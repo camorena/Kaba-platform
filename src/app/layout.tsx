@@ -5,7 +5,10 @@ import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import FloatingCta from "@/components/FloatingCta";
 import ThemeProvider from "@/components/ThemeProvider";
-import { siteConfig } from "@/lib/site";
+import Analytics from "@/components/Analytics";
+import JsonLd from "@/components/JsonLd";
+import { localBusinessJsonLd, websiteJsonLd } from "@/lib/jsonld";
+import { siteConfig, siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -29,7 +32,7 @@ const defaultDescription =
   "Local fence and deck installation, repairs, and free estimates in Angier, Raleigh, and surrounding NC communities.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://kaba-fence.vercel.app"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
     template: `%s | ${siteConfig.name}`,
@@ -46,6 +49,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "32x32", type: "image/png" },
@@ -56,7 +62,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://kaba-fence.vercel.app",
+    url: siteUrl,
     siteName: siteConfig.name,
     title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
     description: defaultDescription,
@@ -93,6 +99,7 @@ export default function RootLayout({
       className={`${dmSans.variable} ${fraunces.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <JsonLd data={[localBusinessJsonLd(), websiteJsonLd()]} />
         <ThemeProvider>
           <a
             href="#main"
@@ -107,6 +114,7 @@ export default function RootLayout({
           <Footer />
           <FloatingCta />
           <ChatWidget />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>

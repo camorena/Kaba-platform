@@ -390,3 +390,33 @@ export const faqs = [
       "Absolutely. New gates, latch and hinge upgrades, and walk-through or driveway openings are part of many fence projects—and we can add them to an existing fence when it makes sense.",
   },
 ] as const;
+
+/** Canonical production origin (metadataBase, sitemap, JSON-LD, analytics). */
+export const siteUrl = "https://kaba-fence.vercel.app";
+
+/** Absolute URL helper for sitemap / JSON-LD. */
+export function absoluteUrl(path = "/"): string {
+  if (!path || path === "/") return siteUrl;
+  return `${siteUrl}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/** All public indexable routes for sitemap. */
+export const sitemapRoutes = [
+  { path: "/", changeFrequency: "weekly" as const, priority: 1 },
+  { path: "/services", changeFrequency: "monthly" as const, priority: 0.9 },
+  { path: "/gallery", changeFrequency: "monthly" as const, priority: 0.8 },
+  { path: "/about", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/reviews", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/quote", changeFrequency: "monthly" as const, priority: 0.9 },
+  { path: "/service-area", changeFrequency: "monthly" as const, priority: 0.8 },
+  { path: "/how-it-works", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/faq", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
+  { path: "/terms", changeFrequency: "yearly" as const, priority: 0.3 },
+] as const;
+
+/** Legal / utility links shown in footer bottom bar. */
+export const legalLinks = [
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+] as const;

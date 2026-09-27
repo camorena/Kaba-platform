@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { footerLinks, navLinks, siteConfig } from "@/lib/site";
+import { footerLinks, legalLinks, navLinks, siteConfig } from "@/lib/site";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -90,11 +90,25 @@ export default function Footer() {
       </div>
 
       <div className="relative border-t border-white/[0.08]">
-        <div className="container-page flex flex-col gap-2 py-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-page flex flex-col gap-3 py-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {siteConfig.name}. All rights reserved.
           </p>
-          <p>{siteConfig.address.region}</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="focus-ring rounded text-cream/60 transition hover:text-cream"
+              >
+                {link.label}
+              </Link>
+            ))}
+            <span className="hidden text-cream/35 sm:inline" aria-hidden>
+              ·
+            </span>
+            <p className="w-full sm:w-auto">{siteConfig.address.region}</p>
+          </div>
         </div>
       </div>
     </footer>

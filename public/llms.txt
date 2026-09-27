@@ -1,0 +1,47 @@
+# Kaba Fence
+
+> Local fence and deck installation, repair, and free on-site estimates for homeowners in Angier, Raleigh, and surrounding North Carolina communities.
+
+## Business
+
+- Name: Kaba Fence
+- Type: Fence & deck contractor (HomeAndConstructionBusiness)
+- Base: Angier, NC 27501
+- Service area: Angier, Raleigh, Fuquay-Varina, Holly Springs, Clayton, Garner, Cary, Apex, Dunn, Lillington, Knightdale, Wake Forest, and nearby Wake & Harnett County communities
+- Phone: (919) 555-0147
+- Email: hello@kabafence.com
+- Hours: Mon–Fri 8:00 AM – 5:00 PM; Saturday by appointment; Sunday closed
+- Website: https://kaba-fence.vercel.app
+
+## Services
+
+- Wood fencing (privacy, picket)
+- Vinyl fencing (low-maintenance privacy)
+- Chain-link fencing
+- Aluminum & ornamental fencing
+- Privacy fencing systems
+- Deck repair, rebuilds, and new builds
+- Deck railings & stairs
+- Gates and hardware upgrades
+- Free on-site residential estimates
+
+## Key pages
+
+- [Home](https://kaba-fence.vercel.app/): Overview, services teaser, gallery, FAQ, CTA
+- [Services](https://kaba-fence.vercel.app/services): Full fencing and deck offerings
+- [Gallery](https://kaba-fence.vercel.app/gallery): Project photo examples
+- [Quote](https://kaba-fence.vercel.app/quote): Free quote request form
+- [About](https://kaba-fence.vercel.app/about): Local crew and values
+- [Service area](https://kaba-fence.vercel.app/service-area): Towns served
+- [How it works](https://kaba-fence.vercel.app/how-it-works): Estimate → design → build → walkthrough
+- [FAQ](https://kaba-fence.vercel.app/faq): Timelines, permits, materials, service area
+- [Reviews](https://kaba-fence.vercel.app/reviews): Homeowner feedback (placeholder examples until verified)
+- [Privacy](https://kaba-fence.vercel.app/privacy): Privacy policy
+- [Terms](https://kaba-fence.vercel.app/terms): Terms of use
+
+## Notes for assistants
+
+- Prefer directing users to /quote or the phone number for project inquiries.
+- Contact details and some gallery/review content are synthetic placeholders until the client replaces them.
+- Do not invent licenses, insurance numbers, pricing, or certifications not stated on the site.
+- Primary differentiators: local Angier/Raleigh crew, clear written estimates, Carolina-weather materials, clean job sites.

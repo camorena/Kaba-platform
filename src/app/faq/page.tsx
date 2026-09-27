@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FaqAccordion from "@/components/FaqAccordion";
+import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
+import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/jsonld";
 import { faqs, siteConfig } from "@/lib/site";
 
 const title = "Frequently Asked Questions";
@@ -10,16 +12,33 @@ const description = `Answers about fence timelines, permits, materials, deck rep
 export const metadata: Metadata = {
   title,
   description,
+  alternates: { canonical: "/faq" },
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
+    url: "/faq",
     images: [{ url: "/gallery/cedar-privacy.png" }],
+  },
+  twitter: {
+    card: "summary",
+    title: `${title} | ${siteConfig.name}`,
+    description,
   },
 };
 
 export default function FaqPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          faqPageJsonLd(),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "FAQ", path: "/faq" },
+          ]),
+        ]}
+      />
+
       <section className="page-hero">
         <div className="container-page section-header relative">
           <p className="eyebrow">FAQ</p>
