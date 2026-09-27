@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FaqAccordion from "@/components/FaqAccordion";
+import Reveal from "@/components/Reveal";
 import ServiceIcon from "@/components/ServiceIcon";
-import { deckServices, fencingServices, siteConfig } from "@/lib/site";
+import ServicesSubnav from "@/components/ServicesSubnav";
+import {
+  deckServices,
+  fencingServices,
+  howItWorks,
+  siteConfig,
+} from "@/lib/site";
 
 const title = "Fence & Deck Services";
 const description = `Wood, vinyl, chain-link, aluminum fencing and deck repair, rebuilds, and new builds from ${siteConfig.name} in Angier and Raleigh NC.`;
@@ -13,6 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
+    images: [{ url: "/gallery/cedar-privacy.png" }],
   },
 };
 
@@ -33,8 +41,12 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="container-page section-y">
-        <div className="max-w-2xl">
+      <div className="container-page pt-4 sm:pt-6">
+        <ServicesSubnav />
+      </div>
+
+      <section id="fencing" className="container-page section-y scroll-mt-[calc(var(--header-offset)+3.5rem)]">
+        <Reveal className="max-w-2xl">
           <span className="accent-bar" aria-hidden />
           <h2 className="mt-4 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
             Fencing
@@ -43,30 +55,41 @@ export default function ServicesPage() {
             New installs, replacements, and repairs—built to last and look right
             on your property.
           </p>
-        </div>
+        </Reveal>
         <ul className="mt-8 grid gap-5 sm:mt-10 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-          {fencingServices.map((service) => (
-            <li key={service.slug} className="card flex flex-col p-5 sm:p-6">
+          {fencingServices.map((service, i) => (
+            <Reveal
+              as="li"
+              key={service.slug}
+              delay={i * 60}
+              className="card group flex flex-col p-5 sm:p-6"
+            >
               <span className="icon-badge">
                 <ServiceIcon slug={service.slug} />
               </span>
               <h3 className="mt-4 font-display text-lg font-semibold tracking-tight text-ink">
                 {service.title}
               </h3>
-              <p className="mt-2.5 text-sm font-medium text-bronze">
+              <p className="mt-2.5 text-sm font-medium text-bronze-dark dark:text-bronze-light">
                 {service.summary}
               </p>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
                 {service.details}
               </p>
-            </li>
+              <Link
+                href="/quote"
+                className="focus-ring btn-ghost mt-5 inline-flex min-h-10 items-center self-start opacity-90 transition group-hover:opacity-100"
+              >
+                Get a quote →
+              </Link>
+            </Reveal>
           ))}
         </ul>
       </section>
 
-      <section className="section-alt section-y">
+      <section id="decks" className="section-alt section-y scroll-mt-[calc(var(--header-offset)+3.5rem)]">
         <div className="container-page">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <span className="accent-bar" aria-hidden />
             <h2 className="mt-4 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
               Decks
@@ -75,45 +98,90 @@ export default function ServicesPage() {
               Safe structures, better outdoor living—from small repairs to custom
               new builds.
             </p>
-          </div>
+          </Reveal>
           <ul className="mt-8 grid gap-5 sm:mt-10 sm:grid-cols-2 sm:gap-6">
-            {deckServices.map((service) => (
-              <li key={service.slug} className="card flex flex-col p-5 sm:p-6">
+            {deckServices.map((service, i) => (
+              <Reveal
+                as="li"
+                key={service.slug}
+                delay={i * 60}
+                className="card group flex flex-col p-5 sm:p-6"
+              >
                 <span className="icon-badge">
                   <ServiceIcon slug={service.slug} />
                 </span>
                 <h3 className="mt-4 font-display text-lg font-semibold tracking-tight text-ink">
                   {service.title}
                 </h3>
-                <p className="mt-2.5 text-sm font-medium text-bronze">
+                <p className="mt-2.5 text-sm font-medium text-bronze-dark dark:text-bronze-light">
                   {service.summary}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-muted">
                   {service.details}
                 </p>
-              </li>
+                <Link
+                  href="/quote"
+                  className="focus-ring btn-ghost mt-5 inline-flex min-h-10 items-center self-start"
+                >
+                  Get a quote →
+                </Link>
+              </Reveal>
             ))}
           </ul>
         </div>
       </section>
 
-      <section className="container-page section-y">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow eyebrow-center">FAQ</p>
-          <h2 className="mt-3.5 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
-            Questions before you book
+      <section id="process" className="container-page section-y scroll-mt-[calc(var(--header-offset)+3.5rem)]">
+        <Reveal className="max-w-2xl">
+          <span className="accent-bar" aria-hidden />
+          <h2 className="mt-4 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
+            Our process
           </h2>
-          <p className="mt-3 text-muted leading-relaxed">
-            Timelines, permits, materials, and whether repair or rebuild makes sense.
+          <p className="mt-3 leading-relaxed text-muted">
+            A clear path from first conversation to finished fence or deck—so you
+            always know what happens next.
           </p>
-        </div>
-        <div className="mx-auto mt-8 max-w-3xl sm:mt-10">
-          <FaqAccordion />
+        </Reveal>
+        <ol className="process-timeline mt-10 grid gap-8 md:grid-cols-3 md:gap-8">
+          {howItWorks.map((step, i) => (
+            <Reveal as="li" key={step.step} delay={i * 90} className="relative pl-14 md:pl-0">
+              {i < howItWorks.length - 1 && (
+                <span
+                  className="pointer-events-none absolute left-[3.25rem] top-[1.375rem] hidden h-px w-[calc(100%-1.5rem)] bg-gradient-to-r from-bronze/40 via-bronze/15 to-transparent md:block"
+                  aria-hidden
+                />
+              )}
+              <span className="step-badge absolute left-0 top-0 md:static">{step.step}</span>
+              <h3 className="mt-0 font-display text-xl font-semibold tracking-tight text-ink md:mt-5">
+                {step.title}
+              </h3>
+              <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-muted">
+                {step.description}
+              </p>
+            </Reveal>
+          ))}
+        </ol>
+      </section>
+
+      <section id="faq" className="section-soft section-y scroll-mt-[calc(var(--header-offset)+3.5rem)]">
+        <div className="container-page">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow eyebrow-center">FAQ</p>
+            <h2 className="mt-3.5 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
+              Questions before you book
+            </h2>
+            <p className="mt-3 text-muted leading-relaxed">
+              Timelines, permits, materials, and whether repair or rebuild makes sense.
+            </p>
+          </Reveal>
+          <Reveal className="mx-auto mt-8 max-w-3xl sm:mt-10" delay={80}>
+            <FaqAccordion />
+          </Reveal>
         </div>
       </section>
 
       <section className="container-page pb-16 lg:pb-20">
-        <div className="band-dark relative overflow-hidden rounded-[1.25rem] px-4 py-10 text-center sm:px-10 sm:py-12 md:px-12">
+        <Reveal className="band-dark relative overflow-hidden rounded-[1.25rem] px-4 py-10 text-center sm:px-10 sm:py-12 md:px-12">
           <div className="relative">
             <span className="accent-bar mx-auto mb-5" aria-hidden />
             <h2 className="font-display text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
@@ -135,7 +203,7 @@ export default function ServicesPage() {
               </a>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );

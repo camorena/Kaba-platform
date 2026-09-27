@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
+    images: [{ url: "/gallery/cedar-privacy.png" }],
   },
 };
 
@@ -24,7 +25,8 @@ export default function QuotePage() {
             Request a quote
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            Share a few details about your fence or deck project. We serve{" "}
+            Three short steps—contact, project, and details—and we&apos;ll schedule
+            a free on-site estimate. We serve{" "}
             {siteConfig.serviceArea}. Prefer to talk? Call{" "}
             <a
               href={siteConfig.phoneHref}

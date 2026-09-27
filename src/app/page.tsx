@@ -3,6 +3,7 @@ import WatermarkedImage from "@/components/WatermarkedImage";
 import Link from "next/link";
 import FaqAccordion from "@/components/FaqAccordion";
 import ServiceIcon from "@/components/ServiceIcon";
+import Reveal from "@/components/Reveal";
 import {
   deckServices,
   fencingServices,
@@ -96,7 +97,7 @@ export default function HomePage() {
                 fill
                 priority
                 sizes="(min-width: 1280px) 42rem, (min-width: 1024px) 55vw, 100vw"
-                className="hero-frame-img"
+                className="hero-frame-img hero-kenburns"
                 watermarkSize="lg"
                 watermarkPosition="tr"
               />
@@ -134,7 +135,7 @@ export default function HomePage() {
         className="section-ink-rail border-b border-ink/[0.08] bg-surface"
         aria-label="Trust points"
       >
-        <div className="mx-auto max-w-6xl">
+        <Reveal from="none" className="mx-auto max-w-6xl">
           <ul className="trust-rail">
             {trustPoints.map((point) => (
               <li key={point.label} className="trust-rail-item">
@@ -143,12 +144,12 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
       </section>
 
       {/* Featured services */}
       <section className="container-page section-y">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+        <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
           <div className="max-w-xl">
             <p className="eyebrow">What we do</p>
             <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
@@ -162,10 +163,10 @@ export default function HomePage() {
           <Link href="/services" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
             View all services →
           </Link>
-        </div>
+        </Reveal>
         <ul className="mt-9 grid gap-4 sm:mt-11 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-          {featured.map((service) => (
-            <li key={service.slug} className="card p-5 sm:p-6">
+          {featured.map((service, i) => (
+            <Reveal as="li" key={service.slug} delay={i * 70} className="card p-5 sm:p-6">
               <span className="icon-badge">
                 <ServiceIcon slug={service.slug} />
               </span>
@@ -175,9 +176,9 @@ export default function HomePage() {
               <p className="mt-2.5 text-sm leading-relaxed text-muted">
                 {service.summary}
               </p>
-            </li>
+            </Reveal>
           ))}
-          <li className="relative flex flex-col justify-center overflow-hidden rounded-[1rem] border border-bronze/25 bg-navy p-5 text-cream shadow-md sm:p-6">
+          <Reveal as="li" delay={350} className="relative flex flex-col justify-center overflow-hidden rounded-[1rem] border border-bronze/25 bg-navy p-5 text-cream shadow-md sm:p-6">
             <div
               className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full opacity-50"
               aria-hidden
@@ -202,14 +203,14 @@ export default function HomePage() {
             >
               Get a Free Quote
             </Link>
-          </li>
+          </Reveal>
         </ul>
       </section>
 
       {/* Customer notes */}
       <section className="section-soft section-y">
         <div className="container-page">
-          <div className="max-w-xl">
+          <Reveal className="max-w-xl">
             <p className="eyebrow">Good work travels</p>
             <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
               Trusted by local homeowners
@@ -217,10 +218,10 @@ export default function HomePage() {
             <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
               A few words from neighbors who called us for their next outdoor project.
             </p>
-          </div>
+          </Reveal>
           <ul className="mt-9 grid gap-4 sm:mt-11 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-            {testimonials.map((testimonial) => (
-              <li key={testimonial.name} className="card flex flex-col p-5 sm:p-6">
+            {testimonials.map((testimonial, i) => (
+              <Reveal as="li" key={testimonial.name} delay={i * 80} className="card flex flex-col p-5 sm:p-6">
                 <span
                   className="font-display text-[2.5rem] leading-none text-bronze/55"
                   aria-hidden
@@ -239,7 +240,7 @@ export default function HomePage() {
                     {testimonial.town}
                   </p>
                 </div>
-              </li>
+              </Reveal>
             ))}
           </ul>
         </div>
@@ -248,7 +249,7 @@ export default function HomePage() {
       {/* Recent work teaser */}
       <section className="section-alt section-y">
         <div className="container-page">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+          <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
             <div className="max-w-xl">
               <p className="eyebrow">Portfolio</p>
               <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
@@ -262,11 +263,13 @@ export default function HomePage() {
             <Link href="/gallery" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
               Browse gallery →
             </Link>
-          </div>
+          </Reveal>
           <ul className="mt-9 grid grid-cols-1 gap-4 sm:mt-11 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12 lg:gap-6">
             {teaser.map((project, index) => (
-              <li
+              <Reveal
+                as="li"
                 key={project.id}
+                delay={index * 70}
                 className={`card overflow-hidden ${
                   index === 0
                     ? "lg:col-span-5"
@@ -297,7 +300,7 @@ export default function HomePage() {
                     {project.title}
                   </p>
                 </div>
-              </li>
+              </Reveal>
             ))}
           </ul>
         </div>
@@ -305,7 +308,7 @@ export default function HomePage() {
 
       {/* How it works */}
       <section className="container-page section-y">
-        <div className="max-w-xl">
+        <Reveal className="max-w-xl">
           <p className="eyebrow">Process</p>
           <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
             How it works
@@ -313,10 +316,10 @@ export default function HomePage() {
           <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
             Straightforward from first call to finished project—no surprises.
           </p>
-        </div>
+        </Reveal>
         <ol className="mt-10 grid gap-8 border-t border-ink/[0.08] pt-10 sm:mt-12 md:grid-cols-3 md:gap-8 md:pt-12">
           {howItWorks.map((step, i) => (
-            <li key={step.step} className="relative">
+            <Reveal as="li" key={step.step} delay={i * 90} className="relative">
               {i < howItWorks.length - 1 && (
                 <span
                   className="pointer-events-none absolute left-[3.25rem] top-[1.375rem] hidden h-px w-[calc(100%-1.5rem)] bg-gradient-to-r from-bronze/40 via-bronze/15 to-transparent md:block"
@@ -330,7 +333,7 @@ export default function HomePage() {
               <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-muted">
                 {step.description}
               </p>
-            </li>
+            </Reveal>
           ))}
         </ol>
       </section>
@@ -339,7 +342,7 @@ export default function HomePage() {
       <section className="section-soft section-y">
         <div className="container-page">
           <div className="grid gap-8 lg:grid-cols-12 lg:gap-12 lg:items-start">
-            <div className="max-w-md lg:col-span-4">
+            <Reveal className="max-w-md lg:col-span-4">
               <p className="eyebrow">FAQ</p>
               <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.35rem] lg:leading-[1.12]">
                 Common questions
@@ -347,17 +350,17 @@ export default function HomePage() {
               <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
                 Quick answers about timelines, permits, materials, and deck repairs.
               </p>
-            </div>
-            <div className="lg:col-span-8">
+            </Reveal>
+            <Reveal className="lg:col-span-8" delay={100}>
               <FaqAccordion />
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* Quote CTA */}
       <section className="band-dark section-ink-rail py-14 sm:py-16 lg:py-20">
-        <div className="container-page relative max-w-2xl text-center">
+        <Reveal className="container-page relative max-w-2xl text-center">
           <span className="accent-bar mx-auto mb-6" aria-hidden />
           <h2 className="font-display text-[1.85rem] font-semibold tracking-[-0.028em] sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
             Ready for a free estimate?
@@ -378,7 +381,7 @@ export default function HomePage() {
               Or call {siteConfig.phone}
             </a>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );

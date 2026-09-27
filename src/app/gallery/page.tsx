@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import GalleryGrid from "@/components/GalleryGrid";
+import Reveal from "@/components/Reveal";
 import { siteConfig } from "@/lib/site";
 
 const title = "Project Gallery";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
+    images: [{ url: "/gallery/cedar-privacy.png" }],
   },
 };
 
@@ -37,7 +39,7 @@ export default function GalleryPage() {
       </section>
 
       <section className="section-alt py-12 lg:py-16">
-        <div className="container-page max-w-3xl text-center">
+        <Reveal className="container-page max-w-3xl text-center">
           <span className="accent-bar mx-auto mb-5" aria-hidden />
           <h2 className="font-display text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
             Have a similar project in mind?
@@ -53,7 +55,7 @@ export default function GalleryPage() {
               View services
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );

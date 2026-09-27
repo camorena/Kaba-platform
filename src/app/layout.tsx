@@ -3,6 +3,7 @@ import { DM_Sans, Fraunces, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
+import FloatingCta from "@/components/FloatingCta";
 import ThemeProvider from "@/components/ThemeProvider";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -28,12 +29,23 @@ const defaultDescription =
   "Local fence and deck installation, repairs, and free estimates in Angier, Raleigh, and surrounding NC communities.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://kabafence.com"),
+  metadataBase: new URL("https://kaba-fence.vercel.app"),
   title: {
     default: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
     template: `%s | ${siteConfig.name}`,
   },
   description: defaultDescription,
+  keywords: [
+    "fence installation",
+    "deck repair",
+    "Angier NC",
+    "Raleigh fence",
+    "vinyl fence",
+    "cedar privacy fence",
+    "free fence estimate",
+  ],
+  authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "32x32", type: "image/png" },
@@ -44,14 +56,28 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
+    url: "https://kaba-fence.vercel.app",
     siteName: siteConfig.name,
     title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
     description: defaultDescription,
+    images: [
+      {
+        url: "/gallery/cedar-privacy.png",
+        width: 1200,
+        height: 900,
+        alt: "Cedar privacy fence installation by Kaba Fence",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
     description: defaultDescription,
+    images: ["/gallery/cedar-privacy.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -75,10 +101,11 @@ export default function RootLayout({
             Skip to content
           </a>
           <Header />
-          <main id="main" className="flex-1">
+          <main id="main" className="flex-1" tabIndex={-1}>
             {children}
           </main>
           <Footer />
+          <FloatingCta />
           <ChatWidget />
         </ThemeProvider>
       </body>
