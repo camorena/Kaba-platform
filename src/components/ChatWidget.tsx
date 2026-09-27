@@ -175,7 +175,7 @@ export default function ChatWidget() {
       ?.suggestions ?? [];
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-end p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pr-[max(0.75rem,env(safe-area-inset-right))]">
+    <div className="chat-widget-root pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-end p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pr-[max(0.75rem,env(safe-area-inset-right))]">
       <div className="pointer-events-auto relative flex flex-col items-end gap-3">
         {/* Panel */}
         {open && (

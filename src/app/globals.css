@@ -1398,3 +1398,11 @@ h3 {
     transition: none;
   }
 }
+
+/* Hide floating chrome while the mobile nav is open so pills don't
+   sit above the menu (they use z-55 / z-60; header menu is z-70). */
+html[data-mobile-nav="open"] .floating-cta-root,
+html[data-mobile-nav="open"] .chat-widget-root {
+  visibility: hidden;
+  pointer-events: none;
+}

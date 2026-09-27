@@ -40,7 +40,7 @@ export default function FloatingCta() {
   if (!show || dismissed || pathname === "/quote") return null;
 
   return (
-    <div className="pointer-events-none fixed bottom-0 left-0 z-[55] p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))]">
+    <div className="floating-cta-root pointer-events-none fixed bottom-0 left-0 z-[55] p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))]">
       <div className="pointer-events-auto flex items-center gap-1.5">
         <Link
           href="/quote"
