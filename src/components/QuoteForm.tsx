@@ -108,7 +108,7 @@ export default function QuoteForm() {
         role="status"
         aria-live="polite"
       >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-bronze/20 to-bronze/10 text-bronze-dark shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_50%,transparent),0_4px_14px_color-mix(in_srgb,var(--bronze)_18%,transparent)]">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center border-2 border-ink bg-bronze text-ink">
           <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -155,7 +155,7 @@ export default function QuoteForm() {
           tabIndex={-1}
           role="alert"
           aria-live="assertive"
-          className="mb-6 rounded-xl border border-danger/30 bg-danger-bg px-4 py-3.5 outline-none"
+          className="mb-6 border border-danger/30 bg-danger-bg px-4 py-3.5 outline-none"
         >
           <p className="text-sm font-semibold text-danger">
             Please fix {errorEntries.length}{" "}
@@ -353,10 +353,10 @@ export default function QuoteForm() {
             ].map((opt) => (
               <label
                 key={opt.value}
-                className={`inline-flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-lg border px-3.5 py-2.5 text-sm transition sm:w-auto ${
+                className={`inline-flex min-h-11 w-full cursor-pointer items-center gap-3 border-2 px-3.5 py-2.5 text-sm transition sm:w-auto ${
                   form.preferredContact === opt.value
-                    ? "border-bronze bg-bronze/8 text-ink"
-                    : "border-ink/12 text-muted hover:border-ink/20 hover:bg-ivory-muted"
+                    ? "border-ink bg-bronze/15 text-ink"
+                    : "border-ink/15 text-muted hover:border-ink/30 hover:bg-ivory-muted"
                 }`}
               >
                 <input

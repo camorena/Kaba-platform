@@ -22,11 +22,7 @@ export default function GalleryGrid() {
 
   return (
     <div className="min-w-0">
-      <div
-        className="filter-row"
-        role="group"
-        aria-label="Filter projects"
-      >
+      <div className="filter-row" role="group" aria-label="Filter projects">
         {filters.map((f) => (
           <button
             key={f.value}
@@ -42,26 +38,45 @@ export default function GalleryGrid() {
         ))}
       </div>
 
-      <ul className="mt-8 grid grid-cols-1 gap-5 sm:mt-10 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-        {projects.map((project) => (
-          <li key={project.id} className="card min-w-0 overflow-hidden">
-            <div className="relative aspect-[4/3] overflow-hidden bg-ivory-muted">
+      <ul className="mt-8 grid grid-cols-1 gap-8 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-10">
+        {projects.map((project, index) => (
+          <li
+            key={project.id}
+            className={`min-w-0 ${
+              index === 0 && filter === "All"
+                ? "sm:col-span-2 lg:col-span-2"
+                : ""
+            }`}
+          >
+            <div
+              className={`frame-photo relative w-full overflow-hidden bg-ivory-muted ${
+                index === 0 && filter === "All"
+                  ? "aspect-[16/10]"
+                  : "aspect-[4/3]"
+              }`}
+            >
               <Image
                 src={project.image}
                 alt={`${project.title}. ${project.caption}.`}
                 fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                className="gallery-img object-cover"
+                sizes={
+                  index === 0 && filter === "All"
+                    ? "(min-width: 1024px) 66vw, 100vw"
+                    : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                }
+                className="frame-photo-img object-cover"
               />
-              <span className="absolute bottom-3 left-3 rounded-full bg-surface/95 px-2.5 py-1 text-xs font-semibold capitalize tracking-tight text-ink shadow-sm backdrop-blur-sm ring-1 ring-ink/5">
-                {project.category}
-              </span>
             </div>
-            <div className="p-4 sm:p-5">
-              <h3 className="font-display font-semibold tracking-tight text-ink">
-                {project.title}
-              </h3>
-              <p className="mt-1.5 text-sm text-muted">{project.caption}</p>
+            <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2">
+              <div>
+                <p className="font-mono text-[0.65rem] uppercase tracking-[0.1em] text-muted">
+                  {String(index + 1).padStart(2, "0")} · {project.category}
+                </p>
+                <h3 className="mt-1 font-display font-semibold tracking-tight text-ink">
+                  {project.title}
+                </h3>
+                <p className="mt-1 text-sm text-muted">{project.caption}</p>
+              </div>
             </div>
           </li>
         ))}

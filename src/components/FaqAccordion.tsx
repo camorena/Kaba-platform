@@ -14,14 +14,14 @@ export default function FaqAccordion({
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <div className="divide-y divide-ink/[0.08] rounded-[1.125rem] border border-ink/[0.08] bg-surface shadow-[0_1px_2px_color-mix(in_srgb,var(--ink)_4%,transparent),0_8px_24px_color-mix(in_srgb,var(--ink)_4%,transparent)]">
+    <div className="divide-y divide-ink/15 border-y border-ink/15">
       {items.map((item, index) => {
         const isOpen = openIndex === index;
         const panelId = `${baseId}-panel-${index}`;
         const buttonId = `${baseId}-button-${index}`;
 
         return (
-          <div key={item.question} className="px-5 sm:px-6">
+          <div key={item.question} className="px-0">
             <h3>
               <button
                 type="button"
@@ -29,21 +29,24 @@ export default function FaqAccordion({
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="focus-ring flex w-full items-center justify-between gap-3 rounded-md py-4 text-left transition-colors sm:gap-4 sm:py-5"
+                className="focus-ring flex w-full items-center justify-between gap-3 py-4 text-left transition-colors sm:gap-4 sm:py-5"
               >
                 <span className="font-display text-base font-semibold tracking-tight text-ink sm:text-lg">
                   {item.question}
                 </span>
                 <span
                   aria-hidden
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-200 ${
-                    isOpen
-                      ? "rotate-45 border-bronze bg-bronze text-white shadow-[0_2px_8px_color-mix(in_srgb,var(--bronze)_35%,transparent)]"
-                      : "border-ink/12 bg-ivory text-ink"
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center border border-ink text-ink transition-colors ${
+                    isOpen ? "bg-bronze" : "bg-transparent"
                   }`}
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d={isOpen ? "M5 12h14" : "M12 5v14M5 12h14"}
+                    />
                   </svg>
                 </span>
               </button>
@@ -53,9 +56,7 @@ export default function FaqAccordion({
               role="region"
               aria-labelledby={buttonId}
               hidden={!isOpen}
-              className={`overflow-hidden transition-[grid-template-rows] duration-200 ${
-                isOpen ? "pb-5" : ""
-              }`}
+              className={isOpen ? "pb-5" : ""}
             >
               {isOpen && (
                 <p className="max-w-3xl text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
