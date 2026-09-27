@@ -22,7 +22,7 @@ export default function ServicesPage() {
       <section className="page-hero">
         <div className="container-page section-header relative">
           <p className="eyebrow">What we offer</p>
-          <h1 className="mt-3.5 text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[1.1]">
+          <h1 className="mt-3.5 text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.03em] text-ink sm:text-4xl sm:leading-[1.12] lg:text-5xl lg:leading-[1.1]">
             Fence & deck services
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
@@ -113,7 +113,7 @@ export default function ServicesPage() {
       </section>
 
       <section className="container-page pb-16 lg:pb-20">
-        <div className="band-dark relative overflow-hidden rounded-[1.25rem] px-6 py-12 text-center sm:px-12">
+        <div className="band-dark relative overflow-hidden rounded-[1.25rem] px-4 py-10 text-center sm:px-10 sm:py-12 md:px-12">
           <div className="relative">
             <span className="accent-bar mx-auto mb-5" aria-hidden />
             <h2 className="font-display text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
@@ -123,13 +123,13 @@ export default function ServicesPage() {
               We&apos;ll walk your property, talk through style and budget, and
               recommend materials that make sense for Angier and Raleigh homes.
             </p>
-            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/quote" className="focus-ring btn-primary">
+            <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+              <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
                 Get a Free Quote
               </Link>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring btn-secondary"
+                className="focus-ring btn-secondary w-full justify-center sm:w-auto"
               >
                 Call {siteConfig.phone}
               </a>

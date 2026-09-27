@@ -29,7 +29,7 @@ export default function FaqAccordion({
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="focus-ring flex w-full items-center justify-between gap-4 rounded-md py-5 text-left transition-colors"
+                className="focus-ring flex w-full items-center justify-between gap-3 rounded-md py-4 text-left transition-colors sm:gap-4 sm:py-5"
               >
                 <span className="font-display text-base font-semibold tracking-tight text-ink sm:text-lg">
                   {item.question}

@@ -104,7 +104,7 @@ export default function QuoteForm() {
   if (submitted) {
     return (
       <div
-        className="card-static p-8 text-center sm:p-10"
+        className="card-static min-w-0 p-6 text-center sm:p-8 md:p-10"
         role="status"
         aria-live="polite"
       >
@@ -130,7 +130,7 @@ export default function QuoteForm() {
             setErrors({});
             setAttempted(false);
           }}
-          className="focus-ring btn-secondary-light mt-7"
+          className="focus-ring btn-secondary-light mt-7 w-full sm:w-auto"
         >
           Submit another request
         </button>
@@ -145,7 +145,7 @@ export default function QuoteForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="card-static p-5 sm:p-8"
+      className="card-static min-w-0 p-4 sm:p-6 md:p-8"
       aria-describedby={errorEntries.length ? "form-error-summary" : undefined}
     >
       {errorEntries.length > 0 && (
@@ -345,7 +345,7 @@ export default function QuoteForm() {
             <span className="text-bronze" aria-hidden>*</span>
             <span className="sr-only">(required)</span>
           </legend>
-          <div className="mt-2.5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+          <div className="mt-2.5 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3">
             {[
               { value: "phone", label: "Phone call" },
               { value: "text", label: "Text message" },
@@ -353,7 +353,7 @@ export default function QuoteForm() {
             ].map((opt) => (
               <label
                 key={opt.value}
-                className={`inline-flex cursor-pointer items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-sm transition ${
+                className={`inline-flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-lg border px-3.5 py-2.5 text-sm transition sm:w-auto ${
                   form.preferredContact === opt.value
                     ? "border-bronze bg-bronze/8 text-ink"
                     : "border-ink/12 text-muted hover:border-ink/20 hover:bg-ivory-muted"
@@ -366,7 +366,7 @@ export default function QuoteForm() {
                   value={opt.value}
                   checked={form.preferredContact === opt.value}
                   onChange={(e) => update("preferredContact", e.target.value)}
-                  className="h-4 w-4 border-ink/20 text-ink accent-bronze focus:ring-2 focus:ring-bronze focus:ring-offset-2"
+                  className="h-5 w-5 shrink-0 border-ink/20 text-ink accent-bronze focus:ring-2 focus:ring-bronze focus:ring-offset-2"
                 />
                 {opt.label}
               </label>

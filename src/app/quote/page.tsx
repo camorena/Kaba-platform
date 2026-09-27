@@ -20,7 +20,7 @@ export default function QuotePage() {
       <section className="page-hero">
         <div className="container-page section-header relative">
           <p className="eyebrow">Free estimates</p>
-          <h1 className="mt-3.5 text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[1.1]">
+          <h1 className="mt-3.5 text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.03em] text-ink sm:text-4xl sm:leading-[1.12] lg:text-5xl lg:leading-[1.1]">
             Request a quote
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
@@ -38,7 +38,7 @@ export default function QuotePage() {
       </section>
 
       <section className="section-y">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="container-page max-w-3xl">
           <QuoteForm />
         </div>
       </section>

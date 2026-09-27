@@ -21,7 +21,7 @@ export default function GalleryPage() {
       <section className="page-hero">
         <div className="container-page section-header relative">
           <p className="eyebrow">Our work</p>
-          <h1 className="mt-3.5 text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[1.1]">
+          <h1 className="mt-3.5 text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.03em] text-ink sm:text-4xl sm:leading-[1.12] lg:text-5xl lg:leading-[1.1]">
             Project gallery
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
@@ -45,11 +45,11 @@ export default function GalleryPage() {
           <p className="mt-3 leading-relaxed text-muted">
             Request a free quote and we&apos;ll take a look at your property.
           </p>
-          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/quote" className="focus-ring btn-primary">
+          <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+            <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
               Get a Free Quote
             </Link>
-            <Link href="/services" className="focus-ring btn-secondary-light">
+            <Link href="/services" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
               View services
             </Link>
           </div>

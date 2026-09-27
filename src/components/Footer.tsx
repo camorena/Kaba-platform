@@ -35,7 +35,7 @@ export default function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="focus-ring rounded text-sm text-ivory/80 transition hover:text-white"
+                  className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 text-sm text-ivory/80 transition hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -53,7 +53,7 @@ export default function Footer() {
             <li>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring rounded transition hover:text-white"
+                className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 transition hover:text-white"
               >
                 {siteConfig.phone}
               </a>
@@ -61,7 +61,7 @@ export default function Footer() {
             <li>
               <a
                 href={siteConfig.emailHref}
-                className="focus-ring rounded break-all transition hover:text-white"
+                className="focus-ring -mx-1 inline-flex min-h-10 items-center break-all rounded px-1 transition hover:text-white"
               >
                 {siteConfig.email}
               </a>

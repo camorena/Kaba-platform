@@ -21,9 +21,9 @@ export default function GalleryGrid() {
   ];
 
   return (
-    <div>
+    <div className="min-w-0">
       <div
-        className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible"
+        className="filter-row"
         role="group"
         aria-label="Filter projects"
       >
@@ -33,10 +33,8 @@ export default function GalleryGrid() {
             type="button"
             onClick={() => setFilter(f.value)}
             aria-pressed={filter === f.value}
-            className={`focus-ring shrink-0 rounded-full px-4 py-2 text-sm font-semibold tracking-tight transition ${
-              filter === f.value
-                ? "bg-ink text-ivory shadow-[0_2px_8px_color-mix(in_srgb,var(--ink)_20%,transparent)]"
-                : "bg-surface text-ink ring-1 ring-ink/10 hover:bg-ivory-muted hover:ring-ink/16"
+            className={`focus-ring filter-chip ${
+              filter === f.value ? "filter-chip-active" : "filter-chip-idle"
             }`}
           >
             {f.label}
@@ -46,7 +44,7 @@ export default function GalleryGrid() {
 
       <ul className="mt-8 grid grid-cols-1 gap-5 sm:mt-10 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
         {projects.map((project) => (
-          <li key={project.id} className="card overflow-hidden">
+          <li key={project.id} className="card min-w-0 overflow-hidden">
             <div className="relative aspect-[4/3] overflow-hidden bg-ivory-muted">
               <Image
                 src={project.image}
@@ -55,7 +53,7 @@ export default function GalleryGrid() {
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="gallery-img object-cover"
               />
-              <span className="absolute bottom-3 left-3 rounded-full bg-surface/95 px-2.5 py-0.5 text-xs font-semibold capitalize tracking-tight text-ink shadow-sm backdrop-blur-sm ring-1 ring-ink/5">
+              <span className="absolute bottom-3 left-3 rounded-full bg-surface/95 px-2.5 py-1 text-xs font-semibold capitalize tracking-tight text-ink shadow-sm backdrop-blur-sm ring-1 ring-ink/5">
                 {project.category}
               </span>
             </div>

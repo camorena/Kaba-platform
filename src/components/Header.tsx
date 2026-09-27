@@ -29,10 +29,10 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-ink/[0.07] bg-surface/90 shadow-[0_1px_0_color-mix(in_srgb,var(--ink)_3%,transparent)] backdrop-blur-md">
-      <div className="container-page flex h-14 items-center justify-between gap-3 lg:h-[3.75rem]">
+      <div className="container-page flex h-14 items-center justify-between gap-2 sm:gap-3 lg:h-[3.75rem]">
         <Link
           href="/"
-          className="focus-ring group flex min-w-0 items-center gap-2.5 rounded-md"
+          className="focus-ring group flex min-w-0 shrink items-center gap-2 rounded-md sm:gap-2.5"
           onClick={() => setOpen(false)}
         >
           <span
@@ -41,7 +41,7 @@ export default function Header() {
           >
             KF
           </span>
-          <span className="truncate font-display text-lg font-semibold tracking-tight text-ink transition group-hover:text-ink-light">
+          <span className="truncate font-display text-base font-semibold tracking-tight text-ink transition group-hover:text-ink-light sm:text-lg">
             {siteConfig.name}
           </span>
         </Link>
@@ -59,7 +59,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`focus-ring relative rounded-md px-3.5 py-2 text-sm font-medium transition-colors ${
+                className={`focus-ring relative rounded-md px-3 py-2 text-sm font-medium transition-colors lg:px-3.5 ${
                   active
                     ? "bg-ink/[0.06] text-ink"
                     : "text-muted hover:bg-ivory-muted hover:text-ink"
@@ -68,7 +68,7 @@ export default function Header() {
                 {link.label}
                 {active && (
                   <span
-                    className="absolute inset-x-3.5 -bottom-px h-0.5 rounded-full bg-bronze"
+                    className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-bronze lg:inset-x-3.5"
                     aria-hidden
                   />
                 )}
@@ -77,16 +77,16 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/quote"
-            className="focus-ring btn-primary hidden px-4 py-2 sm:inline-flex"
+            className="focus-ring btn-primary hidden px-3.5 py-2 text-sm md:inline-flex lg:px-4"
           >
             Get a Free Quote
           </Link>
           <button
             type="button"
-            className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-md text-ink md:hidden"
+            className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-md text-ink md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -108,7 +108,7 @@ export default function Header() {
       {open && (
         <div
           id="mobile-nav"
-          className="border-t border-ink/[0.07] bg-surface md:hidden"
+          className="max-h-[min(100dvh-3.5rem,32rem)] overflow-y-auto border-t border-ink/[0.07] bg-surface md:hidden"
         >
           <nav
             className="container-page flex flex-col gap-1 py-3 pb-5"
@@ -124,7 +124,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className={`focus-ring rounded-md px-3 py-3 text-base font-medium transition-colors ${
+                  className={`focus-ring rounded-md px-3 py-3.5 text-base font-medium transition-colors ${
                     active
                       ? "bg-ink/[0.06] text-ink"
                       : "text-muted hover:bg-ivory-muted hover:text-ink"
@@ -137,13 +137,13 @@ export default function Header() {
             <Link
               href="/quote"
               onClick={() => setOpen(false)}
-              className="focus-ring btn-primary mt-2 w-full py-3 text-center"
+              className="focus-ring btn-primary mt-2 w-full py-3.5 text-center"
             >
               Get a Free Quote
             </Link>
             <a
               href={siteConfig.phoneHref}
-              className="focus-ring btn-secondary-light mt-1 w-full py-3 text-center"
+              className="focus-ring btn-secondary-light mt-1 w-full py-3.5 text-center"
             >
               Call {siteConfig.phone}
             </a>

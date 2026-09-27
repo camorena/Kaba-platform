@@ -38,26 +38,26 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-ink text-ivory">
         <div className="hero-mesh" aria-hidden />
-        <div className="container-page relative grid gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-28">
-          <div>
+        <div className="container-page relative grid gap-10 py-12 sm:gap-12 sm:py-16 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-28">
+          <div className="min-w-0">
             <p className="eyebrow eyebrow-light">
               Angier · Raleigh NC · Surrounding Areas
             </p>
-            <h1 className="mt-5 text-[1.875rem] font-semibold tracking-[-0.03em] sm:text-5xl lg:text-[3.4rem] lg:leading-[1.1]">
+            <h1 className="mt-4 text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.03em] sm:mt-5 sm:text-4xl sm:leading-[1.12] lg:text-[3.25rem] lg:leading-[1.1]">
               Strong fences. Beautiful decks. Built for Carolina homes.
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-ivory/78 sm:text-lg sm:leading-relaxed">
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-ivory/78 sm:mt-6 sm:text-lg sm:leading-relaxed">
               {siteConfig.name} installs and repairs wood, vinyl, chain-link,
               and aluminum fencing—plus deck repairs, rebuilds, and new
               builds—across Angier, Raleigh, and nearby communities.
             </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link href="/quote" className="focus-ring btn-primary w-full sm:w-auto">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
+              <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
                 Get a Free Quote
               </Link>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring btn-secondary w-full sm:w-auto"
+                className="focus-ring btn-secondary w-full justify-center sm:w-auto"
               >
                 Call {siteConfig.phone}
               </a>
@@ -106,11 +106,11 @@ export default function HomePage() {
         aria-label="Trust points"
       >
         <div className="mx-auto max-w-6xl">
-          <ul className="grid grid-cols-2 gap-px bg-ink/[0.07] sm:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-px bg-ink/[0.07] lg:grid-cols-4">
             {trustPoints.map((point) => (
               <li
                 key={point.label}
-                className="flex items-center justify-center gap-2 bg-surface px-3 py-5 text-center text-xs font-semibold tracking-tight text-ink sm:px-4 sm:py-6 sm:text-sm"
+                className="flex items-center justify-center gap-2 bg-surface px-2.5 py-4 text-center text-[0.6875rem] font-semibold leading-snug tracking-tight text-ink sm:px-4 sm:py-6 sm:text-sm"
               >
                 <span
                   className="hidden h-1.5 w-1.5 shrink-0 rounded-full bg-bronze sm:inline-block"
@@ -128,7 +128,7 @@ export default function HomePage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <p className="eyebrow">What we do</p>
-            <h2 className="mt-3.5 text-3xl font-semibold tracking-[-0.025em] text-ink sm:text-4xl">
+            <h2 className="mt-3.5 text-[1.75rem] font-semibold tracking-[-0.025em] text-ink sm:text-3xl lg:text-4xl">
               Featured services
             </h2>
             <p className="mt-3 text-muted leading-relaxed">
@@ -136,7 +136,7 @@ export default function HomePage() {
               projects that protect and improve your outdoor living space.
             </p>
           </div>
-          <Link href="/services" className="focus-ring btn-ghost shrink-0">
+          <Link href="/services" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0">
             View all services →
           </Link>
         </div>
@@ -185,14 +185,14 @@ export default function HomePage() {
         <div className="container-page">
           <div className="max-w-2xl">
             <p className="eyebrow">Good work travels</p>
-            <h2 className="mt-3.5 text-3xl font-semibold tracking-[-0.025em] text-ink sm:text-4xl">
+            <h2 className="mt-3.5 text-[1.75rem] font-semibold tracking-[-0.025em] text-ink sm:text-3xl lg:text-4xl">
               Trusted by local homeowners
             </h2>
             <p className="mt-3 text-muted leading-relaxed">
               A few words from neighbors who called us for their next outdoor project.
             </p>
           </div>
-          <ul className="mt-10 grid gap-5 md:grid-cols-3 sm:gap-6">
+          <ul className="mt-10 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {testimonials.map((testimonial) => (
               <li key={testimonial.name} className="card flex flex-col p-5 sm:p-6">
                 <span
@@ -225,7 +225,7 @@ export default function HomePage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
               <p className="eyebrow">Portfolio</p>
-              <h2 className="mt-3.5 text-3xl font-semibold tracking-[-0.025em] text-ink sm:text-4xl">
+              <h2 className="mt-3.5 text-[1.75rem] font-semibold tracking-[-0.025em] text-ink sm:text-3xl lg:text-4xl">
                 Recent work
               </h2>
               <p className="mt-3 text-muted leading-relaxed">
@@ -233,7 +233,7 @@ export default function HomePage() {
                 neighbors in Angier, Raleigh, and nearby towns.
               </p>
             </div>
-            <Link href="/gallery" className="focus-ring btn-ghost shrink-0">
+            <Link href="/gallery" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0">
               Browse gallery →
             </Link>
           </div>
@@ -267,7 +267,7 @@ export default function HomePage() {
       <section className="container-page section-y">
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow eyebrow-center">Process</p>
-          <h2 className="mt-3.5 text-3xl font-semibold tracking-[-0.025em] text-ink sm:text-4xl">
+          <h2 className="mt-3.5 text-[1.75rem] font-semibold tracking-[-0.025em] text-ink sm:text-3xl lg:text-4xl">
             How it works
           </h2>
           <p className="mt-3 text-muted leading-relaxed">
@@ -303,7 +303,7 @@ export default function HomePage() {
         <div className="container-page">
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow eyebrow-center">FAQ</p>
-            <h2 className="mt-3.5 text-3xl font-semibold tracking-[-0.025em] text-ink sm:text-4xl">
+            <h2 className="mt-3.5 text-[1.75rem] font-semibold tracking-[-0.025em] text-ink sm:text-3xl lg:text-4xl">
               Common questions
             </h2>
             <p className="mt-3 text-muted leading-relaxed">
@@ -317,10 +317,10 @@ export default function HomePage() {
       </section>
 
       {/* Quote CTA */}
-      <section className="band-dark py-14 lg:py-20">
+      <section className="band-dark py-12 sm:py-14 lg:py-20">
         <div className="container-page relative max-w-3xl text-center">
           <span className="accent-bar mx-auto mb-5" aria-hidden />
-          <h2 className="font-display text-3xl font-semibold tracking-[-0.025em] sm:text-4xl">
+          <h2 className="font-display text-[1.75rem] font-semibold tracking-[-0.025em] sm:text-3xl lg:text-4xl">
             Ready for a free estimate?
           </h2>
           <p className="mt-4 text-base leading-relaxed text-ivory/75">
@@ -328,13 +328,13 @@ export default function HomePage() {
             on-site visit in Angier, Raleigh, or your nearby NC community—and
             give you a clear quote with no obligation.
           </p>
-          <div className="mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-            <Link href="/quote" className="focus-ring btn-primary">
+          <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-9 sm:flex-row sm:items-center">
+            <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
               Get a Free Quote
             </Link>
             <a
               href={siteConfig.phoneHref}
-              className="focus-ring btn-secondary"
+              className="focus-ring btn-secondary w-full justify-center sm:w-auto"
             >
               Or call {siteConfig.phone}
             </a>
