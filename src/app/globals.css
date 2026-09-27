@@ -1,0 +1,342 @@
+@import "tailwindcss";
+
+:root {
+  /* Premium charcoal-navy + ivory + brushed bronze */
+  --ink: #1a2332;
+  --ink-dark: #0f1520;
+  --ink-light: #2c3a4f;
+  --bronze: #b8956c;
+  --bronze-dark: #9a7a52;
+  --bronze-light: #d4bc94;
+  --ivory: #f7f5f0;
+  --ivory-muted: #ebe7df;
+  --surface: #ffffff;
+  --muted: #5c6570;
+  --muted-light: #8a929c;
+  --border: color-mix(in srgb, var(--ink) 10%, transparent);
+  --danger: #b42318;
+  --danger-bg: #fef3f2;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --white: #ffffff;
+  --background: var(--ivory);
+  --foreground: var(--ink);
+  /* Sticky header clearance for scroll-into-view / client navigations */
+  --header-offset: 5rem;
+  /* Spacing rhythm */
+  --section-y: 4rem;
+  --section-y-lg: 6rem;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-dark: var(--ink-dark);
+  --color-ink-light: var(--ink-light);
+  --color-bronze: var(--bronze);
+  --color-bronze-dark: var(--bronze-dark);
+  --color-bronze-light: var(--bronze-light);
+  --color-ivory: var(--ivory);
+  --color-ivory-muted: var(--ivory-muted);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-muted-light: var(--muted-light);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-fraunces);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-offset);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-feature-settings: "ss01" on, "kern" on;
+  letter-spacing: -0.01em;
+}
+
+#main {
+  scroll-margin-top: var(--header-offset);
+}
+
+h1,
+h2,
+h3 {
+  scroll-margin-top: var(--header-offset);
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--bronze) 35%, transparent);
+}
+
+/* Global accessible focus rings */
+:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
+
+/* Shared layout utilities */
+.container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem; /* max-w-6xl */
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-page {
+    padding-inline: 2rem;
+  }
+}
+
+.section-y {
+  padding-block: var(--section-y);
+}
+
+@media (min-width: 1024px) {
+  .section-y {
+    padding-block: var(--section-y-lg);
+  }
+}
+
+.section-header {
+  padding-block: 3rem 3.5rem;
+}
+
+@media (min-width: 640px) {
+  .section-header {
+    padding-block: 3.5rem 3.5rem;
+  }
+}
+
+.eyebrow {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+
+.card {
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  background: var(--surface);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 4%, transparent);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--bronze) 40%, transparent);
+  box-shadow:
+    0 8px 24px color-mix(in srgb, var(--ink) 8%, transparent),
+    0 1px 2px color-mix(in srgb, var(--ink) 4%, transparent);
+  transform: translateY(-2px);
+}
+
+.card-static {
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  background: var(--surface);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 4%, transparent);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: var(--bronze);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 12%, transparent);
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.btn-primary:hover {
+  background: var(--bronze-dark);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--bronze) 35%, transparent);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Secondary on dark backgrounds (hero / CTA bands) */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, #fff 28%, transparent);
+  background: color-mix(in srgb, #fff 6%, transparent);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ivory);
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.btn-secondary:hover {
+  background: color-mix(in srgb, #fff 12%, transparent);
+  border-color: color-mix(in srgb, #fff 40%, transparent);
+}
+
+/* Secondary on light backgrounds */
+.btn-secondary-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
+  background: var(--surface);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.btn-secondary-light:hover {
+  background: var(--ivory-muted);
+  border-color: color-mix(in srgb, var(--ink) 25%, transparent);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--bronze);
+  transition: color 180ms ease, gap 180ms ease;
+}
+
+.btn-ghost:hover {
+  color: var(--bronze-dark);
+}
+
+.icon-badge {
+  display: inline-flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--bronze) 12%, transparent);
+  color: var(--bronze-dark);
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.card:hover .icon-badge {
+  background: color-mix(in srgb, var(--bronze) 22%, transparent);
+  color: var(--ink);
+}
+
+.field-input {
+  margin-top: 0.375rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  background: var(--surface);
+  padding: 0.625rem 0.875rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 4%, transparent);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+@media (min-width: 640px) {
+  .field-input {
+    font-size: 0.875rem;
+  }
+}
+
+.field-input::placeholder {
+  color: var(--muted-light);
+}
+
+.field-input:focus {
+  border-color: var(--bronze);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bronze) 25%, transparent);
+}
+
+.field-input[aria-invalid="true"] {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.field-input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+.gallery-img {
+  transition: transform 400ms ease;
+}
+
+.card:hover .gallery-img {
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .card,
+  .btn-primary,
+  .btn-secondary,
+  .btn-secondary-light,
+  .btn-ghost,
+  .gallery-img,
+  .icon-badge {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+
+  .card:hover .gallery-img {
+    transform: none;
+  }
+}

@@ -1,0 +1,47 @@
+import type { Metadata } from "next";
+import QuoteForm from "@/components/QuoteForm";
+import { siteConfig } from "@/lib/site";
+
+const title = "Request a Free Quote";
+const description = `Request a free fence or deck estimate from ${siteConfig.name} serving Angier, Raleigh NC, and surrounding areas.`;
+
+export const metadata: Metadata = {
+  title,
+  description,
+  openGraph: {
+    title: `${title} | ${siteConfig.name}`,
+    description,
+  },
+};
+
+export default function QuotePage() {
+  return (
+    <>
+      <section className="border-b border-ink/8 bg-surface">
+        <div className="container-page section-header">
+          <p className="eyebrow">Free estimates</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
+            Request a quote
+          </h1>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
+            Share a few details about your fence or deck project. We serve{" "}
+            {siteConfig.serviceArea}. Prefer to talk? Call{" "}
+            <a
+              href={siteConfig.phoneHref}
+              className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
+            >
+              {siteConfig.phone}
+            </a>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="section-y">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <QuoteForm />
+        </div>
+      </section>
+    </>
+  );
+}

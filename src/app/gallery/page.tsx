@@ -1,0 +1,59 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import GalleryGrid from "@/components/GalleryGrid";
+import { siteConfig } from "@/lib/site";
+
+const title = "Project Gallery";
+const description = `See fence and deck projects by ${siteConfig.name} serving Angier, Raleigh NC, and surrounding areas.`;
+
+export const metadata: Metadata = {
+  title,
+  description,
+  openGraph: {
+    title: `${title} | ${siteConfig.name}`,
+    description,
+  },
+};
+
+export default function GalleryPage() {
+  return (
+    <>
+      <section className="border-b border-ink/8 bg-surface">
+        <div className="container-page section-header">
+          <p className="eyebrow">Our work</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
+            Project gallery
+          </h1>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
+            Example fence and deck projects from around Angier, Raleigh, and
+            nearby communities. Browse recent installs and repairs completed by
+            our local crew.
+          </p>
+        </div>
+      </section>
+
+      <section className="container-page section-y">
+        <GalleryGrid />
+      </section>
+
+      <section className="border-t border-ink/8 bg-surface py-12 lg:py-16">
+        <div className="container-page max-w-3xl text-center">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+            Have a similar project in mind?
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            Request a free quote and we&apos;ll take a look at your property.
+          </p>
+          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/quote" className="focus-ring btn-primary">
+              Get a Free Quote
+            </Link>
+            <Link href="/services" className="focus-ring btn-secondary-light">
+              View services
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
