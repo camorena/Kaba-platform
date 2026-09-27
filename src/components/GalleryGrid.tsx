@@ -111,7 +111,6 @@ export default function GalleryGrid() {
               type="button"
               className="focus-ring group relative block w-full text-left outline-offset-[-2px]"
               onClick={(e) => openAt(project.id, e.currentTarget)}
-              aria-label={`View ${project.title} larger`}
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-ivory-muted">
                 <WatermarkedImage
@@ -126,15 +125,16 @@ export default function GalleryGrid() {
                   {project.category}
                 </span>
                 <span className="absolute inset-0 flex items-center justify-center bg-navy/0 opacity-0 transition group-hover:bg-navy/25 group-hover:opacity-100 group-focus-visible:bg-navy/25 group-focus-visible:opacity-100">
-                  <span className="rounded-full bg-cream/95 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-navy shadow-md">
+                  <span className="rounded-full bg-cream/95 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-navy shadow-md" aria-hidden>
                     View
                   </span>
                 </span>
               </div>
               <div className="p-4 sm:p-5">
-                <h3 className="font-display font-semibold tracking-tight text-ink">
+                <h2 className="font-display text-base font-semibold tracking-tight text-ink sm:text-lg">
                   {project.title}
-                </h3>
+                  <span className="sr-only"> — open larger view</span>
+                </h2>
                 <p className="mt-1.5 text-sm text-muted">{project.caption}</p>
               </div>
             </button>

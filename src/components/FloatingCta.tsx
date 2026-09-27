@@ -55,7 +55,7 @@ export default function FloatingCta() {
         </Link>
         <button
           type="button"
-          className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface/90 text-muted shadow-sm ring-1 ring-ink/10 backdrop-blur-md transition hover:bg-surface hover:text-ink dark:ring-cream/15"
+          className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface/90 text-muted shadow-sm ring-1 ring-ink/10 backdrop-blur-md transition hover:bg-surface hover:text-ink dark:ring-cream/15"
           aria-label="Dismiss free estimate shortcut"
           onClick={() => {
             setDismissed(true);

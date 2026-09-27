@@ -10,7 +10,7 @@
   --navy-light: #182233;
   --cream: #f7f5f0;
   --bronze: #f7a823;
-  --bronze-dark: #c97a0c;
+  --bronze-dark: #945800;
   --bronze-light: #fbc65a;
 
   /* Semantic tokens — light defaults; remapped under .dark */
@@ -22,7 +22,7 @@
   --surface: #ffffff;
   --stone: #d2ccc0;
   --muted: #4a5460;
-  --muted-light: #7a8490;
+  --muted-light: #5c6570;
   --border: color-mix(in srgb, var(--ink) 10%, transparent);
   --danger: #b42318;
   --danger-bg: #fef3f2;
@@ -815,6 +815,11 @@ h3 {
   letter-spacing: 0.01em;
   color: var(--bronze-dark);
   transition: color 180ms ease, gap 180ms ease;
+}
+
+/* Ensure ghost links never sit below AA via opacity tricks */
+a.btn-ghost {
+  opacity: 1;
 }
 
 .dark .btn-ghost {

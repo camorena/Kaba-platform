@@ -126,7 +126,7 @@ export default function Header() {
     window.setTimeout(() => menuButtonRef.current?.focus({ preventScroll: true }), 0);
   }
 
-  const barHeight = scrolled ? "h-14 lg:h-14" : "h-[3.75rem] lg:h-[4.25rem]";
+  const barHeight = "h-[3.75rem] lg:h-[4.25rem]";
 
   return (
     <>
@@ -166,23 +166,13 @@ export default function Header() {
           >
             <Image
               src="/brand/kaba-fence-icon.png"
-              alt="Kaba Fence"
+              alt=""
               width={44}
               height={44}
-              className={`shrink-0 object-contain transition-[height,width] duration-300 ${
-                scrolled
-                  ? "h-8 w-8 sm:h-9 sm:w-9"
-                  : "h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
-              }`}
+              className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 lg:h-11 lg:w-11"
               priority
             />
-            <span
-              className={`truncate font-display font-semibold tracking-tight text-ink transition-[font-size,opacity] duration-300 group-hover:opacity-80 ${
-                scrolled
-                  ? "text-base sm:text-[1.05rem]"
-                  : "text-[1.05rem] sm:text-lg"
-              }`}
-            >
+            <span className="truncate font-display text-[1.05rem] font-semibold tracking-tight text-ink transition-opacity duration-300 group-hover:opacity-80 sm:text-lg">
               {siteConfig.name}
             </span>
           </Link>

@@ -182,7 +182,27 @@ export default function QuoteForm() {
       }
       return;
     }
-    setSubmitted(true);
+    void (async () => {
+      try {
+        await fetch("/api/quotes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            phone: form.phone.trim(),
+            email: form.email.trim(),
+            serviceType: form.serviceType,
+            address: form.address.trim(),
+            description: form.description.trim(),
+            preferredContact: form.preferredContact,
+            source: "quote-form",
+          }),
+        });
+      } catch {
+        // Store is best-effort for the public demo; still show success UX.
+      }
+      setSubmitted(true);
+    })();
   }
 
   if (submitted) {
@@ -254,7 +274,7 @@ export default function QuoteForm() {
       {/* Progress */}
       <div className="border-b border-ink/[0.07] bg-ivory-muted/40 px-4 py-4 sm:px-6 md:px-8 dark:border-cream/10">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-ink">
             Step {step + 1} of {steps.length}
           </p>
           <p className="text-xs text-muted">{current.blurb}</p>
