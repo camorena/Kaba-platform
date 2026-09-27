@@ -207,8 +207,8 @@ export default function MaterialsPage() {
             <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
               Get a Free Quote
             </Link>
-            <Link href="/warranty" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
-              Warranty & care
+            <Link href="/faq" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
+              Read the FAQ
             </Link>
           </div>
         </Reveal>

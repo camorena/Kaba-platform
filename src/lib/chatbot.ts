@@ -222,21 +222,21 @@ export function getBotReply(rawInput: string): ChatReply {
     };
   }
 
-  // Financing
-  if (includesAny(q, ["financ", "payment plan", "monthly payment", "deposit", "loan", "credit"])) {
+  // Payment / deposit
+  if (includesAny(q, ["financ", "payment plan", "monthly payment", "deposit", "loan", "credit", "payment"])) {
     return {
-      text: `Most projects use a deposit to schedule and balance at walkthrough. Phased scopes are sometimes possible. Optional third-party financing—when available—is between you and the lender; we don't run credit decisions on this site. See our financing page for details.`,
+      text: `Most projects use a deposit to schedule and balance at walkthrough. Phased scopes are sometimes possible. Optional third-party financing—when available—is between you and the lender; we don't run credit decisions on this site. Ask about payment options during your free estimate.`,
       suggestions: ["Get a quote", "Hours & contact"],
-      cta: { label: "Financing options", href: "/financing" },
+      cta: { label: "Request a quote", href: "/quote" },
     };
   }
 
   // Warranty / care
   if (includesAny(q, ["warranty", "guarantee", "care tip", "maintain", "maintenance"])) {
     return {
-      text: `We stand behind our workmanship as stated on your contract, and manufacturer warranties often cover materials like vinyl, aluminum, and composite. Care tips for wood, vinyl, and decks are on our warranty & care page.`,
+      text: `We stand behind our workmanship as stated on your contract, and manufacturer warranties often cover materials like vinyl, aluminum, and composite. Share care questions on your estimate visit—or ask us after install and we'll point you to the right next step.`,
       suggestions: ["Get a quote", "Materials", "Hours & contact"],
-      cta: { label: "Warranty & care", href: "/warranty" },
+      cta: { label: "Materials guide", href: "/materials" },
     };
   }
 

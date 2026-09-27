@@ -29,6 +29,7 @@ export const navLinks = [
   { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
   { href: "/reviews", label: "Reviews" },
+  { href: "/materials", label: "Materials" },
   { href: "/quote", label: "Quote" },
 ] as const;
 
@@ -36,9 +37,6 @@ export const navLinks = [
 export const footerLinks = [
   { href: "/service-area", label: "Service area" },
   { href: "/how-it-works", label: "How it works" },
-  { href: "/materials", label: "Materials" },
-  { href: "/financing", label: "Financing" },
-  { href: "/warranty", label: "Warranty & care" },
   { href: "/faq", label: "FAQ" },
 ] as const;
 
@@ -420,8 +418,6 @@ export const sitemapRoutes = [
   { path: "/service-area", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/how-it-works", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/materials", changeFrequency: "monthly" as const, priority: 0.75 },
-  { path: "/financing", changeFrequency: "monthly" as const, priority: 0.7 },
-  { path: "/warranty", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/faq", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
   { path: "/terms", changeFrequency: "yearly" as const, priority: 0.3 },
@@ -539,130 +535,6 @@ export const materialFaqs = [
     question: "Can I mix materials—like wood privacy with aluminum gates?",
     answer:
       "Often yes. Mixed systems can look sharp and solve practical needs (wider driveway openings, pool codes). We’ll design hardware and posts so the transition feels intentional.",
-  },
-] as const;
-
-/** Financing page — educational only; no lender API. */
-export const financingOptions = [
-  {
-    id: "pay-as-you-go",
-    title: "Pay as you go",
-    summary: "Deposit to schedule, balance due at walkthrough.",
-    details:
-      "Most residential projects use a simple deposit to lock materials and a crew date, with the remainder due when we complete the walkthrough. Exact terms appear on your written estimate.",
-    goodFor: "Homeowners ready to fund the project from savings or a home-improvement budget.",
-  },
-  {
-    id: "phased",
-    title: "Phased projects",
-    summary: "Split larger scopes into sensible stages.",
-    details:
-      "Long fence lines or deck + fence combos can sometimes be phased—secure the priority side first, then finish the rest on a later schedule. Phasing is planned up front so materials and grades match.",
-    goodFor: "Larger properties or households spreading cost across seasons.",
-  },
-  {
-    id: "third-party",
-    title: "Third-party financing (optional)",
-    summary: "Ask about consumer financing partners when available.",
-    details:
-      "When partners are available, we can point you to third-party consumer financing applications. Approval, rates, and terms are between you and the lender—Kaba Fence does not set credit decisions or collect loan payments through this site.",
-    goodFor: "Shoppers who prefer monthly payments through a lender they choose.",
-  },
-] as const;
-
-export const financingFaqs = [
-  {
-    question: "Do you offer in-house loans or credit cards?",
-    answer:
-      "No. We don’t operate a lender or store credit product. We provide clear written estimates and standard deposit/balance billing. Optional third-party financing—when available—is handled by the lender, not through this website.",
-  },
-  {
-    question: "What payment methods do you accept?",
-    answer:
-      "Typically check, card, or bank transfer as listed on your estimate or invoice. We’ll confirm accepted methods before work begins.",
-  },
-  {
-    question: "Is financing required to get a quote?",
-    answer:
-      "Never. Free on-site estimates are no-obligation and do not require a financing application.",
-  },
-  {
-    question: "Can I change payment approach after the estimate?",
-    answer:
-      "Usually yes, as long as we confirm terms before materials are ordered. Tell us early if you’re exploring a lender so scheduling stays smooth.",
-  },
-] as const;
-
-/** Warranty & care — synthetic professional copy for demo. */
-export const warrantyHighlights = [
-  {
-    title: "Workmanship",
-    body: "We stand behind our installation workmanship. If a workmanship issue appears within the stated workmanship period on your contract, we’ll make it right.",
-  },
-  {
-    title: "Manufacturer coverage",
-    body: "Vinyl, aluminum, composite, and many hardware lines carry manufacturer warranties. We’ll help you understand what the maker covers versus what we cover as the installer.",
-  },
-  {
-    title: "What’s excluded",
-    body: "Storm damage, vehicle impact, ground movement beyond normal, misuse, and unfinished homeowner maintenance items typically fall outside workmanship coverage. Your written warranty lists specifics.",
-  },
-] as const;
-
-export const careGuides = [
-  {
-    material: "Wood fences & decks",
-    tips: [
-      "Keep soil and mulch from burying the bottom rail or post bases.",
-      "Rinse pollen and mildew in spring; allow lumber to dry before sealing.",
-      "Re-seal or stain on the cadence we recommend for your species and sun exposure.",
-      "Call us if gates sag or posts shift after a major storm—early fixes are cheaper.",
-    ],
-  },
-  {
-    material: "Vinyl fencing",
-    tips: [
-      "Rinse with a garden hose; mild soap for stubborn spots.",
-      "Avoid abrasive pads and harsh solvents that can haze the finish.",
-      "Keep sprinklers from soaking the same panel endlessly.",
-      "Inspect latches and hinges seasonally so gates keep swinging true.",
-    ],
-  },
-  {
-    material: "Aluminum & chain-link",
-    tips: [
-      "Rinse road dust and fertilizer overspray.",
-      "Check tension bands and post caps after high winds.",
-      "Touch up chips in powder coat promptly to protect the metal.",
-      "Keep vines from overgrowing mesh if you want easy inspection access.",
-    ],
-  },
-  {
-    material: "Composite decks",
-    tips: [
-      "Sweep or blow off debris; wash with manufacturer-approved cleaner.",
-      "Use furniture pads to limit scuffs on high-traffic paths.",
-      "Ensure drainage under the deck stays clear.",
-      "Follow the brand’s guidance before using pressure washers.",
-    ],
-  },
-] as const;
-
-export const warrantyFaqs = [
-  {
-    question: "How long is the workmanship warranty?",
-    answer:
-      "Workmanship duration is stated on your project contract and can vary by scope (fence vs. deck). Ask during your estimate if you need the term in writing before you book.",
-  },
-  {
-    question: "Does warranty cover fading or weathering?",
-    answer:
-      "Natural wood weathering and UV effects are expected. Color-fade and material defects are usually handled under the manufacturer’s warranty when one applies—not as a failure of installation.",
-  },
-  {
-    question: "How do I start a warranty request?",
-    answer:
-      "Call or email with your name, project address, approximate install date, and photos. We’ll confirm coverage and schedule a visit if needed.",
   },
 ] as const;
 

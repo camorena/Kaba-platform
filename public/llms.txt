@@ -36,8 +36,6 @@
 - [How it works](https://kaba-fence.vercel.app/how-it-works): Estimate → design → build → walkthrough
 - [FAQ](https://kaba-fence.vercel.app/faq): Timelines, permits, materials, service area
 - [Materials](https://kaba-fence.vercel.app/materials): Fence & deck materials guide
-- [Financing](https://kaba-fence.vercel.app/financing): Payment paths & educational financing FAQ (no lender API)
-- [Warranty](https://kaba-fence.vercel.app/warranty): Workmanship, manufacturer coverage, and care tips
 - [Reviews](https://kaba-fence.vercel.app/reviews): Homeowner feedback (placeholder examples until verified)
 - [Privacy](https://kaba-fence.vercel.app/privacy): Privacy policy
 - [Terms](https://kaba-fence.vercel.app/terms): Terms of use
