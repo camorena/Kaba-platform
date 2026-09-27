@@ -60,7 +60,16 @@
     0 24px 48px color-mix(in srgb, var(--ink) 10%, transparent);
   --shadow-bronze: 0 6px 22px color-mix(in srgb, var(--bronze) 42%, transparent);
   --glow-bronze: 0 0 56px color-mix(in srgb, var(--bronze) 24%, transparent);
+  /* Admin shell tokens (light) */
+  --admin-bg: color-mix(in srgb, var(--ivory-muted) 70%, var(--ivory));
+  --admin-panel: var(--surface);
+  --admin-thead: color-mix(in srgb, var(--ivory-muted) 85%, var(--surface));
+  --admin-row-hover: color-mix(in srgb, var(--ivory-muted) 55%, transparent);
+  --admin-chip-bg: color-mix(in srgb, var(--ivory-muted) 80%, var(--surface));
+  --admin-chip-border: color-mix(in srgb, var(--ink) 10%, transparent);
 }
+
+
 
 @theme inline {
   --color-ink: var(--ink);
@@ -142,7 +151,15 @@
     0 28px 56px color-mix(in srgb, #000 42%, transparent);
   --shadow-bronze: 0 6px 24px color-mix(in srgb, var(--bronze) 32%, transparent);
   --glow-bronze: 0 0 56px color-mix(in srgb, var(--bronze) 18%, transparent);
+  --admin-bg: #0a0f18;
+  --admin-panel: #141c28;
+  --admin-thead: color-mix(in srgb, #1a2433 90%, transparent);
+  --admin-row-hover: color-mix(in srgb, #1a2433 70%, transparent);
+  --admin-chip-bg: color-mix(in srgb, #1a2433 85%, transparent);
+  --admin-chip-border: color-mix(in srgb, var(--cream) 12%, transparent);
 }
+
+
 
 html {
   scroll-behavior: smooth;
@@ -1397,14 +1414,162 @@ a.btn-ghost {
   opacity: 0.7;
 }
 
-/* Admin table polish */
+
+/* —— Admin craft —— */
+.admin-app {
+  min-height: 100%;
+  background: var(--admin-bg);
+}
+
+.admin-card {
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  background: var(--admin-panel);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.admin-card-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-stat {
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  background: var(--admin-panel);
+  padding: 0.85rem 1rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.admin-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-stat-value {
+  font-family: var(--font-display), serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  font-size: 0.8125rem;
+}
+
+.admin-dl dt {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-dl dd {
+  margin-top: 0.15rem;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.admin-chip {
+  border-radius: 999px;
+  border: 1px solid var(--admin-chip-border);
+  background: var(--admin-chip-bg);
+  padding: 0.3rem 0.65rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.admin-chip:hover {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--bronze) 35%, transparent);
+}
+
+.admin-chip-active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--cream);
+}
+
+.dark .admin-chip-active {
+  background: color-mix(in srgb, var(--bronze) 22%, transparent);
+  border-color: color-mix(in srgb, var(--bronze) 40%, transparent);
+  color: var(--bronze-light);
+}
+
+.admin-badge-sky {
+  background: color-mix(in srgb, #0ea5e9 16%, transparent);
+  color: #0c4a6e;
+}
+.dark .admin-badge-sky {
+  color: #bae6fd;
+}
+
+.admin-badge-violet {
+  background: color-mix(in srgb, #8b5cf6 16%, transparent);
+  color: #4c1d95;
+}
+.dark .admin-badge-violet {
+  color: #ddd6fe;
+}
+
+.admin-badge-amber {
+  background: color-mix(in srgb, #f59e0b 18%, transparent);
+  color: #78350f;
+}
+.dark .admin-badge-amber {
+  color: #fde68a;
+}
+
+.admin-badge-emerald {
+  background: color-mix(in srgb, #10b981 16%, transparent);
+  color: #064e3b;
+}
+.dark .admin-badge-emerald {
+  color: #a7f3d0;
+}
+
+.admin-badge-rose {
+  background: color-mix(in srgb, #f43f5e 14%, transparent);
+  color: #9f1239;
+}
+.dark .admin-badge-rose {
+  color: #fecdd3;
+}
+
+.admin-badge-muted {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  color: var(--muted);
+}
+
 .admin-table tbody tr:nth-child(even) {
-  background: color-mix(in srgb, var(--ivory-muted) 35%, transparent);
+  background: color-mix(in srgb, var(--admin-row-hover) 55%, transparent);
 }
 
 .dark .admin-table tbody tr:nth-child(even) {
-  background: color-mix(in srgb, var(--ivory-muted) 45%, transparent);
+  background: color-mix(in srgb, var(--admin-row-hover) 70%, transparent);
 }
+
+@media (min-width: 1024px) {
+  .admin-sidebar {
+    background: color-mix(in srgb, var(--admin-panel) 55%, transparent);
+  }
+}
+
 
 /* —— Print: quote confirmation —— */
 @media print {

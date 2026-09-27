@@ -1,114 +1,175 @@
 import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import EmptyState from "@/components/admin/EmptyState";
+import PageHeader from "@/components/admin/PageHeader";
+import StatusBadge from "@/components/admin/StatusBadge";
 import { requireAdmin } from "@/lib/admin/guard";
+import { formatMoney, formatShortDate } from "@/lib/admin/format";
+import { invoiceStats, listInvoices } from "@/lib/admin/invoices-store";
+import { listPayments, paidCentsMap, paymentStats } from "@/lib/admin/payments-store";
 import { listQuotes, quoteStats } from "@/lib/admin/quotes-store";
+import { quoteStatusTone } from "@/lib/admin/status";
 
 export const metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const { warning } = await requireAdmin();
-  const stats = quoteStats();
-  const recent = listQuotes().slice(0, 5);
+  const qStats = quoteStats();
+  const paidMap = paidCentsMap();
+  const iStats = invoiceStats(paidMap);
+  const pStats = paymentStats();
+  const recent = listQuotes().slice(0, 6);
+  const recentInvoices = listInvoices().slice(0, 4);
+  const recentPayments = listPayments().slice(0, 4);
 
   const cards = [
-    { label: "Total quotes", value: stats.total, href: "/admin/quotes" },
-    { label: "New", value: stats.new, href: "/admin/quotes" },
-    { label: "Scheduled", value: stats.scheduled, href: "/admin/quotes" },
-    { label: "Won", value: stats.won, href: "/admin/quotes" },
+    {
+      label: "New quotes",
+      value: String(qStats.new),
+      href: "/admin/quotes",
+      hint: `${qStats.total} total`,
+    },
+    {
+      label: "Open invoices",
+      value: String(iStats.open),
+      href: "/admin/invoices",
+      hint: formatMoney(iStats.totalOpenCents) + " due (demo)",
+    },
+    {
+      label: "Payments recorded",
+      value: String(pStats.total),
+      href: "/admin/payments",
+      hint: formatMoney(pStats.recordedCents) + " stub",
+    },
+    {
+      label: "Won quotes",
+      value: String(qStats.won),
+      href: "/admin/quotes",
+      hint: `${qStats.scheduled} scheduled`,
+    },
   ];
 
   return (
     <AdminShell warning={warning}>
-      <header className="mb-6">
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-ink">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Quote pipeline overview. Invoices and payments remain placeholders.
-        </p>
-      </header>
+      <PageHeader
+        title="Dashboard"
+        description="Quote → invoice → payment foundation. Amounts marked demo are synthetic; auth remains a stub."
+      />
 
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c) => (
           <li key={c.label}>
-            <Link
-              href={c.href}
-              className="group block rounded-2xl border border-ink/10 bg-surface p-4 shadow-sm transition hover:border-bronze/40 hover:shadow-md"
-            >
-              <p className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
-                {c.label}
-              </p>
-              <p className="mt-2 font-display text-3xl font-semibold text-ink transition group-hover:text-bronze-dark dark:group-hover:text-bronze-light">
-                {c.value}
-              </p>
+            <Link href={c.href} className="admin-stat block transition hover:border-bronze/35">
+              <p className="admin-stat-label">{c.label}</p>
+              <p className="admin-stat-value mt-1">{c.value}</p>
+              <p className="mt-1 text-[0.6875rem] text-muted">{c.hint}</p>
             </Link>
           </li>
         ))}
       </ul>
 
-      <section className="mt-8">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-muted">
-            Recent quotes
-          </h2>
-          <Link
-            href="/admin/quotes"
-            className="text-sm font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
-          >
-            View all
-          </Link>
-        </div>
-        {recent.length === 0 ? (
-          <EmptyState
-            title="Pipeline is empty"
-            description="When homeowners submit the public quote form, recent entries will show here."
-          />
-        ) : (
-          <ul className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-sm">
-            {recent.map((q) => (
-              <li
-                key={q.id}
-                className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3.5 text-sm transition hover:bg-ivory-muted/50"
-              >
-                <div>
-                  <span className="font-semibold text-ink">{q.name}</span>
-                  <span className="text-muted"> · {q.serviceType}</span>
-                </div>
-                <span className="rounded-full bg-ivory-muted px-2.5 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-ink ring-1 ring-ink/5">
-                  {q.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className="mt-6 grid gap-4 lg:grid-cols-5">
+        <section className="lg:col-span-3">
+          <div className="mb-2.5 flex items-center justify-between gap-3">
+            <h2 className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
+              Recent quotes
+            </h2>
+            <Link
+              href="/admin/quotes"
+              className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+            >
+              View all
+            </Link>
+          </div>
+          {recent.length === 0 ? (
+            <EmptyState
+              title="Pipeline is empty"
+              description="When homeowners submit the public quote form, recent entries will show here."
+            />
+          ) : (
+            <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
+              {recent.map((q) => (
+                <li key={q.id}>
+                  <Link
+                    href={`/admin/quotes/${q.id}`}
+                    className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-sm transition hover:bg-[var(--admin-row-hover)] sm:px-4"
+                  >
+                    <div className="min-w-0">
+                      <span className="font-semibold text-ink">{q.name}</span>
+                      <span className="text-muted"> · {q.serviceType}</span>
+                      <div className="text-[0.6875rem] text-muted-light">
+                        {formatShortDate(q.createdAt)} · {q.address}
+                      </div>
+                    </div>
+                    <StatusBadge
+                      label={q.status}
+                      tone={quoteStatusTone[q.status]}
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
 
-      <section className="mt-8 grid gap-3 sm:grid-cols-2">
-        <Link
-          href="/admin/invoices"
-          className="rounded-2xl border border-dashed border-ink/15 bg-surface/80 p-5 transition hover:border-bronze/35 hover:bg-surface"
-        >
-          <h2 className="text-sm font-bold text-ink">Invoices</h2>
-          <p className="mt-1 text-sm text-muted">Placeholder — not live yet.</p>
-          <span className="mt-3 inline-block text-sm font-semibold text-bronze-dark dark:text-bronze-light">
-            Open →
-          </span>
-        </Link>
-        <Link
-          href="/admin/payments"
-          className="rounded-2xl border border-dashed border-ink/15 bg-surface/80 p-5 transition hover:border-bronze/35 hover:bg-surface"
-        >
-          <h2 className="text-sm font-bold text-ink">Payments</h2>
-          <p className="mt-1 text-sm text-muted">
-            Placeholder — Stripe / ACH wiring pending.
-          </p>
-          <span className="mt-3 inline-block text-sm font-semibold text-bronze-dark dark:text-bronze-light">
-            Open →
-          </span>
-        </Link>
-      </section>
+        <section className="space-y-4 lg:col-span-2">
+          <div>
+            <div className="mb-2.5 flex items-center justify-between">
+              <h2 className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
+                Invoices
+              </h2>
+              <Link
+                href="/admin/invoices"
+                className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+              >
+                All
+              </Link>
+            </div>
+            <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)]">
+              {recentInvoices.map((inv) => (
+                <li key={inv.id}>
+                  <Link
+                    href={`/admin/invoices/${inv.id}`}
+                    className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm hover:bg-[var(--admin-row-hover)]"
+                  >
+                    <span className="font-semibold text-ink">{inv.number}</span>
+                    <span className="text-xs capitalize text-muted">
+                      {inv.status}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <div className="mb-2.5 flex items-center justify-between">
+              <h2 className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
+                Payments
+              </h2>
+              <Link
+                href="/admin/payments"
+                className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+              >
+                All
+              </Link>
+            </div>
+            <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)]">
+              {recentPayments.map((p) => (
+                <li
+                  key={p.id}
+                  className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm"
+                >
+                  <span className="text-ink">{p.invoiceNumber}</span>
+                  <span className="font-medium tabular-nums text-ink">
+                    {formatMoney(p.amountCents)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </div>
     </AdminShell>
   );
 }

@@ -1,0 +1,269 @@
+"use client";
+
+import EmptyState from "@/components/admin/EmptyState";
+import StatusBadge from "@/components/admin/StatusBadge";
+import { formatMoney, formatShortDate } from "@/lib/admin/format";
+import {
+  PAYMENT_METHODS,
+  paymentStatusTone,
+  type PaymentMethod,
+} from "@/lib/admin/status";
+import type { InvoiceRecord } from "@/lib/admin/invoices-store";
+import type { PaymentRecord } from "@/lib/admin/payments-store";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+
+export default function PaymentsPanel({
+  payments,
+  invoices,
+  preselectInvoiceId,
+}: {
+  payments: PaymentRecord[];
+  invoices: InvoiceRecord[];
+  preselectInvoiceId?: string | null;
+}) {
+  const router = useRouter();
+  const openInvoices = useMemo(
+    () => invoices.filter((i) => i.status !== "void" && i.status !== "paid"),
+    [invoices],
+  );
+
+  const [invoiceId, setInvoiceId] = useState(
+    preselectInvoiceId && invoices.some((i) => i.id === preselectInvoiceId)
+      ? preselectInvoiceId
+      : "",
+  );
+  const [amount, setAmount] = useState("");
+  const [method, setMethod] = useState<PaymentMethod>("check");
+  const [reference, setReference] = useState("");
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [ok, setOk] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setOk(null);
+    const dollars = Number.parseFloat(amount);
+    if (!invoiceId) {
+      setError("Select an invoice.");
+      return;
+    }
+    if (!Number.isFinite(dollars) || dollars <= 0) {
+      setError("Enter a valid amount.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch("/api/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          invoiceId,
+          amountCents: Math.round(dollars * 100),
+          method,
+          reference,
+          notes,
+        }),
+      });
+      const data = (await res.json()) as { error?: string };
+      if (!res.ok) {
+        setError(data.error || "Recording failed.");
+        return;
+      }
+      setOk("Payment recorded (demo stub — no Stripe).");
+      setAmount("");
+      setReference("");
+      setNotes("");
+      router.refresh();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-lg border border-sky-700/20 bg-sky-50 px-3 py-2.5 text-xs leading-relaxed text-sky-950 dark:border-sky-400/20 dark:bg-sky-950/35 dark:text-sky-100">
+        <strong className="font-semibold">No Stripe yet.</strong> This form only
+        writes an in-memory payment stub linked to an invoice. Card/ACH
+        collection, webhooks, and reconciliation are not connected — see{" "}
+        <Link href="/admin/settings" className="font-semibold underline">
+          Settings
+        </Link>
+        .
+      </div>
+
+      <form onSubmit={submit} className="admin-card space-y-3" noValidate>
+        <h2 className="admin-card-title">Record payment (stub)</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <label htmlFor="pay-invoice" className="text-xs font-semibold text-muted">
+              Invoice
+            </label>
+            <select
+              id="pay-invoice"
+              className="field-input mt-1 text-sm"
+              value={invoiceId}
+              onChange={(e) => setInvoiceId(e.target.value)}
+            >
+              <option value="">Select…</option>
+              {(openInvoices.length ? openInvoices : invoices).map((inv) => (
+                <option key={inv.id} value={inv.id}>
+                  {inv.number} — {inv.customerName} ({inv.status})
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="pay-amount" className="text-xs font-semibold text-muted">
+              Amount (USD)
+            </label>
+            <input
+              id="pay-amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              inputMode="decimal"
+              className="field-input mt-1 text-sm"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="pay-method" className="text-xs font-semibold text-muted">
+              Method
+            </label>
+            <select
+              id="pay-method"
+              className="field-input mt-1 text-sm capitalize"
+              value={method}
+              onChange={(e) => setMethod(e.target.value as PaymentMethod)}
+            >
+              {PAYMENT_METHODS.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="pay-ref" className="text-xs font-semibold text-muted">
+              Reference
+            </label>
+            <input
+              id="pay-ref"
+              className="field-input mt-1 text-sm"
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              placeholder="Check # / last4 / memo"
+            />
+          </div>
+          <div>
+            <label htmlFor="pay-notes" className="text-xs font-semibold text-muted">
+              Notes
+            </label>
+            <input
+              id="pay-notes"
+              className="field-input mt-1 text-sm"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Optional"
+            />
+          </div>
+        </div>
+        {error && (
+          <p role="alert" className="text-xs font-medium text-danger">
+            {error}
+          </p>
+        )}
+        {ok && (
+          <p role="status" className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
+            {ok}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={busy}
+          className="btn-primary text-sm disabled:opacity-60"
+        >
+          {busy ? "Saving…" : "Record payment"}
+        </button>
+      </form>
+
+      {payments.length === 0 ? (
+        <EmptyState
+          title="No payments recorded"
+          description="Use the stub form above to attach a demo payment to an invoice."
+        />
+      ) : (
+        <div className="admin-table-wrap overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
+          <div className="overflow-x-auto">
+            <table className="admin-table min-w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-ink/10 bg-[var(--admin-thead)] text-[0.625rem] uppercase tracking-wider text-muted">
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">When</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">Invoice</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">Customer</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">Amount</th>
+                  <th className="hidden px-3 py-2.5 font-semibold sm:table-cell sm:px-4">
+                    Method
+                  </th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {payments.map((p) => (
+                  <tr
+                    key={p.id}
+                    className="border-b border-ink/5 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
+                  >
+                    <td className="whitespace-nowrap px-3 py-3 text-muted sm:px-4">
+                      {formatShortDate(p.createdAt)}
+                      {p.demo && (
+                        <div className="mt-1">
+                          <span className="rounded bg-amber-500/15 px-1 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
+                            Demo
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-3 py-3 sm:px-4">
+                      <Link
+                        href={`/admin/invoices/${p.invoiceId}`}
+                        className="font-semibold text-ink hover:underline"
+                      >
+                        {p.invoiceNumber}
+                      </Link>
+                      {p.reference && (
+                        <div className="text-xs text-muted">{p.reference}</div>
+                      )}
+                    </td>
+                    <td className="px-3 py-3 text-ink sm:px-4">
+                      {p.customerName}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3 font-medium tabular-nums text-ink sm:px-4">
+                      {formatMoney(p.amountCents)}
+                    </td>
+                    <td className="hidden px-3 py-3 capitalize text-muted sm:table-cell sm:px-4">
+                      {p.method}
+                    </td>
+                    <td className="px-3 py-3 sm:px-4">
+                      <StatusBadge
+                        label={p.status}
+                        tone={paymentStatusTone[p.status]}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

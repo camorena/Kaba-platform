@@ -1,30 +1,36 @@
-import EmptyState from "@/components/admin/EmptyState";
 import AdminShell from "@/components/admin/AdminShell";
+import InvoicesPanel from "@/components/admin/InvoicesPanel";
+import PageHeader from "@/components/admin/PageHeader";
 import { requireAdmin } from "@/lib/admin/guard";
+import { listInvoices } from "@/lib/admin/invoices-store";
+import { paidCentsMap } from "@/lib/admin/payments-store";
+import { listQuotes } from "@/lib/admin/quotes-store";
 
 export const metadata = { title: "Invoices" };
+export const dynamic = "force-dynamic";
 
 export default async function AdminInvoicesPage() {
   const { warning } = await requireAdmin();
+  const invoices = listInvoices();
+  const paid = paidCentsMap();
+  const paidMap: Record<string, number> = {};
+  paid.forEach((v, k) => {
+    paidMap[k] = v;
+  });
+  const quotesForCreate = listQuotes().filter((q) =>
+    ["won", "scheduled", "contacted", "new"].includes(q.status),
+  );
 
   return (
     <AdminShell warning={warning}>
-      <header className="mb-6">
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-ink">
-          Invoices
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Placeholder UI — invoice data is not live yet.
-        </p>
-      </header>
-      <EmptyState
-        title="Invoice tooling coming soon"
-        description="Planned: draft from won quotes, PDF export, and send-to-customer email. No invoice records are stored in this demo."
-        icon={
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 14l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        }
+      <PageHeader
+        title="Invoices"
+        description="Demo invoices with synthetic amounts. Create drafts from quotes; PDF/email and real pricing come later."
+      />
+      <InvoicesPanel
+        invoices={invoices}
+        paidMap={paidMap}
+        quotesForCreate={quotesForCreate}
       />
     </AdminShell>
   );

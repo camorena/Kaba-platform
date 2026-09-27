@@ -1,4 +1,5 @@
 import AdminShell from "@/components/admin/AdminShell";
+import PageHeader from "@/components/admin/PageHeader";
 import QuotesTable from "@/components/admin/QuotesTable";
 import { requireAdmin } from "@/lib/admin/guard";
 import { listQuotes } from "@/lib/admin/quotes-store";
@@ -12,16 +13,10 @@ export default async function AdminQuotesPage() {
 
   return (
     <AdminShell warning={warning}>
-      <header className="mb-6">
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-ink">
-          Quotes
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Submissions from the public quote form plus seed demo rows. Backed by
-          an in-memory store (swap for a DB later). CRM email follow-up is still
-          pending.
-        </p>
-      </header>
+      <PageHeader
+        title="Quotes"
+        description="Public form submissions plus seed demo rows. In-memory store — resets on serverless cold starts until a DB is wired."
+      />
       <QuotesTable quotes={quotes} />
     </AdminShell>
   );

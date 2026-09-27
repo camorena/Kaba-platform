@@ -14,7 +14,14 @@ export default async function AdminLoginPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
+    <div className="admin-app mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
+      <div
+        role="status"
+        className="mb-6 rounded-lg border border-amber-700/30 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-950 dark:border-amber-400/25 dark:bg-amber-950/40 dark:text-amber-100"
+      >
+        <strong className="font-semibold">Auth stub — not production-ready.</strong>{" "}
+        Shared password cookie only. Replace before handling live customer data.
+      </div>
       <div className="mb-8 text-center">
         <Image
           src="/brand/kaba-fence-icon.png"
@@ -27,7 +34,7 @@ export default async function AdminLoginPage() {
           Admin sign-in
         </h1>
         <p className="mt-2 text-sm text-muted">
-          Scaffold gate for quotes, invoices, and payments.
+          Quotes, invoices, and payments foundation.
         </p>
       </div>
       <div className="card-static p-5 sm:p-6">

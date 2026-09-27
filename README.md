@@ -45,34 +45,39 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 
 ## Admin scaffold (`/admin`)
 
-**Status: foundation only — not production-ready.**
+**Status: UI foundation — not production-ready.** Dense admin shell for quotes → invoices → payments. Auth remains a password stub; data is in-memory with clearly labeled demo amounts.
 
-| Route              | Status |
-| ------------------ | ------ |
-| `/admin/login`     | Password stub (env `ADMIN_PASSWORD`) |
-| `/admin`           | Dashboard overview (quote counts) |
-| `/admin/quotes`    | List + status updates; wired to mock/in-memory store |
-| `/admin/invoices`  | Placeholder |
-| `/admin/payments`  | Placeholder |
+| Route | Purpose |
+| ----- | ------- |
+| `/admin/login` | Password stub (`ADMIN_PASSWORD`) |
+| `/admin` | Dashboard — quote / invoice / payment stats |
+| `/admin/quotes` | Search, status filters, inline status changes |
+| `/admin/quotes/[id]` | Detail, notes, status UX, create-invoice stub |
+| `/admin/invoices` | List + create-from-quote (synthetic demo $) |
+| `/admin/invoices/[id]` | Detail, line items, balance, status |
+| `/admin/payments` | List + record-payment stub (no Stripe) |
+| `/admin/customers` | Derived from quote contacts |
+| `/admin/settings` | Auth / env / Stripe docs — honest, not fake security |
 
-### How quotes flow today
+### How data flows today
 
-1. Public `/quote` form validates client-side, then `POST /api/quotes`.
-2. Records land in an **in-memory store** (`src/lib/admin/quotes-store.ts`) with seed demo rows.
-3. Authenticated admin can `GET /api/quotes` and `PATCH /api/quotes/[id]` for status.
+1. Public `/quote` → `POST /api/quotes` → in-memory `quotes-store` (seed rows keep UI usable).
+2. Admin `PATCH /api/quotes/[id]` updates status and internal notes.
+3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
+4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-On serverless (Vercel) cold starts the in-memory list resets — swap for a real DB before relying on this for leads.
+On Vercel cold starts the in-memory lists reset. Swap for a real DB before relying on this for leads. **Stripe is not connected** — see `/admin/settings`.
 
 ### Auth warning
 
-`ADMIN_PASSWORD` + httpOnly cookie is a **documented stub** so the shell can be gated while building UI. It is **not** real multi-user auth, MFA, CSRF hardening, or audit logging. Replace with Auth.js/Clerk (or similar) + roles before handling live customer PII. If `ADMIN_PASSWORD` is unset, login is disabled and shows a setup notice.
+`ADMIN_PASSWORD` + httpOnly cookie is a **documented stub**. It is **not** real multi-user auth, MFA, CSRF hardening, or audit logging. Replace with Auth.js/Clerk (or similar) + roles before handling live customer PII. If `ADMIN_PASSWORD` is unset, login is disabled and shows a setup notice.
 
 ```bash
 # .env.local
 ADMIN_PASSWORD=choose-a-long-secret
 ```
 
-`robots.txt` disallows `/admin` and `/api/`.
+`robots.txt` disallows `/admin` and `/api/`. Admin metadata is `noindex`.
 
 ## Configuration
 
@@ -119,7 +124,7 @@ Before/after JSON lives under `preview/lighthouse/`. Screenshots: `preview/a11y-
 - Custom domain
 - Town SEO landing pages
 - Production admin auth + database
-- Invoices & payments (Stripe etc.)
+- Production invoices/payments (Stripe) + durable DB
 
 ## Notes
 
