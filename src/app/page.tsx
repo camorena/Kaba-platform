@@ -89,6 +89,7 @@ export default function HomePage() {
               }}
             />
             <div className="hero-frame relative aspect-[4/3] w-full sm:aspect-[5/3.35] lg:ml-1 lg:aspect-[5/3.5] lg:min-h-[25rem] xl:ml-2 xl:min-h-[29rem]">
+              {/* Top-right keeps the hero mark clear of the bottom caption chrome. */}
               <WatermarkedImage
                 src="/gallery/cedar-privacy.png"
                 alt="Cedar privacy fence installation for a Raleigh-area home"
