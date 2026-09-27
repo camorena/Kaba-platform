@@ -119,7 +119,7 @@ export default function ServicesPage() {
             <h2 className="font-display text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
               Not sure which option fits?
             </h2>
-            <p className="mx-auto mt-3 max-w-xl leading-relaxed text-ivory/75">
+            <p className="mx-auto mt-3 max-w-xl leading-relaxed text-cream/75">
               We&apos;ll walk your property, talk through style and budget, and
               recommend materials that make sense for Angier and Raleigh homes.
             </p>

@@ -1,14 +1,23 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (next-themes sets .dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* Brand palette — navy ink, logo orange #f7a823, clean ivory */
-  --ink: #0b111a;
-  --ink-dark: #05080e;
-  --ink-light: #182233;
+  /* Brand constants — never flip (intentional dark chrome) */
+  --navy: #0b111a;
+  --navy-dark: #05080e;
+  --navy-light: #182233;
+  --cream: #f7f5f0;
   --bronze: #f7a823;
   --bronze-dark: #c97a0c;
   --bronze-light: #fbc65a;
-  --ivory: #f7f5f0;
+
+  /* Semantic tokens — light defaults; remapped under .dark */
+  --ink: var(--navy);
+  --ink-dark: var(--navy-dark);
+  --ink-light: var(--navy-light);
+  --ivory: var(--cream);
   --ivory-muted: #ebe6dc;
   --surface: #ffffff;
   --stone: #d2ccc0;
@@ -29,6 +38,8 @@
   --white: #ffffff;
   --background: var(--ivory);
   --foreground: var(--ink);
+  --header-bg: color-mix(in srgb, var(--ivory) 85%, transparent);
+  --header-border: color-mix(in srgb, var(--navy) 7%, transparent);
   /* Sticky header clearance for scroll-into-view / client navigations */
   --header-offset: 3.75rem;
   /* Spacing rhythm — intentional, not uniform */
@@ -55,6 +66,10 @@
   --color-ink: var(--ink);
   --color-ink-dark: var(--ink-dark);
   --color-ink-light: var(--ink-light);
+  --color-navy: var(--navy);
+  --color-navy-dark: var(--navy-dark);
+  --color-navy-light: var(--navy-light);
+  --color-cream: var(--cream);
   --color-bronze: var(--bronze);
   --color-bronze-dark: var(--bronze-dark);
   --color-bronze-light: var(--bronze-light);
@@ -87,6 +102,47 @@
   }
 }
 
+/* —— Dark mode: intentional cinematic palette (not a blind invert) —— */
+.dark {
+  color-scheme: dark;
+  --ink: #efeae2;
+  --ink-dark: #d4cec3;
+  --ink-light: #f7f3ec;
+  --ivory: #0a0f18;
+  --ivory-muted: #121a26;
+  --surface: #141c28;
+  --stone: #3a4556;
+  --muted: #9aa4b2;
+  --muted-light: #7a8494;
+  --border: color-mix(in srgb, var(--cream) 12%, transparent);
+  --danger: #f97066;
+  --danger-bg: color-mix(in srgb, #f97066 14%, var(--surface));
+  --gray-50: #121a26;
+  --gray-100: #1a2433;
+  --gray-200: #2a3548;
+  --gray-300: #3d4a5e;
+  --gray-500: #8b95a5;
+  --gray-600: #a8b0bd;
+  --gray-700: #c5cbd4;
+  --gray-800: #e2e5ea;
+  --gray-900: #f0ece4;
+  --background: var(--ivory);
+  --foreground: var(--ink);
+  --header-bg: color-mix(in srgb, var(--ivory) 88%, transparent);
+  --header-border: color-mix(in srgb, var(--cream) 10%, transparent);
+  --shadow-xs: 0 1px 2px color-mix(in srgb, #000 28%, transparent);
+  --shadow-sm:
+    0 1px 2px color-mix(in srgb, #000 22%, transparent),
+    0 4px 14px color-mix(in srgb, #000 28%, transparent);
+  --shadow-md:
+    0 4px 8px color-mix(in srgb, #000 28%, transparent),
+    0 14px 32px color-mix(in srgb, #000 36%, transparent);
+  --shadow-lg:
+    0 8px 18px color-mix(in srgb, #000 32%, transparent),
+    0 28px 56px color-mix(in srgb, #000 42%, transparent);
+  --shadow-bronze: 0 6px 24px color-mix(in srgb, var(--bronze) 32%, transparent);
+  --glow-bronze: 0 0 56px color-mix(in srgb, var(--bronze) 18%, transparent);
+}
 
 html {
   scroll-behavior: smooth;
@@ -121,7 +177,11 @@ h3 {
 
 ::selection {
   background: color-mix(in srgb, var(--bronze) 38%, transparent);
-  color: var(--ink);
+  color: var(--navy);
+}
+
+.dark ::selection {
+  color: var(--cream);
 }
 
 /* Global accessible focus rings */
@@ -209,6 +269,10 @@ h3 {
   line-height: 1.35;
 }
 
+.dark .eyebrow {
+  color: var(--bronze-light);
+}
+
 .eyebrow::before {
   content: "";
   display: block;
@@ -284,11 +348,24 @@ h3 {
   border-block: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
+.dark .section-alt {
+  border-block-color: color-mix(in srgb, var(--cream) 8%, transparent);
+}
+
 .section-soft {
   background:
     linear-gradient(
       180deg,
       color-mix(in srgb, var(--ivory-muted) 70%, var(--ivory)) 0%,
+      var(--ivory) 100%
+    );
+}
+
+.dark .section-soft {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 80%, var(--ivory)) 0%,
       var(--ivory) 100%
     );
 }
@@ -317,7 +394,7 @@ h3 {
     ),
     radial-gradient(
       ellipse 40% 36% at 92% 8%,
-      color-mix(in srgb, var(--ink-light) 50%, transparent),
+      color-mix(in srgb, var(--navy-light) 50%, transparent),
       transparent 52%
     ),
     radial-gradient(
@@ -360,16 +437,16 @@ h3 {
   background:
     linear-gradient(
       105deg,
-      color-mix(in srgb, var(--ink) 55%, transparent) 0%,
-      color-mix(in srgb, var(--ink) 22%, transparent) 32%,
+      color-mix(in srgb, var(--navy) 55%, transparent) 0%,
+      color-mix(in srgb, var(--navy) 22%, transparent) 32%,
       transparent 62%
     ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--ink-dark) 38%, transparent) 0%,
+      color-mix(in srgb, var(--navy-dark) 38%, transparent) 0%,
       transparent 28%,
       transparent 52%,
-      color-mix(in srgb, var(--ink-dark) 72%, transparent) 100%
+      color-mix(in srgb, var(--navy-dark) 72%, transparent) 100%
     ),
     radial-gradient(
       ellipse 48% 40% at 78% 24%,
@@ -439,13 +516,13 @@ h3 {
   gap: 0.5rem;
   border-radius: 9999px;
   border: 1px solid color-mix(in srgb, var(--bronze) 35%, transparent);
-  background: color-mix(in srgb, var(--ink-dark) 62%, transparent);
+  background: color-mix(in srgb, var(--navy-dark) 62%, transparent);
   padding: 0.5rem 0.95rem 0.5rem 0.6rem;
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ivory);
+  color: var(--cream);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 10px 28px color-mix(in srgb, #000 36%, transparent);
@@ -472,7 +549,7 @@ h3 {
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.01em;
-  color: color-mix(in srgb, var(--ivory) 78%, transparent);
+  color: color-mix(in srgb, var(--cream) 78%, transparent);
 }
 
 .hero-trust-sep {
@@ -653,7 +730,7 @@ h3 {
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: var(--ink);
+  color: var(--navy);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #fff 48%, transparent),
     var(--shadow-bronze);
@@ -688,7 +765,7 @@ h3 {
   font-size: 0.875rem;
   font-weight: 650;
   letter-spacing: 0.01em;
-  color: var(--ivory);
+  color: var(--cream);
   box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 10%, transparent);
   transition:
     background-color 180ms ease,
@@ -740,6 +817,10 @@ h3 {
   transition: color 180ms ease, gap 180ms ease;
 }
 
+.dark .btn-ghost {
+  color: var(--bronze-light);
+}
+
 .btn-ghost:hover {
   color: var(--ink);
   gap: 0.5rem;
@@ -770,6 +851,13 @@ h3 {
     transform 180ms ease;
 }
 
+.dark .icon-badge {
+  color: var(--bronze-light);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 8%, transparent),
+    0 1px 2px color-mix(in srgb, var(--bronze) 18%, transparent);
+}
+
 .card:hover .icon-badge {
   background:
     linear-gradient(
@@ -782,6 +870,13 @@ h3 {
     inset 0 1px 0 color-mix(in srgb, #fff 50%, transparent),
     0 4px 12px color-mix(in srgb, var(--bronze) 20%, transparent);
   transform: scale(1.04);
+}
+
+.dark .card:hover .icon-badge {
+  color: var(--cream);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 10%, transparent),
+    0 4px 14px color-mix(in srgb, var(--bronze) 28%, transparent);
 }
 
 .step-badge {
@@ -799,7 +894,7 @@ h3 {
   font-family: var(--font-display), Georgia, serif;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--navy);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent),
     var(--shadow-bronze);
@@ -867,7 +962,7 @@ h3 {
   border: 1px solid color-mix(in srgb, var(--bronze) 48%, transparent);
   border-radius: 0.7rem;
   padding: 0.4rem;
-  background: color-mix(in srgb, var(--ink-dark) 72%, transparent);
+  background: color-mix(in srgb, var(--navy-dark) 72%, transparent);
   box-shadow:
     0 1px 2px color-mix(in srgb, #000 42%, transparent),
     0 5px 16px color-mix(in srgb, #000 30%, transparent);
@@ -959,11 +1054,11 @@ h3 {
   overflow: hidden;
   background: linear-gradient(
     165deg,
-    var(--ink-light) 0%,
-    var(--ink) 40%,
-    var(--ink-dark) 100%
+    var(--navy-light) 0%,
+    var(--navy) 40%,
+    var(--navy-dark) 100%
   );
-  color: var(--ivory);
+  color: var(--cream);
 }
 
 .band-dark::before {
@@ -979,7 +1074,7 @@ h3 {
     ),
     radial-gradient(
       ellipse 50% 40% at 90% 100%,
-      color-mix(in srgb, var(--ink-light) 40%, transparent),
+      color-mix(in srgb, var(--navy-light) 40%, transparent),
       transparent 50%
     );
 }
@@ -995,6 +1090,16 @@ h3 {
       color-mix(in srgb, var(--ivory-muted) 40%, var(--surface)) 100%
     );
   border-bottom: 1px solid color-mix(in srgb, var(--ink) 7%, transparent);
+}
+
+.dark .page-hero {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 90%, var(--navy)) 0%,
+      var(--ivory) 100%
+    );
+  border-bottom-color: color-mix(in srgb, var(--cream) 8%, transparent);
 }
 
 .page-hero::after {
@@ -1053,9 +1158,15 @@ h3 {
 }
 
 .filter-chip-active {
-  background: var(--ink);
-  color: var(--ivory);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--ink) 20%, transparent);
+  background: var(--navy);
+  color: var(--cream);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--navy) 35%, transparent);
+}
+
+.dark .filter-chip-active {
+  background: var(--cream);
+  color: var(--navy);
+  box-shadow: 0 2px 10px color-mix(in srgb, #000 35%, transparent);
 }
 
 .filter-chip-idle {

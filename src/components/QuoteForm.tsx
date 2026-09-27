@@ -108,7 +108,7 @@ export default function QuoteForm() {
         role="status"
         aria-live="polite"
       >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-bronze/20 to-bronze/10 text-bronze-dark shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_50%,transparent),0_4px_14px_color-mix(in_srgb,var(--bronze)_18%,transparent)]">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-bronze/20 to-bronze/10 text-bronze-dark dark:text-bronze-light shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_50%,transparent),0_4px_14px_color-mix(in_srgb,var(--bronze)_18%,transparent)]">
           <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -366,7 +366,7 @@ export default function QuoteForm() {
                   value={opt.value}
                   checked={form.preferredContact === opt.value}
                   onChange={(e) => update("preferredContact", e.target.value)}
-                  className="h-5 w-5 shrink-0 border-ink/20 text-ink accent-bronze focus:ring-2 focus:ring-bronze focus:ring-offset-2"
+                  className="h-5 w-5 shrink-0 border-ink/20 text-ink accent-bronze focus:ring-2 focus:ring-bronze focus:ring-offset-2 focus:ring-offset-background"
                 />
                 {opt.label}
               </label>

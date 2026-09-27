@@ -36,7 +36,7 @@ export default function HomePage() {
   return (
     <>
       {/* Hero — editorial split with cinematic gallery photo */}
-      <section className="relative overflow-hidden bg-ink text-ivory">
+      <section className="relative overflow-hidden bg-navy text-cream">
         <div className="hero-mesh" aria-hidden />
         <div className="container-page relative grid items-center gap-9 py-12 sm:gap-12 sm:py-16 lg:grid-cols-12 lg:gap-12 lg:py-20 xl:gap-16 xl:py-24">
           <div className="relative min-w-0 lg:col-span-5 xl:col-span-5">
@@ -51,7 +51,7 @@ export default function HomePage() {
               Strong fences. Beautiful decks.{" "}
               <em className="not-italic text-bronze">Built for Carolina homes.</em>
             </h1>
-            <p className="hero-reveal hero-reveal-d2 mt-5 max-w-[36rem] text-[0.9875rem] leading-[1.65] text-ivory/80 sm:mt-6 sm:text-lg sm:leading-[1.65]">
+            <p className="hero-reveal hero-reveal-d2 mt-5 max-w-[36rem] text-[0.9875rem] leading-[1.65] text-cream/80 sm:mt-6 sm:text-lg sm:leading-[1.65]">
               {siteConfig.name} installs and repairs wood, vinyl, chain-link,
               and aluminum fencing—plus deck repairs, rebuilds, and new
               builds—across Angier, Raleigh, and nearby communities.
@@ -107,7 +107,7 @@ export default function HomePage() {
                     <span className="hero-pill-dot" aria-hidden />
                     Cedar privacy · Raleigh
                   </div>
-                  <ul className="hidden max-w-xs space-y-1.5 rounded-xl border border-white/12 bg-ink-dark/65 p-3.5 text-[0.75rem] leading-snug text-ivory/92 shadow-lg backdrop-blur-md sm:block lg:max-w-[15.75rem]">
+                  <ul className="hidden max-w-xs space-y-1.5 rounded-xl border border-white/12 bg-navy-dark/65 p-3.5 text-[0.75rem] leading-snug text-cream/92 shadow-lg backdrop-blur-md sm:block lg:max-w-[15.75rem]">
                     {[
                       "Clear written estimates",
                       "Quality materials, matched to budget",
@@ -177,7 +177,7 @@ export default function HomePage() {
               </p>
             </li>
           ))}
-          <li className="relative flex flex-col justify-center overflow-hidden rounded-[1rem] border border-bronze/25 bg-ink p-5 text-ivory shadow-md sm:p-6">
+          <li className="relative flex flex-col justify-center overflow-hidden rounded-[1rem] border border-bronze/25 bg-navy p-5 text-cream shadow-md sm:p-6">
             <div
               className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full opacity-50"
               aria-hidden
@@ -192,7 +192,7 @@ export default function HomePage() {
             <h3 className="relative mt-2.5 font-display text-lg font-semibold tracking-tight">
               Need something else?
             </h3>
-            <p className="relative mt-2.5 text-sm leading-relaxed text-ivory/78">
+            <p className="relative mt-2.5 text-sm leading-relaxed text-cream/78">
               Gate installs, railing upgrades, storm damage repairs—ask us. If
               we can help, we will.
             </p>
@@ -235,7 +235,7 @@ export default function HomePage() {
                   <p className="text-sm font-semibold text-ink">
                     {testimonial.name}
                   </p>
-                  <p className="mt-1 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark">
+                  <p className="mt-1 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
                     {testimonial.town}
                   </p>
                 </div>
@@ -290,7 +290,7 @@ export default function HomePage() {
                   />
                 </div>
                 <div className="border-t border-ink/[0.06] bg-surface px-4 py-3.5 sm:px-5">
-                  <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark">
+                  <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
                     {project.category}
                   </p>
                   <p className="mt-1.5 text-sm font-semibold tracking-tight text-ink">
@@ -362,7 +362,7 @@ export default function HomePage() {
           <h2 className="font-display text-[1.85rem] font-semibold tracking-[-0.028em] sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
             Ready for a free estimate?
           </h2>
-          <p className="mt-4 text-[0.9875rem] leading-relaxed text-ivory/80 sm:text-base">
+          <p className="mt-4 text-[0.9875rem] leading-relaxed text-cream/80 sm:text-base">
             Tell us about your fence or deck project. We&apos;ll schedule an
             on-site visit in Angier, Raleigh, or your nearby NC community—and
             give you a clear quote with no obligation.

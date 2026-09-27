@@ -21,8 +21,8 @@ export default function Footer() {
               className="h-[4.25rem] w-auto object-contain sm:h-[4.75rem]"
             />
           </Link>
-          <p className="mt-4 text-sm font-medium text-ivory/85">{siteConfig.tagline}</p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-ivory/65">
+          <p className="mt-4 text-sm font-medium text-cream/85">{siteConfig.tagline}</p>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-cream/65">
             Proudly serving {siteConfig.serviceArea}.
           </p>
         </div>
@@ -37,7 +37,7 @@ export default function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 text-sm text-ivory/85 transition hover:text-white"
+                  className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 text-sm text-cream/85 transition hover:text-cream"
                 >
                   {link.label}
                 </Link>
@@ -51,11 +51,11 @@ export default function Footer() {
             Contact & Hours
           </p>
           <span className="mt-2.5 block h-px w-8 bg-bronze/50" aria-hidden />
-          <ul className="mt-4 space-y-1.5 text-sm text-ivory/85">
+          <ul className="mt-4 space-y-1.5 text-sm text-cream/85">
             <li>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 font-medium transition hover:text-white"
+                className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 font-medium transition hover:text-cream"
               >
                 {siteConfig.phone}
               </a>
@@ -63,24 +63,24 @@ export default function Footer() {
             <li>
               <a
                 href={siteConfig.emailHref}
-                className="focus-ring -mx-1 inline-flex min-h-10 items-center break-all rounded px-1 transition hover:text-white"
+                className="focus-ring -mx-1 inline-flex min-h-10 items-center break-all rounded px-1 transition hover:text-cream"
               >
                 {siteConfig.email}
               </a>
             </li>
-            <li className="pt-2 text-ivory/70">
+            <li className="pt-2 text-cream/70">
               {siteConfig.address.city}, {siteConfig.address.state}{" "}
               {siteConfig.address.zip}
             </li>
-            <li className="text-ivory/60">{siteConfig.hours.weekdays}</li>
-            <li className="text-ivory/60">{siteConfig.hours.saturday}</li>
-            <li className="text-ivory/60">{siteConfig.hours.sunday}</li>
+            <li className="text-cream/60">{siteConfig.hours.weekdays}</li>
+            <li className="text-cream/60">{siteConfig.hours.saturday}</li>
+            <li className="text-cream/60">{siteConfig.hours.sunday}</li>
           </ul>
         </div>
       </div>
 
       <div className="relative border-t border-white/[0.08]">
-        <div className="container-page flex flex-col gap-2 py-5 text-xs text-ivory/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-page flex flex-col gap-2 py-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {siteConfig.name}. All rights reserved.
           </p>

@@ -185,15 +185,15 @@ export default function ChatWidget() {
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
-          className="mb-0 flex h-[min(32rem,calc(100dvh-5.5rem))] w-[min(100vw-1.5rem,22.5rem)] flex-col overflow-hidden rounded-2xl border border-ink/[0.08] bg-surface shadow-[var(--shadow-lg)]"
+          className="mb-0 flex h-[min(32rem,calc(100dvh-5.5rem))] w-[min(100vw-1.5rem,22.5rem)] flex-col overflow-hidden rounded-2xl border border-ink/[0.08] bg-surface shadow-[var(--shadow-lg)] dark:border-cream/10"
         >
           {/* Header */}
-          <div className="relative flex shrink-0 items-center gap-3 bg-ink px-3.5 py-3 text-ivory">
+          <div className="relative flex shrink-0 items-center gap-3 bg-navy px-3.5 py-3 text-cream">
             <div
               className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-bronze/60 to-transparent"
               aria-hidden
             />
-            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ivory/10 ring-1 ring-bronze/40">
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream/10 ring-1 ring-bronze/40">
               <Image
                 src="/brand/kaba-fence-icon.png"
                 alt=""
@@ -206,14 +206,14 @@ export default function ChatWidget() {
               <p id={titleId} className="truncate font-display text-sm font-semibold tracking-tight">
                 {siteConfig.name} Chat
               </p>
-              <p className="truncate text-xs text-ivory/70">
+              <p className="truncate text-xs text-cream/70">
                 Fence &amp; deck help · Free estimates
               </p>
             </div>
             <button
               ref={closeButtonRef}
               type="button"
-              className="focus-ring inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-ivory/80 transition hover:bg-white/10 hover:text-ivory"
+              className="focus-ring inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-cream/80 transition hover:bg-white/10 hover:text-cream"
               aria-label="Close chat"
               onClick={() => {
                 setOpen(false);
@@ -234,7 +234,7 @@ export default function ChatWidget() {
           {/* Messages */}
           <div
             ref={listRef}
-            className="flex-1 space-y-3 overflow-y-auto overscroll-contain bg-ivory px-3 py-3 sm:px-3.5"
+            className="flex-1 space-y-3 overflow-y-auto overscroll-contain bg-background px-3 py-3 sm:px-3.5"
             aria-live="polite"
             aria-relevant="additions"
           >
@@ -246,7 +246,7 @@ export default function ChatWidget() {
                 <div
                   className={`max-w-[92%] rounded-2xl px-3.5 py-2.5 text-[0.8125rem] leading-relaxed shadow-[var(--shadow-xs)] ${
                     m.role === "user"
-                      ? "rounded-br-md bg-ink text-ivory"
+                      ? "rounded-br-md bg-navy text-cream"
                       : "rounded-bl-md border border-ink/[0.06] bg-surface text-ink"
                   }`}
                 >
@@ -254,7 +254,7 @@ export default function ChatWidget() {
                   {m.cta && (
                     <Link
                       href={m.cta.href}
-                      className="focus-ring mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-bronze px-3 py-1.5 text-xs font-semibold text-ink shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark"
+                      className="focus-ring mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-bronze px-3 py-1.5 text-xs font-semibold text-navy shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark"
                     >
                       {m.cta.label}
                       <span aria-hidden>→</span>
@@ -287,7 +287,7 @@ export default function ChatWidget() {
                       onChange={(e) =>
                         setLead((p) => ({ ...p, name: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-ink/10 bg-ivory px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
+                      className="w-full rounded-lg border border-ink/10 bg-background px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
                       aria-invalid={Boolean(leadErrors.name)}
                       aria-describedby={leadErrors.name ? "chat-lead-name-err" : undefined}
                     />
@@ -311,7 +311,7 @@ export default function ChatWidget() {
                       onChange={(e) =>
                         setLead((p) => ({ ...p, phone: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-ink/10 bg-ivory px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
+                      className="w-full rounded-lg border border-ink/10 bg-background px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
                       aria-invalid={Boolean(leadErrors.phone)}
                       aria-describedby={leadErrors.phone ? "chat-lead-phone-err" : undefined}
                     />
@@ -335,7 +335,7 @@ export default function ChatWidget() {
                       onChange={(e) =>
                         setLead((p) => ({ ...p, email: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-ink/10 bg-ivory px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
+                      className="w-full rounded-lg border border-ink/10 bg-background px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
                       aria-invalid={Boolean(leadErrors.email)}
                       aria-describedby={leadErrors.email ? "chat-lead-email-err" : undefined}
                     />
@@ -358,13 +358,13 @@ export default function ChatWidget() {
                       onChange={(e) =>
                         setLead((p) => ({ ...p, message: e.target.value }))
                       }
-                      className="w-full resize-none rounded-lg border border-ink/10 bg-ivory px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
+                      className="w-full resize-none rounded-lg border border-ink/10 bg-background px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
                     />
                   </div>
                   <div className="flex flex-wrap items-center gap-2 pt-0.5">
                     <button
                       type="submit"
-                      className="focus-ring inline-flex flex-1 items-center justify-center rounded-lg bg-bronze px-3 py-2 text-xs font-semibold text-ink shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark sm:flex-none"
+                      className="focus-ring inline-flex flex-1 items-center justify-center rounded-lg bg-bronze px-3 py-2 text-xs font-semibold text-navy shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark sm:flex-none"
                     >
                       Send contact info
                     </button>
@@ -391,7 +391,7 @@ export default function ChatWidget() {
                   key={s}
                   type="button"
                   onClick={() => handleUserText(s)}
-                  className="focus-ring shrink-0 rounded-full border border-ink/10 bg-ivory px-2.5 py-1 text-[0.6875rem] font-medium text-ink transition hover:border-bronze/50 hover:bg-bronze/10"
+                  className="focus-ring shrink-0 rounded-full border border-ink/10 bg-background px-2.5 py-1 text-[0.6875rem] font-medium text-ink transition hover:border-bronze/50 hover:bg-bronze/10"
                 >
                   {s}
                 </button>
@@ -415,11 +415,11 @@ export default function ChatWidget() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about fences, decks, quotes…"
               autoComplete="off"
-              className="min-w-0 flex-1 rounded-xl border border-ink/10 bg-ivory px-3 py-2.5 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
+              className="min-w-0 flex-1 rounded-xl border border-ink/10 bg-background px-3 py-2.5 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40"
             />
             <button
               type="submit"
-              className="focus-ring inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink text-bronze transition hover:bg-ink-light disabled:opacity-40"
+              className="focus-ring inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy text-bronze transition hover:bg-navy-light disabled:opacity-40"
               disabled={!input.trim()}
               aria-label="Send message"
             >
@@ -438,7 +438,7 @@ export default function ChatWidget() {
         <button
           ref={openButtonRef}
           type="button"
-          className="focus-ring group relative flex h-14 w-14 items-center justify-center rounded-full bg-ink text-bronze shadow-[var(--shadow-lg),0_0_0_3px_color-mix(in_srgb,var(--bronze)_35%,transparent)] transition hover:scale-[1.04] hover:bg-ink-light active:scale-[0.98]"
+          className="focus-ring group relative flex h-14 w-14 items-center justify-center rounded-full bg-navy text-bronze shadow-[var(--shadow-lg),0_0_0_3px_color-mix(in_srgb,var(--bronze)_35%,transparent)] transition hover:scale-[1.04] hover:bg-navy-light active:scale-[0.98]"
           aria-expanded={open}
           aria-controls={panelId}
           aria-label={open ? "Close chat" : "Open chat with Kaba Fence"}
@@ -452,7 +452,7 @@ export default function ChatWidget() {
         >
           {unread && !open && (
             <span
-              className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-bronze ring-2 ring-ivory"
+              className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-bronze ring-2 ring-background"
               aria-hidden
             />
           )}

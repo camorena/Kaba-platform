@@ -14,7 +14,7 @@ export default function FaqAccordion({
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <div className="divide-y divide-ink/[0.08] rounded-[1.125rem] border border-ink/[0.08] bg-surface shadow-[0_1px_2px_color-mix(in_srgb,var(--ink)_4%,transparent),0_8px_24px_color-mix(in_srgb,var(--ink)_4%,transparent)]">
+    <div className="divide-y divide-ink/[0.08] rounded-[1.125rem] border border-ink/[0.08] dark:divide-cream/10 dark:border-cream/10 bg-surface shadow-[0_1px_2px_color-mix(in_srgb,var(--ink)_4%,transparent),0_8px_24px_color-mix(in_srgb,var(--ink)_4%,transparent)]">
       {items.map((item, index) => {
         const isOpen = openIndex === index;
         const panelId = `${baseId}-panel-${index}`;
@@ -38,8 +38,8 @@ export default function FaqAccordion({
                   aria-hidden
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-200 ${
                     isOpen
-                      ? "rotate-45 border-bronze bg-bronze text-ink shadow-[0_2px_8px_color-mix(in_srgb,var(--bronze)_35%,transparent)]"
-                      : "border-ink/12 bg-ivory text-ink"
+                      ? "rotate-45 border-bronze bg-bronze text-navy shadow-[0_2px_8px_color-mix(in_srgb,var(--bronze)_35%,transparent)]"
+                      : "border-ink/12 bg-ivory-muted text-ink"
                   }`}
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

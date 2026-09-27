@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 import { navLinks, siteConfig } from "@/lib/site";
 
 export default function Header() {
@@ -31,7 +32,7 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ink/[0.07] bg-ivory/85 shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_18%,transparent),0_10px_28px_color-mix(in_srgb,var(--ink)_5%,transparent)] backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-ink/[0.07] bg-ivory/85 shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_18%,transparent),0_10px_28px_color-mix(in_srgb,var(--navy)_5%,transparent)] backdrop-blur-xl dark:border-cream/10 dark:shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_22%,transparent),0_10px_28px_color-mix(in_srgb,#000_35%,transparent)]">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bronze/65 to-transparent"
         aria-hidden
@@ -50,7 +51,7 @@ export default function Header() {
             className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 lg:h-11 lg:w-11"
             priority
           />
-          <span className="truncate font-display text-[1.05rem] font-semibold tracking-tight text-ink transition group-hover:text-ink-light sm:text-lg">
+          <span className="truncate font-display text-[1.05rem] font-semibold tracking-tight text-ink transition group-hover:opacity-80 sm:text-lg">
             {siteConfig.name}
           </span>
         </Link>
@@ -70,7 +71,7 @@ export default function Header() {
                 href={link.href}
                 className={`focus-ring relative rounded-md px-3 py-2 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors lg:px-3.5 ${
                   active
-                    ? "bg-ink/[0.055] text-ink"
+                    ? "bg-ink/[0.055] text-ink dark:bg-cream/[0.08]"
                     : "text-muted hover:bg-ivory-muted hover:text-ink"
                 }`}
               >
@@ -86,7 +87,8 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <ThemeToggle />
           <Link
             href="/quote"
             className="focus-ring btn-primary hidden min-h-0 px-3.5 py-2 text-sm md:inline-flex lg:px-4"
@@ -117,7 +119,7 @@ export default function Header() {
       {open && (
         <div
           id="mobile-nav"
-          className="max-h-[min(100dvh-3.75rem,34rem)] overflow-y-auto border-t border-ink/[0.07] bg-ivory/96 backdrop-blur-xl md:hidden"
+          className="max-h-[min(100dvh-3.75rem,34rem)] overflow-y-auto border-t border-ink/[0.07] bg-ivory/96 backdrop-blur-xl dark:border-cream/10 md:hidden"
         >
           <nav
             className="container-page flex flex-col gap-1 py-3.5 pb-6"
@@ -135,7 +137,7 @@ export default function Header() {
                   onClick={() => setOpen(false)}
                   className={`focus-ring rounded-md px-3 py-3.5 text-base font-medium transition-colors ${
                     active
-                      ? "bg-ink/[0.05] text-ink"
+                      ? "bg-ink/[0.05] text-ink dark:bg-cream/[0.08]"
                       : "text-muted hover:bg-ivory-muted hover:text-ink"
                   }`}
                 >
