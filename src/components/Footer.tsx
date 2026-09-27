@@ -6,9 +6,9 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="band-dark mt-auto border-t border-white/[0.06]">
-      <div className="container-page relative grid gap-10 py-12 sm:gap-12 sm:py-14 md:grid-cols-2 lg:grid-cols-3">
-        <div className="md:col-span-2 lg:col-span-1">
+    <footer className="band-dark mt-auto border-t border-white/[0.08]">
+      <div className="container-page relative grid gap-10 py-12 sm:gap-12 sm:py-14 md:grid-cols-2 lg:grid-cols-12 lg:gap-10">
+        <div className="md:col-span-2 lg:col-span-5">
           <Link
             href="/"
             className="focus-ring inline-flex rounded-md"
@@ -18,26 +18,26 @@ export default function Footer() {
               alt="Kaba Fence"
               width={140}
               height={144}
-              className="h-16 w-auto object-contain sm:h-[4.5rem]"
+              className="h-[4.25rem] w-auto object-contain sm:h-[4.75rem]"
             />
           </Link>
-          <p className="mt-3 text-sm text-ivory/75">{siteConfig.tagline}</p>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/55">
+          <p className="mt-4 text-sm font-medium text-ivory/85">{siteConfig.tagline}</p>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-ivory/65">
             Proudly serving {siteConfig.serviceArea}.
           </p>
         </div>
 
-        <div>
-          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-bronze-light">
+        <div className="lg:col-span-3 lg:pt-1">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
             Quick Links
           </p>
-          <span className="mt-2 block h-px w-8 bg-bronze/40" aria-hidden />
-          <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-1">
+          <span className="mt-2.5 block h-px w-8 bg-bronze/50" aria-hidden />
+          <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-1 sm:gap-y-1.5">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 text-sm text-ivory/80 transition hover:text-white"
+                  className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 text-sm text-ivory/85 transition hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -46,16 +46,16 @@ export default function Footer() {
           </ul>
         </div>
 
-        <div>
-          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-bronze-light">
+        <div className="lg:col-span-4 lg:pt-1">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
             Contact & Hours
           </p>
-          <span className="mt-2 block h-px w-8 bg-bronze/40" aria-hidden />
-          <ul className="mt-4 space-y-2.5 text-sm text-ivory/80">
+          <span className="mt-2.5 block h-px w-8 bg-bronze/50" aria-hidden />
+          <ul className="mt-4 space-y-1.5 text-sm text-ivory/85">
             <li>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 transition hover:text-white"
+                className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 font-medium transition hover:text-white"
               >
                 {siteConfig.phone}
               </a>
@@ -68,19 +68,19 @@ export default function Footer() {
                 {siteConfig.email}
               </a>
             </li>
-            <li className="pt-2 text-ivory/60">
+            <li className="pt-2 text-ivory/70">
               {siteConfig.address.city}, {siteConfig.address.state}{" "}
               {siteConfig.address.zip}
             </li>
-            <li className="text-ivory/50">{siteConfig.hours.weekdays}</li>
-            <li className="text-ivory/50">{siteConfig.hours.saturday}</li>
-            <li className="text-ivory/50">{siteConfig.hours.sunday}</li>
+            <li className="text-ivory/60">{siteConfig.hours.weekdays}</li>
+            <li className="text-ivory/60">{siteConfig.hours.saturday}</li>
+            <li className="text-ivory/60">{siteConfig.hours.sunday}</li>
           </ul>
         </div>
       </div>
 
-      <div className="relative border-t border-white/[0.06]">
-        <div className="container-page flex flex-col gap-2 py-5 text-xs text-ivory/40 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative border-t border-white/[0.08]">
+        <div className="container-page flex flex-col gap-2 py-5 text-xs text-ivory/50 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {siteConfig.name}. All rights reserved.
           </p>

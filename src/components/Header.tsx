@@ -31,26 +31,26 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ink/[0.06] bg-ivory/80 shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_12%,transparent),0_8px_24px_color-mix(in_srgb,var(--ink)_4%,transparent)] backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-ink/[0.07] bg-ivory/85 shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_18%,transparent),0_10px_28px_color-mix(in_srgb,var(--ink)_5%,transparent)] backdrop-blur-xl">
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bronze/55 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bronze/65 to-transparent"
         aria-hidden
       />
-      <div className="container-page flex h-14 items-center justify-between gap-2 sm:gap-3 lg:h-[3.75rem]">
+      <div className="container-page flex h-[3.75rem] items-center justify-between gap-3 sm:gap-4 lg:h-[4.25rem]">
         <Link
           href="/"
-          className="focus-ring group flex min-w-0 shrink items-center gap-2 rounded-md sm:gap-2.5"
+          className="focus-ring group flex min-w-0 shrink items-center gap-2.5 rounded-md sm:gap-3"
           onClick={() => setOpen(false)}
         >
           <Image
             src="/brand/kaba-fence-icon.png"
             alt="Kaba Fence"
-            width={40}
-            height={40}
-            className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
+            width={44}
+            height={44}
+            className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 lg:h-11 lg:w-11"
             priority
           />
-          <span className="truncate font-display text-base font-semibold tracking-tight text-ink transition group-hover:text-ink-light sm:text-lg">
+          <span className="truncate font-display text-[1.05rem] font-semibold tracking-tight text-ink transition group-hover:text-ink-light sm:text-lg">
             {siteConfig.name}
           </span>
         </Link>
@@ -68,9 +68,9 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`focus-ring relative rounded-md px-3 py-2 text-[0.8125rem] font-medium tracking-[-0.01em] transition-colors lg:px-3.5 ${
+                className={`focus-ring relative rounded-md px-3 py-2 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors lg:px-3.5 ${
                   active
-                    ? "bg-ink/[0.05] text-ink"
+                    ? "bg-ink/[0.055] text-ink"
                     : "text-muted hover:bg-ivory-muted hover:text-ink"
                 }`}
               >
@@ -89,13 +89,13 @@ export default function Header() {
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/quote"
-            className="focus-ring btn-primary hidden px-3.5 py-2 text-sm md:inline-flex lg:px-4"
+            className="focus-ring btn-primary hidden min-h-0 px-3.5 py-2 text-sm md:inline-flex lg:px-4"
           >
             Get a Free Quote
           </Link>
           <button
             type="button"
-            className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-md text-ink md:hidden"
+            className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-lg text-ink hover:bg-ivory-muted md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -117,10 +117,10 @@ export default function Header() {
       {open && (
         <div
           id="mobile-nav"
-          className="max-h-[min(100dvh-3.5rem,32rem)] overflow-y-auto border-t border-ink/[0.06] bg-ivory/95 backdrop-blur-xl md:hidden"
+          className="max-h-[min(100dvh-3.75rem,34rem)] overflow-y-auto border-t border-ink/[0.07] bg-ivory/96 backdrop-blur-xl md:hidden"
         >
           <nav
-            className="container-page flex flex-col gap-1 py-3 pb-5"
+            className="container-page flex flex-col gap-1 py-3.5 pb-6"
             aria-label="Mobile navigation"
           >
             {navLinks.map((link) => {

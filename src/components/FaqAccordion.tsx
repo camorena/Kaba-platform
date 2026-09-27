@@ -38,7 +38,7 @@ export default function FaqAccordion({
                   aria-hidden
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-200 ${
                     isOpen
-                      ? "rotate-45 border-bronze bg-bronze text-white shadow-[0_2px_8px_color-mix(in_srgb,var(--bronze)_35%,transparent)]"
+                      ? "rotate-45 border-bronze bg-bronze text-ink shadow-[0_2px_8px_color-mix(in_srgb,var(--bronze)_35%,transparent)]"
                       : "border-ink/12 bg-ivory text-ink"
                   }`}
                 >
