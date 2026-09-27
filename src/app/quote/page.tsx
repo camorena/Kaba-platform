@@ -17,10 +17,10 @@ export const metadata: Metadata = {
 export default function QuotePage() {
   return (
     <>
-      <section className="border-b border-ink/8 bg-surface">
-        <div className="container-page section-header">
+      <section className="page-hero">
+        <div className="container-page section-header relative">
           <p className="eyebrow">Free estimates</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
+          <h1 className="mt-3.5 text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[1.1]">
             Request a quote
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">

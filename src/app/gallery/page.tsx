@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 export default function GalleryPage() {
   return (
     <>
-      <section className="border-b border-ink/8 bg-surface">
-        <div className="container-page section-header">
+      <section className="page-hero">
+        <div className="container-page section-header relative">
           <p className="eyebrow">Our work</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
+          <h1 className="mt-3.5 text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[1.1]">
             Project gallery
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
@@ -36,9 +36,10 @@ export default function GalleryPage() {
         <GalleryGrid />
       </section>
 
-      <section className="border-t border-ink/8 bg-surface py-12 lg:py-16">
+      <section className="section-alt py-12 lg:py-16">
         <div className="container-page max-w-3xl text-center">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          <span className="accent-bar mx-auto mb-5" aria-hidden />
+          <h2 className="font-display text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
             Have a similar project in mind?
           </h2>
           <p className="mt-3 leading-relaxed text-muted">

@@ -108,12 +108,12 @@ export default function QuoteForm() {
         role="status"
         aria-live="polite"
       >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-bronze/15 text-bronze-dark">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-bronze/20 to-bronze/10 text-bronze-dark shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_50%,transparent),0_4px_14px_color-mix(in_srgb,var(--bronze)_18%,transparent)]">
           <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="mt-5 font-display text-2xl font-semibold text-ink">
+        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight text-ink">
           Request received
         </h2>
         <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">

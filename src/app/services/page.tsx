@@ -19,10 +19,10 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <>
-      <section className="border-b border-ink/8 bg-surface">
-        <div className="container-page section-header">
+      <section className="page-hero">
+        <div className="container-page section-header relative">
           <p className="eyebrow">What we offer</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
+          <h1 className="mt-3.5 text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl sm:leading-[1.1]">
             Fence & deck services
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
@@ -35,7 +35,8 @@ export default function ServicesPage() {
 
       <section className="container-page section-y">
         <div className="max-w-2xl">
-          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          <span className="accent-bar" aria-hidden />
+          <h2 className="mt-4 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
             Fencing
           </h2>
           <p className="mt-3 leading-relaxed text-muted">
@@ -49,7 +50,7 @@ export default function ServicesPage() {
               <span className="icon-badge">
                 <ServiceIcon slug={service.slug} />
               </span>
-              <h3 className="mt-4 font-display text-lg font-semibold text-ink">
+              <h3 className="mt-4 font-display text-lg font-semibold tracking-tight text-ink">
                 {service.title}
               </h3>
               <p className="mt-2.5 text-sm font-medium text-bronze">
@@ -63,10 +64,11 @@ export default function ServicesPage() {
         </ul>
       </section>
 
-      <section className="border-y border-ink/8 bg-surface section-y">
+      <section className="section-alt section-y">
         <div className="container-page">
           <div className="max-w-2xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+            <span className="accent-bar" aria-hidden />
+            <h2 className="mt-4 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
               Decks
             </h2>
             <p className="mt-3 leading-relaxed text-muted">
@@ -80,7 +82,7 @@ export default function ServicesPage() {
                 <span className="icon-badge">
                   <ServiceIcon slug={service.slug} />
                 </span>
-                <h3 className="mt-4 font-display text-lg font-semibold text-ink">
+                <h3 className="mt-4 font-display text-lg font-semibold tracking-tight text-ink">
                   {service.title}
                 </h3>
                 <p className="mt-2.5 text-sm font-medium text-bronze">
@@ -97,8 +99,8 @@ export default function ServicesPage() {
 
       <section className="container-page section-y">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">FAQ</p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          <p className="eyebrow eyebrow-center">FAQ</p>
+          <h2 className="mt-3.5 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
             Questions before you book
           </h2>
           <p className="mt-3 text-muted leading-relaxed">
@@ -111,24 +113,27 @@ export default function ServicesPage() {
       </section>
 
       <section className="container-page pb-16 lg:pb-20">
-        <div className="rounded-2xl bg-ink px-6 py-12 text-center text-ivory sm:px-12">
-          <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-            Not sure which option fits?
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl leading-relaxed text-ivory/75">
-            We&apos;ll walk your property, talk through style and budget, and
-            recommend materials that make sense for Angier and Raleigh homes.
-          </p>
-          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/quote" className="focus-ring btn-primary">
-              Get a Free Quote
-            </Link>
-            <a
-              href={siteConfig.phoneHref}
-              className="focus-ring btn-secondary"
-            >
-              Call {siteConfig.phone}
-            </a>
+        <div className="band-dark relative overflow-hidden rounded-[1.25rem] px-6 py-12 text-center sm:px-12">
+          <div className="relative">
+            <span className="accent-bar mx-auto mb-5" aria-hidden />
+            <h2 className="font-display text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
+              Not sure which option fits?
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl leading-relaxed text-ivory/75">
+              We&apos;ll walk your property, talk through style and budget, and
+              recommend materials that make sense for Angier and Raleigh homes.
+            </p>
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link href="/quote" className="focus-ring btn-primary">
+                Get a Free Quote
+              </Link>
+              <a
+                href={siteConfig.phoneHref}
+                className="focus-ring btn-secondary"
+              >
+                Call {siteConfig.phone}
+              </a>
+            </div>
           </div>
         </div>
       </section>

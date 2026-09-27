@@ -33,10 +33,10 @@ export default function GalleryGrid() {
             type="button"
             onClick={() => setFilter(f.value)}
             aria-pressed={filter === f.value}
-            className={`focus-ring shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
+            className={`focus-ring shrink-0 rounded-full px-4 py-2 text-sm font-semibold tracking-tight transition ${
               filter === f.value
-                ? "bg-ink text-ivory shadow-sm"
-                : "bg-surface text-ink ring-1 ring-ink/12 hover:bg-ivory-muted"
+                ? "bg-ink text-ivory shadow-[0_2px_8px_color-mix(in_srgb,var(--ink)_20%,transparent)]"
+                : "bg-surface text-ink ring-1 ring-ink/10 hover:bg-ivory-muted hover:ring-ink/16"
             }`}
           >
             {f.label}
@@ -55,12 +55,12 @@ export default function GalleryGrid() {
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="gallery-img object-cover"
               />
-              <span className="absolute bottom-3 left-3 rounded-full bg-surface/95 px-2.5 py-0.5 text-xs font-semibold capitalize text-ink shadow-sm backdrop-blur-sm">
+              <span className="absolute bottom-3 left-3 rounded-full bg-surface/95 px-2.5 py-0.5 text-xs font-semibold capitalize tracking-tight text-ink shadow-sm backdrop-blur-sm ring-1 ring-ink/5">
                 {project.category}
               </span>
             </div>
             <div className="p-4 sm:p-5">
-              <h3 className="font-display font-semibold text-ink">
+              <h3 className="font-display font-semibold tracking-tight text-ink">
                 {project.title}
               </h3>
               <p className="mt-1.5 text-sm text-muted">{project.caption}</p>
