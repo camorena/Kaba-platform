@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import WatermarkedImage from "@/components/WatermarkedImage";
 import { useMemo, useState } from "react";
 import { galleryProjects } from "@/lib/site";
 
@@ -46,12 +46,13 @@ export default function GalleryGrid() {
         {projects.map((project) => (
           <li key={project.id} className="card min-w-0 overflow-hidden">
             <div className="relative aspect-[4/3] overflow-hidden bg-ivory-muted">
-              <Image
+              <WatermarkedImage
                 src={project.image}
                 alt={`${project.title}. ${project.caption}.`}
                 fill
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="gallery-img object-cover"
+                watermarkSize="sm"
               />
               <span className="absolute bottom-3 left-3 rounded-full bg-surface/95 px-2.5 py-1 text-xs font-semibold capitalize tracking-tight text-ink shadow-sm backdrop-blur-sm ring-1 ring-ink/5">
                 {project.category}

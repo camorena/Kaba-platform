@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import WatermarkedImage from "@/components/WatermarkedImage";
 import Link from "next/link";
 import FaqAccordion from "@/components/FaqAccordion";
 import ServiceIcon from "@/components/ServiceIcon";
@@ -89,13 +89,15 @@ export default function HomePage() {
               }}
             />
             <div className="hero-frame relative aspect-[4/3] w-full sm:aspect-[5/3.35] lg:ml-1 lg:aspect-[5/3.5] lg:min-h-[25rem] xl:ml-2 xl:min-h-[29rem]">
-              <Image
+              <WatermarkedImage
                 src="/gallery/cedar-privacy.png"
                 alt="Cedar privacy fence installation for a Raleigh-area home"
                 fill
                 priority
                 sizes="(min-width: 1280px) 42rem, (min-width: 1024px) 55vw, 100vw"
                 className="hero-frame-img"
+                watermarkSize="lg"
+                watermarkPosition="tr"
               />
               <div className="hero-cinematic" aria-hidden />
               <div className="hero-overlay absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6">
@@ -277,12 +279,13 @@ export default function HomePage() {
                     index < 2 ? "aspect-[16/10] sm:aspect-[5/3]" : "aspect-[4/3]"
                   }`}
                 >
-                  <Image
+                  <WatermarkedImage
                     src={project.image}
                     alt={`${project.title}. ${project.caption}.`}
                     fill
                     sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
                     className="gallery-img object-cover"
+                    watermarkSize="sm"
                   />
                 </div>
                 <div className="border-t border-ink/[0.06] bg-surface px-4 py-3.5 sm:px-5">
