@@ -8,10 +8,12 @@ import { navLinks, siteConfig } from "@/lib/site";
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [navPath, setNavPath] = useState(pathname);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  if (navPath !== pathname) {
+    setNavPath(pathname);
+    if (open) setOpen(false);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -28,7 +30,11 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ink/[0.07] bg-surface/90 shadow-[0_1px_0_color-mix(in_srgb,var(--ink)_3%,transparent)] backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-ink/[0.06] bg-ivory/80 shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_12%,transparent),0_8px_24px_color-mix(in_srgb,var(--ink)_4%,transparent)] backdrop-blur-xl">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bronze/55 to-transparent"
+        aria-hidden
+      />
       <div className="container-page flex h-14 items-center justify-between gap-2 sm:gap-3 lg:h-[3.75rem]">
         <Link
           href="/"
@@ -37,9 +43,10 @@ export default function Header() {
         >
           <span
             aria-hidden
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold tracking-wide text-ivory shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_12%,transparent),0_2px_6px_color-mix(in_srgb,var(--ink)_18%,transparent)]"
+            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold tracking-wide text-ivory shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_14%,transparent),0_2px_8px_color-mix(in_srgb,var(--ink)_22%,transparent)]"
           >
             KF
+            <span className="absolute inset-x-2 bottom-1 h-0.5 rounded-full bg-bronze/90" />
           </span>
           <span className="truncate font-display text-base font-semibold tracking-tight text-ink transition group-hover:text-ink-light sm:text-lg">
             {siteConfig.name}
@@ -59,16 +66,16 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`focus-ring relative rounded-md px-3 py-2 text-sm font-medium transition-colors lg:px-3.5 ${
+                className={`focus-ring relative rounded-md px-3 py-2 text-[0.8125rem] font-medium tracking-[-0.01em] transition-colors lg:px-3.5 ${
                   active
-                    ? "bg-ink/[0.06] text-ink"
+                    ? "bg-ink/[0.05] text-ink"
                     : "text-muted hover:bg-ivory-muted hover:text-ink"
                 }`}
               >
                 {link.label}
                 {active && (
                   <span
-                    className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-bronze lg:inset-x-3.5"
+                    className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-gradient-to-r from-bronze-dark via-bronze to-bronze-light lg:inset-x-3.5"
                     aria-hidden
                   />
                 )}
@@ -108,7 +115,7 @@ export default function Header() {
       {open && (
         <div
           id="mobile-nav"
-          className="max-h-[min(100dvh-3.5rem,32rem)] overflow-y-auto border-t border-ink/[0.07] bg-surface md:hidden"
+          className="max-h-[min(100dvh-3.5rem,32rem)] overflow-y-auto border-t border-ink/[0.06] bg-ivory/95 backdrop-blur-xl md:hidden"
         >
           <nav
             className="container-page flex flex-col gap-1 py-3 pb-5"
@@ -126,7 +133,7 @@ export default function Header() {
                   onClick={() => setOpen(false)}
                   className={`focus-ring rounded-md px-3 py-3.5 text-base font-medium transition-colors ${
                     active
-                      ? "bg-ink/[0.06] text-ink"
+                      ? "bg-ink/[0.05] text-ink"
                       : "text-muted hover:bg-ivory-muted hover:text-ink"
                   }`}
                 >

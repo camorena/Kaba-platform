@@ -1,30 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  /* Premium charcoal-navy + ivory + brushed bronze — refined contrast */
-  --ink: #121a26;
-  --ink-dark: #0a0f18;
-  --ink-light: #243044;
-  --bronze: #c49a6c;
-  --bronze-dark: #a67d4f;
-  --bronze-light: #e0c49a;
-  --ivory: #f8f6f1;
-  --ivory-muted: #efebe3;
+  /* Luxury contractor palette — cool ink, champagne bronze, clean ivory */
+  --ink: #0c121c;
+  --ink-dark: #060a11;
+  --ink-light: #1a2535;
+  --bronze: #cba46f;
+  --bronze-dark: #9a7345;
+  --bronze-light: #e8d5b3;
+  --ivory: #f6f4ef;
+  --ivory-muted: #ebe7de;
   --surface: #ffffff;
-  --muted: #4f5863;
-  --muted-light: #7a8490;
-  --border: color-mix(in srgb, var(--ink) 10%, transparent);
+  --stone: #d4cfc4;
+  --muted: #55606c;
+  --muted-light: #87919c;
+  --border: color-mix(in srgb, var(--ink) 9%, transparent);
   --danger: #b42318;
   --danger-bg: #fef3f2;
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
+  --gray-50: #f8f7f5;
+  --gray-100: #efede8;
+  --gray-200: #ddd8cf;
+  --gray-300: #c4beb3;
+  --gray-500: #6b7380;
+  --gray-600: #4e5663;
+  --gray-700: #343c48;
+  --gray-800: #1c2430;
+  --gray-900: #0c121c;
   --white: #ffffff;
   --background: var(--ivory);
   --foreground: var(--ink);
@@ -44,8 +45,8 @@
   --shadow-lg:
     0 8px 16px color-mix(in srgb, var(--ink) 6%, transparent),
     0 24px 48px color-mix(in srgb, var(--ink) 10%, transparent);
-  --shadow-bronze: 0 6px 20px color-mix(in srgb, var(--bronze) 32%, transparent);
-  --glow-bronze: 0 0 48px color-mix(in srgb, var(--bronze) 22%, transparent);
+  --shadow-bronze: 0 6px 22px color-mix(in srgb, var(--bronze) 34%, transparent);
+  --glow-bronze: 0 0 56px color-mix(in srgb, var(--bronze) 24%, transparent);
 }
 
 @theme inline {
@@ -58,6 +59,7 @@
   --color-ivory: var(--ivory);
   --color-ivory-muted: var(--ivory-muted);
   --color-surface: var(--surface);
+  --color-stone: var(--stone);
   --color-muted: var(--muted);
   --color-muted-light: var(--muted-light);
   --color-background: var(--background);
@@ -273,7 +275,7 @@ h3 {
     var(--ivory);
 }
 
-/* Hero mesh + pattern */
+/* Hero mesh + cinematic photo treatments */
 .hero-mesh {
   position: absolute;
   inset: 0;
@@ -287,23 +289,23 @@ h3 {
   inset: -20%;
   background:
     radial-gradient(
-      ellipse 50% 45% at 12% 18%,
-      color-mix(in srgb, var(--bronze) 28%, transparent),
+      ellipse 48% 42% at 8% 20%,
+      color-mix(in srgb, var(--bronze) 26%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 40% 36% at 92% 8%,
+      color-mix(in srgb, var(--ink-light) 50%, transparent),
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse 50% 46% at 72% 92%,
+      color-mix(in srgb, var(--bronze) 12%, transparent),
       transparent 55%
     ),
     radial-gradient(
-      ellipse 45% 40% at 88% 12%,
-      color-mix(in srgb, var(--ink-light) 55%, transparent),
-      transparent 50%
-    ),
-    radial-gradient(
-      ellipse 55% 50% at 78% 88%,
-      color-mix(in srgb, var(--bronze) 14%, transparent),
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse 40% 35% at 30% 92%,
-      color-mix(in srgb, #3d5a80 30%, transparent),
+      ellipse 36% 32% at 24% 96%,
+      color-mix(in srgb, #2a4060 28%, transparent),
       transparent 50%
     );
   opacity: 0.95;
@@ -313,19 +315,176 @@ h3 {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.35;
+  opacity: 0.28;
   background-image:
     linear-gradient(
-      color-mix(in srgb, #fff 4%, transparent) 1px,
+      color-mix(in srgb, #fff 3.5%, transparent) 1px,
       transparent 1px
     ),
     linear-gradient(
       90deg,
-      color-mix(in srgb, #fff 4%, transparent) 1px,
+      color-mix(in srgb, #fff 3.5%, transparent) 1px,
       transparent 1px
     );
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 20%, transparent 75%);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 75% 65% at 40% 40%, #000 15%, transparent 72%);
+}
+
+.hero-cinematic {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--ink) 72%, transparent) 0%,
+      color-mix(in srgb, var(--ink) 35%, transparent) 28%,
+      color-mix(in srgb, var(--ink-dark) 12%, transparent) 52%,
+      transparent 78%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ink-dark) 42%, transparent) 0%,
+      transparent 26%,
+      transparent 58%,
+      color-mix(in srgb, var(--ink-dark) 62%, transparent) 100%
+    ),
+    radial-gradient(
+      ellipse 50% 38% at 82% 28%,
+      color-mix(in srgb, var(--bronze) 18%, transparent),
+      transparent 68%
+    );
+}
+
+.hero-frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 1.25rem;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--bronze) 22%, transparent),
+    0 0 0 1px color-mix(in srgb, #fff 8%, transparent),
+    0 28px 70px color-mix(in srgb, #000 48%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 14%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .hero-frame {
+    border-radius: 1.5rem;
+  }
+}
+
+.hero-frame-img {
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-frame:hover .hero-frame-img {
+    transform: scale(1.06);
+  }
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, #fff 16%, transparent);
+  background: color-mix(in srgb, var(--ink-dark) 55%, transparent);
+  padding: 0.45rem 0.85rem 0.45rem 0.55rem;
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px color-mix(in srgb, #000 30%, transparent);
+}
+
+.hero-pill-dot {
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 9999px;
+  background: var(--bronze);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bronze) 28%, transparent);
+}
+
+.hero-trust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--ivory) 58%, transparent);
+}
+
+.hero-trust-sep {
+  display: none;
+  height: 0.25rem;
+  width: 0.25rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--bronze) 70%, transparent);
+}
+
+@media (min-width: 480px) {
+  .hero-trust-sep {
+    display: inline-block;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-reveal {
+    animation: hero-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero-reveal-d1 {
+    animation-delay: 80ms;
+  }
+
+  .hero-reveal-d2 {
+    animation-delay: 160ms;
+  }
+
+  .hero-reveal-d3 {
+    animation-delay: 240ms;
+  }
+
+  .hero-reveal-d4 {
+    animation-delay: 320ms;
+  }
+
+  .hero-reveal-d5 {
+    animation-delay: 400ms;
+  }
+
+  .hero-reveal-visual {
+    animation: hero-fade 1s cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+  }
 }
 
 .soft-glow {
@@ -382,17 +541,17 @@ h3 {
   border-radius: 0.625rem;
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--bronze-light) 35%, var(--bronze)) 0%,
-    var(--bronze) 45%,
+    color-mix(in srgb, var(--bronze-light) 42%, var(--bronze)) 0%,
+    var(--bronze) 42%,
     var(--bronze-dark) 100%
   );
   padding: 0.75rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 650;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.015em;
   color: #fff;
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #fff 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 26%, transparent),
     var(--shadow-bronze);
   transition:
     filter 180ms ease,
@@ -721,7 +880,8 @@ h3 {
   .btn-secondary-light,
   .btn-ghost,
   .gallery-img,
-  .icon-badge {
+  .icon-badge,
+  .hero-frame-img {
     transition: none;
   }
 
@@ -735,5 +895,15 @@ h3 {
 
   .card:hover .icon-badge {
     transform: none;
+  }
+
+  .hero-reveal,
+  .hero-reveal-d1,
+  .hero-reveal-d2,
+  .hero-reveal-d3,
+  .hero-reveal-d4,
+  .hero-reveal-d5,
+  .hero-reveal-visual {
+    animation: none;
   }
 }

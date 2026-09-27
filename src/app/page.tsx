@@ -35,24 +35,32 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero — editorial split with cinematic gallery photo */}
       <section className="relative overflow-hidden bg-ink text-ivory">
         <div className="hero-mesh" aria-hidden />
-        <div className="container-page relative grid gap-10 py-12 sm:gap-12 sm:py-16 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-28">
-          <div className="min-w-0">
-            <p className="eyebrow eyebrow-light">
+        <div className="container-page relative grid items-center gap-10 py-11 sm:gap-12 sm:py-16 lg:grid-cols-12 lg:gap-10 lg:py-20 xl:gap-14 xl:py-24">
+          <div className="relative min-w-0 lg:col-span-5 xl:col-span-5">
+            <span
+              className="pointer-events-none absolute -left-5 top-1 hidden h-[4.5rem] w-px bg-gradient-to-b from-bronze via-bronze/40 to-transparent xl:block"
+              aria-hidden
+            />
+            <p className="eyebrow eyebrow-light hero-reveal">
               Angier · Raleigh NC · Surrounding Areas
             </p>
-            <h1 className="mt-4 text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.03em] sm:mt-5 sm:text-4xl sm:leading-[1.12] lg:text-[3.25rem] lg:leading-[1.1]">
-              Strong fences. Beautiful decks. Built for Carolina homes.
+            <h1 className="hero-reveal hero-reveal-d1 mt-4 max-w-[16ch] text-[1.85rem] font-semibold leading-[1.12] tracking-[-0.032em] sm:mt-5 sm:max-w-[18ch] sm:text-[2.55rem] sm:leading-[1.08] lg:text-[3.1rem] lg:leading-[1.06] xl:max-w-[15ch] xl:text-[3.4rem]">
+              Strong fences. Beautiful decks.{" "}
+              <em className="not-italic text-bronze-light">Built for Carolina homes.</em>
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-ivory/78 sm:mt-6 sm:text-lg sm:leading-relaxed">
+            <p className="hero-reveal hero-reveal-d2 mt-5 max-w-xl text-base leading-relaxed text-ivory/72 sm:mt-6 sm:text-lg sm:leading-relaxed">
               {siteConfig.name} installs and repairs wood, vinyl, chain-link,
               and aluminum fencing—plus deck repairs, rebuilds, and new
               builds—across Angier, Raleigh, and nearby communities.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
-              <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
+            <div className="hero-reveal hero-reveal-d3 mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
+              <Link
+                href="/quote"
+                className="focus-ring btn-primary w-full justify-center sm:w-auto sm:min-w-[11.5rem]"
+              >
                 Get a Free Quote
               </Link>
               <a
@@ -62,39 +70,57 @@ export default function HomePage() {
                 Call {siteConfig.phone}
               </a>
             </div>
+            <p className="hero-reveal hero-reveal-d4 hero-trust mt-6 sm:mt-7">
+              <span>Free on-site estimates</span>
+              <span className="hero-trust-sep" aria-hidden />
+              <span>No obligation</span>
+              <span className="hero-trust-sep" aria-hidden />
+              <span>Local Wake &amp; Harnett crew</span>
+            </p>
           </div>
-          <div className="relative hidden lg:block">
+
+          <div className="hero-reveal-visual relative lg:col-span-7">
             <div
-              className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-60 blur-2xl"
+              className="pointer-events-none absolute -inset-4 rounded-[2rem] opacity-70 blur-3xl sm:-inset-6"
               aria-hidden
               style={{
                 background:
-                  "radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--bronze) 22%, transparent), transparent 70%)",
+                  "radial-gradient(ellipse at 60% 40%, color-mix(in srgb, var(--bronze) 28%, transparent), transparent 68%)",
               }}
             />
-            <div className="glass-panel relative p-7 sm:p-8">
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-bronze-light">
-                Why homeowners choose us
-              </p>
-              <span className="accent-bar mt-3" aria-hidden />
-              <ul className="mt-5 space-y-4">
-                {[
-                  "Clear written estimates before work begins",
-                  "Local crew familiar with Wake & Harnett soils and codes",
-                  "Quality materials matched to your budget and style",
-                  "Respectful of your property—we leave it cleaner than we found it",
-                ].map((item) => (
-                  <li key={item} className="flex gap-3 text-sm leading-relaxed text-ivory/90">
-                    <span
-                      className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-bronze text-[10px] font-bold text-white shadow-sm"
-                      aria-hidden
-                    >
-                      ✓
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+            <div className="hero-frame relative aspect-[4/3] w-full sm:aspect-[5/3.4] lg:ml-2 lg:aspect-[5/3.55] lg:min-h-[24rem] xl:ml-4 xl:min-h-[28rem]">
+              <Image
+                src="/gallery/cedar-privacy.png"
+                alt="Cedar privacy fence installation for a Raleigh-area home"
+                fill
+                priority
+                sizes="(min-width: 1280px) 42rem, (min-width: 1024px) 55vw, 100vw"
+                className="hero-frame-img"
+              />
+              <div className="hero-cinematic" aria-hidden />
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="hero-pill">
+                    <span className="hero-pill-dot" aria-hidden />
+                    Cedar privacy · Raleigh
+                  </div>
+                  <ul className="hidden max-w-xs space-y-1.5 rounded-xl border border-white/10 bg-ink-dark/55 p-3.5 text-[0.75rem] leading-snug text-ivory/88 backdrop-blur-md sm:block lg:max-w-[15.5rem]">
+                    {[
+                      "Clear written estimates",
+                      "Quality materials, matched to budget",
+                      "Job sites left cleaner than found",
+                    ].map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <span
+                          className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-bronze"
+                          aria-hidden
+                        />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
