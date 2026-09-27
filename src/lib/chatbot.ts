@@ -25,17 +25,18 @@ const phone = siteConfig.phone;
 const email = siteConfig.email;
 const hours = `${siteConfig.hours.weekdays}; ${siteConfig.hours.saturday}; ${siteConfig.hours.sunday}`;
 
-const DEFAULT_SUGGESTIONS = [
+/** Primary chips — quotes, services, materials, service area (no financing/warranty). */
+export const DEFAULT_SUGGESTIONS = [
+  "Get a quote",
   "Fence services",
   "Deck services",
+  "Materials",
   "Service area",
-  "Get a quote",
-  "Hours & contact",
-];
+] as const;
 
 export const WELCOME_REPLY: ChatReply = {
-  text: `Hi! I'm the ${siteConfig.name} helper. I can answer questions about fences, decks, our service area, hours, and free estimates — or help you leave your contact info for a callback.`,
-  suggestions: DEFAULT_SUGGESTIONS,
+  text: `Hi — I'm the ${siteConfig.name} helper. Ask about fence & deck work, materials, where we serve, or free estimates. Prefer a person? Call ${phone} or leave your number below.`,
+  suggestions: [...DEFAULT_SUGGESTIONS],
 };
 
 function normalize(input: string): string {
@@ -71,14 +72,26 @@ function matchFaq(q: string): string | null {
       return faq.answer;
     }
     if (
-      (q.includes("material") || q.includes("weather") || q.includes("cedar") || q.includes("vinyl")) &&
+      (q.includes("material") ||
+        q.includes("weather") ||
+        q.includes("cedar") ||
+        q.includes("vinyl")) &&
       faq.question.toLowerCase().includes("materials")
     ) {
       return faq.answer;
     }
     if (
-      (q.includes("repair") && q.includes("deck") && !q.includes("fence")) &&
+      q.includes("repair") &&
+      q.includes("deck") &&
+      !q.includes("fence") &&
       faq.question.toLowerCase().includes("repair an existing deck")
+    ) {
+      return faq.answer;
+    }
+    if (
+      (q.includes("free estimate") ||
+        (q.includes("estimate") && q.includes("free"))) &&
+      faq.question.toLowerCase().includes("estimate really free")
     ) {
       return faq.answer;
     }
@@ -93,9 +106,10 @@ function matchServiceDetail(q: string): string | null {
       q.includes(key) ||
       q.includes(s.title.toLowerCase()) ||
       (s.slug === "chain-link" && q.includes("chain link")) ||
-      (s.slug === "aluminum" && (q.includes("ornamental") || q.includes("aluminum")))
+      (s.slug === "aluminum" &&
+        (q.includes("ornamental") || q.includes("aluminum")))
     ) {
-      return `${s.title}: ${s.details} Want a free on-site estimate? I can take your name and phone, or you can open our quote form.`;
+      return `${s.title}: ${s.details} Want a free on-site estimate? Leave your name and phone, or open our quote form.`;
     }
   }
   for (const s of deckServices) {
@@ -103,7 +117,8 @@ function matchServiceDetail(q: string): string | null {
     if (
       q.includes(key) ||
       q.includes(s.title.toLowerCase()) ||
-      (s.slug === "new-builds" && (q.includes("new deck") || q.includes("build a deck")))
+      (s.slug === "new-builds" &&
+        (q.includes("new deck") || q.includes("build a deck")))
     ) {
       return `${s.title}: ${s.details} Happy to arrange a free estimate — leave your contact info or visit the quote page.`;
     }
@@ -116,27 +131,34 @@ export function getBotReply(rawInput: string): ChatReply {
   const q = normalize(rawInput);
   if (!q) {
     return {
-      text: "Go ahead and ask about fences, decks, where we work, or how to get a free quote.",
-      suggestions: DEFAULT_SUGGESTIONS,
+      text: "Go ahead — ask about fences, decks, materials, where we work, or how to get a free quote.",
+      suggestions: [...DEFAULT_SUGGESTIONS],
     };
   }
 
   // Greetings
   if (
-    includesAny(q, ["hello", "hi ", "hey", "good morning", "good afternoon", "good evening"]) ||
+    includesAny(q, [
+      "hello",
+      "hi ",
+      "hey",
+      "good morning",
+      "good afternoon",
+      "good evening",
+    ]) ||
     q === "hi"
   ) {
     return {
       text: `Hello! Thanks for reaching out to ${siteConfig.name}. What can I help with today?`,
-      suggestions: DEFAULT_SUGGESTIONS,
+      suggestions: [...DEFAULT_SUGGESTIONS],
     };
   }
 
   // Thanks / bye
   if (includesAny(q, ["thank", "thanks", "bye", "goodbye", "see you"])) {
     return {
-      text: `You're welcome! Call us at ${phone} anytime, or request a free estimate on our quote page.`,
-      suggestions: ["Get a quote", "Hours & contact"],
+      text: `You're welcome! Call ${phone} anytime, or request a free estimate on our quote page.`,
+      suggestions: ["Get a quote", "Hours & contact", "Materials"],
       cta: { label: "Get a free quote", href: "/quote" },
     };
   }
@@ -157,12 +179,13 @@ export function getBotReply(rawInput: string): ChatReply {
       "speak to",
       "talk to someone",
       "free estimate",
+      "get a quote",
     ])
   ) {
     return {
-      text: `We offer free on-site estimates across ${area}. Share your name, phone, and email below and we'll follow up — or jump straight to the full quote form.`,
+      text: `We offer free on-site estimates across ${area}. Share your name and phone below and we'll follow up — or jump to the full quote form. Prefer to talk now? Call ${phone}.`,
       collectLead: true,
-      suggestions: ["Fence services", "Deck services", "Service area"],
+      suggestions: ["Fence services", "Deck services", "Service area", "Materials"],
       cta: { label: "Open quote form", href: "/quote" },
     };
   }
@@ -179,11 +202,13 @@ export function getBotReply(rawInput: string): ChatReply {
       "call",
       "contact",
       "reach",
+      "hours & contact",
     ])
   ) {
     return {
-      text: `You can reach us at ${phone} or ${email}. Hours: ${hours}. We're based in ${siteConfig.address.city}, ${siteConfig.address.state}.`,
+      text: `Call ${phone} or email ${email}. Hours: ${hours}. Based in ${siteConfig.address.city}, ${siteConfig.address.state}.`,
       suggestions: ["Get a quote", "Service area", "Fence services"],
+      cta: { label: `Call ${phone}`, href: siteConfig.phoneHref },
     };
   }
 
@@ -204,17 +229,30 @@ export function getBotReply(rawInput: string): ChatReply {
       "area",
       "towns",
       "cities",
+      "garner",
+      "cary",
+      "apex",
     ])
   ) {
     return {
-      text: `${siteConfig.name} serves ${area}. If you're nearby and unsure, leave your city with a quote request and we'll confirm.`,
+      text: `${siteConfig.name} serves ${area}. Nearby and unsure? Leave your city with a quote request and we'll confirm.`,
       suggestions: ["Get a quote", "Hours & contact", "Fence services"],
       cta: { label: "Request a quote", href: "/quote" },
     };
   }
 
   // Materials guide
-  if (includesAny(q, ["material", "cedar", "vinyl", "composite", "which wood", "aluminum fence"])) {
+  if (
+    includesAny(q, [
+      "material",
+      "cedar",
+      "vinyl",
+      "composite",
+      "which wood",
+      "aluminum fence",
+      "pressure treated",
+    ])
+  ) {
     return {
       text: `We install cedar, pressure-treated wood, vinyl, aluminum/ornamental, chain-link, and composite decking chosen for Carolina weather. Compare options on our materials guide, or ask for samples during your free estimate.`,
       suggestions: ["Get a quote", "Fence services", "Deck services"],
@@ -222,19 +260,31 @@ export function getBotReply(rawInput: string): ChatReply {
     };
   }
 
-  // Payment / deposit
-  if (includesAny(q, ["financ", "payment plan", "monthly payment", "deposit", "loan", "credit", "payment"])) {
+  // Payment / deposit — brief, no dedicated financing page
+  if (
+    includesAny(q, [
+      "financ",
+      "payment plan",
+      "monthly payment",
+      "deposit",
+      "loan",
+      "credit",
+      "payment",
+    ])
+  ) {
     return {
-      text: `Most projects use a deposit to schedule and balance at walkthrough. Phased scopes are sometimes possible. Optional third-party financing—when available—is between you and the lender; we don't run credit decisions on this site. Ask about payment options during your free estimate.`,
+      text: `Most projects use a deposit to schedule and balance at walkthrough. Payment details are covered during your free estimate — we don't process credit decisions on this site. Call ${phone} or request a quote and we'll walk you through options.`,
       suggestions: ["Get a quote", "Hours & contact"],
       cta: { label: "Request a quote", href: "/quote" },
     };
   }
 
-  // Warranty / care
-  if (includesAny(q, ["warranty", "guarantee", "care tip", "maintain", "maintenance"])) {
+  // Warranty / care — brief, no dedicated warranty page
+  if (
+    includesAny(q, ["warranty", "guarantee", "care tip", "maintain", "maintenance"])
+  ) {
     return {
-      text: `We stand behind our workmanship as stated on your contract, and manufacturer warranties often cover materials like vinyl, aluminum, and composite. Share care questions on your estimate visit—or ask us after install and we'll point you to the right next step.`,
+      text: `Workmanship coverage is spelled out on your contract; many materials (vinyl, aluminum, composite) also carry manufacturer warranties. We'll cover care tips on your estimate visit or after install — ask us anytime at ${phone}.`,
       suggestions: ["Get a quote", "Materials", "Hours & contact"],
       cta: { label: "Materials guide", href: "/materials" },
     };
@@ -251,10 +301,19 @@ export function getBotReply(rawInput: string): ChatReply {
   }
 
   // Process / how it works
-  if (includesAny(q, ["how it works", "process", "what happens", "steps", "on-site", "on site"])) {
+  if (
+    includesAny(q, [
+      "how it works",
+      "process",
+      "what happens",
+      "steps",
+      "on-site",
+      "on site",
+    ])
+  ) {
     return {
       text: "Here's how it works: (1) Request a quote online or by phone. (2) We visit for an on-site estimate with a clear written price. (3) Our crew builds or repairs on schedule and cleans up. Ready to start?",
-      suggestions: ["Get a quote", "Hours & contact"],
+      suggestions: ["Get a quote", "Hours & contact", "Materials"],
       cta: { label: "Get a free quote", href: "/quote" },
     };
   }
@@ -264,7 +323,7 @@ export function getBotReply(rawInput: string): ChatReply {
   if (detail) {
     return {
       text: detail,
-      suggestions: ["Get a quote", "Fence services", "Deck services"],
+      suggestions: ["Get a quote", "Fence services", "Deck services", "Materials"],
       cta: { label: "Get a free quote", href: "/quote" },
       collectLead: includesAny(q, ["quote", "estimate", "price", "cost"]),
     };
@@ -301,24 +360,34 @@ export function getBotReply(rawInput: string): ChatReply {
   if (faqAnswer) {
     return {
       text: faqAnswer,
-      suggestions: ["Get a quote", "Fence services", "Deck services"],
+      suggestions: ["Get a quote", "Fence services", "Materials"],
       cta: { label: "Get a free quote", href: "/quote" },
     };
   }
 
   // Human handoff
-  if (includesAny(q, ["human", "person", "real person", "agent", "representative"])) {
+  if (
+    includesAny(q, [
+      "human",
+      "person",
+      "real person",
+      "agent",
+      "representative",
+      "talk to a",
+    ])
+  ) {
     return {
       text: `Absolutely — leave your name, phone, and a short message below, or call us directly at ${phone}. Someone from ${siteConfig.name} will get back to you.`,
       collectLead: true,
       suggestions: ["Hours & contact", "Get a quote"],
+      cta: { label: `Call ${phone}`, href: siteConfig.phoneHref },
     };
   }
 
-  // Fallback
+  // Fallback — clear recovery paths
   return {
-    text: `I'm not sure I caught that. I can help with fence & deck services, our service area (${area.split(",")[0]} & nearby), hours, or getting a free quote. You can also call ${phone}.`,
-    suggestions: DEFAULT_SUGGESTIONS,
+    text: `I didn't catch that. I can help with fence & deck services, materials, our service area (${area.split(",")[0]} & nearby), hours, or a free quote. Or call ${phone} and talk to the crew.`,
+    suggestions: [...DEFAULT_SUGGESTIONS],
     cta: { label: "Get a free quote", href: "/quote" },
   };
 }
@@ -331,5 +400,7 @@ export type LeadPayload = {
 };
 
 export function formatLeadConfirmation(lead: LeadPayload): string {
-  return `Thanks, ${lead.name.trim()}! We've noted your info (${lead.phone.trim()}${lead.email.trim() ? `, ${lead.email.trim()}` : ""}). A ${siteConfig.name} team member will follow up soon. For the fastest response, call ${phone} or finish details on our quote page.`;
+  return `Thanks, ${lead.name.trim()}! We've noted your info (${lead.phone.trim()}${
+    lead.email.trim() ? `, ${lead.email.trim()}` : ""
+  }). A ${siteConfig.name} team member will follow up soon. For the fastest response, call ${phone} or finish details on our quote page.`;
 }

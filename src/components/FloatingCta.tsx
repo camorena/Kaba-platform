@@ -6,38 +6,49 @@ import { useEffect, useState } from "react";
 
 /**
  * Cookie-light "Free estimate" pill. Sits bottom-left so it never
- * fights the chat launcher (bottom-right). Hidden on /quote and
- * until the user scrolls a bit past the hero.
+ * fights the chat launcher (bottom-right). Hidden on /quote, while
+ * chat is open (data-chat-open), and until the user scrolls past the hero.
  */
 export default function FloatingCta() {
   const pathname = usePathname();
-  const [show, setShow] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const [scrolledPastHero, setScrolledPastHero] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem("kaba-cta-dismissed") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
-    try {
-      if (sessionStorage.getItem("kaba-cta-dismissed") === "1") {
-        setDismissed(true);
-      }
-    } catch {
-      /* ignore */
+    function syncChat() {
+      setChatOpen(document.documentElement.dataset.chatOpen === "true");
     }
+    syncChat();
+    const obs = new MutationObserver(syncChat);
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-chat-open"],
+    });
+    return () => obs.disconnect();
   }, []);
 
   useEffect(() => {
-    if (pathname === "/quote" || dismissed) {
-      setShow(false);
-      return;
-    }
+    if (pathname === "/quote" || dismissed || chatOpen) return;
     function onScroll() {
-      setShow(window.scrollY > 420);
+      setScrolledPastHero(window.scrollY > 420);
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [pathname, dismissed]);
+  }, [pathname, dismissed, chatOpen]);
 
-  if (!show || dismissed || pathname === "/quote") return null;
+  const show =
+    scrolledPastHero && !dismissed && pathname !== "/quote" && !chatOpen;
+
+  if (!show) return null;
 
   return (
     <div className="floating-cta-root pointer-events-none fixed bottom-0 left-0 z-[55] p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))]">
@@ -59,7 +70,6 @@ export default function FloatingCta() {
           aria-label="Dismiss free estimate shortcut"
           onClick={() => {
             setDismissed(true);
-            setShow(false);
             try {
               sessionStorage.setItem("kaba-cta-dismissed", "1");
             } catch {

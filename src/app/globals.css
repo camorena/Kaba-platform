@@ -1269,7 +1269,141 @@ a.btn-ghost {
   color: color-mix(in srgb, var(--cream) 78%, transparent);
 }
 
+/* —— Chat widget craft —— */
+@keyframes chat-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes chat-teaser-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes chat-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes chat-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes chat-launcher-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--bronze) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 14px color-mix(in srgb, var(--bronze) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--bronze) 0%, transparent);
+  }
+}
+
+@keyframes chat-online-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.chat-panel {
+  height: min(34rem, calc(100dvh - 5.25rem - env(safe-area-inset-bottom, 0px)));
+}
+
+@media (max-width: 639px) {
+  .chat-panel {
+    /* Near-sheet on phones; no competing launcher underneath */
+    height: min(36rem, calc(100dvh - 1.25rem - env(safe-area-inset-bottom, 0px)));
+    width: min(100vw - 1.25rem, 24rem);
+  }
+}
+
+.chat-messages {
+  min-height: 0;
+}
+
+.chat-typing-dot {
+  display: inline-block;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: var(--muted);
+}
+
+.chat-typing-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.chat-typing-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chat-panel {
+    animation: chat-panel-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .chat-teaser {
+    animation: chat-teaser-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .chat-msg {
+    animation: chat-msg-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .chat-typing-dot {
+    animation: chat-typing 1s ease-in-out infinite;
+  }
+
+  .chat-launcher-pulse {
+    animation: chat-launcher-pulse 2.4s ease-out infinite;
+  }
+
+  .chat-online-dot {
+    animation: chat-online-pulse 2s ease-in-out infinite;
+  }
+}
+
+/* Hide estimate pill while chat owns bottom chrome */
+html[data-chat-open="true"] .floating-cta-root {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Floating CTA entrance */
+
 @keyframes floating-cta-in {
   from {
     opacity: 0;
@@ -1648,7 +1782,13 @@ a.btn-ghost {
   .hero-reveal-d5,
   .hero-reveal-visual,
   .hero-kenburns,
-  .floating-cta {
+  .floating-cta,
+  .chat-panel,
+  .chat-teaser,
+  .chat-msg,
+  .chat-typing-dot,
+  .chat-launcher-pulse,
+  .chat-online-dot {
     animation: none;
   }
 
