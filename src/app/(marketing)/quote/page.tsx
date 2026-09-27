@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import QuoteForm from "@/components/QuoteForm";
-import { siteConfig } from "@/lib/site";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Request a Free Quote";
 const description = `Request a free fence or deck estimate from ${siteConfig.name} serving Angier, Raleigh NC, and surrounding areas.`;
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
 };
 

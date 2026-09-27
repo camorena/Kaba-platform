@@ -36,6 +36,9 @@ export const navLinks = [
 export const footerLinks = [
   { href: "/service-area", label: "Service area" },
   { href: "/how-it-works", label: "How it works" },
+  { href: "/materials", label: "Materials" },
+  { href: "/financing", label: "Financing" },
+  { href: "/warranty", label: "Warranty & care" },
   { href: "/faq", label: "FAQ" },
 ] as const;
 
@@ -124,6 +127,8 @@ export const galleryProjects = [
     category: "fence" as const,
     image: "/gallery/cedar-privacy.jpg",
     caption: "Cedar privacy fence — Raleigh",
+    beforeImage: "/gallery/before/cedar-privacy.jpg",
+    beforeCaption: "Tired, uneven privacy line before replacement",
   },
   {
     id: "vinyl-privacy",
@@ -131,6 +136,8 @@ export const galleryProjects = [
     category: "fence" as const,
     image: "/gallery/vinyl-privacy.jpg",
     caption: "White vinyl privacy — Angier",
+    beforeImage: "/gallery/before/vinyl-privacy.jpg",
+    beforeCaption: "Dated wood run prior to low-maintenance vinyl",
   },
   {
     id: "aluminum-ornamental",
@@ -152,6 +159,8 @@ export const galleryProjects = [
     category: "deck" as const,
     image: "/gallery/deck-new-build.jpg",
     caption: "New elevated deck — Angier",
+    beforeImage: "/gallery/before/deck-new-build.jpg",
+    beforeCaption: "Worn deck surface before rebuild",
   },
   {
     id: "deck-repair",
@@ -410,9 +419,251 @@ export const sitemapRoutes = [
   { path: "/quote", changeFrequency: "monthly" as const, priority: 0.9 },
   { path: "/service-area", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/how-it-works", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/materials", changeFrequency: "monthly" as const, priority: 0.75 },
+  { path: "/financing", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/warranty", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/faq", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
   { path: "/terms", changeFrequency: "yearly" as const, priority: 0.3 },
+] as const;
+
+
+
+/** Default Open Graph / Twitter image used across marketing pages. */
+export const defaultOgImage = {
+  url: "/gallery/cedar-privacy.jpg",
+  width: 1280,
+  height: 720,
+  alt: "Cedar privacy fence installation by Kaba Fence",
+} as const;
+
+/** Fence & deck materials guide for /materials. */
+export const fenceMaterials = [
+  {
+    id: "cedar",
+    name: "Cedar",
+    bestFor: "Privacy, picket, and warm curb appeal",
+    lifespan: "15–25 years with care",
+    maintenance: "Periodic cleaning; seal or stain every few years",
+    pros: ["Natural look", "Insect & rot resistance", "Takes stain beautifully"],
+    cons: ["Higher lumber cost", "Needs occasional finish work"],
+    tip: "Ideal for Raleigh and Angier yards that want classic wood privacy without going full pressure-treated look.",
+  },
+  {
+    id: "pressure-treated",
+    name: "Pressure-treated pine",
+    bestFor: "Budget-friendly privacy and farm-style runs",
+    lifespan: "10–20 years depending on grade & care",
+    maintenance: "Let dry, then seal; watch for warping early on",
+    pros: ["Affordable", "Widely available", "Strong for posts & panels"],
+    cons: ["Can warp/check while drying", "Less premium look than cedar"],
+    tip: "Great workhorse material when we size posts correctly and leave room for Carolina humidity.",
+  },
+  {
+    id: "vinyl",
+    name: "Vinyl",
+    bestFor: "HOA neighborhoods and low-maintenance privacy",
+    lifespan: "20–30+ years",
+    maintenance: "Occasional rinse; no staining or painting",
+    pros: ["Color-stable", "Easy clean", "Consistent panel look"],
+    cons: ["Higher upfront cost", "Can look plastic if poorly specified"],
+    tip: "We specify thicker walls and proper posts so panels stay straight through summer heat.",
+  },
+  {
+    id: "aluminum",
+    name: "Aluminum / ornamental",
+    bestFor: "View-preserving security and front-yard elegance",
+    lifespan: "25–40+ years",
+    maintenance: "Rinse occasionally; powder coat resists rust",
+    pros: ["Rust-resistant", "Open sight lines", "Pet & pool friendly"],
+    cons: ["Not full privacy", "Premium vs. chain-link"],
+    tip: "Pair with landscaping for soft privacy without blocking breezes or views.",
+  },
+  {
+    id: "chain-link",
+    name: "Chain-link",
+    bestFor: "Pets, side yards, and secure perimeters on a budget",
+    lifespan: "15–30 years (vinyl-coated lasts longer visually)",
+    maintenance: "Check tension & posts after storms",
+    pros: ["Affordable", "Fast install", "Durable security"],
+    cons: ["Industrial look", "Limited privacy unless slatted"],
+    tip: "Vinyl-coated mesh and privacy slats upgrade curb appeal without losing strength.",
+  },
+] as const;
+
+export const deckMaterials = [
+  {
+    id: "pt-deck",
+    name: "Pressure-treated lumber",
+    bestFor: "Value-focused new decks and repairs",
+    lifespan: "10–20 years with sealing",
+    maintenance: "Clean & reseal regularly; replace boards as needed",
+    pros: ["Lowest material cost", "Easy to repair locally", "Strong framing"],
+    cons: ["Splits/checks over time", "Needs more upkeep"],
+    tip: "We still use PT for most framing—even under composite—because it holds fasteners well in NC soil conditions.",
+  },
+  {
+    id: "cedar-deck",
+    name: "Cedar decking",
+    bestFor: "Warm natural decks with lighter foot feel",
+    lifespan: "15–25 years with care",
+    maintenance: "Clean; oil or stain to keep color",
+    pros: ["Beautiful grain", "Naturally resistant", "Comfortable underfoot"],
+    cons: ["Softer than composite", "Periodic finish work"],
+    tip: "Looks especially good with cable or aluminum railings for a clean modern contrast.",
+  },
+  {
+    id: "composite",
+    name: "Composite / capped polymer",
+    bestFor: "Low-maintenance entertaining decks",
+    lifespan: "25–30+ years (brand dependent)",
+    maintenance: "Soap-and-water cleaning; no staining",
+    pros: ["Fade & stain resistant", "Consistent boards", "Long warranties"],
+    cons: ["Higher upfront cost", "Can get warm in full sun"],
+    tip: "We help pick colors that hide Carolina pine pollen and hold up to afternoon sun.",
+  },
+] as const;
+
+export const materialFaqs = [
+  {
+    question: "Which fence material is best for North Carolina weather?",
+    answer:
+      "Cedar, quality pressure-treated pine, vinyl, and powder-coated aluminum all perform well here. The right pick depends on privacy goals, budget, and how much maintenance you want. We’ll walk options on site with samples when it helps.",
+  },
+  {
+    question: "Do you help with HOA material requirements?",
+    answer:
+      "Yes. Many Wake County HOAs prefer certain vinyl colors or wood styles. Share your guidelines early—we’ll quote materials that are more likely to pass review.",
+  },
+  {
+    question: "Can I mix materials—like wood privacy with aluminum gates?",
+    answer:
+      "Often yes. Mixed systems can look sharp and solve practical needs (wider driveway openings, pool codes). We’ll design hardware and posts so the transition feels intentional.",
+  },
+] as const;
+
+/** Financing page — educational only; no lender API. */
+export const financingOptions = [
+  {
+    id: "pay-as-you-go",
+    title: "Pay as you go",
+    summary: "Deposit to schedule, balance due at walkthrough.",
+    details:
+      "Most residential projects use a simple deposit to lock materials and a crew date, with the remainder due when we complete the walkthrough. Exact terms appear on your written estimate.",
+    goodFor: "Homeowners ready to fund the project from savings or a home-improvement budget.",
+  },
+  {
+    id: "phased",
+    title: "Phased projects",
+    summary: "Split larger scopes into sensible stages.",
+    details:
+      "Long fence lines or deck + fence combos can sometimes be phased—secure the priority side first, then finish the rest on a later schedule. Phasing is planned up front so materials and grades match.",
+    goodFor: "Larger properties or households spreading cost across seasons.",
+  },
+  {
+    id: "third-party",
+    title: "Third-party financing (optional)",
+    summary: "Ask about consumer financing partners when available.",
+    details:
+      "When partners are available, we can point you to third-party consumer financing applications. Approval, rates, and terms are between you and the lender—Kaba Fence does not set credit decisions or collect loan payments through this site.",
+    goodFor: "Shoppers who prefer monthly payments through a lender they choose.",
+  },
+] as const;
+
+export const financingFaqs = [
+  {
+    question: "Do you offer in-house loans or credit cards?",
+    answer:
+      "No. We don’t operate a lender or store credit product. We provide clear written estimates and standard deposit/balance billing. Optional third-party financing—when available—is handled by the lender, not through this website.",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer:
+      "Typically check, card, or bank transfer as listed on your estimate or invoice. We’ll confirm accepted methods before work begins.",
+  },
+  {
+    question: "Is financing required to get a quote?",
+    answer:
+      "Never. Free on-site estimates are no-obligation and do not require a financing application.",
+  },
+  {
+    question: "Can I change payment approach after the estimate?",
+    answer:
+      "Usually yes, as long as we confirm terms before materials are ordered. Tell us early if you’re exploring a lender so scheduling stays smooth.",
+  },
+] as const;
+
+/** Warranty & care — synthetic professional copy for demo. */
+export const warrantyHighlights = [
+  {
+    title: "Workmanship",
+    body: "We stand behind our installation workmanship. If a workmanship issue appears within the stated workmanship period on your contract, we’ll make it right.",
+  },
+  {
+    title: "Manufacturer coverage",
+    body: "Vinyl, aluminum, composite, and many hardware lines carry manufacturer warranties. We’ll help you understand what the maker covers versus what we cover as the installer.",
+  },
+  {
+    title: "What’s excluded",
+    body: "Storm damage, vehicle impact, ground movement beyond normal, misuse, and unfinished homeowner maintenance items typically fall outside workmanship coverage. Your written warranty lists specifics.",
+  },
+] as const;
+
+export const careGuides = [
+  {
+    material: "Wood fences & decks",
+    tips: [
+      "Keep soil and mulch from burying the bottom rail or post bases.",
+      "Rinse pollen and mildew in spring; allow lumber to dry before sealing.",
+      "Re-seal or stain on the cadence we recommend for your species and sun exposure.",
+      "Call us if gates sag or posts shift after a major storm—early fixes are cheaper.",
+    ],
+  },
+  {
+    material: "Vinyl fencing",
+    tips: [
+      "Rinse with a garden hose; mild soap for stubborn spots.",
+      "Avoid abrasive pads and harsh solvents that can haze the finish.",
+      "Keep sprinklers from soaking the same panel endlessly.",
+      "Inspect latches and hinges seasonally so gates keep swinging true.",
+    ],
+  },
+  {
+    material: "Aluminum & chain-link",
+    tips: [
+      "Rinse road dust and fertilizer overspray.",
+      "Check tension bands and post caps after high winds.",
+      "Touch up chips in powder coat promptly to protect the metal.",
+      "Keep vines from overgrowing mesh if you want easy inspection access.",
+    ],
+  },
+  {
+    material: "Composite decks",
+    tips: [
+      "Sweep or blow off debris; wash with manufacturer-approved cleaner.",
+      "Use furniture pads to limit scuffs on high-traffic paths.",
+      "Ensure drainage under the deck stays clear.",
+      "Follow the brand’s guidance before using pressure washers.",
+    ],
+  },
+] as const;
+
+export const warrantyFaqs = [
+  {
+    question: "How long is the workmanship warranty?",
+    answer:
+      "Workmanship duration is stated on your project contract and can vary by scope (fence vs. deck). Ask during your estimate if you need the term in writing before you book.",
+  },
+  {
+    question: "Does warranty cover fading or weathering?",
+    answer:
+      "Natural wood weathering and UV effects are expected. Color-fade and material defects are usually handled under the manufacturer’s warranty when one applies—not as a failure of installation.",
+  },
+  {
+    question: "How do I start a warranty request?",
+    answer:
+      "Call or email with your name, project address, approximate install date, and photos. We’ll confirm coverage and schedule a visit if needed.",
+  },
 ] as const;
 
 /** Legal / utility links shown in footer bottom bar. */

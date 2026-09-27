@@ -3,7 +3,7 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
-import { siteConfig } from "@/lib/site";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Privacy Policy";
 const description = `How ${siteConfig.name} handles information you share through our website, quote form, and phone or email contact. Serving Angier and Raleigh NC.`;
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: `${title} | ${siteConfig.name}`,
     description,
     url: "/privacy",
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
   twitter: {
     card: "summary",

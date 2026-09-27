@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { serviceTowns, siteConfig } from "@/lib/site";
+import { defaultOgImage, serviceTowns, siteConfig } from "@/lib/site";
 
 const title = "Service Area";
 const description = `Fence and deck installation & repair serving Angier, Raleigh, Fuquay-Varina, Holly Springs, Clayton, and surrounding NC communities from ${siteConfig.name}.`;
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
 };
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
-import { siteConfig } from "@/lib/site";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Terms of Use";
 const description = `Website terms for ${siteConfig.name}—fence and deck contractor serving Angier, Raleigh, and surrounding North Carolina communities.`;
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: `${title} | ${siteConfig.name}`,
     description,
     url: "/terms",
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
   twitter: {
     card: "summary",

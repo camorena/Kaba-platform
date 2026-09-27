@@ -2,18 +2,26 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import GalleryGrid from "@/components/GalleryGrid";
 import Reveal from "@/components/Reveal";
-import { siteConfig } from "@/lib/site";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Project Gallery";
-const description = `See fence and deck projects by ${siteConfig.name} serving Angier, Raleigh NC, and surrounding areas.`;
+const description = `Browse fence and deck projects by ${siteConfig.name}—including before/after pairs—serving Angier, Raleigh NC, and surrounding areas.`;
 
 export const metadata: Metadata = {
   title,
   description,
+  alternates: { canonical: "/gallery" },
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    url: "/gallery",
+    images: [defaultOgImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${title} | ${siteConfig.name}`,
+    description,
+    images: [defaultOgImage.url],
   },
 };
 
@@ -27,9 +35,9 @@ export default function GalleryPage() {
             Project gallery
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            Example fence and deck projects from around Angier, Raleigh, and
-            nearby communities. Browse recent installs and repairs completed by
-            our local crew.
+            Fence and deck projects from around Angier, Raleigh, and nearby
+            communities. Toggle Before / After on select jobs to see the
+            transformation—then request a free quote for your own yard.
           </p>
         </div>
       </section>
@@ -51,8 +59,8 @@ export default function GalleryPage() {
             <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
               Get a Free Quote
             </Link>
-            <Link href="/services" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
-              View services
+            <Link href="/materials" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
+              Materials guide
             </Link>
           </div>
         </Reveal>

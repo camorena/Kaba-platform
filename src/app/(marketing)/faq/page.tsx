@@ -4,7 +4,7 @@ import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/jsonld";
-import { faqs, siteConfig } from "@/lib/site";
+import { defaultOgImage, faqs, siteConfig } from "@/lib/site";
 
 const title = "Frequently Asked Questions";
 const description = `Answers about fence timelines, permits, materials, deck repairs, and service area from ${siteConfig.name} in Angier and Raleigh NC.`;
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: `${title} | ${siteConfig.name}`,
     description,
     url: "/faq",
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
   twitter: {
     card: "summary",

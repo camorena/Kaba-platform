@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { siteConfig, testimonials } from "@/lib/site";
+import { defaultOgImage, siteConfig, testimonials } from "@/lib/site";
 
 const title = "Customer Reviews";
 const description = `Read what Angier, Raleigh, and nearby NC homeowners say about fence and deck work from ${siteConfig.name}.`;
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
 };
 

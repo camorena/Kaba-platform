@@ -206,57 +206,114 @@ export default function QuoteForm() {
   }
 
   if (submitted) {
+    const contactVia =
+      form.preferredContact === "email"
+        ? "email"
+        : form.preferredContact === "text"
+          ? "text"
+          : "phone";
+    const submittedAt = new Date().toLocaleString("en-US", {
+      timeZone: "America/Chicago",
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+
     return (
       <div
-        className="card-static min-w-0 p-6 text-center sm:p-8 md:p-10"
+        className="quote-confirm card-static min-w-0 p-6 sm:p-8 md:p-10"
         role="status"
         aria-live="polite"
       >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-bronze/20 to-bronze/10 text-bronze-dark shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_50%,transparent),0_4px_14px_color-mix(in_srgb,var(--bronze)_18%,transparent)] dark:text-bronze-light">
-          <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
+        <div className="print:hidden text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-bronze/20 to-bronze/10 text-bronze-dark shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_50%,transparent),0_4px_14px_color-mix(in_srgb,var(--bronze)_18%,transparent)] dark:text-bronze-light">
+            <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight text-ink">
+            Request received
+          </h2>
+          <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">
+            Thanks, {form.name.split(" ")[0]}! We&apos;ll review your{" "}
+            {form.serviceType.toLowerCase()} project in {form.address} and get
+            back to you by {contactVia} soon. For faster help, call{" "}
+            <a href={siteConfig.phoneHref} className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline">
+              {siteConfig.phone}
+            </a>
+            .
+          </p>
         </div>
-        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight text-ink">
-          Request received
-        </h2>
-        <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">
-          Thanks, {form.name.split(" ")[0]}! We&apos;ll review your{" "}
-          {form.serviceType.toLowerCase()} project in {form.address} and get
-          back to you by {form.preferredContact === "email" ? "email" : form.preferredContact === "text" ? "text" : "phone"}{" "}
-          soon. For faster help, call{" "}
-          <a href={siteConfig.phoneHref} className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline">
-            {siteConfig.phone}
-          </a>
-          .
-        </p>
-        <dl className="mx-auto mt-6 max-w-sm rounded-xl border border-ink/[0.08] bg-ivory-muted/60 px-4 py-3 text-left text-sm dark:border-cream/10">
-          <div className="flex justify-between gap-3 py-1.5">
-            <dt className="text-muted">Service</dt>
-            <dd className="font-medium text-ink">{form.serviceType}</dd>
+
+        <div className="quote-confirm-sheet mt-6 rounded-xl border border-ink/[0.08] bg-ivory-muted/60 px-4 py-4 text-left dark:border-cream/10 sm:px-5">
+          <div className="hidden print:block">
+            <p className="font-display text-xl font-semibold text-ink">
+              {siteConfig.name} — Quote request summary
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              {siteConfig.phone} · {siteConfig.email}
+            </p>
           </div>
-          <div className="flex justify-between gap-3 border-t border-ink/[0.06] py-1.5 dark:border-cream/10">
-            <dt className="text-muted">Location</dt>
-            <dd className="font-medium text-ink text-right">{form.address}</dd>
+          <div className="flex flex-wrap items-baseline justify-between gap-2 print:mt-4">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
+              Confirmation summary
+            </p>
+            <p className="text-xs text-muted">Submitted {submittedAt} CT</p>
           </div>
-          <div className="flex justify-between gap-3 border-t border-ink/[0.06] py-1.5 dark:border-cream/10">
-            <dt className="text-muted">Contact via</dt>
-            <dd className="font-medium capitalize text-ink">{form.preferredContact}</dd>
-          </div>
-        </dl>
-        <button
-          type="button"
-          onClick={() => {
-            setForm(initial);
-            setSubmitted(false);
-            setErrors({});
-            setAttempted(false);
-            setStep(0);
-          }}
-          className="focus-ring btn-secondary-light mt-7 w-full sm:w-auto"
-        >
-          Submit another request
-        </button>
+          <dl className="mt-3 space-y-0 text-sm">
+            {[
+              ["Name", form.name],
+              ["Phone", form.phone],
+              ["Email", form.email],
+              ["Service", form.serviceType],
+              ["Location", form.address],
+              ["Contact via", form.preferredContact],
+              ["Project notes", form.description],
+            ].map(([label, value], i) => (
+              <div
+                key={label}
+                className={`grid gap-1 py-2.5 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:gap-4 ${
+                  i > 0 ? "border-t border-ink/[0.06] dark:border-cream/10" : ""
+                }`}
+              >
+                <dt className="font-medium text-muted">{label}</dt>
+                <dd className="font-medium capitalize text-ink sm:normal-case whitespace-pre-wrap">
+                  {label === "Contact via" ? (
+                    <span className="capitalize">{value}</span>
+                  ) : (
+                    value
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-3 border-t border-ink/[0.06] pt-3 text-xs leading-relaxed text-muted dark:border-cream/10">
+            This is a request confirmation—not a binding estimate.{" "}
+            {siteConfig.name} will follow up to schedule a free on-site visit.
+          </p>
+        </div>
+
+        <div className="print:hidden mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="focus-ring btn-primary w-full sm:w-auto"
+          >
+            Print / save PDF
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setForm(initial);
+              setSubmitted(false);
+              setErrors({});
+              setAttempted(false);
+              setStep(0);
+            }}
+            className="focus-ring btn-secondary-light w-full sm:w-auto"
+          >
+            Submit another request
+          </button>
+        </div>
       </div>
     );
   }

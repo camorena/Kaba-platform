@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { companyValues, siteConfig, trustPoints } from "@/lib/site";
+import { defaultOgImage, companyValues, siteConfig, trustPoints } from "@/lib/site";
 
 const title = "About Our Crew";
 const description = `Meet ${siteConfig.name}—a local Angier & Raleigh NC fence and deck crew focused on clear estimates, solid craftsmanship, and clean job sites.`;
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
 };
 

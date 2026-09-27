@@ -101,7 +101,7 @@ export default function AdminShell({
             );
           })}
         </nav>
-        <div className="min-w-0">{children}</div>
+        <div className="admin-panel min-w-0 rounded-2xl border border-ink/8 bg-transparent lg:border-0">{children}</div>
       </div>
     </div>
   );

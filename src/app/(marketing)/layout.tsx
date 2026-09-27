@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import FloatingCta from "@/components/FloatingCta";
 import JsonLd from "@/components/JsonLd";
+import PageTransition from "@/components/PageTransition";
 import { localBusinessJsonLd, websiteJsonLd } from "@/lib/jsonld";
 
 export default function MarketingLayout({
@@ -21,7 +22,7 @@ export default function MarketingLayout({
       </a>
       <Header />
       <main id="main" className="flex-1" tabIndex={-1}>
-        {children}
+        <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
       <FloatingCta />

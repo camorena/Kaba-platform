@@ -4,12 +4,7 @@ import FaqAccordion from "@/components/FaqAccordion";
 import Reveal from "@/components/Reveal";
 import ServiceIcon from "@/components/ServiceIcon";
 import ServicesSubnav from "@/components/ServicesSubnav";
-import {
-  deckServices,
-  fencingServices,
-  howItWorks,
-  siteConfig,
-} from "@/lib/site";
+import { defaultOgImage, deckServices, fencingServices, howItWorks, siteConfig } from "@/lib/site";
 
 const title = "Fence & Deck Services";
 const description = `Wood, vinyl, chain-link, aluminum fencing and deck repair, rebuilds, and new builds from ${siteConfig.name} in Angier and Raleigh NC.`;
@@ -20,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${title} | ${siteConfig.name}`,
     description,
-    images: [{ url: "/gallery/cedar-privacy.jpg" }],
+    images: [defaultOgImage],
   },
 };
 

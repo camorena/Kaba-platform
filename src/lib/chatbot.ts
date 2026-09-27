@@ -213,12 +213,40 @@ export function getBotReply(rawInput: string): ChatReply {
     };
   }
 
+  // Materials guide
+  if (includesAny(q, ["material", "cedar", "vinyl", "composite", "which wood", "aluminum fence"])) {
+    return {
+      text: `We install cedar, pressure-treated wood, vinyl, aluminum/ornamental, chain-link, and composite decking chosen for Carolina weather. Compare options on our materials guide, or ask for samples during your free estimate.`,
+      suggestions: ["Get a quote", "Fence services", "Deck services"],
+      cta: { label: "Materials guide", href: "/materials" },
+    };
+  }
+
+  // Financing
+  if (includesAny(q, ["financ", "payment plan", "monthly payment", "deposit", "loan", "credit"])) {
+    return {
+      text: `Most projects use a deposit to schedule and balance at walkthrough. Phased scopes are sometimes possible. Optional third-party financing—when available—is between you and the lender; we don't run credit decisions on this site. See our financing page for details.`,
+      suggestions: ["Get a quote", "Hours & contact"],
+      cta: { label: "Financing options", href: "/financing" },
+    };
+  }
+
+  // Warranty / care
+  if (includesAny(q, ["warranty", "guarantee", "care tip", "maintain", "maintenance"])) {
+    return {
+      text: `We stand behind our workmanship as stated on your contract, and manufacturer warranties often cover materials like vinyl, aluminum, and composite. Care tips for wood, vinyl, and decks are on our warranty & care page.`,
+      suggestions: ["Get a quote", "Materials", "Hours & contact"],
+      cta: { label: "Warranty & care", href: "/warranty" },
+    };
+  }
+
   // Trust / about
-  if (includesAny(q, ["about", "why", "trust", "local", "who are", "warranty", "guarantee"])) {
+  if (includesAny(q, ["about", "why", "trust", "local", "who are"])) {
     const points = trustPoints.map((t) => t.label).join(" · ");
     return {
       text: `${siteConfig.name} — ${siteConfig.tagline}. ${siteConfig.description} What homeowners value: ${points}.`,
       suggestions: ["Get a quote", "Fence services", "Deck services"],
+      cta: { label: "About our crew", href: "/about" },
     };
   }
 

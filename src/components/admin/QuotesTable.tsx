@@ -1,5 +1,6 @@
 "use client";
 
+import EmptyState from "@/components/admin/EmptyState";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { QuoteRecord, QuoteStatus } from "@/lib/admin/quotes-store";
@@ -11,6 +12,14 @@ const statuses: QuoteStatus[] = [
   "won",
   "lost",
 ];
+
+const statusTone: Record<QuoteStatus, string> = {
+  new: "bg-sky-500/15 text-sky-900 dark:text-sky-200",
+  contacted: "bg-violet-500/15 text-violet-900 dark:text-violet-200",
+  scheduled: "bg-amber-500/15 text-amber-950 dark:text-amber-100",
+  won: "bg-emerald-500/15 text-emerald-900 dark:text-emerald-200",
+  lost: "bg-ink/8 text-muted",
+};
 
 export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
   const router = useRouter();
@@ -32,79 +41,93 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
 
   if (quotes.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-ink/15 bg-surface px-4 py-10 text-center text-sm text-muted">
-        No quotes yet. Submissions from <code>/quote</code> will appear here
-        (in-memory store — resets on cold starts until a DB is wired).
-      </p>
+      <EmptyState
+        title="No quotes yet"
+        description="Submissions from /quote will appear here. This demo uses an in-memory store—it resets on cold starts until a database is wired."
+      />
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-ink/10 bg-surface shadow-sm">
-      <table className="min-w-full text-left text-sm">
-        <thead className="border-b border-ink/10 bg-ivory-muted/60 text-[0.6875rem] uppercase tracking-wider text-muted">
-          <tr>
-            <th className="px-3 py-2.5 font-semibold">Received</th>
-            <th className="px-3 py-2.5 font-semibold">Contact</th>
-            <th className="px-3 py-2.5 font-semibold">Service</th>
-            <th className="px-3 py-2.5 font-semibold">Location</th>
-            <th className="px-3 py-2.5 font-semibold">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {quotes.map((q) => (
-            <tr key={q.id} className="border-b border-ink/5 align-top last:border-0">
-              <td className="whitespace-nowrap px-3 py-3 text-muted">
-                {new Date(q.createdAt).toLocaleString("en-US", {
-                  timeZone: "America/Chicago",
-                  month: "short",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}
-                <div className="mt-0.5 text-[0.6875rem] text-muted-light">
-                  {q.source}
-                </div>
-              </td>
-              <td className="px-3 py-3">
-                <div className="font-semibold text-ink">{q.name}</div>
-                <div className="text-muted">{q.phone}</div>
-                <div className="text-muted">{q.email}</div>
-                <div className="mt-1 text-[0.6875rem] capitalize text-muted-light">
-                  Prefer {q.preferredContact}
-                </div>
-              </td>
-              <td className="px-3 py-3">
-                <div className="font-medium text-ink">{q.serviceType}</div>
-                <p className="mt-1 max-w-xs text-xs leading-relaxed text-muted">
-                  {q.description}
-                </p>
-              </td>
-              <td className="px-3 py-3 text-muted">{q.address}</td>
-              <td className="px-3 py-3">
-                <label className="sr-only" htmlFor={`status-${q.id}`}>
-                  Status for {q.name}
-                </label>
-                <select
-                  id={`status-${q.id}`}
-                  className="field-input mt-0 py-1.5 text-xs"
-                  value={q.status}
-                  disabled={busyId === q.id}
-                  onChange={(e) =>
-                    void setStatus(q.id, e.target.value as QuoteStatus)
-                  }
-                >
-                  {statuses.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </td>
+    <div className="admin-table-wrap overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-sm">
+      <div className="overflow-x-auto">
+        <table className="admin-table min-w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-ink/10 bg-ivory-muted/70 text-[0.6875rem] uppercase tracking-wider text-muted">
+              <th className="px-4 py-3 font-semibold">Received</th>
+              <th className="px-4 py-3 font-semibold">Contact</th>
+              <th className="px-4 py-3 font-semibold">Service</th>
+              <th className="px-4 py-3 font-semibold">Location</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {quotes.map((q) => (
+              <tr
+                key={q.id}
+                className="border-b border-ink/5 align-top transition-colors last:border-0 hover:bg-ivory-muted/40"
+              >
+                <td className="whitespace-nowrap px-4 py-3.5 text-muted">
+                  {new Date(q.createdAt).toLocaleString("en-US", {
+                    timeZone: "America/Chicago",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                  <div className="mt-1">
+                    <span className="rounded-full bg-ivory-muted px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-muted-light">
+                      {q.source}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-4 py-3.5">
+                  <div className="font-semibold text-ink">{q.name}</div>
+                  <div className="mt-0.5 text-muted">{q.phone}</div>
+                  <div className="text-muted">{q.email}</div>
+                  <div className="mt-1.5 text-[0.6875rem] capitalize text-muted-light">
+                    Prefer {q.preferredContact}
+                  </div>
+                </td>
+                <td className="px-4 py-3.5">
+                  <div className="font-medium text-ink">{q.serviceType}</div>
+                  <p className="mt-1.5 max-w-xs text-xs leading-relaxed text-muted line-clamp-3">
+                    {q.description}
+                  </p>
+                </td>
+                <td className="px-4 py-3.5 text-muted">{q.address}</td>
+                <td className="px-4 py-3.5">
+                  <label className="sr-only" htmlFor={`status-${q.id}`}>
+                    Status for {q.name}
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    <span
+                      className={`inline-flex w-fit rounded-full px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide ${statusTone[q.status]}`}
+                    >
+                      {q.status}
+                    </span>
+                    <select
+                      id={`status-${q.id}`}
+                      className="field-input mt-0 max-w-[9.5rem] py-1.5 text-xs"
+                      value={q.status}
+                      disabled={busyId === q.id}
+                      onChange={(e) =>
+                        void setStatus(q.id, e.target.value as QuoteStatus)
+                      }
+                    >
+                      {statuses.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

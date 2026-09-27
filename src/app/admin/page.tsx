@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
+import EmptyState from "@/components/admin/EmptyState";
 import { requireAdmin } from "@/lib/admin/guard";
 import { listQuotes, quoteStats } from "@/lib/admin/quotes-store";
 
@@ -25,7 +26,7 @@ export default async function AdminDashboardPage() {
           Dashboard
         </h1>
         <p className="mt-1 text-sm text-muted">
-          Overview of quote pipeline. Invoices and payments are placeholders.
+          Quote pipeline overview. Invoices and payments remain placeholders.
         </p>
       </header>
 
@@ -34,12 +35,12 @@ export default async function AdminDashboardPage() {
           <li key={c.label}>
             <Link
               href={c.href}
-              className="block rounded-xl border border-ink/10 bg-surface p-4 shadow-sm transition hover:border-bronze/40"
+              className="group block rounded-2xl border border-ink/10 bg-surface p-4 shadow-sm transition hover:border-bronze/40 hover:shadow-md"
             >
               <p className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
                 {c.label}
               </p>
-              <p className="mt-2 font-display text-3xl font-semibold text-ink">
+              <p className="mt-2 font-display text-3xl font-semibold text-ink transition group-hover:text-bronze-dark dark:group-hover:text-bronze-light">
                 {c.value}
               </p>
             </Link>
@@ -59,49 +60,54 @@ export default async function AdminDashboardPage() {
             View all
           </Link>
         </div>
-        <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-surface">
-          {recent.map((q) => (
-            <li
-              key={q.id}
-              className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3 text-sm"
-            >
-              <div>
-                <span className="font-semibold text-ink">{q.name}</span>
-                <span className="text-muted"> · {q.serviceType}</span>
-              </div>
-              <span className="rounded-full bg-ivory-muted px-2 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-ink">
-                {q.status}
-              </span>
-            </li>
-          ))}
-        </ul>
+        {recent.length === 0 ? (
+          <EmptyState
+            title="Pipeline is empty"
+            description="When homeowners submit the public quote form, recent entries will show here."
+          />
+        ) : (
+          <ul className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-sm">
+            {recent.map((q) => (
+              <li
+                key={q.id}
+                className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3.5 text-sm transition hover:bg-ivory-muted/50"
+              >
+                <div>
+                  <span className="font-semibold text-ink">{q.name}</span>
+                  <span className="text-muted"> · {q.serviceType}</span>
+                </div>
+                <span className="rounded-full bg-ivory-muted px-2.5 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-ink ring-1 ring-ink/5">
+                  {q.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="mt-8 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-dashed border-ink/15 bg-surface/70 p-4">
+        <Link
+          href="/admin/invoices"
+          className="rounded-2xl border border-dashed border-ink/15 bg-surface/80 p-5 transition hover:border-bronze/35 hover:bg-surface"
+        >
           <h2 className="text-sm font-bold text-ink">Invoices</h2>
-          <p className="mt-1 text-sm text-muted">
-            Placeholder — not live yet.
-          </p>
-          <Link
-            href="/admin/invoices"
-            className="mt-3 inline-block text-sm font-semibold text-bronze-dark dark:text-bronze-light"
-          >
+          <p className="mt-1 text-sm text-muted">Placeholder — not live yet.</p>
+          <span className="mt-3 inline-block text-sm font-semibold text-bronze-dark dark:text-bronze-light">
             Open →
-          </Link>
-        </div>
-        <div className="rounded-xl border border-dashed border-ink/15 bg-surface/70 p-4">
+          </span>
+        </Link>
+        <Link
+          href="/admin/payments"
+          className="rounded-2xl border border-dashed border-ink/15 bg-surface/80 p-5 transition hover:border-bronze/35 hover:bg-surface"
+        >
           <h2 className="text-sm font-bold text-ink">Payments</h2>
           <p className="mt-1 text-sm text-muted">
             Placeholder — Stripe / ACH wiring pending.
           </p>
-          <Link
-            href="/admin/payments"
-            className="mt-3 inline-block text-sm font-semibold text-bronze-dark dark:text-bronze-light"
-          >
+          <span className="mt-3 inline-block text-sm font-semibold text-bronze-dark dark:text-bronze-light">
             Open →
-          </Link>
-        </div>
+          </span>
+        </Link>
       </section>
     </AdminShell>
   );

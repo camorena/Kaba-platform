@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Fraunces, Geist_Mono } from "next/font/google";
 import ThemeProvider from "@/components/ThemeProvider";
 import Analytics from "@/components/Analytics";
-import { siteConfig, siteUrl } from "@/lib/site";
+import { defaultOgImage, siteConfig, siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -65,20 +65,13 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
     description: defaultDescription,
-    images: [
-      {
-        url: "/gallery/cedar-privacy.jpg",
-        width: 1280,
-        height: 720,
-        alt: "Cedar privacy fence installation by Kaba Fence",
-      },
-    ],
+    images: [defaultOgImage],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
     description: defaultDescription,
-    images: ["/gallery/cedar-privacy.jpg"],
+    images: [defaultOgImage.url],
   },
   robots: {
     index: true,
