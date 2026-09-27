@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand palette — navy ink, logo orange #f7a823, clean ivory */
-  --ink: #0b111a;
-  --ink-dark: #05080e;
-  --ink-light: #182233;
+  /* Brand palette — navy ink, orange-gold accent, clean ivory */
+  --ink: #0c121c;
+  --ink-dark: #060a11;
+  --ink-light: #1a2535;
   --bronze: #f7a823;
-  --bronze-dark: #c97a0c;
-  --bronze-light: #fbc65a;
-  --ivory: #f7f5f0;
-  --ivory-muted: #ebe6dc;
+  --bronze-dark: #d4890f;
+  --bronze-light: #fbd089;
+  --ivory: #f6f4ef;
+  --ivory-muted: #ebe7de;
   --surface: #ffffff;
-  --stone: #d2ccc0;
-  --muted: #4a5460;
-  --muted-light: #7a8490;
-  --border: color-mix(in srgb, var(--ink) 10%, transparent);
+  --stone: #d4cfc4;
+  --muted: #55606c;
+  --muted-light: #87919c;
+  --border: color-mix(in srgb, var(--ink) 9%, transparent);
   --danger: #b42318;
   --danger-bg: #fef3f2;
   --gray-50: #f8f7f5;
@@ -25,17 +25,15 @@
   --gray-600: #4e5663;
   --gray-700: #343c48;
   --gray-800: #1c2430;
-  --gray-900: #0b111a;
+  --gray-900: #0c121c;
   --white: #ffffff;
   --background: var(--ivory);
   --foreground: var(--ink);
   /* Sticky header clearance for scroll-into-view / client navigations */
-  --header-offset: 4.25rem;
-  /* Spacing rhythm — intentional, not uniform */
-  --section-y: 3.5rem;
-  --section-y-lg: 6.5rem;
-    --section-y-tight: 2.75rem;
-  --section-y-tight-lg: 4.5rem;
+  --header-offset: 4rem;
+  /* Spacing rhythm */
+  --section-y: 3.25rem;
+  --section-y-lg: 6rem;
   /* Elevation */
   --shadow-xs: 0 1px 2px color-mix(in srgb, var(--ink) 5%, transparent);
   --shadow-sm:
@@ -75,15 +73,14 @@
 
 @media (min-width: 640px) {
   :root {
-    --section-y: 4.5rem;
-    --section-y-tight: 3.25rem;
-    --header-offset: 4.5rem;
+    --section-y: 4rem;
+    --header-offset: 4.25rem;
   }
 }
 
 @media (min-width: 1024px) {
   :root {
-    --header-offset: 4.75rem;
+    --header-offset: 4.5rem;
   }
 }
 
