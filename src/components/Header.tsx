@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -41,13 +42,14 @@ export default function Header() {
           className="focus-ring group flex min-w-0 shrink items-center gap-2 rounded-md sm:gap-2.5"
           onClick={() => setOpen(false)}
         >
-          <span
-            aria-hidden
-            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold tracking-wide text-ivory shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_14%,transparent),0_2px_8px_color-mix(in_srgb,var(--ink)_22%,transparent)]"
-          >
-            KF
-            <span className="absolute inset-x-2 bottom-1 h-0.5 rounded-full bg-bronze/90" />
-          </span>
+          <Image
+            src="/brand/kaba-fence-icon.png"
+            alt="Kaba Fence"
+            width={40}
+            height={40}
+            className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
+            priority
+          />
           <span className="truncate font-display text-base font-semibold tracking-tight text-ink transition group-hover:text-ink-light sm:text-lg">
             {siteConfig.name}
           </span>

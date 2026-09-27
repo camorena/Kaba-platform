@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  /* Luxury contractor palette — cool ink, champagne bronze, clean ivory */
+  /* Brand palette — navy ink, orange-gold accent, clean ivory */
   --ink: #0c121c;
   --ink-dark: #060a11;
   --ink-light: #1a2535;
-  --bronze: #cba46f;
-  --bronze-dark: #9a7345;
-  --bronze-light: #e8d5b3;
+  --bronze: #f7a823;
+  --bronze-dark: #d4890f;
+  --bronze-light: #fbd089;
   --ivory: #f6f4ef;
   --ivory-muted: #ebe7de;
   --surface: #ffffff;
@@ -45,7 +45,7 @@
   --shadow-lg:
     0 8px 16px color-mix(in srgb, var(--ink) 6%, transparent),
     0 24px 48px color-mix(in srgb, var(--ink) 10%, transparent);
-  --shadow-bronze: 0 6px 22px color-mix(in srgb, var(--bronze) 34%, transparent);
+  --shadow-bronze: 0 6px 22px color-mix(in srgb, var(--bronze) 42%, transparent);
   --glow-bronze: 0 0 56px color-mix(in srgb, var(--bronze) 24%, transparent);
 }
 
@@ -549,9 +549,9 @@ h3 {
   font-size: 0.875rem;
   font-weight: 650;
   letter-spacing: 0.015em;
-  color: #fff;
+  color: var(--ink);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #fff 26%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent),
     var(--shadow-bronze);
   transition:
     filter 180ms ease,
@@ -695,9 +695,9 @@ h3 {
   font-family: var(--font-display), Georgia, serif;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--ink);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #fff 25%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent),
     var(--shadow-bronze);
 }
 

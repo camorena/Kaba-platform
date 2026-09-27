@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { navLinks, siteConfig } from "@/lib/site";
 
@@ -8,18 +9,19 @@ export default function Footer() {
     <footer className="band-dark mt-auto border-t border-white/[0.06]">
       <div className="container-page relative grid gap-10 py-12 sm:gap-12 sm:py-14 md:grid-cols-2 lg:grid-cols-3">
         <div className="md:col-span-2 lg:col-span-1">
-          <div className="flex items-center gap-2.5">
-            <span
-              aria-hidden
-              className="flex h-8 w-8 items-center justify-center rounded-md bg-bronze/20 text-xs font-bold tracking-wide text-bronze-light"
-            >
-              KF
-            </span>
-            <p className="font-display text-xl font-semibold tracking-tight">
-              {siteConfig.name}
-            </p>
-          </div>
-          <p className="mt-2 text-sm text-ivory/75">{siteConfig.tagline}</p>
+          <Link
+            href="/"
+            className="focus-ring inline-flex rounded-md"
+          >
+            <Image
+              src="/brand/kaba-fence-logo.png"
+              alt="Kaba Fence"
+              width={140}
+              height={144}
+              className="h-16 w-auto object-contain sm:h-[4.5rem]"
+            />
+          </Link>
+          <p className="mt-3 text-sm text-ivory/75">{siteConfig.tagline}</p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/55">
             Proudly serving {siteConfig.serviceArea}.
           </p>
