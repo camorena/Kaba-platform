@@ -177,6 +177,11 @@ export default function ServicesPage() {
           <Reveal className="mx-auto mt-8 max-w-3xl sm:mt-10" delay={80}>
             <FaqAccordion />
           </Reveal>
+          <Reveal className="mt-6 text-center" delay={120}>
+            <Link href="/faq" className="focus-ring btn-ghost inline-flex min-h-11 items-center">
+              View all FAQs →
+            </Link>
+          </Reveal>
         </div>
       </section>
 

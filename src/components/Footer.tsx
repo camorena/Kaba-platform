@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { navLinks, siteConfig } from "@/lib/site";
+import { footerLinks, navLinks, siteConfig } from "@/lib/site";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -34,6 +34,16 @@ export default function Footer() {
           <span className="mt-2.5 block h-px w-8 bg-bronze/50" aria-hidden />
           <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-1 sm:gap-y-1.5">
             {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="focus-ring -mx-1 inline-flex min-h-10 items-center rounded px-1 text-sm text-cream/85 transition hover:text-cream"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+            {footerLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}

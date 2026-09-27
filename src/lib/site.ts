@@ -22,11 +22,21 @@ export const siteConfig = {
   },
 } as const;
 
+/** Primary header + footer nav (kept lean for mobile). */
 export const navLinks = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/quote", label: "Get a Quote" },
+  { href: "/about", label: "About" },
+  { href: "/reviews", label: "Reviews" },
+  { href: "/quote", label: "Quote" },
+] as const;
+
+/** Secondary links — footer (+ optional secondary surfaces). */
+export const footerLinks = [
+  { href: "/service-area", label: "Service area" },
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/faq", label: "FAQ" },
 ] as const;
 
 export const fencingServices = [
@@ -152,6 +162,7 @@ export const galleryProjects = [
   },
 ] as const;
 
+/** Compact 3-step summary used on home + services. */
 export const howItWorks = [
   {
     step: "1",
@@ -173,11 +184,129 @@ export const howItWorks = [
   },
 ] as const;
 
+/** Full process timeline for /how-it-works. */
+export const processTimeline = [
+  {
+    step: "01",
+    title: "Estimate",
+    eyebrow: "Free on-site visit",
+    description:
+      "Share your goals online or by phone. We schedule a free visit, measure carefully, and deliver a clear written estimate with material options that fit Angier and Raleigh homes.",
+  },
+  {
+    step: "02",
+    title: "Design",
+    eyebrow: "Materials & layout",
+    description:
+      "Together we lock in style, height, gates, and finishes—wood, vinyl, chain-link, aluminum, or deck systems—plus any HOA or permit considerations for your neighborhood.",
+  },
+  {
+    step: "03",
+    title: "Build",
+    eyebrow: "Crafted on schedule",
+    description:
+      "Our local crew installs or repairs on the agreed timeline. We protect landscaping, set posts and framing properly, and keep the job site organized every day.",
+  },
+  {
+    step: "04",
+    title: "Walkthrough",
+    eyebrow: "Clean finish",
+    description:
+      "We walk the finished fence or deck with you, adjust gates and hardware, haul debris, and make sure everything feels solid before we leave.",
+  },
+] as const;
+
 export const trustPoints = [
   { label: "Local to Angier & Raleigh" },
   { label: "Free On-Site Estimates" },
   { label: "Quality Materials" },
   { label: "Clean Job Sites" },
+] as const;
+
+export const companyValues = [
+  {
+    title: "Local & accountable",
+    description:
+      "We’re based in Angier and work across the Raleigh area. When you call, you’re talking to the crew that shows up—not a national call center.",
+  },
+  {
+    title: "Clear estimates",
+    description:
+      "Written quotes with materials, scope, and timeline spelled out. No vague ranges, no surprise line items after the posts are set.",
+  },
+  {
+    title: "Built for Carolina weather",
+    description:
+      "We specify lumber, fasteners, and finishes that hold up to heat, humidity, and storms—so your fence or deck lasts.",
+  },
+  {
+    title: "Job sites left clean",
+    description:
+      "Cut-offs hauled, lawn protected, gates swinging true. Neighbors should notice the new fence—not the mess.",
+  },
+] as const;
+
+export const serviceTowns = [
+  {
+    name: "Angier",
+    region: "Harnett County",
+    note: "Home base — fence installs, deck rebuilds, and repairs across town and nearby rural lots.",
+  },
+  {
+    name: "Raleigh",
+    region: "Wake County",
+    note: "Privacy fences, ornamental aluminum, and deck projects for in-town and suburban homes.",
+  },
+  {
+    name: "Fuquay-Varina",
+    region: "Wake County",
+    note: "New builds and replacements for growing neighborhoods and larger backyard lots.",
+  },
+  {
+    name: "Holly Springs",
+    region: "Wake County",
+    note: "HOA-friendly vinyl and wood privacy systems, plus deck rail and stair upgrades.",
+  },
+  {
+    name: "Clayton",
+    region: "Johnston County",
+    note: "Chain-link, wood privacy, and deck repair for homes east of Raleigh.",
+  },
+  {
+    name: "Garner",
+    region: "Wake County",
+    note: "Fence replacements and deck refreshes for established neighborhoods.",
+  },
+  {
+    name: "Cary",
+    region: "Wake County",
+    note: "Select ornamental and privacy projects where schedule and access allow.",
+  },
+  {
+    name: "Apex",
+    region: "Wake County",
+    note: "Wood and vinyl fencing with clean installs for suburban yards.",
+  },
+  {
+    name: "Dunn",
+    region: "Harnett County",
+    note: "Rural and in-town fence lines, pet enclosures, and deck repairs.",
+  },
+  {
+    name: "Lillington",
+    region: "Harnett County",
+    note: "Fence and deck work for Harnett County homeowners south of Angier.",
+  },
+  {
+    name: "Knightdale",
+    region: "Wake County",
+    note: "Privacy and chain-link installs for east Wake communities.",
+  },
+  {
+    name: "Wake Forest",
+    region: "Wake County",
+    note: "Select projects in northern Wake—ask us about current scheduling.",
+  },
 ] as const;
 
 export const testimonials = [
@@ -198,6 +327,24 @@ export const testimonials = [
       "From the first estimate to the final gate adjustment, the crew was on time, thoughtful, and dependable.",
     name: "Laura T.",
     town: "Clayton",
+  },
+  {
+    quote:
+      "We needed vinyl privacy that would pass HOA review. Kaba walked us through options, got it approved, and installed it cleanly.",
+    name: "Jordan M.",
+    town: "Cary",
+  },
+  {
+    quote:
+      "Storm damage took out a section of our fence. They matched the existing panels and had us secure again within the week.",
+    name: "Pat & Elena S.",
+    town: "Angier",
+  },
+  {
+    quote:
+      "Our new elevated deck feels solid and the railings look sharp. Clear quote, steady communication, no drama.",
+    name: "Marcus W.",
+    town: "Raleigh",
   },
 ] as const;
 
@@ -221,5 +368,25 @@ export const faqs = [
     question: "Can you repair an existing deck instead of replacing it?",
     answer:
       "Often yes. We inspect framing, joists, boards, and railings first. If the structure is sound, targeted repairs and railing upgrades can restore safety and look without a full rebuild.",
+  },
+  {
+    question: "What towns do you serve?",
+    answer:
+      "We’re based in Angier and regularly work in Raleigh, Fuquay-Varina, Holly Springs, Clayton, Garner, Cary, Apex, Dunn, Lillington, Knightdale, Wake Forest, and nearby communities. If you’re close and unsure, call—we’ll let you know.",
+  },
+  {
+    question: "Is the estimate really free?",
+    answer:
+      "Yes. On-site estimates for residential fence and deck projects are free and no-obligation. You’ll leave with a written scope and price so you can decide on your timeline.",
+  },
+  {
+    question: "How do I prepare for install day?",
+    answer:
+      "Clear access along the fence or deck line when you can, note underground utilities we’ve already marked through 811, and let us know about pets or locked gates. We’ll confirm details before we arrive.",
+  },
+  {
+    question: "Do you build gates and hardware upgrades?",
+    answer:
+      "Absolutely. New gates, latch and hinge upgrades, and walk-through or driveway openings are part of many fence projects—and we can add them to an existing fence when it makes sense.",
   },
 ] as const;

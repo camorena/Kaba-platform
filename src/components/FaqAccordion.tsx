@@ -3,7 +3,10 @@
 import { useId, useState } from "react";
 import { faqs } from "@/lib/site";
 
-type FaqItem = (typeof faqs)[number];
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
 
 export default function FaqAccordion({
   items = faqs,

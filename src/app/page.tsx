@@ -210,14 +210,19 @@ export default function HomePage() {
       {/* Customer notes */}
       <section className="section-soft section-y">
         <div className="container-page">
-          <Reveal className="max-w-xl">
-            <p className="eyebrow">Good work travels</p>
-            <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
-              Trusted by local homeowners
-            </h2>
-            <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
-              A few words from neighbors who called us for their next outdoor project.
-            </p>
+          <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+            <div className="max-w-xl">
+              <p className="eyebrow">Good work travels</p>
+              <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
+                Trusted by local homeowners
+              </h2>
+              <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
+                A few words from neighbors who called us for their next outdoor project.
+              </p>
+            </div>
+            <Link href="/reviews" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
+              Read all reviews →
+            </Link>
           </Reveal>
           <ul className="mt-9 grid gap-4 sm:mt-11 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
             {testimonials.map((testimonial, i) => (
@@ -308,14 +313,19 @@ export default function HomePage() {
 
       {/* How it works */}
       <section className="container-page section-y">
-        <Reveal className="max-w-xl">
-          <p className="eyebrow">Process</p>
-          <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
-            How it works
-          </h2>
-          <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
-            Straightforward from first call to finished project—no surprises.
-          </p>
+        <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+          <div className="max-w-xl">
+            <p className="eyebrow">Process</p>
+            <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
+              How it works
+            </h2>
+            <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
+              Straightforward from first call to finished project—no surprises.
+            </p>
+          </div>
+          <Link href="/how-it-works" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
+            See full process →
+          </Link>
         </Reveal>
         <ol className="mt-10 grid gap-8 border-t border-ink/[0.08] pt-10 sm:mt-12 md:grid-cols-3 md:gap-8 md:pt-12">
           {howItWorks.map((step, i) => (
@@ -350,6 +360,9 @@ export default function HomePage() {
               <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
                 Quick answers about timelines, permits, materials, and deck repairs.
               </p>
+              <Link href="/faq" className="focus-ring btn-ghost mt-5 inline-flex min-h-11 items-center">
+                View all FAQs →
+              </Link>
             </Reveal>
             <Reveal className="lg:col-span-8" delay={100}>
               <FaqAccordion />
