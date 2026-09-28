@@ -55,7 +55,7 @@ export default function ContactPage() {
 
       <section className="section-y">
         <div className="container-page max-w-3xl">
-          <QuoteForm />
+          <QuoteForm contact={contact} />
         </div>
       </section>
     </>

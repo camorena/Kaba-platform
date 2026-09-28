@@ -3,7 +3,10 @@ import Link from "next/link";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
-import { getPublishedFaqs } from "@/lib/cms/public";
+import {
+  getPublishedContactInfo,
+  getPublishedFaqs,
+} from "@/lib/cms/public";
 import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/jsonld";
 import { defaultOgImage, siteConfig } from "@/lib/site";
 
@@ -30,6 +33,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function FaqPage() {
+  const contact = getPublishedContactInfo();
   const faqItems = getPublishedFaqs();
 
   return (
@@ -54,10 +58,10 @@ export default function FaqPage() {
             Timelines, permits, materials, deck repairs, and where we work across
             Angier, Raleigh, and nearby towns. Still unsure? Call{" "}
             <a
-              href={siteConfig.phoneHref}
+              href={contact.phoneHref}
               className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
             >
-              {siteConfig.phone}
+              {contact.phone}
             </a>
             .
           </p>

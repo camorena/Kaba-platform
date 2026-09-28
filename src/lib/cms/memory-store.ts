@@ -14,9 +14,11 @@ import {
   deckMaterials,
   deckServices,
   faqs,
+  fencingOptionsNav,
   fencingServices,
   fenceMaterials,
   footerLinks,
+  legalLinks,
   galleryProjects,
   howItWorks,
   kabaExperience,
@@ -255,6 +257,21 @@ function seed(): Map<string, ContentDocument[]> {
         key: `footer.${slug}.label`,
         group: "nav",
         label: `Footer ${slug}`,
+        value: link.label,
+      };
+    }),
+    ...fencingOptionsNav.map((link) => ({
+      key: `fencingNav.${link.slug}.label`,
+      group: "nav",
+      label: `Fencing nav ${link.slug}`,
+      value: link.label,
+    })),
+    ...legalLinks.map((link) => {
+      const slug = link.href.replace(/^\//, "").replace(/\//g, "-") || "home";
+      return {
+        key: `legal.${slug}.label`,
+        group: "nav",
+        label: `Legal ${slug}`,
         value: link.label,
       };
     }),

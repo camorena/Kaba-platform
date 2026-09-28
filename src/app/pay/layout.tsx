@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 import { siteConfig } from "@/lib/site";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -12,6 +15,7 @@ export const metadata: Metadata = {
 export default function PayLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const contact = getPublishedContactInfo();
   return (
     <div className="flex min-h-full flex-1 flex-col bg-[var(--background)]">
       <header className="border-b border-ink/10 bg-navy text-ivory">
@@ -23,10 +27,10 @@ export default function PayLayout({
             <p className="text-[0.6875rem] text-ivory/70">{siteConfig.tagline}</p>
           </div>
           <a
-            href={siteConfig.phoneHref}
+            href={contact.phoneHref}
             className="rounded-full bg-bronze px-3 py-1.5 text-xs font-semibold text-navy hover:bg-bronze-light"
           >
-            {siteConfig.phone}
+            {contact.phone}
           </a>
         </div>
       </header>
@@ -35,8 +39,8 @@ export default function PayLayout({
       </main>
       <footer className="border-t border-ink/10 py-4 text-center text-[0.6875rem] text-muted">
         {siteConfig.name} · {siteConfig.address.region} ·{" "}
-        <a href={siteConfig.emailHref} className="underline hover:text-ink">
-          {siteConfig.email}
+        <a href={contact.emailHref} className="underline hover:text-ink">
+          {contact.email}
         </a>
       </footer>
     </div>

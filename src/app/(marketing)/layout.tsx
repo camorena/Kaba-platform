@@ -7,7 +7,9 @@ import {
   getPublishedContactInfo,
   getPublishedFaqs,
   getPublishedFenceTypes,
+  getPublishedFencingOptionsNav,
   getPublishedFooterLinks,
+  getPublishedLegalLinks,
   getPublishedNavLinks,
   getPublishedServiceTowns,
   getPublishedServices,
@@ -24,6 +26,8 @@ export default function MarketingLayout({
   const contact = getPublishedContactInfo();
   const navLinks = getPublishedNavLinks();
   const footerLinks = getPublishedFooterLinks();
+  const fencingOptionsNav = getPublishedFencingOptionsNav();
+  const legalLinks = getPublishedLegalLinks();
   const towns = getPublishedServiceTowns();
 
   const chatCatalog = {
@@ -64,13 +68,19 @@ export default function MarketingLayout({
       >
         Skip to content
       </a>
-      <Header navLinks={navLinks} contact={contact} />
+      <Header
+        navLinks={navLinks}
+        fencingOptionsNav={fencingOptionsNav}
+        contact={contact}
+      />
       <main id="main" className="flex-1" tabIndex={-1}>
         <PageTransition>{children}</PageTransition>
       </main>
       <Footer
         navLinks={navLinks}
         footerLinks={footerLinks}
+        fencingOptionsNav={fencingOptionsNav}
+        legalLinks={legalLinks}
         contact={contact}
       />
       <ChatWidget catalog={chatCatalog} />

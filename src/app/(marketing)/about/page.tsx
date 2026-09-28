@@ -8,6 +8,7 @@ import {
   getPublishedAboutLocalTrust,
   getPublishedAboutStats,
   getPublishedCompanyValues,
+  getPublishedContactInfo,
   getPublishedServiceTowns,
 } from "@/lib/cms/public";
 import {
@@ -82,6 +83,7 @@ const experienceDetail: Record<(typeof kabaExperience)[number]["id"], string> = 
 };
 
 export default function AboutPage() {
+  const contact = getPublishedContactInfo();
   const aboutStats = getPublishedAboutStats();
   const aboutLocalTrust = getPublishedAboutLocalTrust();
   const companyValues = getPublishedCompanyValues();
@@ -416,10 +418,10 @@ export default function AboutPage() {
                 Request a Free Estimate
               </Link>
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring btn-secondary w-full justify-center sm:w-auto"
               >
-                Call {siteConfig.phone}
+                Call {contact.phone}
               </a>
             </div>
           </div>

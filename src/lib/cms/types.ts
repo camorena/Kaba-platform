@@ -189,3 +189,14 @@ export type PublishedMaterialFaq = {
   answer: string;
 };
 
+export type PublishedFencingOptionNav = {
+  href: string;
+  label: string;
+  slug: string;
+};
+
+export type PublishedLegalLink = {
+  href: string;
+  label: string;
+};
+

@@ -14,7 +14,7 @@ import {
   getSmtpConfig,
   type MailTransportKind,
 } from "@/lib/mail/config";
-import { siteConfig } from "@/lib/site";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 
 export type SendMailInput = {
   to: string | string[];
@@ -174,5 +174,6 @@ export async function sendMail(input: SendMailInput): Promise<SendMailResult> {
 export function resolveOwnerEmails(): string[] {
   const fromEnv = getOwnerRecipients();
   if (fromEnv.length) return fromEnv;
-  return siteConfig.email ? [siteConfig.email] : [];
+  const email = getPublishedContactInfo().email;
+  return email ? [email] : [];
 }

@@ -4,10 +4,11 @@
  *
  * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects,
  * fence-types, services, about, materials (+ FAQs), service-area (+ JSON-LD),
- * site-copy (hero/trust/experience/needs/process/nav/footer/contact),
- * and chatbot catalogs via getPublished* (CMS published → site.ts fallback).
+ * site-copy (hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact),
+ * remaining contact CTAs, and chatbot catalogs via getPublished*
+ * (CMS published → site.ts fallback).
  *
- * See preview/REUSE_PORT_v13.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v14.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -39,11 +40,11 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     phase: "A",
     plural: "Fence types",
     pluralEs: "Tipos de cerca",
-    siteSources: ["fencingServices", "fencingOptionsNav"],
+    siteSources: ["fencingServices"],
     publicPaths: ["/services", "/residential", "/commercial", "/", "chatbot"],
     shipped: true,
     publicCutover: true,
-    notes: "v10: /services + residential/commercial + home cards. v12: chatbot fencing lists.",
+    notes: "v10: /services + residential/commercial + home cards. v12: chatbot fencing lists. Dropdown labels → site-copy fencingNav (v14).",
   },
   {
     key: "services",
@@ -92,11 +93,25 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
       "yourNeeds",
       "navLinks",
       "footerLinks",
+      "fencingOptionsNav",
+      "legalLinks",
     ],
-    publicPaths: ["/", "/how-it-works", "/residential", "nav", "footer", "contact", "chatbot"],
+    publicPaths: [
+      "/",
+      "/how-it-works",
+      "/residential",
+      "nav",
+      "footer",
+      "fencingNav",
+      "legal",
+      "contact",
+      "CTAs",
+      "pay",
+      "chatbot",
+    ],
     shipped: true,
     publicCutover: true,
-    notes: "v12: hero/trust/experience/needs/process. v13: nav/footer labels + contact phone/email/hours (+ chatbot contact). howItWorks.* unused on public.",
+    notes: "v12: hero/trust/experience/needs/process. v13: nav/footer + contact. v14: fencingNav/legal labels + remaining phone/email CTAs (FAQ/home/res/com/about/services/materials/service-area/QuoteForm/pay/privacy/terms/404/launch-blockers/mail). howItWorks.* unused on public.",
   },
   {
     key: "about",

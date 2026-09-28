@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import {
+  getPublishedContactInfo,
   getPublishedFenceTypes,
   getPublishedServices,
 } from "@/lib/cms/public";
@@ -46,6 +47,7 @@ const commercialPoints = [
 ] as const;
 
 export default function CommercialPage() {
+  const contact = getPublishedContactInfo();
   const fencingServices = getPublishedFenceTypes("commercial");
   const deckServices = getPublishedServices("commercial");
 
@@ -67,8 +69,8 @@ export default function CommercialPage() {
             <Link href="/contact" className="focus-ring btn-primary gap-2 justify-center sm:w-auto">
               Request a Free Estimate →
             </Link>
-            <a href={siteConfig.phoneHref} className="focus-ring btn-secondary-light justify-center">
-              Call {siteConfig.phone}
+            <a href={contact.phoneHref} className="focus-ring btn-secondary-light justify-center">
+              Call {contact.phone}
             </a>
           </div>
         </div>
@@ -155,7 +157,7 @@ export default function CommercialPage() {
             Discuss your commercial fence project
           </h2>
           <p className="mt-3 text-cream/75">
-            Call {siteConfig.phone} or request a free estimate online.
+            Call {contact.phone} or request a free estimate online.
           </p>
           <Link href="/contact" className="focus-ring btn-primary mt-8 inline-flex gap-2">
             Request a Free Estimate →

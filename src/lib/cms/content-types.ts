@@ -7,8 +7,8 @@
  * Phase A–C shipped as admin stubs. Public marketing still reads
  * `src/lib/site.ts` except cutovers via getPublished* (faqs, testimonials,
  * projects, fence-types, services, about, materials, service-area,
- * site-copy hero/trust/experience/needs/process/nav/footer/contact,
- * materials FAQs, chatbot catalogs).
+ * site-copy hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact
+ * (+ remaining CTAs), materials FAQs, chatbot catalogs).
  */
 
 export type FieldKind =
@@ -86,7 +86,7 @@ const SITE_COPY_GROUP_OPTIONS = [
   { value: "experience", label: "Kaba experience", labelEs: "Experiencia Kaba" },
   { value: "trust", label: "Trust points", labelEs: "Puntos de confianza" },
   { value: "needs", label: "Your needs (home)", labelEs: "Sus necesidades (inicio)" },
-  { value: "nav", label: "Nav / footer labels", labelEs: "Etiquetas de nav / pie" },
+  { value: "nav", label: "Nav / footer / fencing / legal labels", labelEs: "Etiquetas de nav / pie / cercas / legal" },
   { value: "contact", label: "Contact phone / email / hours", labelEs: "Contacto teléfono / correo / horario" },
 ] as const;
 
@@ -253,7 +253,7 @@ export const CONTENT_TYPES: Readonly<Record<string, ContentTypeSpec>> = {
     orderBy: "sortOrder",
     phase: "B",
     publicPath: "/",
-    siteSource: "siteConfig hero/tagline/contact, howItWorks, processTimeline, kabaExperience, trustPoints, yourNeeds, navLinks, footerLinks",
+    siteSource: "siteConfig hero/tagline/contact, howItWorks, processTimeline, kabaExperience, trustPoints, yourNeeds, navLinks, footerLinks, fencingOptionsNav, legalLinks",
     fields: [
       {
         name: "key",

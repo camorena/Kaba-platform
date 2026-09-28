@@ -4,9 +4,12 @@ import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
 import { defaultOgImage, siteConfig } from "@/lib/site";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 
 const title = "Terms of Use";
 const description = `Website terms for ${siteConfig.name}—fence and deck contractor serving Angier, Raleigh, and surrounding North Carolina communities.`;
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title,
@@ -26,6 +29,7 @@ export const metadata: Metadata = {
 };
 
 export default function TermsPage() {
+  const contact = getPublishedContactInfo();
   return (
     <>
       <JsonLd
@@ -177,17 +181,17 @@ export default function TermsPage() {
             <p className="mt-3">
               Questions about these terms? Contact {siteConfig.name} at{" "}
               <a
-                href={siteConfig.emailHref}
+                href={contact.emailHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.email}
+                {contact.email}
               </a>{" "}
               or{" "}
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.phone}
+                {contact.phone}
               </a>
               .
             </p>

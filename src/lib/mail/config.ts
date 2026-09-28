@@ -11,7 +11,7 @@
  *   SMTP_SECURE        — "true" for port 465 TLS
  *   MAIL_FROM          — From: address (required for send)
  *   MAIL_TO_OWNERS     — comma-separated owner alert recipients (optional;
- *                        falls back to siteConfig.email)
+ *                        falls back to published contact email / site.ts)
  */
 
 export type MailTransportKind = "none" | "resend" | "smtp";

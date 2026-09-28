@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import {
+  getPublishedContactInfo,
   getPublishedFenceTypes,
   getPublishedServices,
   getPublishedYourNeeds,
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function ResidentialPage() {
+  const contact = getPublishedContactInfo();
   const yourNeeds = getPublishedYourNeeds();
   const fencingServices = getPublishedFenceTypes("residential");
   const deckServices = getPublishedServices("residential");
@@ -45,8 +47,8 @@ export default function ResidentialPage() {
             <Link href="/contact" className="focus-ring btn-primary gap-2 justify-center sm:w-auto">
               Request a Free Estimate →
             </Link>
-            <a href={siteConfig.phoneHref} className="focus-ring btn-secondary-light justify-center">
-              Call {siteConfig.phone}
+            <a href={contact.phoneHref} className="focus-ring btn-secondary-light justify-center">
+              Call {contact.phone}
             </a>
           </div>
         </div>

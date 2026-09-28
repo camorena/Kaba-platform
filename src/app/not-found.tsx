@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { siteConfig } from "@/lib/site";
+import {
+  getPublishedContactInfo,
+  getPublishedFencingOptionsNav,
+  getPublishedFooterLinks,
+  getPublishedLegalLinks,
+  getPublishedNavLinks,
+} from "@/lib/cms/public";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -19,6 +25,11 @@ const helpful = [
 ] as const;
 
 export default function NotFound() {
+  const contact = getPublishedContactInfo();
+  const navLinks = getPublishedNavLinks();
+  const footerLinks = getPublishedFooterLinks();
+  const fencingOptionsNav = getPublishedFencingOptionsNav();
+  const legalLinks = getPublishedLegalLinks();
   return (
     <>
       <a
@@ -27,7 +38,11 @@ export default function NotFound() {
       >
         Skip to content
       </a>
-      <Header />
+      <Header
+        navLinks={navLinks}
+        fencingOptionsNav={fencingOptionsNav}
+        contact={contact}
+      />
       <main id="main" className="flex flex-1 flex-col" tabIndex={-1}>
         <section className="page-hero flex-1">
           <div className="container-page relative flex flex-col items-start py-16 sm:py-20 lg:py-24">
@@ -39,10 +54,10 @@ export default function NotFound() {
               The link may be outdated, or the page moved. Try one of these
               popular destinations—or call{" "}
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.phone}
+                {contact.phone}
               </a>{" "}
               if you need a human.
             </p>
@@ -82,7 +97,13 @@ export default function NotFound() {
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer
+        navLinks={navLinks}
+        footerLinks={footerLinks}
+        fencingOptionsNav={fencingOptionsNav}
+        legalLinks={legalLinks}
+        contact={contact}
+      />
     </>
   );
 }

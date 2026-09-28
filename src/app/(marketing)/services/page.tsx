@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import {
+  getPublishedContactInfo,
   getPublishedFenceTypes,
   getPublishedServices,
 } from "@/lib/cms/public";
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function ServicesPage() {
+  const contact = getPublishedContactInfo();
   const fencingServices = getPublishedFenceTypes();
   const deckServices = getPublishedServices();
 
@@ -140,8 +142,8 @@ export default function ServicesPage() {
             <Link href="/contact" className="focus-ring btn-primary justify-center gap-2">
               Request a Free Estimate →
             </Link>
-            <a href={siteConfig.phoneHref} className="focus-ring btn-secondary justify-center">
-              Call {siteConfig.phone}
+            <a href={contact.phoneHref} className="focus-ring btn-secondary justify-center">
+              Call {contact.phone}
             </a>
           </div>
         </Reveal>

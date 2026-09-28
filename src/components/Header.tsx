@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
-  fencingOptionsNav,
+  fencingOptionsNav as siteFencingOptionsNav,
   navLinks as siteNavLinks,
   siteConfig,
 } from "@/lib/site";
@@ -22,15 +22,27 @@ export type HeaderContact = {
   phoneHref: string;
 };
 
+export type HeaderFencingNavLink = {
+  href: string;
+  label: string;
+  slug?: string;
+};
+
 export default function Header({
   navLinks = siteNavLinks.map((l) => {
     const out: HeaderNavLink = { href: l.href, label: l.label };
     if ("hasDropdown" in l && l.hasDropdown) out.hasDropdown = true;
     return out;
   }),
+  fencingOptionsNav = siteFencingOptionsNav.map((l) => ({
+    href: l.href,
+    label: l.label,
+    slug: l.slug,
+  })),
   contact = { phone: siteConfig.phone, phoneHref: siteConfig.phoneHref },
 }: {
   navLinks?: HeaderNavLink[];
+  fencingOptionsNav?: HeaderFencingNavLink[];
   contact?: HeaderContact;
 } = {}) {
   const pathname = usePathname();

@@ -19,8 +19,10 @@ import type {
   PublishedFaq,
   PublishedFenceMaterial,
   PublishedFenceType,
+  PublishedFencingOptionNav,
   PublishedFooterLink,
   PublishedHeroCopy,
+  PublishedLegalLink,
   PublishedMaterialComparison,
   PublishedMaterialFaq,
   PublishedMaterialGuidance,
@@ -42,8 +44,10 @@ import {
   faqs as siteFaqs,
   fenceMaterials as siteFenceMaterials,
   fencingServices as siteFenceTypes,
+  fencingOptionsNav as siteFencingOptionsNav,
   footerLinks as siteFooterLinks,
   galleryProjects as siteProjects,
+  legalLinks as siteLegalLinks,
   kabaExperience as siteKabaExperience,
   materialFaqs as siteMaterialFaqs,
   materialGuidance as siteMaterialGuidance,
@@ -67,8 +71,10 @@ export type {
   PublishedFaq,
   PublishedFenceMaterial,
   PublishedFenceType,
+  PublishedFencingOptionNav,
   PublishedFooterLink,
   PublishedHeroCopy,
+  PublishedLegalLink,
   PublishedMaterialComparison,
   PublishedMaterialFaq,
   PublishedMaterialGuidance,
@@ -842,6 +848,50 @@ export function contactInfoSourceIsCms(): boolean {
     "contact.serviceArea",
   ];
   return keys.some((k) => contact.has(k)) || hero.has("site.serviceArea");
+}
+
+
+/**
+ * Fencing dropdown / footer fencing-column labels.
+ * Per-slug: published site-copy fencingNav.{slug}.label → else site.ts.
+ * Hrefs stay from site.ts.
+ */
+export function getPublishedFencingOptionsNav(): PublishedFencingOptionNav[] {
+  const byKey = siteCopyValueMap("nav");
+  return siteFencingOptionsNav.map((link) => ({
+    href: link.href,
+    slug: link.slug,
+    label: byKey.get(`fencingNav.${link.slug}.label`) ?? link.label,
+  }));
+}
+
+export function fencingOptionsNavSourceIsCms(): boolean {
+  const byKey = siteCopyValueMap("nav");
+  return siteFencingOptionsNav.some((link) =>
+    byKey.has(`fencingNav.${link.slug}.label`),
+  );
+}
+
+/**
+ * Legal / utility footer links.
+ * Per-link: published site-copy legal.{slug}.label → else site.ts.
+ */
+export function getPublishedLegalLinks(): PublishedLegalLink[] {
+  const byKey = siteCopyValueMap("nav");
+  return siteLegalLinks.map((link) => {
+    const slug = hrefToCopySlug(link.href);
+    return {
+      href: link.href,
+      label: byKey.get(`legal.${slug}.label`) ?? link.label,
+    };
+  });
+}
+
+export function legalLinksSourceIsCms(): boolean {
+  const byKey = siteCopyValueMap("nav");
+  return siteLegalLinks.some((link) =>
+    byKey.has(`legal.${hrefToCopySlug(link.href)}.label`),
+  );
 }
 
 /**

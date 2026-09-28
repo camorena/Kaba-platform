@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { getPublishedServiceTowns } from "@/lib/cms/public";
+import {
+  getPublishedContactInfo,
+  getPublishedServiceTowns,
+} from "@/lib/cms/public";
 import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Service Area";
@@ -29,6 +32,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function ServiceAreaPage() {
+  const contact = getPublishedContactInfo();
   const serviceTowns = getPublishedServiceTowns();
 
   return (
@@ -60,10 +64,10 @@ export default function ServiceAreaPage() {
               Raleigh first, then surrounding towns within a practical drive. Not
               sure if we reach you? Call{" "}
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.phone}
+                {contact.phone}
               </a>{" "}
               and ask.
             </p>

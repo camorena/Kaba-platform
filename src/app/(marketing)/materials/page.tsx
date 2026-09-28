@@ -6,6 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
 import {
+  getPublishedContactInfo,
   getPublishedDeckMaterials,
   getPublishedFenceMaterials,
   getPublishedMaterialComparison,
@@ -41,6 +42,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function MaterialsPage() {
+  const contact = getPublishedContactInfo();
   const fenceMaterials = getPublishedFenceMaterials();
   const deckMaterials = getPublishedDeckMaterials();
   const materialGuidance = getPublishedMaterialGuidance();
@@ -417,10 +419,10 @@ export default function MaterialsPage() {
                 Request a Free Estimate
               </Link>
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring btn-secondary w-full justify-center sm:w-auto"
               >
-                Call {siteConfig.phone}
+                Call {contact.phone}
               </a>
             </div>
           </div>

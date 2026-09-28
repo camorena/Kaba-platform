@@ -7,8 +7,8 @@
  */
 
 import { getAuthMode, isAuthConfigured } from "@/lib/admin/auth";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 import { getStripeStatus } from "@/lib/stripe/config";
-import { siteConfig } from "@/lib/site";
 
 export type LaunchBlocker = {
   readonly id: string;
@@ -23,14 +23,15 @@ export function getLaunchBlockers(): LaunchBlocker[] {
   const mode = getAuthMode();
   const authConfigured = isAuthConfigured();
   const stripe = getStripeStatus();
+  const contact = getPublishedContactInfo();
   const hoursLine = [
-    siteConfig.hours.weekdays,
-    siteConfig.hours.saturday,
-    siteConfig.hours.sunday,
+    contact.hours.weekdays,
+    contact.hours.saturday,
+    contact.hours.sunday,
   ]
     .filter(Boolean)
     .join(" · ");
-  const contactOk = Boolean(siteConfig.phone?.trim() && siteConfig.email?.trim());
+  const contactOk = Boolean(contact.phone?.trim() && contact.email?.trim());
 
   let authDetailKey: string;
   if (!authConfigured) {
@@ -89,7 +90,7 @@ export function getLaunchBlockers(): LaunchBlocker[] {
         ? "pages.dashboard.blockerHoursOk"
         : "pages.dashboard.blockerHoursMissing",
       detailVars: contactOk
-        ? { hours: hoursLine || "—", phone: siteConfig.phone, email: siteConfig.email }
+        ? { hours: hoursLine || "—", phone: contact.phone, email: contact.email }
         : undefined,
       clear: contactOk && hoursLine.length > 0,
       href: "/admin/settings#settings-trust",

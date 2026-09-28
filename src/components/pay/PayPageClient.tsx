@@ -10,6 +10,13 @@ import {
 import { siteConfig } from "@/lib/site";
 import { useMemo, useState } from "react";
 
+export type PayPageContact = {
+  phone: string;
+  phoneHref: string;
+  email: string;
+  emailHref: string;
+};
+
 export default function PayPageClient({
   token,
   invoice,
@@ -18,6 +25,12 @@ export default function PayPageClient({
   stripeCheckoutReady,
   checkoutState,
   receipt,
+  contact = {
+    phone: siteConfig.phone,
+    phoneHref: siteConfig.phoneHref,
+    email: siteConfig.email,
+    emailHref: siteConfig.emailHref,
+  },
 }: {
   token: string;
   invoice: InvoiceRecord;
@@ -26,6 +39,7 @@ export default function PayPageClient({
   stripeCheckoutReady: boolean;
   checkoutState: "idle" | "success" | "cancel";
   receipt: PaymentReceiptStub | null;
+  contact?: PayPageContact;
 }) {
   const [locale, setLocale] = useState<PayLocale>("en");
   const [busy, setBusy] = useState(false);
@@ -263,13 +277,13 @@ export default function PayPageClient({
             <p className="text-sm leading-relaxed text-muted">{m.offlineBody}</p>
             <div className="flex flex-wrap gap-2 text-sm">
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="rounded-full border border-ink/15 px-3 py-1.5 font-semibold text-ink hover:border-bronze"
               >
-                {siteConfig.phone}
+                {contact.phone}
               </a>
               <a
-                href={siteConfig.emailHref}
+                href={contact.emailHref}
                 className="rounded-full border border-ink/15 px-3 py-1.5 font-semibold text-ink hover:border-bronze"
               >
                 {m.contactUs}

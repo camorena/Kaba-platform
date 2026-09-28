@@ -3,6 +3,12 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/site";
 
+export type QuoteFormContact = {
+  phone: string;
+  phoneHref: string;
+  email: string;
+};
+
 type FormState = {
   name: string;
   phone: string;
@@ -67,7 +73,15 @@ const steps = [
   },
 ] as const;
 
-export default function QuoteForm() {
+export default function QuoteForm({
+  contact = {
+    phone: siteConfig.phone,
+    phoneHref: siteConfig.phoneHref,
+    email: siteConfig.email,
+  },
+}: {
+  contact?: QuoteFormContact;
+} = {}) {
   const [form, setForm] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -237,8 +251,8 @@ export default function QuoteForm() {
             Thanks, {form.name.split(" ")[0]}! We&apos;ll review your{" "}
             {form.serviceType.toLowerCase()} project in {form.address} and get
             back to you by {contactVia} soon. For faster help, call{" "}
-            <a href={siteConfig.phoneHref} className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline">
-              {siteConfig.phone}
+            <a href={contact.phoneHref} className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline">
+              {contact.phone}
             </a>
             .
           </p>
@@ -250,7 +264,7 @@ export default function QuoteForm() {
               {siteConfig.name} — Quote request summary
             </p>
             <p className="mt-1 text-sm text-muted">
-              {siteConfig.phone} · {siteConfig.email}
+              {contact.phone} · {contact.email}
             </p>
           </div>
           <div className="flex flex-wrap items-baseline justify-between gap-2 print:mt-4">

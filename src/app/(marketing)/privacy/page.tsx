@@ -4,9 +4,12 @@ import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
 import { defaultOgImage, siteConfig } from "@/lib/site";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 
 const title = "Privacy Policy";
 const description = `How ${siteConfig.name} handles information you share through our website, quote form, and phone or email contact. Serving Angier and Raleigh NC.`;
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title,
@@ -26,6 +29,7 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
+  const contact = getPublishedContactInfo();
   return (
     <>
       <JsonLd
@@ -62,17 +66,17 @@ export default function PrivacyPage() {
               {siteConfig.name} is a local fence and deck contractor based in{" "}
               {siteConfig.address.city}, {siteConfig.address.state}. Contact us at{" "}
               <a
-                href={siteConfig.emailHref}
+                href={contact.emailHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.email}
+                {contact.email}
               </a>{" "}
               or{" "}
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.phone}
+                {contact.phone}
               </a>
               .
             </p>
@@ -146,7 +150,7 @@ export default function PrivacyPage() {
             </h2>
             <p className="mt-3">
               You can ask us to update or remove contact details we hold by
-              emailing {siteConfig.email} or calling {siteConfig.phone}. If you
+              emailing {contact.email} or calling {contact.phone}. If you
               prefer not to use the web form, call or email us directly.
             </p>
           </div>
@@ -178,17 +182,17 @@ export default function PrivacyPage() {
             <p className="mt-3">
               Questions about privacy? Reach {siteConfig.name} at{" "}
               <a
-                href={siteConfig.emailHref}
+                href={contact.emailHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.email}
+                {contact.email}
               </a>
               ,{" "}
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
               >
-                {siteConfig.phone}
+                {contact.phone}
               </a>
               , or visit our{" "}
               <Link

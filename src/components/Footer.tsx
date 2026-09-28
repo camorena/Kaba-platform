@@ -3,14 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteCredit from "@/components/SiteCredit";
 import {
-  fencingOptionsNav,
+  fencingOptionsNav as siteFencingOptionsNav,
   footerLinks as siteFooterLinks,
-  legalLinks,
+  legalLinks as siteLegalLinks,
   navLinks as siteNavLinks,
   siteConfig,
 } from "@/lib/site";
 
 export type FooterNavLink = { href: string; label: string };
+export type FooterFencingNavLink = { href: string; label: string; slug?: string };
+export type FooterLegalLink = { href: string; label: string };
 export type FooterContact = {
   phone: string;
   phoneHref: string;
@@ -44,6 +46,12 @@ function SocialIcon({
 export default function Footer({
   navLinks = siteNavLinks.map((l) => ({ href: l.href, label: l.label })),
   footerLinks = siteFooterLinks.map((l) => ({ href: l.href, label: l.label })),
+  fencingOptionsNav = siteFencingOptionsNav.map((l) => ({
+    href: l.href,
+    label: l.label,
+    slug: l.slug,
+  })),
+  legalLinks = siteLegalLinks.map((l) => ({ href: l.href, label: l.label })),
   contact = {
     phone: siteConfig.phone,
     phoneHref: siteConfig.phoneHref,
@@ -54,6 +62,8 @@ export default function Footer({
 }: {
   navLinks?: FooterNavLink[];
   footerLinks?: FooterNavLink[];
+  fencingOptionsNav?: FooterFencingNavLink[];
+  legalLinks?: FooterLegalLink[];
   contact?: FooterContact;
 } = {}) {
   const year = new Date().getFullYear();

@@ -17,6 +17,7 @@ import {
   resolveOwnerEmails,
   sendMail,
 } from "@/lib/mail";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 import { siteConfig } from "@/lib/site";
 import { buildPaymentReceiptStub } from "@/lib/pay/receipt";
 
@@ -159,7 +160,7 @@ export async function notifyPaymentReceived(input: {
     subject,
     text: lines,
     html: `<pre style="font-family:system-ui,sans-serif;white-space:pre-wrap">${escapeHtml(lines)}</pre>`,
-    replyTo: siteConfig.email || undefined,
+    replyTo: getPublishedContactInfo().email || undefined,
   });
 
   return {

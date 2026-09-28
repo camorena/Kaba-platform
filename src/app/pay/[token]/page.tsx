@@ -10,6 +10,7 @@ import {
 import { buildPaymentReceiptStub } from "@/lib/pay/receipt";
 import { isValidPayTokenShape } from "@/lib/pay/token";
 import { getPayMessages } from "@/lib/pay/messages";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 import { siteConfig } from "@/lib/site";
 import {
   isStripeCheckoutReady,
@@ -52,14 +53,19 @@ export default async function PublicPayPage({
   const token = decodeURIComponent(raw ?? "").trim();
   const search = await searchParams;
   const m = getPayMessages("en");
+  const contact = getPublishedContactInfo();
 
   if (!token || !isValidPayTokenShape(token)) {
-    return <PayNotFound title={m.notFoundTitle} body={m.notFoundBody} />;
+    return (
+      <PayNotFound title={m.notFoundTitle} body={m.notFoundBody} contact={contact} />
+    );
   }
 
   const invoice = await getInvoiceByPayToken(token);
   if (!invoice) {
-    return <PayNotFound title={m.notFoundTitle} body={m.notFoundBody} />;
+    return (
+      <PayNotFound title={m.notFoundTitle} body={m.notFoundBody} contact={contact} />
+    );
   }
 
   const paidCents = await paidCentsForInvoice(invoice.id);
@@ -90,21 +96,30 @@ export default async function PublicPayPage({
       stripeCheckoutReady={stripeCheckoutReady}
       checkoutState={checkoutState}
       receipt={receipt}
+      contact={contact}
     />
   );
 }
 
-function PayNotFound({ title, body }: { title: string; body: string }) {
+function PayNotFound({
+  title,
+  body,
+  contact,
+}: {
+  title: string;
+  body: string;
+  contact: { phone: string; phoneHref: string };
+}) {
   return (
     <div className="rounded-xl border border-ink/10 px-5 py-8 text-center">
       <h1 className="font-display text-xl font-semibold text-ink">{title}</h1>
       <p className="mx-auto mt-2 max-w-md text-sm text-muted">{body}</p>
       <p className="mt-4 text-sm">
         <a
-          href={siteConfig.phoneHref}
+          href={contact.phoneHref}
           className="font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
         >
-          {siteConfig.phone}
+          {contact.phone}
         </a>
         {" · "}
         <Link href="/" className="font-semibold text-ink hover:underline">
