@@ -5,9 +5,12 @@ import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
 import {
-  aboutLocalTrust,
-  aboutStats,
-  companyValues,
+  getPublishedAboutLocalTrust,
+  getPublishedAboutStats,
+  getPublishedCompanyValues,
+  getPublishedServiceTowns,
+} from "@/lib/cms/public";
+import {
   defaultOgImage,
   kabaExperience,
   siteConfig,
@@ -34,6 +37,8 @@ export const metadata: Metadata = {
     images: [defaultOgImage.url],
   },
 };
+
+export const dynamic = "force-dynamic";
 
 function ExpIcon({ icon }: { icon: (typeof kabaExperience)[number]["icon"] }) {
   const common = "h-6 w-6";
@@ -77,6 +82,18 @@ const experienceDetail: Record<(typeof kabaExperience)[number]["id"], string> = 
 };
 
 export default function AboutPage() {
+  const aboutStats = getPublishedAboutStats();
+  const aboutLocalTrust = getPublishedAboutLocalTrust();
+  const companyValues = getPublishedCompanyValues();
+  const serviceTowns = getPublishedServiceTowns();
+  const coverageLabel =
+    serviceTowns.length > 0
+      ? `${serviceTowns
+          .map((t) => t.name)
+          .slice(0, 8)
+          .join(" · ")}${serviceTowns.length > 8 ? " & nearby" : ""}`
+      : "Angier · Raleigh · surrounding areas";
+
   return (
     <>
       <JsonLd
@@ -265,8 +282,7 @@ export default function AboutPage() {
                   Service area
                 </p>
                 <p className="mt-1.5 text-sm leading-relaxed text-muted sm:text-base">
-                  Angier · Raleigh · Fuquay-Varina · Holly Springs · Cary · Apex ·
-                  Garner · Clayton &amp; nearby
+                  {coverageLabel}
                 </p>
               </div>
               <Link

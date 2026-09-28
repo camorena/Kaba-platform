@@ -8,7 +8,8 @@ export type ContentDocument = {
   /**
    * Draft | published.
    * Publishing affects the live site only for types with a public cutover
-   * (faqs, testimonials, projects, fence-types, services via getPublished*).
+   * (faqs, testimonials, projects, fence-types, services, about, materials,
+   * service-area, and process.* site-copy via getPublished*).
    * Other types stay admin-only until their swap — marketing still uses site.ts.
    */
   status: "draft" | "published";
@@ -58,5 +59,75 @@ export type PublishedService = {
   summary: string;
   details: string;
   audience: PublishedAudience;
+};
+
+export type PublishedAboutLocalTrust = {
+  title: string;
+  description: string;
+};
+
+export type PublishedAboutStat = {
+  value: string;
+  label: string;
+};
+
+export type PublishedCompanyValue = {
+  title: string;
+  description: string;
+};
+
+export type PublishedServiceTown = {
+  name: string;
+  region: string;
+  note: string;
+};
+
+export type PublishedFenceMaterial = {
+  id: string;
+  name: string;
+  tagline: string;
+  bestFor: string;
+  lifespan: string;
+  maintenance: string;
+  privacy: string;
+  upkeep: string;
+  costTier: string;
+  servicesHref: string;
+  image: string;
+  pros: string[];
+  cons: string[];
+  tip: string;
+};
+
+export type PublishedDeckMaterial = {
+  id: string;
+  name: string;
+  bestFor: string;
+  lifespan: string;
+  maintenance: string;
+  pros: string[];
+  cons: string[];
+  tip: string;
+};
+
+export type PublishedMaterialGuidance = {
+  title: string;
+  body: string;
+};
+
+export type PublishedMaterialComparison = {
+  id: string;
+  name: string;
+  privacy: string;
+  maintenance: string;
+  lifespan: string;
+  bestWhen: string;
+};
+
+export type PublishedProcessStep = {
+  step: string;
+  title: string;
+  eyebrow: string;
+  description: string;
 };
 

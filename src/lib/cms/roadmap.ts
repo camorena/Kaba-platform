@@ -3,9 +3,10 @@
  * and how they replace `src/lib/site.ts` over time.
  *
  * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects,
- * fence-types, services via getPublished* (CMS published → site.ts fallback).
+ * fence-types, services, about, materials, service-area, and process.* site-copy
+ * via getPublished* (CMS published → site.ts fallback).
  *
- * See preview/REUSE_PORT_v10.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v11.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -88,9 +89,10 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
       "kabaExperience",
       "trustPoints",
     ],
-    publicPaths: ["/", "header/footer", "/how-it-works"],
+    publicPaths: ["/how-it-works"],
     shipped: true,
-    notes: "Keyed copy bag. Prefer keys over free-form HTML. Not cut over yet.",
+    publicCutover: true,
+    notes: "v11: process.* keys → /how-it-works only. Hero/trust/experience/howItWorks.* still site.ts.",
   },
   {
     key: "about",
@@ -100,7 +102,8 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     siteSources: ["aboutLocalTrust", "aboutStats", "companyValues"],
     publicPaths: ["/about"],
     shipped: true,
-    notes: "Story blocks + stats. Claims stay gated via trust-claims. Not cut over.",
+    publicCutover: true,
+    notes: "v11: /about reads getPublishedAbout*. Trust-claims settings stay separate; trustPoints still site.ts.",
   },
   {
     key: "testimonials",
@@ -119,9 +122,10 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "Service area towns",
     pluralEs: "Ciudades de servicio",
     siteSources: ["serviceTowns", "siteConfig.serviceArea"],
-    publicPaths: ["/service-area", "JSON-LD areaServed"],
+    publicPaths: ["/service-area", "/about"],
     shipped: true,
-    notes: "Town list is a claim — keep honest. Not cut over.",
+    publicCutover: true,
+    notes: "v11: /service-area + about coverage teaser. Keep towns honest. JSON-LD areaServed still hardcoded.",
   },
   {
     key: "materials",
@@ -131,7 +135,8 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     siteSources: ["fenceMaterials", "materialGuidance", "deckMaterials"],
     publicPaths: ["/materials"],
     shipped: true,
-    notes: "Guidance copy only — no dollar prices. Not cut over.",
+    publicCutover: true,
+    notes: "v11: /materials reads getPublishedFence/DeckMaterials + guidance. No dollar prices. materialFaqs still site.ts.",
   },
   {
     key: "media",

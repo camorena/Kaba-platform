@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { defaultOgImage, processTimeline, siteConfig } from "@/lib/site";
+import { getPublishedProcessTimeline } from "@/lib/cms/public";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "How It Works";
 const description = `From free estimate to design, build, and walkthrough—see how ${siteConfig.name} delivers fence and deck projects in Angier, Raleigh, and nearby NC.`;
@@ -16,7 +17,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function HowItWorksPage() {
+  const processTimeline = getPublishedProcessTimeline();
+
   return (
     <>
       <section className="page-hero">

@@ -5,7 +5,8 @@
  * Route params select a KEY here — never a raw table name (allow-list).
  *
  * Phase A–C shipped as admin stubs. Public marketing still reads
- * `src/lib/site.ts` except cutovers via getPublishedFaqs/Testimonials/Projects/FenceTypes/Services.
+ * `src/lib/site.ts` except cutovers via getPublished* (faqs, testimonials,
+ * projects, fence-types, services, about, materials, service-area, process site-copy).
  */
 
 export type FieldKind =

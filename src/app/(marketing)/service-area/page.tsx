@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { defaultOgImage, serviceTowns, siteConfig } from "@/lib/site";
+import { getPublishedServiceTowns } from "@/lib/cms/public";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Service Area";
 const description = `Fence and deck installation & repair serving Angier, Raleigh, Fuquay-Varina, Holly Springs, Clayton, and surrounding NC communities from ${siteConfig.name}.`;
@@ -25,7 +26,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function ServiceAreaPage() {
+  const serviceTowns = getPublishedServiceTowns();
+
   return (
     <>
       <section className="page-hero">

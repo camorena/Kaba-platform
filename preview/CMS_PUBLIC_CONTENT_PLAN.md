@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-28 (America/Chicago)  
 **Code:** `src/lib/cms/` · registry `content-types.ts` · roadmap `roadmap.ts` · public readers `public.ts`  
-**Companion:** `preview/REUSE_PORT_v10.md`
+**Companion:** `preview/REUSE_PORT_v11.md`
 
 Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (images, text, services, gallery/projects, about, FAQs, etc.) without ripping `src/lib/site.ts` until each type is ready.
 
@@ -23,7 +23,7 @@ Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (image
 | Phase | Types | Admin | Public swap |
 |-------|--------|-------|-------------|
 | **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit | **faqs → `/faq` (v8)**; **projects → `/gallery` + home (v9)**; **fence-types + services → `/services`, residential/commercial, home (v10)** |
-| **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | **testimonials → `/reviews` + home (v9)**; others still `site.ts` |
+| **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | **testimonials → `/reviews` + home (v9)**; **about / materials / service-area + process.* site-copy (v11)** |
 | **C (v8)** | `media` | Media library scaffold | Projects still path strings (+ beforeImage in CMS) |
 | **D** | `i18n-public` | Locale fields on documents | Optional `/es` marketing |
 
@@ -52,13 +52,13 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 
 | Key | Replaces in site.ts | Notes |
 |-----|---------------------|--------|
-| `site-copy` | `siteConfig` hero/tagline, `howItWorks`, `processTimeline`, `kabaExperience`, `trustPoints` | Keyed strings, not raw HTML |
-| `about` | `aboutLocalTrust`, `aboutStats`, `companyValues` | Keep trust-claims separate |
+| `site-copy` | `siteConfig` hero/tagline, `howItWorks`, `processTimeline`, `kabaExperience`, `trustPoints` | **Partial (v11):** `process.*` → `/how-it-works`; other keys still site.ts |
+| `about` | `aboutLocalTrust`, `aboutStats`, `companyValues` | **Cut over (v11):** `/about`. Trust-claims Settings stay separate |
 | `testimonials` | `testimonials` | **Cut over (v9):** name + town + quote; no fake ratings |
-| `service-area` | `serviceTowns` | Geographic claim — honesty required |
-| `materials` | `fenceMaterials`, `materialGuidance`, `deckMaterials` | Guidance only; no dollar prices |
+| `service-area` | `serviceTowns` | **Cut over (v11):** `/service-area` + about teaser. JSON-LD still hardcoded |
+| `materials` | `fenceMaterials`, `materialGuidance`, `deckMaterials` | **Cut over (v11):** `/materials`. Guidance only; no dollar prices |
 
-Admin list/edit seeded from `site.ts`. Public cutovers: faqs, testimonials, projects, fence-types, services.
+Admin list/edit seeded from `site.ts`. Public cutovers through v11: faqs, testimonials, projects, fence-types, services, about, materials, service-area, process.* site-copy.
 
 ---
 
@@ -87,7 +87,7 @@ Admin list/edit seeded from `site.ts`. Public cutovers: faqs, testimonials, proj
 3. **published** → for cut-over types, public `getPublished(type)` reads CMS; `revalidatePath` / tag when leaving memory.  
 4. **rollback** — keep previous published JSON snapshot when editors are non-technical.
 
-v10: publishing **FAQs**, **testimonials**, **projects**, **fence-types**, or **services** changes their cutover surfaces. Other types stay admin-only.
+v11: publishing **FAQs**, **testimonials**, **projects**, **fence-types**, **services**, **about**, **materials**, **service-area**, or **site-copy `process.*`** changes their cutover surfaces. Other types/keys stay admin-only.
 
 ---
 
@@ -103,13 +103,14 @@ v10: publishing **FAQs**, **testimonials**, **projects**, **fence-types**, or **
 
 **Done (v8):** `faqs` → `/faq` + JSON-LD.  
 **Done (v9):** `testimonials` → `/reviews` + home; `projects` → `/gallery` + home teaser.  
-**Done (v10):** `fence-types` → `/services` + residential/commercial + home cards; `services` → `/services` deck section + residential/commercial.
+**Done (v10):** `fence-types` → `/services` + residential/commercial + home cards; `services` → `/services` deck section + residential/commercial.  
+**Done (v11):** `about` → `/about`; `materials` → `/materials`; `service-area` → `/service-area` + about teaser; `site-copy` `process.*` → `/how-it-works`.
 
 Document each cutover in a new `REUSE_PORT_vN.md` note.
 
 ---
 
-## Live vs site.ts (v10 snapshot)
+## Live vs site.ts (v11 snapshot)
 
 | Surface | Source |
 |---------|--------|
@@ -120,8 +121,14 @@ Document each cutover in a new `REUSE_PORT_vN.md` note.
 | `/residential` fencing + deck cards | Same helpers (audience `residential`) |
 | `/commercial` fencing (+ deck if audience matches) | Same helpers (audience `commercial`) |
 | Home fencing option cards | `getPublishedFenceTypes()` |
+| `/about` stats + local trust + values | CMS published about (`getPublishedAbout*`) |
+| `/about` coverage teaser | CMS published service towns |
+| `/service-area` town cards | CMS published service-area (`getPublishedServiceTowns`) |
+| `/materials` fence/deck/guidance + compare | CMS published materials (`getPublished*Materials*`) |
+| `/how-it-works` process timeline | CMS published site-copy `process.*` (`getPublishedProcessTimeline`) |
 | Chatbot FAQ / fencing / deck lists | `site.ts` |
-| About, materials, service-area, how-it-works, site-copy, `yourNeeds`, nav | `site.ts` |
+| Hero/tagline, trustPoints, kabaExperience, `yourNeeds`, nav, materialFaqs, JSON-LD areaServed | `site.ts` |
+| Trust-claims (Settings) | Separate memory store — not About CMS |
 | Admin Content hub list/edit (all Phase A–C types) | CMS memory (seeded from `site.ts`) |
 
 ---
@@ -132,4 +139,5 @@ Document each cutover in a new `REUSE_PORT_vN.md` note.
 - Live media binary upload without alt/provenance  
 - Public Spanish site without explicit product ask  
 - Full draft→review→rollback before an editor owns content daily  
-- Cutting over high-risk claim surfaces (service-area, trust) without review  
+- Auto-updating JSON-LD areaServed from CMS towns without claim review  
+- Merging About CMS with Settings trust-claims  

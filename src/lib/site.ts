@@ -6,6 +6,9 @@
  *   getPublishedFaqs() → /faq
  *   getPublishedTestimonials() → /reviews + home
  *   getPublishedProjects() → /gallery + home teaser
+ *   getPublishedFenceTypes/Services() → /services, residential/commercial, home
+ *   getPublishedAbout* / ServiceTowns / Materials* → /about, /service-area, /materials
+ *   getPublishedProcessTimeline() → /how-it-works (process.* site-copy only)
  * Do not delete other exports until each type follows the swap path in
  * preview/CMS_PUBLIC_CONTENT_PLAN.md (getPublished* + one page at a time).
  */

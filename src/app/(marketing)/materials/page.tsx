@@ -6,12 +6,14 @@ import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
 import {
-  deckMaterials,
+  getPublishedDeckMaterials,
+  getPublishedFenceMaterials,
+  getPublishedMaterialComparison,
+  getPublishedMaterialGuidance,
+} from "@/lib/cms/public";
+import {
   defaultOgImage,
-  fenceMaterials,
-  materialComparison,
   materialFaqs,
-  materialGuidance,
   siteConfig,
 } from "@/lib/site";
 
@@ -36,7 +38,14 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function MaterialsPage() {
+  const fenceMaterials = getPublishedFenceMaterials();
+  const deckMaterials = getPublishedDeckMaterials();
+  const materialGuidance = getPublishedMaterialGuidance();
+  const materialComparison = getPublishedMaterialComparison();
+
   return (
     <>
       <JsonLd
