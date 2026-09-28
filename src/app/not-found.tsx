@@ -6,6 +6,7 @@ import {
   getPublishedContactInfo,
   getPublishedFencingOptionsNav,
   getPublishedFooterLinks,
+  getPublishedHeroCopy,
   getPublishedLegalLinks,
   getPublishedNavLinks,
 } from "@/lib/cms/public";
@@ -26,10 +27,21 @@ const helpful = [
 
 export default function NotFound() {
   const contact = getPublishedContactInfo();
+  const brand = getPublishedHeroCopy();
   const navLinks = getPublishedNavLinks();
   const footerLinks = getPublishedFooterLinks();
   const fencingOptionsNav = getPublishedFencingOptionsNav();
   const legalLinks = getPublishedLegalLinks();
+  const footerContact = {
+    phone: contact.phone,
+    phoneHref: contact.phoneHref,
+    email: contact.email,
+    emailHref: contact.emailHref,
+    serviceArea: contact.serviceArea,
+    addressRegion: contact.address.region,
+    social: contact.social,
+  };
+  const footerBrand = { name: brand.name, tagline: brand.tagline };
   return (
     <>
       <a
@@ -102,7 +114,8 @@ export default function NotFound() {
         footerLinks={footerLinks}
         fencingOptionsNav={fencingOptionsNav}
         legalLinks={legalLinks}
-        contact={contact}
+        contact={footerContact}
+        brand={footerBrand}
       />
     </>
   );

@@ -10,8 +10,10 @@ import {
 import { buildPaymentReceiptStub } from "@/lib/pay/receipt";
 import { isValidPayTokenShape } from "@/lib/pay/token";
 import { getPayMessages } from "@/lib/pay/messages";
-import { getPublishedContactInfo } from "@/lib/cms/public";
-import { siteConfig } from "@/lib/site";
+import {
+  getPublishedContactInfo,
+  getPublishedHeroCopy,
+} from "@/lib/cms/public";
 import {
   isStripeCheckoutReady,
   suggestedDepositCents,
@@ -54,17 +56,28 @@ export default async function PublicPayPage({
   const search = await searchParams;
   const m = getPayMessages("en");
   const contact = getPublishedContactInfo();
+  const brandName = getPublishedHeroCopy().name;
 
   if (!token || !isValidPayTokenShape(token)) {
     return (
-      <PayNotFound title={m.notFoundTitle} body={m.notFoundBody} contact={contact} />
+      <PayNotFound
+        title={m.notFoundTitle}
+        body={m.notFoundBody}
+        contact={contact}
+        brandName={brandName}
+      />
     );
   }
 
   const invoice = await getInvoiceByPayToken(token);
   if (!invoice) {
     return (
-      <PayNotFound title={m.notFoundTitle} body={m.notFoundBody} contact={contact} />
+      <PayNotFound
+        title={m.notFoundTitle}
+        body={m.notFoundBody}
+        contact={contact}
+        brandName={brandName}
+      />
     );
   }
 
@@ -105,10 +118,12 @@ function PayNotFound({
   title,
   body,
   contact,
+  brandName,
 }: {
   title: string;
   body: string;
   contact: { phone: string; phoneHref: string };
+  brandName: string;
 }) {
   return (
     <div className="rounded-xl border border-ink/10 px-5 py-8 text-center">
@@ -123,7 +138,7 @@ function PayNotFound({
         </a>
         {" · "}
         <Link href="/" className="font-semibold text-ink hover:underline">
-          {siteConfig.name}
+          {brandName}
         </Link>
       </p>
     </div>

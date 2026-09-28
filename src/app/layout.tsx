@@ -3,7 +3,8 @@ import { Inter, Playfair_Display, Great_Vibes, Geist_Mono } from "next/font/goog
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeScript from "@/components/ThemeScript";
 import Analytics from "@/components/Analytics";
-import { defaultOgImage, siteConfig, siteUrl } from "@/lib/site";
+import { getPublishedHeroCopy } from "@/lib/cms/public";
+import { defaultOgImage, siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,57 +36,59 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const defaultDescription =
-  "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish. Free estimates.";
-
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: `${siteConfig.name} | Fence Company in Raleigh, NC`,
-    template: `%s | ${siteConfig.name}`,
-  },
-  description: defaultDescription,
-  keywords: [
-    "fence company Raleigh NC",
-    "fence installation",
-    "wood fence",
-    "vinyl fence",
-    "aluminum fence",
-    "chain link fence",
-    "free fence estimate",
-  ],
-  authors: [{ name: siteConfig.name }],
-  creator: siteConfig.name,
-  alternates: {
-    canonical: "/",
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
-      { url: "/brand/favicon-48.png", sizes: "48x48", type: "image/png" },
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const defaultDescription = `${brand.description} Free estimates.`;
+  const titleDefault = `${brand.name} | Fence Company in Raleigh, NC`;
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: titleDefault,
+      template: `%s | ${brand.name}`,
+    },
+    description: defaultDescription,
+    keywords: [
+      "fence company Raleigh NC",
+      "fence installation",
+      "wood fence",
+      "vinyl fence",
+      "aluminum fence",
+      "chain link fence",
+      "free fence estimate",
     ],
-    apple: [{ url: "/brand/apple-touch-icon.png", sizes: "180x180" }],
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: siteConfig.name,
-    title: `${siteConfig.name} | Fence Company in Raleigh, NC`,
-    description: defaultDescription,
-    images: [defaultOgImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.name} | Fence Company in Raleigh, NC`,
-    description: defaultDescription,
-    images: [defaultOgImage.url],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+    authors: [{ name: brand.name }],
+    creator: brand.name,
+    alternates: {
+      canonical: "/",
+    },
+    icons: {
+      icon: [
+        { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+        { url: "/brand/favicon-48.png", sizes: "48x48", type: "image/png" },
+      ],
+      apple: [{ url: "/brand/apple-touch-icon.png", sizes: "180x180" }],
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: siteUrl,
+      siteName: brand.name,
+      title: titleDefault,
+      description: defaultDescription,
+      images: [defaultOgImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: titleDefault,
+      description: defaultDescription,
+      images: [defaultOgImage.url],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export default function RootLayout({
   children,

@@ -143,6 +143,7 @@ function seed(): Map<string, ContentDocument[]> {
     label: string;
     value: string;
   }[] = [
+    { key: "site.name", group: "hero", label: "Brand name", value: siteConfig.name },
     { key: "site.tagline", group: "hero", label: "Tagline", value: siteConfig.tagline },
     {
       key: "site.description",
@@ -322,6 +323,48 @@ function seed(): Map<string, ContentDocument[]> {
       group: "contact",
       label: "Service area blurb",
       value: siteConfig.serviceArea,
+    },
+    {
+      key: "contact.address.city",
+      group: "contact",
+      label: "Address city",
+      value: siteConfig.address.city,
+    },
+    {
+      key: "contact.address.state",
+      group: "contact",
+      label: "Address state",
+      value: siteConfig.address.state,
+    },
+    {
+      key: "contact.address.zip",
+      group: "contact",
+      label: "Address ZIP",
+      value: siteConfig.address.zip,
+    },
+    {
+      key: "contact.address.region",
+      group: "contact",
+      label: "Address region",
+      value: siteConfig.address.region,
+    },
+    {
+      key: "contact.social.facebook",
+      group: "contact",
+      label: "Facebook URL",
+      value: siteConfig.social.facebook,
+    },
+    {
+      key: "contact.social.instagram",
+      group: "contact",
+      label: "Instagram URL",
+      value: siteConfig.social.instagram,
+    },
+    {
+      key: "contact.social.linkedin",
+      group: "contact",
+      label: "LinkedIn URL",
+      value: siteConfig.social.linkedin,
     },
   ];
 

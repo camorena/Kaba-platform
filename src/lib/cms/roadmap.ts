@@ -4,11 +4,11 @@
  *
  * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects,
  * fence-types, services, about, materials (+ FAQs), service-area (+ JSON-LD),
- * site-copy (hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact),
+ * site-copy (hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact/brand/address/social),
  * remaining contact CTAs, and chatbot catalogs via getPublished*
  * (CMS published → site.ts fallback).
  *
- * See preview/REUSE_PORT_v14.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v15.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -85,7 +85,7 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "Site copy & CTAs",
     pluralEs: "Textos y CTAs del sitio",
     siteSources: [
-      "siteConfig (tagline, hero*, description, phone/email/hours)",
+      "siteConfig (name, tagline, hero*, description, phone/email/hours, address, social)",
       "howItWorks",
       "processTimeline",
       "kabaExperience",
@@ -105,13 +105,18 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
       "fencingNav",
       "legal",
       "contact",
+      "brand",
+      "address",
+      "social",
+      "metadata",
       "CTAs",
       "pay",
+      "invoice-letterhead",
       "chatbot",
     ],
     shipped: true,
     publicCutover: true,
-    notes: "v12: hero/trust/experience/needs/process. v13: nav/footer + contact. v14: fencingNav/legal labels + remaining phone/email CTAs (FAQ/home/res/com/about/services/materials/service-area/QuoteForm/pay/privacy/terms/404/launch-blockers/mail). howItWorks.* unused on public.",
+    notes: "v12: hero/trust/experience/needs/process. v13: nav/footer + contact. v14: fencingNav/legal labels + remaining phone/email CTAs. v15: brand name/tagline/description (metadata/OG/footer/pay/JSON-LD), address + social URLs, invoice letterhead via getPublishedContactInfo/HeroCopy. howItWorks.* unused on public.",
   },
   {
     key: "about",

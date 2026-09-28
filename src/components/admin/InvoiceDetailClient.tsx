@@ -19,16 +19,33 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+export type InvoiceLetterhead = {
+  name: string;
+  tagline: string;
+  addressRegion: string;
+  phone: string;
+  email: string;
+};
+
 export default function InvoiceDetailClient({
   invoice,
   payments,
   paidCents,
   stripeCheckoutReady = false,
+  letterhead = {
+    name: siteConfig.name,
+    tagline: siteConfig.tagline,
+    addressRegion: siteConfig.address.region,
+    phone: siteConfig.phone,
+    email: siteConfig.email,
+  },
 }: {
   invoice: InvoiceRecord;
   payments: PaymentRecord[];
   paidCents: number;
   stripeCheckoutReady?: boolean;
+  /** Published contact/brand when passed from the server page; site.ts fallback. */
+  letterhead?: InvoiceLetterhead;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -256,13 +273,13 @@ export default function InvoiceDetailClient({
         <div className="flex items-start justify-between gap-4 border-b-2 border-[#c08b3a] pb-4">
           <div>
             <p className="font-display text-2xl font-semibold tracking-tight text-[#0b111a]">
-              {siteConfig.name}
+              {letterhead.name}
             </p>
-            <p className="mt-1 text-xs text-[#5c6570]">{siteConfig.tagline}</p>
+            <p className="mt-1 text-xs text-[#5c6570]">{letterhead.tagline}</p>
             <p className="mt-2 text-xs text-[#5c6570]">
-              {siteConfig.address.region} · {siteConfig.phone}
+              {letterhead.addressRegion} · {letterhead.phone}
             </p>
-            <p className="text-xs text-[#5c6570]">{siteConfig.email}</p>
+            <p className="text-xs text-[#5c6570]">{letterhead.email}</p>
           </div>
           <div className="text-right">
             <p className="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-[#c08b3a]">

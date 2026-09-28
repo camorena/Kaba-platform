@@ -9,6 +9,7 @@ import {
   getPublishedFenceTypes,
   getPublishedFencingOptionsNav,
   getPublishedFooterLinks,
+  getPublishedHeroCopy,
   getPublishedLegalLinks,
   getPublishedNavLinks,
   getPublishedServiceTowns,
@@ -24,11 +25,22 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }>) {
   const contact = getPublishedContactInfo();
+  const brand = getPublishedHeroCopy();
   const navLinks = getPublishedNavLinks();
   const footerLinks = getPublishedFooterLinks();
   const fencingOptionsNav = getPublishedFencingOptionsNav();
   const legalLinks = getPublishedLegalLinks();
   const towns = getPublishedServiceTowns();
+  const footerContact = {
+    phone: contact.phone,
+    phoneHref: contact.phoneHref,
+    email: contact.email,
+    emailHref: contact.emailHref,
+    serviceArea: contact.serviceArea,
+    addressRegion: contact.address.region,
+    social: contact.social,
+  };
+  const footerBrand = { name: brand.name, tagline: brand.tagline };
 
   const chatCatalog = {
     faqs: getPublishedFaqs(),
@@ -58,8 +70,9 @@ export default function MarketingLayout({
           localBusinessJsonLd({
             towns,
             contact,
+            brand: { name: brand.name, description: brand.description },
           }),
-          websiteJsonLd(),
+          websiteJsonLd({ name: brand.name, description: brand.description }),
         ]}
       />
       <a
@@ -81,7 +94,8 @@ export default function MarketingLayout({
         footerLinks={footerLinks}
         fencingOptionsNav={fencingOptionsNav}
         legalLinks={legalLinks}
-        contact={contact}
+        contact={footerContact}
+        brand={footerBrand}
       />
       <ChatWidget catalog={chatCatalog} />
     </>

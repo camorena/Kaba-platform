@@ -612,12 +612,13 @@ function siteCopyValueMap(group?: string): Map<string, string> {
 }
 
 /**
- * Hero / tagline / description for home (+ metadata).
+ * Brand name / tagline / description / hero for metadata, OG, footer, home.
  * Per-key: published site-copy value when present, else site.ts.
  */
 export function getPublishedHeroCopy(): PublishedHeroCopy {
   const byKey = siteCopyValueMap("hero");
   return {
+    name: byKey.get("site.name") ?? siteSiteConfig.name,
     tagline: byKey.get("site.tagline") ?? siteSiteConfig.tagline,
     description: byKey.get("site.description") ?? siteSiteConfig.description,
     heroLabel: byKey.get("hero.label") ?? siteSiteConfig.heroLabel,
@@ -627,7 +628,14 @@ export function getPublishedHeroCopy(): PublishedHeroCopy {
 }
 
 export function heroCopySourceIsCms(): boolean {
-  const keys = ["site.tagline", "site.description", "hero.label", "hero.headline", "hero.sub"];
+  const keys = [
+    "site.name",
+    "site.tagline",
+    "site.description",
+    "hero.label",
+    "hero.headline",
+    "hero.sub",
+  ];
   const published = siteCopyValueMap("hero");
   return keys.some((k) => published.has(k));
 }
@@ -796,7 +804,7 @@ export function footerLinksSourceIsCms(): boolean {
 }
 
 /**
- * Contact phone / email / hours / service-area blurb.
+ * Contact phone / email / hours / service-area / address / social.
  * Per-key published site-copy (group contact or hero.serviceArea) → else site.ts.
  */
 export function getPublishedContactInfo(): PublishedContactInfo {
@@ -831,6 +839,26 @@ export function getPublishedContactInfo(): PublishedContactInfo {
       sunday:
         contact.get("contact.hours.sunday") ?? siteSiteConfig.hours.sunday,
     },
+    address: {
+      city:
+        contact.get("contact.address.city") ?? siteSiteConfig.address.city,
+      state:
+        contact.get("contact.address.state") ?? siteSiteConfig.address.state,
+      zip: contact.get("contact.address.zip") ?? siteSiteConfig.address.zip,
+      region:
+        contact.get("contact.address.region") ?? siteSiteConfig.address.region,
+    },
+    social: {
+      facebook:
+        contact.get("contact.social.facebook") ??
+        siteSiteConfig.social.facebook,
+      instagram:
+        contact.get("contact.social.instagram") ??
+        siteSiteConfig.social.instagram,
+      linkedin:
+        contact.get("contact.social.linkedin") ??
+        siteSiteConfig.social.linkedin,
+    },
   };
 }
 
@@ -846,6 +874,13 @@ export function contactInfoSourceIsCms(): boolean {
     "contact.hours.saturday",
     "contact.hours.sunday",
     "contact.serviceArea",
+    "contact.address.city",
+    "contact.address.state",
+    "contact.address.zip",
+    "contact.address.region",
+    "contact.social.facebook",
+    "contact.social.instagram",
+    "contact.social.linkedin",
   ];
   return keys.some((k) => contact.has(k)) || hero.has("site.serviceArea");
 }

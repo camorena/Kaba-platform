@@ -261,7 +261,7 @@ const en = {
     },
     content: {
       title: "Content",
-      description: "CMS Phase A–C with public cutovers: FAQs, testimonials, projects, fence-types, services, about, materials (+ FAQs), service-area (+ JSON-LD), site-copy (hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact + remaining CTAs) → home, chrome, pay/404/mail & matching pages, plus chatbot catalogs. Trust-claims stay in Settings. Remaining keys still site.ts until cut over.",
+      description: "CMS Phase A–C with public cutovers: FAQs, testimonials, projects, fence-types, services, about, materials (+ FAQs), service-area (+ JSON-LD), site-copy (hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact/brand/address/social + CTAs) → home, chrome, metadata/OG, pay/404/mail/invoice letterhead & matching pages, plus chatbot catalogs. Trust-claims stay in Settings. Remaining keys still site.ts until cut over.",
       meta: "Memory CMS · FAQ / reviews / gallery / services / about / materials / towns / nav / fencing / legal / contact CTAs / JSON-LD / chatbot live",
       hubIntro: "Manage public marketing content from admin. Green Live badges mark types whose Published status updates the public site (CMS → site.ts fallback when none published).",
       phaseA: "Phase A — products & FAQs",
@@ -293,7 +293,7 @@ const en = {
       statusHelpAdmin: "Published is stored in memory only. This type is not cut over — marketing still reads site.ts.",
       edit: "Edit",
       empty: "No documents in this type yet.",
-      swapNote: "Swap path: cut over one type at a time via getPublished* helpers — see preview/REUSE_PORT_v14.md. Do not rip site.ts until each cutover. Keep claims honest (no fake star ratings or invented service towns). Trust-claims stay in Settings, separate from About CMS.",
+      swapNote: "Swap path: cut over one type at a time via getPublished* helpers — see preview/REUSE_PORT_v15.md. Do not rip site.ts until each cutover. Keep claims honest (no fake star ratings or invented service towns). Trust-claims stay in Settings, separate from About CMS.",
       editStubNoteLive: "Saves to the in-memory CMS. Published items appear on {paths}. Keep quotes and captions honest — no fake ratings.",
       editStubNoteAdmin: "Saves to the in-memory CMS store. This type is admin-only until its documented cutover; site.ts remains the live source.",
       locked: "locked",

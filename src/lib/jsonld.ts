@@ -6,6 +6,12 @@ type JsonLd = Record<string, unknown>;
 export type LocalBusinessJsonLdOptions = {
   towns?: readonly PublishedServiceTown[];
   contact?: PublishedContactInfo;
+  brand?: { name: string; description: string };
+};
+
+export type WebsiteJsonLdOptions = {
+  name?: string;
+  description?: string;
 };
 
 /**
@@ -20,6 +26,11 @@ export function localBusinessJsonLd(
   const phone = contact?.phone ?? siteConfig.phone;
   const email = contact?.email ?? siteConfig.email;
   const serviceArea = contact?.serviceArea ?? siteConfig.serviceArea;
+  const name = options.brand?.name ?? siteConfig.name;
+  const description = options.brand?.description ?? siteConfig.description;
+  const addressCity = contact?.address.city ?? siteConfig.address.city;
+  const addressState = contact?.address.state ?? siteConfig.address.state;
+  const addressZip = contact?.address.zip ?? siteConfig.address.zip;
 
   const towns = options.towns?.filter((t) => t.name.trim().length > 0) ?? [];
   const areaServed: Record<string, unknown>[] =
@@ -57,8 +68,8 @@ export function localBusinessJsonLd(
     "@context": "https://schema.org",
     "@type": ["HomeAndConstructionBusiness", "LocalBusiness"],
     "@id": `${siteUrl}/#business`,
-    name: siteConfig.name,
-    description: siteConfig.description,
+    name,
+    description,
     url: siteUrl,
     telephone: phone,
     email,
@@ -67,9 +78,9 @@ export function localBusinessJsonLd(
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      addressLocality: siteConfig.address.city,
-      addressRegion: siteConfig.address.state,
-      postalCode: siteConfig.address.zip,
+      addressLocality: addressCity,
+      addressRegion: addressState,
+      postalCode: addressZip,
       addressCountry: "US",
     },
     areaServed,
@@ -94,14 +105,14 @@ export function localBusinessJsonLd(
   };
 }
 
-export function websiteJsonLd(): JsonLd {
+export function websiteJsonLd(options: WebsiteJsonLdOptions = {}): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${siteUrl}/#website`,
-    name: siteConfig.name,
+    name: options.name ?? siteConfig.name,
     url: siteUrl,
-    description: siteConfig.description,
+    description: options.description ?? siteConfig.description,
     publisher: { "@id": `${siteUrl}/#business` },
     inLanguage: "en-US",
   };

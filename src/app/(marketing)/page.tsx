@@ -12,18 +12,19 @@ import {
   getPublishedTrustPoints,
   getPublishedYourNeeds,
 } from "@/lib/cms/public";
-import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: `${siteConfig.name} | Fence Company in Raleigh, NC`,
-  },
-  description: siteConfig.description,
-  openGraph: {
-    title: `${siteConfig.name} | Fence Company in Raleigh, NC`,
-    description: siteConfig.description,
-  },
-};
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const title = `${brand.name} | Fence Company in Raleigh, NC`;
+  return {
+    title: { absolute: title },
+    description: brand.description,
+    openGraph: {
+      title,
+      description: brand.description,
+    },
+  };
+}
 
 export const dynamic = "force-dynamic";
 

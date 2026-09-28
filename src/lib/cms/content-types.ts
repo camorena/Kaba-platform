@@ -8,7 +8,7 @@
  * `src/lib/site.ts` except cutovers via getPublished* (faqs, testimonials,
  * projects, fence-types, services, about, materials, service-area,
  * site-copy hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact
- * (+ remaining CTAs), materials FAQs, chatbot catalogs).
+ * (+ brand/address/social + remaining CTAs), materials FAQs, chatbot catalogs).
  */
 
 export type FieldKind =
@@ -87,7 +87,7 @@ const SITE_COPY_GROUP_OPTIONS = [
   { value: "trust", label: "Trust points", labelEs: "Puntos de confianza" },
   { value: "needs", label: "Your needs (home)", labelEs: "Sus necesidades (inicio)" },
   { value: "nav", label: "Nav / footer / fencing / legal labels", labelEs: "Etiquetas de nav / pie / cercas / legal" },
-  { value: "contact", label: "Contact phone / email / hours", labelEs: "Contacto teléfono / correo / horario" },
+  { value: "contact", label: "Contact phone / email / hours / address / social", labelEs: "Contacto teléfono / correo / horario / dirección / redes" },
 ] as const;
 
 const PROVENANCE_OPTIONS = [
@@ -253,7 +253,7 @@ export const CONTENT_TYPES: Readonly<Record<string, ContentTypeSpec>> = {
     orderBy: "sortOrder",
     phase: "B",
     publicPath: "/",
-    siteSource: "siteConfig hero/tagline/contact, howItWorks, processTimeline, kabaExperience, trustPoints, yourNeeds, navLinks, footerLinks, fencingOptionsNav, legalLinks",
+    siteSource: "siteConfig name/tagline/description/hero/contact/address/social, howItWorks, processTimeline, kabaExperience, trustPoints, yourNeeds, navLinks, footerLinks, fencingOptionsNav, legalLinks",
     fields: [
       {
         name: "key",

@@ -9,7 +9,7 @@ export type ContentDocument = {
    * Draft | published.
    * Publishing affects the live site only for types with a public cutover
    * (faqs, testimonials, projects, fence-types, services, about, materials,
-   * service-area, site-copy (hero/trust/experience/needs/process/nav/footer/contact)
+   * service-area, site-copy (hero/trust/experience/needs/process/nav/footer/fencingNav/legal/contact/brand/address/social)
    * via getPublished*, materials FAQs, JSON-LD areaServed, and chatbot catalogs).
    * Other types stay admin-only until their swap — marketing still uses site.ts.
    */
@@ -133,6 +133,7 @@ export type PublishedProcessStep = {
 };
 
 export type PublishedHeroCopy = {
+  name: string;
   tagline: string;
   description: string;
   heroLabel: string;
@@ -181,6 +182,17 @@ export type PublishedContactInfo = {
     weekdays: string;
     saturday: string;
     sunday: string;
+  };
+  address: {
+    city: string;
+    state: string;
+    zip: string;
+    region: string;
+  };
+  social: {
+    facebook: string;
+    instagram: string;
+    linkedin: string;
   };
 };
 

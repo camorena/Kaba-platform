@@ -12,6 +12,8 @@
  *   getPublishedHeroCopy / TrustPoints / YourNeeds / KabaExperience → home (+ residential needs)
  *   getPublishedNavLinks / FooterLinks / FencingOptionsNav / LegalLinks / ContactInfo
  *     → header/footer chrome (+ legal) + contact CTAs across marketing/pay/404/mail
+ *   getPublishedHeroCopy (name/tagline/description) + ContactInfo address/social
+ *     → metadata/OG, footer brand/region/social, pay chrome, JSON-LD, invoice letterhead
  *   JSON-LD areaServed ← getPublishedServiceTowns()
  *   Chatbot catalog ← getPublishedFaqs / FenceTypes / Services (+ contact)
  * Do not delete other exports until each type follows the swap path in

@@ -4,6 +4,10 @@ import {
   listPaymentsForInvoice,
   paidCentsForInvoice,
 } from "@/lib/admin/payments-store";
+import {
+  getPublishedContactInfo,
+  getPublishedHeroCopy,
+} from "@/lib/cms/public";
 import { isStripeCheckoutReady } from "@/lib/stripe/config";
 import { notFound } from "next/navigation";
 
@@ -31,6 +35,8 @@ export default async function AdminInvoiceDetailPage({
   const payments = await listPaymentsForInvoice(invoice.id);
   const paidCents = await paidCentsForInvoice(invoice.id);
   const stripeCheckoutReady = isStripeCheckoutReady();
+  const contact = getPublishedContactInfo();
+  const brand = getPublishedHeroCopy();
 
   return (
     <InvoiceDetailClient
@@ -38,6 +44,13 @@ export default async function AdminInvoiceDetailPage({
       payments={payments}
       paidCents={paidCents}
       stripeCheckoutReady={stripeCheckoutReady}
+      letterhead={{
+        name: brand.name,
+        tagline: brand.tagline,
+        addressRegion: contact.address.region,
+        phone: contact.phone,
+        email: contact.email,
+      }}
     />
   );
 }
