@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import AdminPageChrome from "@/components/admin/AdminPageChrome";
+import ContentBreadcrumbs from "@/components/admin/cms/ContentBreadcrumbs";
 import ContentEditClient from "@/components/admin/cms/ContentEditClient";
 import {
   CMS_PUBLIC_ROADMAP,
@@ -47,10 +47,16 @@ export default async function AdminContentEditPage({
   const document = getContent(type, id);
   if (!document) notFound();
   const { isPublicCutover, livePaths } = cutoverMeta(type);
+  const docLabel = String(document.fields[spec.titleField] ?? id);
 
   return (
     <>
-      <AdminPageChrome page="content" showDictMeta />
+      <ContentBreadcrumbs
+        typeLabelEn={spec.plural}
+        typeLabelEs={spec.pluralEs}
+        typeHref={`/admin/content/${spec.key}`}
+        docLabel={docLabel}
+      />
       <ContentEditClient
         spec={spec}
         document={document}

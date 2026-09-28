@@ -53,26 +53,22 @@ export default function ContentHubClient({
   const totalItems = Object.values(counts).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="admin-content-hub space-y-6 sm:space-y-8">
-      <div className="admin-content-sticky sticky top-0 z-20 -mx-1 space-y-3 bg-[color-mix(in_srgb,var(--admin-bg,var(--cream))_92%,transparent)] px-1 py-2 backdrop-blur-md sm:py-3">
-        <p className="max-w-3xl text-sm leading-relaxed text-muted">
-          {t("pages.content.hubIntro")}
+    <div className="admin-content-hub space-y-8 sm:space-y-10">
+      <div className="admin-content-sticky sticky top-0 z-20 -mx-1 space-y-3 bg-[color-mix(in_srgb,var(--admin-bg,var(--cream))_94%,transparent)] px-1 py-2.5 backdrop-blur-md">
+        <p className="text-[0.6875rem] tracking-wide text-muted">
+          <span className="text-ink/80">{t("pages.content.hubStatLive", { count: liveCount })}</span>
+          <span className="mx-2 text-ink/20" aria-hidden>
+            ·
+          </span>
+          <span>{t("pages.content.hubStatAdmin", { count: adminOnlyCount })}</span>
+          <span className="mx-2 text-ink/20" aria-hidden>
+            ·
+          </span>
+          <span>{t("pages.content.hubStatItems", { count: totalItems })}</span>
         </p>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="admin-badge admin-badge-emerald rounded-full px-2.5 py-1 text-[0.5625rem] font-bold uppercase tracking-[0.08em]">
-            {t("pages.content.hubStatLive", { count: liveCount })}
-          </span>
-          <span className="admin-badge admin-badge-muted rounded-full px-2.5 py-1 text-[0.5625rem] font-bold uppercase tracking-[0.08em]">
-            {t("pages.content.hubStatAdmin", { count: adminOnlyCount })}
-          </span>
-          <span className="admin-badge admin-badge-muted rounded-full px-2.5 py-1 text-[0.5625rem] font-bold uppercase tracking-[0.08em]">
-            {t("pages.content.hubStatItems", { count: totalItems })}
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <label className="relative block min-w-0 flex-1 sm:max-w-md">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <label className="relative block min-w-0 flex-1 sm:max-w-sm">
             <span className="sr-only">{t("pages.content.searchLabel")}</span>
             <input
               type="search"
@@ -98,7 +94,7 @@ export default function ContentHubClient({
           </label>
 
           <div
-            className="flex flex-wrap gap-1.5"
+            className="flex flex-wrap gap-1"
             role="group"
             aria-label={t("pages.content.filterAria")}
           >
@@ -113,10 +109,10 @@ export default function ContentHubClient({
                 key={id}
                 type="button"
                 onClick={() => setLiveFilter(id)}
-                className={`admin-touch rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                className={`admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
                   liveFilter === id
-                    ? "bg-bronze/15 text-bronze-dark ring-1 ring-bronze/35 dark:text-bronze-light"
-                    : "bg-[var(--admin-panel)] text-muted ring-1 ring-[var(--admin-border)] hover:text-ink"
+                    ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
+                    : "text-muted hover:bg-[var(--admin-panel)] hover:text-ink"
                 }`}
               >
                 {label}
@@ -130,15 +126,15 @@ export default function ContentHubClient({
         const group = filteredTypes.filter((spec) => spec.phase === phase);
         if (group.length === 0) return null;
         return (
-          <section key={phase} aria-labelledby={`content-phase-${phase}`}>
-            <div className="admin-content-phase-head mb-3 flex items-baseline justify-between gap-2">
+          <section key={phase} aria-labelledby={`content-phase-${phase}`} className="space-y-3">
+            <div className="admin-content-phase-head flex items-baseline justify-between gap-3 border-b border-[var(--admin-border)]/50 pb-2">
               <h2
                 id={`content-phase-${phase}`}
-                className="admin-section-label"
+                className="text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-muted"
               >
                 {phaseTitle[phase]}
               </h2>
-              <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted">
+              <span className="text-[0.6875rem] tabular-nums text-muted/80">
                 {t("pages.content.phaseCount", { count: group.length })}
               </span>
             </div>
@@ -151,47 +147,38 @@ export default function ContentHubClient({
                   <Link
                     key={spec.key}
                     href={`/admin/content/${spec.key}`}
-                    className="admin-glass-panel admin-gold-rail admin-content-card admin-touch group relative block overflow-hidden p-4 transition hover:ring-1 hover:ring-bronze/30 sm:p-5"
+                    title={livePaths ? t("pages.content.livePathsHint", { paths: livePaths }) : undefined}
+                    className="admin-glass-panel admin-content-card admin-touch group relative block p-4 transition hover:border-bronze/25 sm:p-5"
                   >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="admin-section-label">{spec.key}</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[0.625rem] font-medium uppercase tracking-[0.08em] text-muted">
+                        {spec.key}
+                      </p>
                       {livePaths ? (
-                        <span className="admin-badge admin-badge-emerald rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
-                          {t("pages.content.liveBadge", { paths: livePaths })}
+                        <span className="admin-content-chip admin-content-chip-live">
+                          {t("pages.content.liveBadge")}
                         </span>
                       ) : (
-                        <span className="admin-badge admin-badge-muted rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                        <span className="admin-content-chip">
                           {t("pages.content.adminOnlyBadge")}
                         </span>
                       )}
                     </div>
-                    <h3 className="admin-card-title mt-1.5 group-hover:text-bronze-dark dark:group-hover:text-bronze-light">
+                    <h3 className="mt-2 font-display text-[1.05rem] font-semibold leading-snug tracking-[-0.02em] text-ink group-hover:text-bronze-dark dark:group-hover:text-bronze-light">
                       {plural}
                     </h3>
-                    <p className="mt-2 text-sm font-medium text-ink">
+                    <p className="mt-1.5 text-sm text-muted">
                       {t("pages.content.count", { count })}
                     </p>
-                    <p className="mt-1.5 text-xs leading-relaxed text-muted">
-                      {t("pages.content.mirrors", { source: spec.siteSource })}
-                    </p>
-                    {spec.publicPath ? (
-                      <p className="mt-1 text-xs text-muted">
-                        {t("pages.content.publicPath", { path: spec.publicPath })}
-                      </p>
-                    ) : null}
                     {livePaths ? (
-                      <p className="mt-2.5 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-                        {t("pages.content.publishAffects", { paths: livePaths })}
+                      <p className="mt-2 truncate text-[0.6875rem] text-muted/80">
+                        {livePaths}
                       </p>
                     ) : (
-                      <p className="mt-2.5 text-xs text-muted">
-                        {t("pages.content.publishAdminOnly")}
+                      <p className="mt-2 text-[0.6875rem] text-muted/70">
+                        {t("pages.content.mirrors", { source: spec.siteSource })}
                       </p>
                     )}
-                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-bronze opacity-0 transition group-hover:opacity-100">
-                      {t("pages.content.openType")}
-                      <span aria-hidden>→</span>
-                    </span>
                   </Link>
                 );
               })}
@@ -201,7 +188,7 @@ export default function ContentHubClient({
       })}
 
       {filteredTypes.length === 0 ? (
-        <div className="admin-empty admin-gold-rail rounded-xl border border-dashed border-ink/12 bg-[var(--admin-panel)] px-5 py-12 text-center">
+        <div className="admin-empty rounded-xl border border-dashed border-ink/10 bg-[var(--admin-panel)]/60 px-5 py-14 text-center">
           <p className="font-display text-base font-semibold text-ink">
             {t("common.noMatches")}
           </p>
@@ -222,34 +209,36 @@ export default function ContentHubClient({
       ) : null}
 
       {upcoming.length > 0 ? (
-        <section aria-labelledby="content-upcoming">
-          <h2 id="content-upcoming" className="admin-section-label mb-3">
-            {t("pages.content.upcomingTitle")}
-          </h2>
-          <p className="mb-3 max-w-3xl text-sm text-muted">
+        <section aria-labelledby="content-upcoming" className="space-y-3">
+          <div className="border-b border-[var(--admin-border)]/50 pb-2">
+            <h2
+              id="content-upcoming"
+              className="text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-muted"
+            >
+              {t("pages.content.upcomingTitle")}
+            </h2>
+          </div>
+          <p className="max-w-2xl text-[0.8125rem] text-muted">
             {t("pages.content.upcomingBody")}
           </p>
-          <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
             {upcoming.map((item) => {
               const plural = locale === "es" ? item.pluralEs : item.plural;
               return (
                 <li
                   key={item.key}
-                  className="admin-glass-panel border border-dashed border-[var(--admin-border)] p-4 opacity-90 sm:p-5"
+                  className="rounded-xl border border-dashed border-[var(--admin-border)]/80 bg-[var(--admin-panel)]/40 px-4 py-3.5"
                 >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="admin-section-label">{item.key}</p>
-                    <span className="admin-badge admin-badge-muted rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[0.625rem] font-medium uppercase tracking-[0.08em] text-muted">
+                      {item.key}
+                    </p>
+                    <span className="admin-content-chip">
                       {t("pages.content.phaseBadge", { phase: item.phase })}
                     </span>
                   </div>
-                  <h3 className="admin-card-title mt-1">{plural}</h3>
-                  <p className="mt-2 text-xs text-muted">
-                    {t("pages.content.replaces", {
-                      source: item.siteSources.join(", "),
-                    })}
-                  </p>
-                  <p className="mt-1 text-xs text-muted">
+                  <h3 className="mt-1.5 text-sm font-semibold text-ink">{plural}</h3>
+                  <p className="mt-1 text-[0.6875rem] text-muted/80">
                     {item.publicPaths.join(" · ")}
                   </p>
                 </li>
@@ -259,7 +248,7 @@ export default function ContentHubClient({
         </section>
       ) : null}
 
-      <p className="rounded-lg border border-border/60 bg-surface/40 px-3 py-2 text-xs leading-relaxed text-muted">
+      <p className="max-w-3xl text-[0.6875rem] leading-relaxed text-muted/75">
         {t("pages.content.swapNote")}
       </p>
     </div>

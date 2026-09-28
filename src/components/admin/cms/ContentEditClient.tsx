@@ -83,27 +83,32 @@ export default function ContentEditClient({
   const title = String(fields[spec.titleField] ?? initial.id);
 
   return (
-    <form onSubmit={onSave} className="admin-content-edit mx-auto max-w-2xl space-y-4 pb-24">
-      <div className="admin-content-sticky sticky top-0 z-20 -mx-1 space-y-3 bg-[color-mix(in_srgb,var(--admin-bg,var(--cream))_92%,transparent)] px-1 py-2 backdrop-blur-md sm:py-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+    <form
+      onSubmit={onSave}
+      className="admin-content-edit mx-auto max-w-2xl space-y-5 pb-24 sm:pb-8"
+    >
+      <div className="admin-content-sticky sticky top-0 z-20 -mx-1 space-y-2.5 bg-[color-mix(in_srgb,var(--admin-bg,var(--cream))_94%,transparent)] px-1 py-2.5 backdrop-blur-md">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="admin-section-label">{spec.key}</p>
-            <h2 className="admin-card-title truncate">{title}</h2>
+            <p className="text-[0.625rem] font-medium uppercase tracking-[0.08em] text-muted">
+              {spec.key}
+            </p>
+            <h2 className="mt-0.5 truncate font-display text-lg font-semibold tracking-[-0.02em] text-ink sm:text-xl">
+              {title}
+            </h2>
           </div>
           <Link
             href={`/admin/content/${spec.key}`}
-            className="btn-secondary-light admin-touch text-sm"
+            className="admin-touch shrink-0 text-sm font-medium text-bronze underline-offset-2 hover:underline"
           >
             {t("pages.content.backList")}
           </Link>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[0.6875rem] text-muted">
           <span
-            className={`admin-badge rounded-full px-2.5 py-1 text-[0.5625rem] font-bold uppercase tracking-[0.08em] ${
-              status === "published"
-                ? "admin-badge-emerald"
-                : "admin-badge-muted"
+            className={`admin-content-chip ${
+              status === "published" ? "admin-content-chip-live" : ""
             }`}
           >
             {status === "published"
@@ -111,33 +116,37 @@ export default function ContentEditClient({
               : t("pages.content.statusDraft")}
           </span>
           {dirty ? (
-            <span className="admin-badge rounded-full bg-amber-500/15 px-2.5 py-1 text-[0.5625rem] font-bold uppercase tracking-[0.08em] text-amber-800 dark:text-amber-200">
+            <span className="admin-content-chip admin-content-chip-warn">
               {t("pages.content.unsaved")}
             </span>
           ) : null}
           {isPublicCutover ? (
-            <span className="admin-badge admin-badge-emerald rounded-full px-2.5 py-1 text-[0.5625rem] font-bold uppercase tracking-[0.08em]">
-              {t("pages.content.liveBadge", { paths: livePaths })}
+            <span title={livePaths} className="text-muted/80">
+              {t("pages.content.liveBadge")}
+              <span className="mx-1 text-ink/20" aria-hidden>
+                ·
+              </span>
+              <span className="text-muted/70">{livePaths}</span>
             </span>
           ) : (
-            <span className="admin-badge admin-badge-muted rounded-full px-2.5 py-1 text-[0.5625rem] font-bold uppercase tracking-[0.08em]">
-              {t("pages.content.adminOnlyBadge")}
-            </span>
+            <span className="text-muted/70">{t("pages.content.adminOnlyBadge")}</span>
           )}
         </div>
       </div>
 
-      <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs leading-relaxed text-amber-900 dark:text-amber-200">
+      <p className="text-[0.75rem] leading-relaxed text-muted">
         {isPublicCutover
           ? t("pages.content.editStubNoteLive", { paths: livePaths })
           : t("pages.content.editStubNoteAdmin")}
       </p>
 
-      <div className="admin-glass-panel admin-gold-rail space-y-5 p-4 sm:p-5">
+      <div className="admin-glass-panel space-y-6 p-4 sm:p-6">
         <div>
-          <p className="admin-section-label">{t("pages.content.colStatus")}</p>
+          <p className="text-[0.625rem] font-medium uppercase tracking-[0.08em] text-muted">
+            {t("pages.content.colStatus")}
+          </p>
           <div
-            className="mt-2 grid grid-cols-2 gap-2"
+            className="mt-2 inline-flex rounded-lg bg-[var(--admin-bg)]/70 p-0.5 ring-1 ring-[var(--admin-border)]/70"
             role="group"
             aria-label={t("pages.content.colStatus")}
           >
@@ -151,27 +160,25 @@ export default function ContentEditClient({
                 key={id}
                 type="button"
                 onClick={() => setStatus(id)}
-                className={`admin-touch rounded-xl px-3 py-2.5 text-sm font-semibold transition ring-1 ${
+                className={`admin-touch rounded-md px-3.5 py-1.5 text-sm font-medium transition ${
                   status === id
-                    ? id === "published"
-                      ? "bg-emerald-500/15 text-emerald-800 ring-emerald-500/35 dark:text-emerald-200"
-                      : "bg-bronze/15 text-bronze-dark ring-bronze/35 dark:text-bronze-light"
-                    : "bg-[var(--admin-bg)] text-muted ring-[var(--admin-border)] hover:text-ink"
+                    ? "bg-[var(--admin-panel)] text-ink shadow-sm"
+                    : "text-muted hover:text-ink"
                 }`}
               >
                 {label}
               </button>
             ))}
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-muted">
+          <p className="mt-2 text-[0.75rem] leading-relaxed text-muted">
             {isPublicCutover
               ? t("pages.content.statusHelpLive", { paths: livePaths })
               : t("pages.content.statusHelpAdmin")}
           </p>
         </div>
 
-        <div className="border-t border-[var(--admin-border)]/70 pt-4">
-          <p className="admin-section-label mb-3">
+        <div className="border-t border-[var(--admin-border)]/60 pt-5">
+          <p className="mb-4 text-[0.625rem] font-medium uppercase tracking-[0.08em] text-muted">
             {t("pages.content.fieldsHeading")}
           </p>
           <div className="space-y-4">
@@ -186,7 +193,7 @@ export default function ContentEditClient({
                 return (
                   <label
                     key={field.name}
-                    className="flex min-h-11 items-center gap-2.5 rounded-lg border border-[var(--admin-border)]/60 bg-[var(--admin-bg)]/40 px-3 py-2"
+                    className="flex min-h-11 items-center gap-2.5 rounded-lg px-1 py-1"
                   >
                     <input
                       type="checkbox"
@@ -203,10 +210,10 @@ export default function ContentEditClient({
               if (field.kind === "textarea") {
                 return (
                   <label key={field.name} className="block">
-                    <span className="admin-section-label flex items-center justify-between gap-2">
+                    <span className="flex items-center justify-between gap-2 text-[0.6875rem] font-medium text-muted">
                       <span>{label}</span>
                       {field.maxLength ? (
-                        <span className="font-normal normal-case tracking-normal text-muted">
+                        <span className="tabular-nums font-normal text-muted/70">
                           {strVal.length}/{field.maxLength}
                         </span>
                       ) : null}
@@ -220,7 +227,9 @@ export default function ContentEditClient({
                       onChange={(e) => setField(field.name, e.target.value)}
                     />
                     {hint ? (
-                      <span className="mt-1 block text-xs text-muted">{hint}</span>
+                      <span className="mt-1 block text-[0.6875rem] text-muted/80">
+                        {hint}
+                      </span>
                     ) : null}
                   </label>
                 );
@@ -229,7 +238,9 @@ export default function ContentEditClient({
               if (field.kind === "select" && field.options) {
                 return (
                   <label key={field.name} className="block">
-                    <span className="admin-section-label">{label}</span>
+                    <span className="text-[0.6875rem] font-medium text-muted">
+                      {label}
+                    </span>
                     <select
                       className="field-input mt-1.5 w-full"
                       value={strVal}
@@ -243,7 +254,9 @@ export default function ContentEditClient({
                       ))}
                     </select>
                     {hint ? (
-                      <span className="mt-1 block text-xs text-muted">{hint}</span>
+                      <span className="mt-1 block text-[0.6875rem] text-muted/80">
+                        {hint}
+                      </span>
                     ) : null}
                   </label>
                 );
@@ -251,13 +264,13 @@ export default function ContentEditClient({
 
               return (
                 <label key={field.name} className="block">
-                  <span className="admin-section-label flex items-center justify-between gap-2">
+                  <span className="flex items-center justify-between gap-2 text-[0.6875rem] font-medium text-muted">
                     <span>
                       {label}
                       {locked ? ` (${t("pages.content.locked")})` : ""}
                     </span>
                     {field.maxLength && field.kind !== "number" ? (
-                      <span className="font-normal normal-case tracking-normal text-muted">
+                      <span className="tabular-nums font-normal text-muted/70">
                         {strVal.length}/{field.maxLength}
                       </span>
                     ) : null}
@@ -281,7 +294,9 @@ export default function ContentEditClient({
                     }
                   />
                   {hint ? (
-                    <span className="mt-1 block text-xs text-muted">{hint}</span>
+                    <span className="mt-1 block text-[0.6875rem] text-muted/80">
+                      {hint}
+                    </span>
                   ) : null}
                 </label>
               );
@@ -290,7 +305,7 @@ export default function ContentEditClient({
         </div>
       </div>
 
-      <div className="admin-content-savebar admin-detail-actions fixed inset-x-0 bottom-0 z-30 border-t border-[var(--admin-border)] bg-[color-mix(in_srgb,var(--admin-panel)_94%,transparent)] px-4 py-3 backdrop-blur-md sm:static sm:inset-auto sm:z-auto sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+      <div className="admin-content-savebar admin-detail-actions fixed inset-x-0 bottom-0 z-30 border-t border-[var(--admin-border)]/80 bg-[color-mix(in_srgb,var(--admin-panel)_94%,transparent)] px-4 py-3 backdrop-blur-md sm:static sm:inset-auto sm:z-auto sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
         <div className="mx-auto flex max-w-2xl flex-wrap gap-2">
           <button
             type="button"
@@ -311,7 +326,7 @@ export default function ContentEditClient({
           <button
             type="submit"
             disabled={saving || !dirty}
-            className="admin-touch btn-secondary-light text-sm disabled:opacity-60 sm:ml-auto"
+            className="admin-touch text-sm font-medium text-muted underline-offset-2 hover:text-ink hover:underline disabled:opacity-40 sm:ml-auto"
           >
             {saving ? t("common.saving") : t("pages.content.save")}
           </button>

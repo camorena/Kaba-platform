@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import AdminPageChrome from "@/components/admin/AdminPageChrome";
+import ContentBreadcrumbs from "@/components/admin/cms/ContentBreadcrumbs";
 import ContentListClient from "@/components/admin/cms/ContentListClient";
 import {
   CMS_PUBLIC_ROADMAP,
@@ -43,7 +43,10 @@ export default async function AdminContentListPage({
 
   return (
     <>
-      <AdminPageChrome page="content" showDictMeta />
+      <ContentBreadcrumbs
+        typeLabelEn={spec.plural}
+        typeLabelEs={spec.pluralEs}
+      />
       <ContentListClient
         spec={spec}
         documents={documents}

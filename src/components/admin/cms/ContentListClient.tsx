@@ -53,11 +53,17 @@ export default function ContentListClient({
   }
 
   return (
-    <div className="admin-content-list space-y-4">
-      <div className="admin-content-sticky sticky top-0 z-20 -mx-1 space-y-3 bg-[color-mix(in_srgb,var(--admin-bg,var(--cream))_92%,transparent)] px-1 py-2 backdrop-blur-md sm:py-3">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div className="min-w-0 max-w-2xl">
-            <p className="text-sm leading-relaxed text-muted">
+    <div className="admin-content-list space-y-5">
+      <div className="admin-content-sticky sticky top-0 z-20 -mx-1 space-y-3 bg-[color-mix(in_srgb,var(--admin-bg,var(--cream))_94%,transparent)] px-1 py-2.5 backdrop-blur-md">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0 max-w-xl">
+            <p className="text-[0.6875rem] font-medium uppercase tracking-[0.08em] text-muted">
+              {spec.key}
+            </p>
+            <h2 className="mt-0.5 font-display text-lg font-semibold tracking-[-0.02em] text-ink sm:text-xl">
+              {plural}
+            </h2>
+            <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-muted">
               {isPublicCutover
                 ? t("pages.content.listHintLive", { plural, paths: livePaths })
                 : t("pages.content.listHintAdmin", { plural })}
@@ -65,32 +71,36 @@ export default function ContentListClient({
           </div>
           <Link
             href="/admin/content"
-            className="btn-secondary-light admin-touch shrink-0 text-sm"
+            className="admin-touch shrink-0 text-sm font-medium text-bronze underline-offset-2 hover:underline"
           >
             {t("pages.content.backHub")}
           </Link>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-xs">
-          <span className="admin-badge admin-badge-emerald rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
-            {t("pages.content.statusPublished")}: {publishedCount}
+        <p className="text-[0.6875rem] tracking-wide text-muted">
+          <span className="text-ink/80">
+            {publishedCount} {t("pages.content.statusPublished").toLowerCase()}
           </span>
-          <span className="admin-badge admin-badge-muted rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
-            {t("pages.content.statusDraft")}: {draftCount}
+          <span className="mx-2 text-ink/20" aria-hidden>
+            ·
+          </span>
+          <span>
+            {draftCount} {t("pages.content.statusDraft").toLowerCase()}
           </span>
           {isPublicCutover ? (
-            <span className="admin-badge admin-badge-emerald rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
-              {t("pages.content.liveBadge", { paths: livePaths })}
-            </span>
-          ) : (
-            <span className="admin-badge admin-badge-muted rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
-              {t("pages.content.adminOnlyBadge")}
-            </span>
-          )}
-        </div>
+            <>
+              <span className="mx-2 text-ink/20" aria-hidden>
+                ·
+              </span>
+              <span className="text-emerald-800/80 dark:text-emerald-300/80">
+                {t("pages.content.liveBadge")}
+              </span>
+            </>
+          ) : null}
+        </p>
 
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label className="relative block min-w-0 flex-1 sm:max-w-sm">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+          <label className="relative block min-w-0 flex-1 sm:max-w-xs">
             <span className="sr-only">{t("pages.content.searchLabel")}</span>
             <input
               type="search"
@@ -115,7 +125,7 @@ export default function ContentListClient({
             </svg>
           </label>
           <div
-            className="flex flex-wrap gap-1.5"
+            className="flex flex-wrap gap-1"
             role="group"
             aria-label={t("pages.content.statusFilterAria")}
           >
@@ -130,10 +140,10 @@ export default function ContentListClient({
                 key={id}
                 type="button"
                 onClick={() => setStatusFilter(id)}
-                className={`admin-touch rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                className={`admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
                   statusFilter === id
-                    ? "bg-bronze/15 text-bronze-dark ring-1 ring-bronze/35 dark:text-bronze-light"
-                    : "bg-[var(--admin-panel)] text-muted ring-1 ring-[var(--admin-border)] hover:text-ink"
+                    ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
+                    : "text-muted hover:bg-[var(--admin-panel)] hover:text-ink"
                 }`}
               >
                 {label}
@@ -170,21 +180,21 @@ export default function ContentListClient({
           <div className="admin-glass-panel hidden overflow-hidden md:block">
             <div className="admin-table-wrap overflow-x-auto">
               <table className="w-full min-w-[36rem] text-left text-sm">
-                <thead className="sticky top-0 z-10 bg-[var(--admin-panel)]">
-                  <tr className="border-b border-[var(--admin-border)] text-[0.6875rem] uppercase tracking-[0.08em] text-muted">
-                    <th className="px-4 py-3 font-bold">
+                <thead>
+                  <tr className="border-b border-[var(--admin-border)] text-[0.625rem] uppercase tracking-[0.08em] text-muted">
+                    <th className="px-4 py-2.5 font-semibold">
                       {t("pages.content.colTitle")}
                     </th>
-                    <th className="px-4 py-3 font-bold">
+                    <th className="px-4 py-2.5 font-semibold">
                       {t("pages.content.colStatus")}
                     </th>
-                    <th className="px-4 py-3 font-bold">
+                    <th className="px-4 py-2.5 font-semibold">
                       {t("pages.content.colOrder")}
                     </th>
-                    <th className="px-4 py-3 font-bold">
+                    <th className="px-4 py-2.5 font-semibold">
                       {t("pages.content.colUpdated")}
                     </th>
-                    <th className="px-4 py-3 font-bold">
+                    <th className="px-4 py-2.5 font-semibold">
                       <span className="sr-only">{t("pages.content.edit")}</span>
                     </th>
                   </tr>
@@ -195,15 +205,22 @@ export default function ContentListClient({
                     return (
                       <tr
                         key={doc.id}
-                        className="border-b border-[var(--admin-border)]/60 transition hover:bg-[var(--admin-row-hover)]"
+                        className="border-b border-[var(--admin-border)]/50 transition hover:bg-[var(--admin-row-hover)]"
                       >
-                        <td className="px-4 py-3 font-medium text-ink">{title}</td>
+                        <td className="px-4 py-3">
+                          <Link
+                            href={`/admin/content/${spec.key}/${doc.id}`}
+                            className="font-medium text-ink hover:text-bronze-dark dark:hover:text-bronze-light"
+                          >
+                            {title}
+                          </Link>
+                        </td>
                         <td className="px-4 py-3">
                           <span
-                            className={`admin-badge rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                            className={`admin-content-chip ${
                               doc.status === "published"
-                                ? "admin-badge-emerald"
-                                : "admin-badge-muted"
+                                ? "admin-content-chip-live"
+                                : ""
                             }`}
                           >
                             {doc.status === "published"
@@ -211,14 +228,16 @@ export default function ContentListClient({
                               : t("pages.content.statusDraft")}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-muted">{doc.sortOrder}</td>
+                        <td className="px-4 py-3 tabular-nums text-muted">
+                          {doc.sortOrder}
+                        </td>
                         <td className="px-4 py-3 text-muted">
                           {formatUpdated(doc.updatedAt)}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <Link
                             href={`/admin/content/${spec.key}/${doc.id}`}
-                            className="font-semibold text-bronze underline-offset-2 hover:underline"
+                            className="text-sm font-medium text-bronze underline-offset-2 hover:underline"
                           >
                             {t("pages.content.edit")}
                           </Link>
@@ -231,24 +250,22 @@ export default function ContentListClient({
             </div>
           </div>
 
-          <ul className="grid gap-3 md:hidden">
+          <ul className="grid gap-2.5 md:hidden">
             {filtered.map((doc) => {
               const title = String(doc.fields[titleField] ?? doc.id);
               return (
                 <li key={doc.id}>
                   <Link
                     href={`/admin/content/${spec.key}/${doc.id}`}
-                    className="admin-glass-panel admin-gold-rail admin-mobile-card admin-touch block p-4"
+                    className="admin-glass-panel admin-mobile-card admin-touch block p-4"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold leading-snug text-ink">
-                        {title}
-                      </h3>
+                      <h3 className="font-medium leading-snug text-ink">{title}</h3>
                       <span
-                        className={`admin-badge shrink-0 rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                        className={`admin-content-chip shrink-0 ${
                           doc.status === "published"
-                            ? "admin-badge-emerald"
-                            : "admin-badge-muted"
+                            ? "admin-content-chip-live"
+                            : ""
                         }`}
                       >
                         {doc.status === "published"
@@ -256,12 +273,12 @@ export default function ContentListClient({
                           : t("pages.content.statusDraft")}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-muted">
-                      {t("pages.content.colOrder")}: {doc.sortOrder} ·{" "}
+                    <p className="mt-2 text-[0.6875rem] text-muted">
+                      {t("pages.content.colOrder")} {doc.sortOrder}
+                      <span className="mx-1.5 text-ink/20" aria-hidden>
+                        ·
+                      </span>
                       {formatUpdated(doc.updatedAt)}
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-bronze">
-                      {t("pages.content.edit")} →
                     </p>
                   </Link>
                 </li>
@@ -269,7 +286,7 @@ export default function ContentListClient({
             })}
           </ul>
 
-          <p className="text-xs text-muted">
+          <p className="text-[0.6875rem] text-muted">
             {t("common.showingOf", {
               filtered: filtered.length,
               total: documents.length,
@@ -278,7 +295,7 @@ export default function ContentListClient({
         </>
       )}
 
-      <p className="rounded-lg border border-border/60 bg-surface/40 px-3 py-2 text-xs leading-relaxed text-muted">
+      <p className="max-w-3xl text-[0.6875rem] leading-relaxed text-muted/75">
         {t("pages.content.swapNote")}
       </p>
     </div>
