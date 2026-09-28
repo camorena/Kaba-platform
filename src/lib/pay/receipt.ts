@@ -34,6 +34,6 @@ export function buildPaymentReceiptStub(
     method: payment.method,
     reference: payment.reference,
     stripeCheckoutSessionId: payment.stripeCheckoutSessionId,
-    note: "Receipt stub — not emailed. Wire mail transport before production.",
+    note: "Receipt stub — email when mail transport is configured (Settings → Platform).",
   };
 }

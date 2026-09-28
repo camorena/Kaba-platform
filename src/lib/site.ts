@@ -1,3 +1,11 @@
+/**
+ * Public marketing content (single source for the live site today).
+ *
+ * CMS cutover: admin Phase A stubs live under src/lib/cms/ and /admin/content.
+ * Do not delete exports here until each type follows the swap path in
+ * preview/CMS_PUBLIC_CONTENT_PLAN.md (getPublished* + one page at a time).
+ */
+
 export const siteConfig = {
   name: "Kaba Fence",
   tagline: "We Listen. We Guide. We Build. We Care.",

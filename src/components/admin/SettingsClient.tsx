@@ -64,6 +64,15 @@ export default function SettingsClient({
     webhookReady: false,
     badge: "not_connected" as const,
   },
+  mail = {
+    resendConfigured: false,
+    smtpConfigured: false,
+    fromConfigured: false,
+    ownersConfigured: false,
+    transport: "none" as const,
+    ready: false,
+    badge: "not_configured" as const,
+  },
   roles = ["owner", "editor", "viewer"],
 }: {
   configured: boolean;
@@ -82,6 +91,15 @@ export default function SettingsClient({
     checkoutReady: boolean;
     webhookReady: boolean;
     badge: "not_connected" | "checkout_ready" | "connected";
+  };
+  mail?: {
+    resendConfigured: boolean;
+    smtpConfigured: boolean;
+    fromConfigured: boolean;
+    ownersConfigured: boolean;
+    transport: "none" | "resend" | "smtp";
+    ready: boolean;
+    badge: "not_configured" | "resend" | "smtp";
   };
   roles?: string[];
 }) {
@@ -428,6 +446,9 @@ export default function SettingsClient({
                     "src/lib/db/postgres/",
                     "db/migrations/0001_ops_foundation.sql",
                     "db/migrations/0003_stripe.sql",
+                    "db/migrations/0005_cms_content.sql",
+                    "src/lib/cms/",
+                    "src/lib/mail/",
                     "db/seeds/0001_angier_raleigh_demo.sql",
                     "npm run db:migrate / db:seed",
                   ].map((path) => (
@@ -523,6 +544,83 @@ export default function SettingsClient({
                   <Code>STRIPE_SECRET_KEY</Code>
                   <Code>STRIPE_WEBHOOK_SECRET</Code>
                   <Code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</Code>
+                </div>
+              </article>
+
+              <article className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="admin-card-title">
+                    {t("pages.settings.mailTitle")}
+                  </h3>
+                  <span
+                    className={`admin-badge rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                      mail.badge === "resend" || mail.badge === "smtp"
+                        ? "admin-badge-emerald"
+                        : "admin-badge-muted"
+                    }`}
+                  >
+                    {mail.badge === "resend"
+                      ? t("pages.settings.mailBadgeResend")
+                      : mail.badge === "smtp"
+                        ? t("pages.settings.mailBadgeSmtp")
+                        : t("pages.settings.mailBadge")}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {mail.badge === "resend"
+                    ? t("pages.settings.mailBodyResend")
+                    : mail.badge === "smtp"
+                      ? t("pages.settings.mailBodySmtp")
+                      : t("pages.settings.mailBody")}
+                </p>
+                <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-1">
+                  {(
+                    [
+                      ["MAIL_FROM", mail.fromConfigured],
+                      ["RESEND_API_KEY", mail.resendConfigured],
+                      ["SMTP_HOST", mail.smtpConfigured],
+                      ["MAIL_TO_OWNERS", mail.ownersConfigured],
+                    ] as const
+                  ).map(([env, ok]) => (
+                    <div
+                      key={env}
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 bg-surface/40 px-3 py-2"
+                    >
+                      <dt>
+                        <Code>{env}</Code>
+                      </dt>
+                      <dd className="font-medium text-ink">
+                        {ok
+                          ? t("pages.settings.mailKeySet")
+                          : t("pages.settings.mailKeyMissing")}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
+                  <li>{t("pages.settings.mailPlan1")}</li>
+                  <li>{t("pages.settings.mailPlan2")}</li>
+                </ul>
+                <p className="mt-3 text-xs leading-relaxed text-muted">
+                  {withCode(
+                    t("pages.settings.mailRoutes", {
+                      quoteNotify: "notifyQuoteCreated",
+                      paymentNotify: "notifyPaymentReceived",
+                    }),
+                    ["notifyQuoteCreated", "notifyPaymentReceived"],
+                  )}
+                </p>
+                <p className="admin-section-label mt-4">
+                  {t("pages.settings.mailEnv")}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Code>MAIL_FROM</Code>
+                  <Code>RESEND_API_KEY</Code>
+                  <Code>SMTP_HOST</Code>
+                  <Code>SMTP_PORT</Code>
+                  <Code>SMTP_USER</Code>
+                  <Code>SMTP_PASS</Code>
+                  <Code>MAIL_TO_OWNERS</Code>
                 </div>
               </article>
             </div>

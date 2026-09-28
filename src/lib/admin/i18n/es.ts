@@ -15,6 +15,7 @@ const es = {
     templates: "Plantillas",
     activity: "Actividad",
     reports: "Informes",
+    content: "Contenido",
     settings: "Configuración",
     navigate: "Navegación"
   },
@@ -273,6 +274,38 @@ const es = {
       description:
         "Resumen operativo ligero: solo gráficos SVG/CSS. Montos de demostración; sin proveedor de analítica."
     },
+    content: {
+      title: "Contenido",
+      description: "Andamiaje CMS para tipos de cerca, servicios, proyectos y preguntas frecuentes. Las páginas públicas siguen leyendo site.ts.",
+      meta: "CMS en memoria · site.ts sigue activo",
+      hubIntro: "Gestione el contenido público de marketing desde el admin. Los tipos de la fase A tienen listados/edición; el sitio en vivo sigue leyendo site.ts hasta cada corte.",
+      phaseA: "Fase A — borradores editables",
+      upcomingTitle: "Planificado — contenido del sitio público",
+      upcomingBody: "Hoja de ruta para imágenes, textos, nosotros, materiales, carga de medios y bilingüismo público opcional. Vea preview/CMS_PUBLIC_CONTENT_PLAN.md.",
+      phaseBadge: "Fase {phase}",
+      replaces: "Reemplazará: {source}",
+      count: "{count} elemento",
+      count_plural: "{count} elementos",
+      mirrors: "Refleja {source} en site.ts",
+      publicPath: "Público: {path}",
+      listHint: "Editando {plural} en memoria — aún no se publica en el sitio de marketing.",
+      backHub: "Todos los tipos de contenido",
+      backList: "Volver a la lista",
+      colTitle: "Título",
+      colStatus: "Estado",
+      colOrder: "Orden",
+      colUpdated: "Actualizado",
+      statusPublished: "Publicado",
+      statusDraft: "Borrador",
+      edit: "Editar",
+      empty: "Aún no hay documentos en este tipo.",
+      swapNote: "Ruta de cambio: cuando esté listo, apunte las páginas públicas a listContent() / cms_documents en Postgres en lugar de los exports de site.ts — vea preview/REUSE_PORT_v7.md. No elimine site.ts hasta ese corte.",
+      editStubNote: "Borrador de edición en admin. Guarda solo en el almacén CMS en memoria. El sitio público sigue usando src/lib/site.ts hasta el cambio documentado.",
+      locked: "bloqueado",
+      save: "Guardar",
+      saved: "Contenido guardado (memoria)",
+      saveFailed: "No se pudo guardar el contenido",
+    },
     settings: {
       title: "Configuración",
       description:
@@ -368,7 +401,7 @@ const es = {
       dataNext:
         "Activar: docker compose up -d (opcional), npm run db:migrate, npm run db:seed, luego KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory sigue siendo el predeterminado para que el build no necesite una base en vivo.",
       dataNotify:
-        "La creación de cotizaciones usa persistir y luego notificar: primero se guarda la fila; {notify} es un stub sin efecto hasta conectar el correo.",
+        "La creación de cotizaciones usa persistir y luego notificar: primero se guarda la fila; {notify} envía vía Resend o SMTP si está configurado; si no, es un no-op honesto.",
       dataFilesLabel: "Esquema, semillas y repositorios",
       stripeTitle: "Pagos y Stripe",
       stripeBadge: "Sin conexión",
@@ -387,6 +420,23 @@ const es = {
       stripeKeyMissing: "Sin definir",
       stripeRoutes:
         "Rutas: {checkout} (admin) · /api/pay/[token]/checkout (público) · {webhook} (Stripe → app). Migraciones: 0003_stripe + 0004_pay_token.",
+      mailTitle: "Notificaciones por correo",
+      mailBadge: "Sin configurar",
+      mailBadgeResend: "Resend",
+      mailBadgeSmtp: "SMTP",
+      mailBody:
+        "Las claves de correo no están definidas. notifyQuoteCreated y notifyPaymentReceived permanecen como no-ops honestos — las cotizaciones y pagos se persisten primero.",
+      mailBodyResend:
+        "RESEND_API_KEY + MAIL_FROM están definidas. Las alertas al propietario y los avisos de pago se envían vía Resend después de guardar la fila.",
+      mailBodySmtp:
+        "SMTP_HOST + MAIL_FROM están definidas. Las alertas y avisos de pago se envían vía SMTP después de guardar la fila. Resend tiene prioridad si ambos están configurados.",
+      mailPlan1: "Crear cotización → alerta al propietario (MAIL_TO_OWNERS o correo del sitio)",
+      mailPlan2: "Pago registrado → aviso de recibo al propietario y al cliente (persistir y luego notificar)",
+      mailEnv: "Variables de entorno",
+      mailKeySet: "Definida",
+      mailKeyMissing: "Sin definir",
+      mailRoutes:
+        "Ganchos: {quoteNotify} · {paymentNotify}. Prefiera RESEND_API_KEY; si no, SMTP_HOST (+ SMTP_PORT/USER/PASS).",
       aboutTitle: "Acerca de este admin",
       aboutBody:
         "Herramientas operativas de bajo costo y notas de diseño para demos — sin analítica ni mensajería de pago.",

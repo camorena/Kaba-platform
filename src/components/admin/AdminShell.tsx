@@ -31,6 +31,7 @@ const nav = [
   { href: "/admin/templates", icon: "templates" },
   { href: "/admin/activity", icon: "pulse" },
   { href: "/admin/reports", icon: "chart" },
+  { href: "/admin/content", icon: "content" },
   { href: "/admin/settings", icon: "gear" },
 ];
 
@@ -101,6 +102,12 @@ function NavIcon({ name }: { name: string }) {
       return (
         <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 19V5m0 14h16M8 17V9m4 8V7m4 10v-4" />
+        </svg>
+      );
+    case "content":
+      return (
+        <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 6h16M4 10h16M4 14h10M4 18h7" />
         </svg>
       );
     default:

@@ -15,6 +15,7 @@ const en = {
     templates: "Templates",
     activity: "Activity",
     reports: "Reports",
+    content: "Content",
     settings: "Settings",
     navigate: "Navigate"
   },
@@ -258,6 +259,38 @@ const en = {
       title: "Reports",
       description: "Lightweight ops snapshot — SVG/CSS charts only. Demo amounts; no analytics vendor."
     },
+    content: {
+      title: "Content",
+      description: "CMS scaffold for fence types, services, projects, and FAQs. Public pages still read site.ts.",
+      meta: "Memory CMS · site.ts still live",
+      hubIntro: "Manage public marketing content from admin. Phase A types have list/edit stubs; the live site still reads site.ts until each cutover.",
+      phaseA: "Phase A — editable stubs",
+      upcomingTitle: "Planned — public site content",
+      upcomingBody: "Roadmap for images, site copy, about, materials, media upload, and optional public bilingual. See preview/CMS_PUBLIC_CONTENT_PLAN.md.",
+      phaseBadge: "Phase {phase}",
+      replaces: "Will replace: {source}",
+      count: "{count} item",
+      count_plural: "{count} items",
+      mirrors: "Mirrors {source} in site.ts",
+      publicPath: "Public: {path}",
+      listHint: "Editing {plural} in memory — not published to the marketing site yet.",
+      backHub: "All content types",
+      backList: "Back to list",
+      colTitle: "Title",
+      colStatus: "Status",
+      colOrder: "Order",
+      colUpdated: "Updated",
+      statusPublished: "Published",
+      statusDraft: "Draft",
+      edit: "Edit",
+      empty: "No documents in this type yet.",
+      swapNote: "Swap path: when ready, point public pages at listContent() / Postgres cms_documents instead of site.ts exports — see preview/REUSE_PORT_v7.md. Do not rip site.ts until that cutover.",
+      editStubNote: "Admin edit stub. Saves to the in-memory CMS store only. The public site continues to use src/lib/site.ts until the documented swap.",
+      locked: "locked",
+      save: "Save",
+      saved: "Content saved (memory)",
+      saveFailed: "Could not save content",
+    },
     settings: {
       title: "Settings",
       description:
@@ -351,7 +384,7 @@ const en = {
       dataNext:
         "Flip: docker compose up -d (optional), npm run db:migrate, npm run db:seed, then KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory remains the default so builds need no live DB.",
       dataNotify:
-        "Quote create uses persist-then-notify: the row is saved first; {notify} is a no-op stub until mail is wired.",
+        "Quote create uses persist-then-notify: the row is saved first; {notify} sends via Resend or SMTP when configured, otherwise an honest no-op.",
       dataFilesLabel: "Schema, seeds & repos",
       stripeTitle: "Payments & Stripe",
       stripeBadge: "Not connected",
@@ -370,6 +403,23 @@ const en = {
       stripeKeyMissing: "Not set",
       stripeRoutes:
         "Routes: {checkout} (admin) · /api/pay/[token]/checkout (public) · {webhook} (Stripe → app). Migrations: 0003_stripe + 0004_pay_token.",
+      mailTitle: "Email notifications",
+      mailBadge: "Not configured",
+      mailBadgeResend: "Resend",
+      mailBadgeSmtp: "SMTP",
+      mailBody:
+        "Mail keys are not set. notifyQuoteCreated and notifyPaymentReceived stay honest no-ops — quotes and payments still persist first.",
+      mailBodyResend:
+        "RESEND_API_KEY + MAIL_FROM are set. Owner alerts and payment notices send via Resend after the row is saved.",
+      mailBodySmtp:
+        "SMTP_HOST + MAIL_FROM are set. Owner alerts and payment notices send via SMTP after the row is saved. Resend wins if both are configured.",
+      mailPlan1: "Quote create → owner alert (MAIL_TO_OWNERS or site email)",
+      mailPlan2: "Payment recorded → owner + customer receipt notice (persist-then-notify)",
+      mailEnv: "Environment keys",
+      mailKeySet: "Set",
+      mailKeyMissing: "Not set",
+      mailRoutes:
+        "Hooks: {quoteNotify} · {paymentNotify}. Prefer RESEND_API_KEY; otherwise SMTP_HOST (+ SMTP_PORT/USER/PASS).",
       aboutTitle: "About this admin",
       aboutBody:
         "Low-cost ops tools and craft notes for demos — no paid analytics or messaging APIs.",
