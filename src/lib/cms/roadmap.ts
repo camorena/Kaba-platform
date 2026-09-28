@@ -2,10 +2,10 @@
  * Public-site CMS roadmap — which admin pages own marketing content,
  * and how they replace `src/lib/site.ts` over time.
  *
- * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects
- * via getPublished* (CMS published → site.ts fallback).
+ * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects,
+ * fence-types, services via getPublished* (CMS published → site.ts fallback).
  *
- * See preview/REUSE_PORT_v9.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v10.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -38,9 +38,10 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "Fence types",
     pluralEs: "Tipos de cerca",
     siteSources: ["fencingServices", "fencingOptionsNav"],
-    publicPaths: ["/services", "/"],
+    publicPaths: ["/services", "/residential", "/commercial", "/"],
     shipped: true,
-    notes: "Product cards + hash anchors. Accent/audience later.",
+    publicCutover: true,
+    notes: "v10: /services + residential/commercial + home cards read getPublishedFenceTypes().",
   },
   {
     key: "services",
@@ -50,7 +51,8 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     siteSources: ["deckServices", "yourNeeds (partial)"],
     publicPaths: ["/services", "/residential", "/commercial"],
     shipped: true,
-    notes: "Deck + service offerings. Keep fencing in fence-types.",
+    publicCutover: true,
+    notes: "v10: /services + residential/commercial read getPublishedServices() (deck offerings).",
   },
   {
     key: "projects",

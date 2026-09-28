@@ -12,9 +12,12 @@ export {
 export type {
   ContentDocument,
   ContentFieldValue,
+  PublishedAudience,
   PublishedFaq,
+  PublishedFenceType,
   PublishedTestimonial,
   PublishedProject,
+  PublishedService,
 } from "@/lib/cms/types";
 export {
   listContent,
@@ -39,4 +42,8 @@ export {
   testimonialsSourceIsCms,
   getPublishedProjects,
   projectsSourceIsCms,
+  getPublishedFenceTypes,
+  fenceTypesSourceIsCms,
+  getPublishedServices,
+  servicesSourceIsCms,
 } from "@/lib/cms/public";

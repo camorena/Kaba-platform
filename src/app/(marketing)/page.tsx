@@ -3,11 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import {
+  getPublishedFenceTypes,
   getPublishedProjects,
   getPublishedTestimonials,
 } from "@/lib/cms/public";
 import {
-  fencingServices,
   kabaExperience,
   siteConfig,
   trustPoints,
@@ -105,6 +105,7 @@ function TrustIcon({ icon }: { icon: (typeof trustPoints)[number]["icon"] }) {
 }
 
 export default function HomePage() {
+  const fencingServices = getPublishedFenceTypes();
   const teaser = getPublishedProjects()
     .filter((p) => p.category === "fence")
     .slice(0, 4);

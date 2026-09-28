@@ -8,8 +8,8 @@ export type ContentDocument = {
   /**
    * Draft | published.
    * Publishing affects the live site only for types with a public cutover
-   * (faqs, testimonials, projects via getPublished*). Other types stay
-   * admin-only until their swap — marketing still uses site.ts.
+   * (faqs, testimonials, projects, fence-types, services via getPublished*).
+   * Other types stay admin-only until their swap — marketing still uses site.ts.
    */
   status: "draft" | "published";
   sortOrder: number;
@@ -39,3 +39,24 @@ export type PublishedProject = {
   city?: string;
   isFeatured?: boolean;
 };
+
+export type PublishedAudience = "both" | "residential" | "commercial";
+
+export type PublishedFenceType = {
+  slug: string;
+  title: string;
+  tagline: string;
+  summary: string;
+  details: string;
+  image: string;
+  audience: PublishedAudience;
+};
+
+export type PublishedService = {
+  slug: string;
+  title: string;
+  summary: string;
+  details: string;
+  audience: PublishedAudience;
+};
+

@@ -6,7 +6,7 @@ Built with **Next.js (App Router)** and **Tailwind CSS**.
 
 Live: https://kaba-fence.vercel.app
 
-Ops / reuse notes: `preview/REUSE_PORT_v9.md` (testimonials + projects cutover), `preview/CMS_PUBLIC_CONTENT_PLAN.md` (public content admin roadmap).
+Ops / reuse notes: `preview/REUSE_PORT_v10.md` (fence-types + services cutover), `preview/CMS_PUBLIC_CONTENT_PLAN.md` (public content admin roadmap).
 
 
 ## Getting started

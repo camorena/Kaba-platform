@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { defaultOgImage, fencingServices, siteConfig } from "@/lib/site";
+import {
+  getPublishedFenceTypes,
+  getPublishedServices,
+} from "@/lib/cms/public";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Fencing Options";
 const description = `Wood, vinyl, aluminum, and chain link fencing from ${siteConfig.name} in Raleigh, NC & surrounding areas.`;
@@ -17,7 +21,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function ServicesPage() {
+  const fencingServices = getPublishedFenceTypes();
+  const deckServices = getPublishedServices();
+
   return (
     <>
       <section className="page-hero">
@@ -77,6 +86,46 @@ export default function ServicesPage() {
           ))}
         </ul>
       </section>
+
+      {deckServices.length > 0 ? (
+        <section className="section-soft section-y">
+          <div className="container-page">
+            <Reveal>
+              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
+                Deck Services
+              </p>
+              <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">
+                Repair, rebuild, and new deck builds
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+                Beyond fencing, {siteConfig.name} helps keep decks safe and
+                useful—repairs, rebuilds, new builds, and railing upgrades.
+              </p>
+            </Reveal>
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {deckServices.map((svc, i) => (
+                <Reveal
+                  as="li"
+                  key={svc.slug}
+                  id={`deck-${svc.slug}`}
+                  delay={i * 60}
+                  className="card scroll-mt-[calc(var(--header-offset)+1rem)] p-5"
+                >
+                  <h3 className="font-display text-base font-semibold text-ink">
+                    {svc.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {svc.summary}
+                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-muted">
+                    {svc.details}
+                  </p>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       <section className="band-dark py-14 sm:py-16">
         <Reveal className="container-page max-w-2xl text-center">

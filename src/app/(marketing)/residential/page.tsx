@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { defaultOgImage, fencingServices, siteConfig, yourNeeds } from "@/lib/site";
+import {
+  getPublishedFenceTypes,
+  getPublishedServices,
+} from "@/lib/cms/public";
+import { defaultOgImage, siteConfig, yourNeeds } from "@/lib/site";
 
 const title = "Residential Fencing";
 const description = `Residential fence installation and repair for homeowners in Raleigh, NC & surrounding areas from ${siteConfig.name}.`;
@@ -16,7 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function ResidentialPage() {
+  const fencingServices = getPublishedFenceTypes("residential");
+  const deckServices = getPublishedServices("residential");
+
   return (
     <>
       <section className="page-hero">
@@ -83,6 +92,33 @@ export default function ResidentialPage() {
           </ul>
         </div>
       </section>
+
+      {deckServices.length > 0 ? (
+        <section className="container-page section-y">
+          <Reveal>
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
+              Deck Services
+            </p>
+            <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">
+              Decks that match how you live
+            </h2>
+          </Reveal>
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {deckServices.map((svc, i) => (
+              <Reveal as="li" key={svc.slug} delay={i * 60} className="card p-5">
+                <h3 className="font-display text-base font-semibold text-ink">{svc.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{svc.summary}</p>
+                <Link
+                  href={`/services#deck-${svc.slug}`}
+                  className="focus-ring btn-ghost mt-4 inline-flex min-h-10 items-center"
+                >
+                  Learn more →
+                </Link>
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="band-dark py-14 sm:py-16">
         <Reveal className="container-page max-w-2xl text-center">

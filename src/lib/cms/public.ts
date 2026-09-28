@@ -9,17 +9,42 @@ import "server-only";
 
 import { listContent } from "@/lib/cms/memory-store";
 import type {
+  PublishedAudience,
   PublishedFaq,
+  PublishedFenceType,
   PublishedProject,
+  PublishedService,
   PublishedTestimonial,
 } from "@/lib/cms/types";
 import {
+  deckServices as siteDeckServices,
   faqs as siteFaqs,
+  fencingServices as siteFenceTypes,
   galleryProjects as siteProjects,
   testimonials as siteTestimonials,
 } from "@/lib/site";
 
-export type { PublishedFaq, PublishedProject, PublishedTestimonial };
+export type {
+  PublishedAudience,
+  PublishedFaq,
+  PublishedFenceType,
+  PublishedProject,
+  PublishedService,
+  PublishedTestimonial,
+};
+
+function parseAudience(raw: string): PublishedAudience {
+  if (raw === "residential" || raw === "commercial") return raw;
+  return "both";
+}
+
+function matchesAudience(
+  audience: PublishedAudience,
+  filter?: "residential" | "commercial",
+): boolean {
+  if (!filter) return true;
+  return audience === "both" || audience === filter;
+}
 
 /**
  * Live FAQ reader for /faq (+ JSON-LD).
@@ -129,4 +154,100 @@ export function getPublishedProjects(): PublishedProject[] {
 
 export function projectsSourceIsCms(): boolean {
   return listContent("projects").some((d) => d.status === "published");
+}
+
+/**
+ * Live fence types for /services, residential/commercial, home cards.
+ * Published CMS → else site.ts. Optional audience filter (both always matches).
+ * Chatbot still imports site.ts fencingServices.
+ */
+export function getPublishedFenceTypes(
+  audience?: "residential" | "commercial",
+): PublishedFenceType[] {
+  const docs = listContent("fence-types").filter(
+    (d) => d.status === "published",
+  );
+  const fromCms = docs
+    .map((d) => {
+      const slug = String(d.fields.slug ?? d.id).trim();
+      const title = String(d.fields.name ?? "").trim();
+      const tagline = String(d.fields.tagline ?? "").trim();
+      const summary = String(d.fields.summary ?? "").trim();
+      const details = String(d.fields.details ?? "").trim();
+      const image = String(d.fields.image ?? "").trim();
+      const aud = parseAudience(String(d.fields.audience ?? "both").trim());
+      return {
+        slug,
+        title,
+        tagline,
+        summary,
+        details,
+        image,
+        audience: aud,
+      } satisfies PublishedFenceType;
+    })
+    .filter((f) => f.slug.length > 0 && f.title.length > 0 && f.image.length > 0);
+
+  const all =
+    fromCms.length > 0
+      ? fromCms
+      : siteFenceTypes.map((s) => ({
+          slug: s.slug,
+          title: s.title,
+          tagline: s.tagline,
+          summary: s.summary,
+          details: s.details,
+          image: s.image,
+          audience: "both" as const,
+        }));
+
+  return all.filter((f) => matchesAudience(f.audience, audience));
+}
+
+export function fenceTypesSourceIsCms(): boolean {
+  return listContent("fence-types").some((d) => d.status === "published");
+}
+
+/**
+ * Live deck/services offerings for /services, residential/commercial.
+ * Published CMS → else site.ts. Optional audience filter.
+ * Chatbot still imports site.ts deckServices.
+ */
+export function getPublishedServices(
+  audience?: "residential" | "commercial",
+): PublishedService[] {
+  const docs = listContent("services").filter((d) => d.status === "published");
+  const fromCms = docs
+    .map((d) => {
+      const slug = String(d.fields.slug ?? d.id).trim();
+      const title = String(d.fields.name ?? "").trim();
+      const summary = String(d.fields.summary ?? "").trim();
+      const details = String(d.fields.details ?? "").trim();
+      const aud = parseAudience(String(d.fields.audience ?? "both").trim());
+      return {
+        slug,
+        title,
+        summary,
+        details,
+        audience: aud,
+      } satisfies PublishedService;
+    })
+    .filter((s) => s.slug.length > 0 && s.title.length > 0);
+
+  const all =
+    fromCms.length > 0
+      ? fromCms
+      : siteDeckServices.map((s) => ({
+          slug: s.slug,
+          title: s.title,
+          summary: s.summary,
+          details: s.details,
+          audience: "residential" as const,
+        }));
+
+  return all.filter((s) => matchesAudience(s.audience, audience));
+}
+
+export function servicesSourceIsCms(): boolean {
+  return listContent("services").some((d) => d.status === "published");
 }

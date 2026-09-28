@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-28 (America/Chicago)  
 **Code:** `src/lib/cms/` · registry `content-types.ts` · roadmap `roadmap.ts` · public readers `public.ts`  
-**Companion:** `preview/REUSE_PORT_v9.md`
+**Companion:** `preview/REUSE_PORT_v10.md`
 
 Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (images, text, services, gallery/projects, about, FAQs, etc.) without ripping `src/lib/site.ts` until each type is ready.
 
@@ -22,7 +22,7 @@ Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (image
 
 | Phase | Types | Admin | Public swap |
 |-------|--------|-------|-------------|
-| **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit | **faqs → `/faq` (v8)**; **projects → `/gallery` + home (v9)** |
+| **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit | **faqs → `/faq` (v8)**; **projects → `/gallery` + home (v9)**; **fence-types + services → `/services`, residential/commercial, home (v10)** |
 | **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | **testimonials → `/reviews` + home (v9)**; others still `site.ts` |
 | **C (v8)** | `media` | Media library scaffold | Projects still path strings (+ beforeImage in CMS) |
 | **D** | `i18n-public` | Locale fields on documents | Optional `/es` marketing |
@@ -31,12 +31,12 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 
 ---
 
-## Phase A — shipped (v7) + FAQ cutover (v8)
+## Phase A — shipped (v7) + public cutovers (v8–v10)
 
 | Key | Mirrors today | Public routes | Live reader |
 |-----|---------------|---------------|-------------|
-| `fence-types` | `fencingServices` | `/services`, home cards | `site.ts` |
-| `services` | `deckServices` | `/services`, residential/commercial | `site.ts` |
+| `fence-types` | `fencingServices` | `/services`, residential/commercial, home cards | **`getPublishedFenceTypes()`** (CMS published → else `site.ts`) |
+| `services` | `deckServices` | `/services`, residential/commercial | **`getPublishedServices()`** (CMS published → else `site.ts`) |
 | `projects` | `galleryProjects` | `/gallery`, home teaser | **`getPublishedProjects()`** (CMS published → else `site.ts`) |
 | `faqs` | `faqs` | `/faq` | **`getPublishedFaqs()`** (CMS published → else `site.ts`) |
 
@@ -44,7 +44,7 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 
 **Admin:** `/admin/content` · `/admin/content/[type]` · `/admin/content/[type]/[id]` · `PATCH /api/admin/content/[type]`.
 
-**Not cut over:** chatbot still imports `faqs` from `site.ts`.
+**Not cut over:** chatbot still imports `faqs`, `fencingServices`, and `deckServices` from `site.ts`.
 
 ---
 
@@ -58,7 +58,7 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 | `service-area` | `serviceTowns` | Geographic claim — honesty required |
 | `materials` | `fenceMaterials`, `materialGuidance`, `deckMaterials` | Guidance only; no dollar prices |
 
-Admin list/edit seeded from `site.ts`. Public cutovers: faqs, testimonials, projects.
+Admin list/edit seeded from `site.ts`. Public cutovers: faqs, testimonials, projects, fence-types, services.
 
 ---
 
@@ -87,7 +87,7 @@ Admin list/edit seeded from `site.ts`. Public cutovers: faqs, testimonials, proj
 3. **published** → for cut-over types, public `getPublished(type)` reads CMS; `revalidatePath` / tag when leaving memory.  
 4. **rollback** — keep previous published JSON snapshot when editors are non-technical.
 
-v9: publishing **FAQs**, **testimonials**, or **projects** changes their cutover surfaces. Other types stay admin-only.
+v10: publishing **FAQs**, **testimonials**, **projects**, **fence-types**, or **services** changes their cutover surfaces. Other types stay admin-only.
 
 ---
 
@@ -102,21 +102,26 @@ v9: publishing **FAQs**, **testimonials**, or **projects** changes their cutover
 ```
 
 **Done (v8):** `faqs` → `/faq` + JSON-LD.  
-**Done (v9):** `testimonials` → `/reviews` + home; `projects` → `/gallery` + home teaser.
+**Done (v9):** `testimonials` → `/reviews` + home; `projects` → `/gallery` + home teaser.  
+**Done (v10):** `fence-types` → `/services` + residential/commercial + home cards; `services` → `/services` deck section + residential/commercial.
 
 Document each cutover in a new `REUSE_PORT_vN.md` note.
 
 ---
 
-## Live vs site.ts (v9 snapshot)
+## Live vs site.ts (v10 snapshot)
 
 | Surface | Source |
 |---------|--------|
 | `/faq` accordion + FAQ JSON-LD | CMS published FAQs (`getPublishedFaqs`) |
 | `/reviews` + home review cards | CMS published testimonials (`getPublishedTestimonials`) |
 | `/gallery` + home work teaser | CMS published projects (`getPublishedProjects`) |
-| Chatbot FAQ answers | `site.ts` `faqs` |
-| Services, about, materials, service-area, how-it-works, site-copy, nav | `site.ts` |
+| `/services` fencing + deck sections | CMS published fence-types + services (`getPublishedFenceTypes` / `getPublishedServices`) |
+| `/residential` fencing + deck cards | Same helpers (audience `residential`) |
+| `/commercial` fencing (+ deck if audience matches) | Same helpers (audience `commercial`) |
+| Home fencing option cards | `getPublishedFenceTypes()` |
+| Chatbot FAQ / fencing / deck lists | `site.ts` |
+| About, materials, service-area, how-it-works, site-copy, `yourNeeds`, nav | `site.ts` |
 | Admin Content hub list/edit (all Phase A–C types) | CMS memory (seeded from `site.ts`) |
 
 ---
