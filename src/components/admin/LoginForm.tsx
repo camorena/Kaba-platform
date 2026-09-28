@@ -76,8 +76,8 @@ export default function LoginForm({ configured }: { configured: boolean }) {
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>
-      <p className="text-xs leading-relaxed text-muted">
-        Stub auth only. Cookie session lasts ~12 hours. Not suitable as sole
+      <p className="rounded-lg border border-ink/8 bg-ivory-muted/50 px-3 py-2 text-xs leading-relaxed text-muted dark:bg-ivory-muted/25">
+        Stub auth only — cookie session lasts ~12 hours. Not suitable as sole
         protection for customer PII in production.
       </p>
     </form>

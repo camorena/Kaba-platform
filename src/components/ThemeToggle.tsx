@@ -3,7 +3,14 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-export default function ThemeToggle({ className = "" }: { className?: string }) {
+export default function ThemeToggle({
+  className = "",
+  variant = "default",
+}: {
+  className?: string;
+  /** dark = cream icons for charcoal chrome (admin topbar) */
+  variant?: "default" | "dark";
+}) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -12,16 +19,24 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
   }, []);
 
   const isDark = mounted && resolvedTheme === "dark";
+  const tone =
+    variant === "dark"
+      ? "text-cream/80 hover:bg-white/10 hover:text-cream"
+      : "text-ink hover:bg-ivory-muted";
+
+  const display =
+    /\b(hidden|inline-flex|flex|block)\b/.test(className)
+      ? ""
+      : "inline-flex";
 
   return (
     <button
       type="button"
-      className={`focus-ring inline-flex h-11 w-11 items-center justify-center rounded-lg text-ink transition-colors hover:bg-ivory-muted ${className}`}
+      className={`focus-ring ${display} h-11 w-11 items-center justify-center rounded-lg transition-colors ${tone} ${className}`}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
-      {/* Sun — shown in dark mode (click for light) */}
       <svg
         className={`h-5 w-5 transition-opacity ${mounted && isDark ? "opacity-100" : "opacity-0 absolute"}`}
         viewBox="0 0 24 24"
@@ -35,7 +50,6 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
         <circle cx="12" cy="12" r="4" />
         <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
       </svg>
-      {/* Moon — shown in light mode (click for dark) */}
       <svg
         className={`h-5 w-5 transition-opacity ${mounted && !isDark ? "opacity-100" : mounted ? "opacity-0 absolute" : "opacity-100"}`}
         viewBox="0 0 24 24"

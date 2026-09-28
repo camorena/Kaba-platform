@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import AdminPageTransition from "@/components/admin/AdminPageTransition";
 import { ToastProvider, useToast } from "@/components/admin/Toast";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const CommandPalette = dynamic(() => import("@/components/admin/CommandPalette"), {
   ssr: false,
@@ -160,7 +161,7 @@ function AdminShellInner({
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-1.5">
             <button
               type="button"
               onClick={openCmd}
@@ -191,6 +192,7 @@ function AdminShellInner({
             >
               ?
             </button>
+            <ThemeToggle variant="dark" className="!h-8 !w-8" />
             <Link
               href="/"
               className="rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream"
@@ -250,7 +252,7 @@ function AdminShellInner({
           </p>
         </aside>
 
-        <main className="admin-main min-w-0 px-3 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
+        <main className="admin-main min-w-0 px-3 py-3.5 sm:px-5 sm:py-4 lg:px-6 lg:py-5">
           <AdminPageTransition>{children}</AdminPageTransition>
         </main>
       </div>

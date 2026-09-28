@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   fencingOptionsNav,
   navLinks,
@@ -166,8 +167,8 @@ export default function Header() {
           open ? "fixed inset-x-0" : "sticky"
         } ${
           scrolled
-            ? "border-ink/[0.1] bg-white/95 shadow-[0_8px_28px_rgba(10,12,16,0.06)]"
-            : "border-ink/[0.06] bg-white/90"
+            ? "border-[color:var(--header-border)] bg-[var(--header-bg)] shadow-[var(--shadow-sm)]"
+            : "border-[color:var(--header-border)] bg-[var(--header-bg)]"
         }`}
         data-scrolled={scrolled ? "true" : "false"}
         data-mobile-nav-open={open ? "true" : "false"}
@@ -237,7 +238,7 @@ export default function Header() {
                     </button>
                     {dropdownOpen && (
                       <div className="absolute left-0 top-full z-50 min-w-[14rem] pt-2">
-                        <ul className="rounded-xl border border-ink/[0.08] bg-white py-2 shadow-lg">
+                        <ul className="rounded-xl border border-ink/[0.08] bg-surface py-2 shadow-lg">
                           <li>
                             <Link
                               href="/services"
@@ -287,13 +288,14 @@ export default function Header() {
             })}
           </nav>
 
-          <div className="flex shrink-0 items-center justify-self-end gap-2 sm:gap-2.5">
+          <div className="flex shrink-0 items-center justify-self-end gap-1.5 sm:gap-2">
             <a
               href={siteConfig.phoneHref}
-              className="focus-ring btn-phone hidden lg:inline-flex"
+              className="focus-ring btn-phone header-phone inline-flex"
+              aria-label={`Call ${siteConfig.phone}`}
             >
               <svg
-                className="h-4 w-4 text-bronze"
+                className="h-4 w-4 shrink-0 text-bronze"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -306,8 +308,9 @@ export default function Header() {
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                 />
               </svg>
-              {siteConfig.phone}
+              <span className="tabular-nums tracking-tight">{siteConfig.phone}</span>
             </a>
+            <ThemeToggle className="hidden sm:inline-flex" />
             <Link
               href="/contact"
               className="focus-ring btn-primary hidden min-h-0 px-3.5 py-2.5 text-[0.75rem] uppercase tracking-[0.06em] md:inline-flex lg:px-4"
@@ -366,7 +369,7 @@ export default function Header() {
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
-            className="absolute inset-x-0 top-full z-[66] max-h-[min(100dvh-3.5rem,36rem)] overflow-y-auto border-t border-ink/[0.07] bg-white/98 shadow-xl backdrop-blur-xl lg:hidden"
+            className="absolute inset-x-0 top-full z-[66] max-h-[min(100dvh-3.5rem,36rem)] overflow-y-auto border-t border-[color:var(--header-border)] bg-[var(--header-bg)] shadow-xl backdrop-blur-xl lg:hidden"
           >
             <nav
               className="container-page flex flex-col gap-1 py-3.5 pb-6"
@@ -452,10 +455,28 @@ export default function Header() {
               </Link>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring btn-secondary-light mt-1 w-full py-3.5 text-center"
+                className="focus-ring btn-phone mt-1 w-full py-3.5 text-center text-base"
               >
+                <svg
+                  className="h-4 w-4 text-bronze"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
                 Call {siteConfig.phone}
               </a>
+              <div className="mt-3 flex items-center justify-between rounded-lg border border-ink/[0.08] bg-ivory-muted/50 px-3 py-2 sm:hidden">
+                <span className="text-sm font-medium text-muted">Appearance</span>
+                <ThemeToggle />
+              </div>
             </nav>
           </div>
         )}

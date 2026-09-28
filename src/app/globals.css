@@ -1182,6 +1182,27 @@ a.btn-ghost {
 
 
 /* —— Luxury mockup helpers —— */
+
+.header-phone {
+  min-height: 2.5rem;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 640px) {
+  .header-phone {
+    min-height: 2.75rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.8125rem;
+  }
+}
+@media (max-width: 379px) {
+  .header-phone {
+    padding-inline: 0.5rem;
+  }
+}
+
 .btn-phone {
   display: inline-flex;
   align-items: center;
@@ -2107,6 +2128,32 @@ html[data-chat-open="true"] .floating-cta-root {
   }
 }
 
+
+
+
+/* —— Print: admin invoice —— */
+@media print {
+  .admin-topbar,
+  .admin-sidebar,
+  .admin-auth-banner,
+  .admin-cmd-root,
+  .print\:hidden {
+    display: none !important;
+  }
+  .invoice-print-root {
+    background: white !important;
+    color: #0b111a !important;
+  }
+  .invoice-print-sheet {
+    border: 1px solid #d2ccc0 !important;
+    background: white !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  .admin-main {
+    padding: 0 !important;
+  }
+}
 
 /* —— Print: quote confirmation —— */
 @media print {

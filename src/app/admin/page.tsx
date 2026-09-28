@@ -58,8 +58,10 @@ export default async function AdminDashboardPage() {
       />
 
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         {[
+          { href: "/admin/quotes", label: "Quotes" },
+          { href: "/admin/invoices", label: "Invoices" },
           { href: "/admin/calendar", label: "Schedule" },
           { href: "/admin/activity", label: "Activity" },
           { href: "/admin/reports", label: "Reports" },
@@ -74,7 +76,7 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
+      <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c) => (
           <li key={c.label}>
             <Link href={c.href} className="admin-stat admin-stat-lift block transition hover:border-bronze/35">
@@ -86,7 +88,7 @@ export default async function AdminDashboardPage() {
         ))}
       </ul>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-5">
+      <div className="mt-5 grid gap-3.5 lg:grid-cols-5">
         <section className="lg:col-span-3">
           <div className="mb-2.5 flex items-center justify-between gap-3">
             <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">

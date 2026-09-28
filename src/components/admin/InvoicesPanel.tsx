@@ -2,7 +2,9 @@
 
 import EmptyState from "@/components/admin/EmptyState";
 import StatusBadge from "@/components/admin/StatusBadge";
+import { downloadCsv } from "@/lib/admin/csv";
 import { formatMoney, formatShortDate } from "@/lib/admin/format";
+import { useToast } from "@/components/admin/Toast";
 import {
   INVOICE_STATUSES,
   invoiceStatusTone,
@@ -24,6 +26,7 @@ export default function InvoicesPanel({
   quotesForCreate: QuoteRecord[];
 }) {
   const router = useRouter();
+  const toast = useToast();
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | "all">("all");
   const [quoteId, setQuoteId] = useState("");
@@ -46,7 +49,33 @@ export default function InvoicesPanel({
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [invoices, query, statusFilter]);
+  }, [invoices, query, statusFilter, paidMap]);
+
+  function exportCsv() {
+    const rows: (string | number)[][] = [
+      ["Number", "Customer", "Email", "Address", "Total", "Paid", "Balance", "Status", "Created"],
+      ...filtered.map((inv) => {
+        const total = inv.lines.reduce((s, l) => s + l.quantity * l.unitCents, 0);
+        const paid = paidMap[inv.id] ?? 0;
+        return [
+          inv.number,
+          inv.customerName,
+          inv.customerEmail,
+          inv.address,
+          (total / 100).toFixed(2),
+          (paid / 100).toFixed(2),
+          (Math.max(0, total - paid) / 100).toFixed(2),
+          inv.status,
+          formatShortDate(inv.createdAt),
+        ];
+      }),
+    ];
+    downloadCsv(`kaba-invoices-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+    toast.push({
+      title: `CSV exported · ${filtered.length} invoice${filtered.length === 1 ? "" : "s"}`,
+      tone: "success",
+    });
+  }
 
   async function createFromQuote() {
     if (!quoteId) {
@@ -134,6 +163,15 @@ export default function InvoicesPanel({
           />
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
+          <button
+            type="button"
+            onClick={exportCsv}
+            disabled={filtered.length === 0}
+            className="admin-chip disabled:opacity-40"
+            title="Download filtered invoices as CSV"
+          >
+            Export CSV
+          </button>
           <button
             type="button"
             onClick={() => setStatusFilter("all")}

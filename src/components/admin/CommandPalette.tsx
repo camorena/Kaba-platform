@@ -210,7 +210,7 @@ export default function CommandPalette({
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search pages or quotes…"
+            placeholder="Jump to page, quote, or action…"
             className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-muted"
             aria-controls={listId}
             aria-autocomplete="list"
@@ -259,7 +259,7 @@ export default function CommandPalette({
         </ul>
         <div className="flex items-center justify-between border-t border-ink/8 px-3 py-2 text-[0.625rem] text-muted">
           <span>↑↓ navigate · ↵ open</span>
-          <span>Type to search quotes</span>
+          <span>Quotes search as you type</span>
         </div>
       </div>
     </div>

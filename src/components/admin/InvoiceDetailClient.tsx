@@ -54,8 +54,12 @@ export default function InvoiceDetailClient({
     }
   }
 
+  function printInvoice() {
+    window.print();
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="invoice-print-root space-y-4">
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
         <Link href="/admin/invoices" className="font-semibold hover:underline">
           ← Invoices
@@ -81,11 +85,18 @@ export default function InvoiceDetailClient({
             {invoice.customerName} · {invoice.address}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 print:hidden">
+          <button
+            type="button"
+            onClick={printInvoice}
+            className="btn-secondary-light text-sm"
+          >
+            Print invoice
+          </button>
           {invoice.quoteId && (
             <Link
               href={`/admin/quotes/${invoice.quoteId}`}
-              className="btn-secondary text-sm"
+              className="btn-secondary-light text-sm"
             >
               Source quote
             </Link>
@@ -99,7 +110,7 @@ export default function InvoiceDetailClient({
         </div>
       </div>
 
-      <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5">
+      <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5 print:hidden">
         <h2 className="admin-card-title mb-3">Progress</h2>
         <InvoiceStatusTimeline status={status} />
       </section>
@@ -120,7 +131,7 @@ export default function InvoiceDetailClient({
       </div>
 
       <div className="grid gap-3 lg:grid-cols-3">
-        <section className="admin-card lg:col-span-2">
+        <section className="admin-card invoice-print-sheet lg:col-span-2">
           <h2 className="admin-card-title">Line items</h2>
           <div className="mt-3 overflow-x-auto">
             <table className="admin-table min-w-full text-left text-sm">

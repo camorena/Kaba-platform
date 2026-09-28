@@ -3,6 +3,7 @@
 import EmptyState from "@/components/admin/EmptyState";
 import { useToast } from "@/components/admin/Toast";
 import StatusBadge from "@/components/admin/StatusBadge";
+import { downloadCsv } from "@/lib/admin/csv";
 import { formatShortDate } from "@/lib/admin/format";
 import {
   QUOTE_STATUSES,
@@ -42,6 +43,27 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
     });
   }, [quotes, query, statusFilter]);
 
+  function exportCsv() {
+    const rows: (string | number)[][] = [
+      ["Received", "Name", "Phone", "Email", "Service", "Address", "Status", "Source"],
+      ...filtered.map((q) => [
+        formatShortDate(q.createdAt),
+        q.name,
+        q.phone,
+        q.email,
+        q.serviceType,
+        q.address,
+        q.status,
+        q.source,
+      ]),
+    ];
+    downloadCsv(`kaba-quotes-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+    toast.push({
+      title: `CSV exported · ${filtered.length} quote${filtered.length === 1 ? "" : "s"}`,
+      tone: "success",
+    });
+  }
+
   async function setStatus(id: string, status: QuoteStatus) {
     setBusyId(id);
     try {
@@ -78,6 +100,15 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
           />
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
+          <button
+            type="button"
+            onClick={exportCsv}
+            disabled={filtered.length === 0}
+            className="admin-chip disabled:opacity-40"
+            title="Download filtered quotes as CSV"
+          >
+            Export CSV
+          </button>
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
