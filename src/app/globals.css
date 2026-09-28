@@ -1184,22 +1184,42 @@ a.btn-ghost {
 /* —— Luxury mockup helpers —— */
 
 .header-phone {
+  flex-shrink: 0;
+  align-items: center;
   min-height: 2.5rem;
-  padding: 0.4rem 0.65rem;
+  max-height: 2.5rem;
+  padding: 0.4rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
-@media (min-width: 640px) {
+@media (min-width: 1280px) {
   .header-phone {
-    min-height: 2.75rem;
-    padding: 0.55rem 1rem;
+    min-height: 2.5rem;
+    max-height: 2.5rem;
+    padding: 0.45rem 0.9rem;
     font-size: 0.8125rem;
   }
 }
-@media (max-width: 379px) {
-  .header-phone {
-    padding-inline: 0.5rem;
+
+.header-cta {
+  flex-shrink: 0;
+  align-items: center;
+  min-height: 2.5rem !important;
+  max-height: 2.5rem;
+  padding: 0.45rem 0.9rem !important;
+  font-size: 0.6875rem !important;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1;
+}
+@media (min-width: 1280px) {
+  .header-cta {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.75rem !important;
   }
 }
 

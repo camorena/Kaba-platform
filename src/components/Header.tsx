@@ -174,7 +174,7 @@ export default function Header() {
         data-mobile-nav-open={open ? "true" : "false"}
       >
         <div
-          className={`container-page grid grid-cols-[1fr_auto] items-center gap-3 transition-[height] duration-300 sm:gap-4 lg:grid-cols-[1fr_auto_1fr] ${barHeight}`}
+          className={`container-page grid grid-cols-[1fr_auto] items-center gap-2 transition-[height] duration-300 sm:gap-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-3 xl:gap-4 ${barHeight}`}
         >
           <Link
             href="/"
@@ -211,7 +211,7 @@ export default function Header() {
                   >
                     <button
                       type="button"
-                      className={`focus-ring inline-flex items-center gap-1 rounded-md px-3 py-2 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors ${
+                      className={`focus-ring inline-flex items-center gap-1 rounded-md px-2 py-2 text-[0.75rem] font-semibold tracking-[-0.01em] transition-colors xl:px-3 xl:text-[0.8125rem] ${
                         active || pathname.startsWith("/services")
                           ? "bg-ink/[0.05] text-ink"
                           : "text-muted hover:bg-ivory-muted hover:text-ink"
@@ -270,7 +270,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`focus-ring relative rounded-md px-3 py-2 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors ${
+                  className={`focus-ring relative rounded-md px-2 py-2 text-[0.75rem] font-semibold tracking-[-0.01em] transition-colors xl:px-3 xl:text-[0.8125rem] ${
                     active
                       ? "bg-ink/[0.05] text-ink"
                       : "text-muted hover:bg-ivory-muted hover:text-ink"
@@ -291,7 +291,7 @@ export default function Header() {
           <div className="flex shrink-0 items-center justify-self-end gap-1.5 sm:gap-2">
             <a
               href={siteConfig.phoneHref}
-              className="focus-ring btn-phone header-phone inline-flex"
+              className="focus-ring btn-phone header-phone hidden whitespace-nowrap xl:inline-flex"
               aria-label={`Call ${siteConfig.phone}`}
             >
               <svg
@@ -310,12 +310,13 @@ export default function Header() {
               </svg>
               <span className="tabular-nums tracking-tight">{siteConfig.phone}</span>
             </a>
-            <ThemeToggle className="hidden sm:inline-flex" />
+            <ThemeToggle className="hidden h-10 w-10 shrink-0 sm:inline-flex" />
             <Link
               href="/contact"
-              className="focus-ring btn-primary hidden min-h-0 px-3.5 py-2.5 text-[0.75rem] uppercase tracking-[0.06em] md:inline-flex lg:px-4"
+              className="focus-ring btn-primary header-cta hidden whitespace-nowrap md:inline-flex"
             >
-              Request a Free Estimate
+              <span className="xl:hidden">Free Estimate</span>
+              <span className="hidden xl:inline">Request a Free Estimate</span>
             </Link>
             <button
               ref={menuButtonRef}
