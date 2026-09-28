@@ -43,8 +43,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | `/reviews`      | Homeowner testimonials (placeholders)        |
 | `/privacy`      | Privacy policy                               |
 | `/terms`        | Terms of use                                 |
+| `/pay/[token]`  | Customer invoice deposit (tokenized; no admin cookie) |
 
-Public chrome (header/footer/chat) lives under the `(marketing)` route group. Root `layout.tsx` only handles fonts, theme, and analytics.
+Public chrome (header/footer/chat) lives under the `(marketing)` route group. Root `layout.tsx` only handles fonts, theme, and analytics. Pay links use a slim branded layout (no chat).
 
 ## Admin scaffold (`/admin`)
 
@@ -57,7 +58,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 | `/admin/quotes` | Search, status filters, inline status changes |
 | `/admin/quotes/[id]` | Detail, notes, status UX, create-invoice stub |
 | `/admin/invoices` | List + create-from-quote (synthetic demo $) |
-| `/admin/invoices/[id]` | Detail, line items, balance, status |
+| `/admin/invoices/[id]` | Detail, line items, balance, copy/share pay link, Stripe deposit |
 | `/admin/payments` | List + record payment; Stripe Checkout when keys set |
 | `/admin/customers` | Derived from quote contacts |
 | `/admin/settings` | Live auth mode, trust claims, Stripe status (Platform) |
@@ -69,7 +70,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-Schema: `db/migrations/0001_ops_foundation.sql`. Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v5.md`. Stripe is optional — without keys the UI says **not connected**; with test keys admin can collect an invoice deposit via Checkout + webhook.
+Schema: `db/migrations/0001_ops_foundation.sql` (+ `0003_stripe`, `0004_pay_token`). Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v6.md`. Stripe is optional — without keys the UI says **not connected**; with test keys admin or the customer pay link can open Checkout for a deposit; webhook records the payment.
 
 ### Auth (dual mode)
 
@@ -89,7 +90,7 @@ ADMIN_PASSWORD=choose-a-long-secret
 # owner@kabafence.example / change-me-owner
 ```
 
-`robots.txt` disallows `/admin` and `/api/`. Admin metadata is `noindex`.
+`robots.txt` disallows `/admin`, `/api/`, and `/pay`. Admin and pay metadata are `noindex`.
 
 ## Configuration
 
@@ -110,7 +111,7 @@ Business details live in `src/lib/site.ts`:
 | `STRIPE_WEBHOOK_SECRET` | No | Verify `POST /api/stripe/webhook` |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No | Documented for future Elements |
 
-Without keys the build and Payments UI stay honest (“not connected”). No live charges unless you set live keys. See `preview/REUSE_PORT_v5.md`.
+Without keys the build and Payments UI stay honest (“not connected”); `/pay/[token]` shows an offline message instead of a fake card form. No live charges unless you set live keys. See `preview/REUSE_PORT_v6.md`.
 
 ## Analytics (optional)
 

@@ -37,6 +37,9 @@ export default function InvoiceDetailClient({
   const [busy, setBusy] = useState(false);
   const [confirmVoid, setConfirmVoid] = useState(false);
   const [checkoutBusy, setCheckoutBusy] = useState(false);
+  const [shareBusy, setShareBusy] = useState(false);
+
+  const payPath = `/pay/${encodeURIComponent(invoice.payToken)}`;
   const total = invoice.lines.reduce(
     (s, l) => s + l.quantity * l.unitCents,
     0,
@@ -99,6 +102,38 @@ export default function InvoiceDetailClient({
     }
   }
 
+  async function sharePayLink() {
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}${payPath}`
+        : payPath;
+    setShareBusy(true);
+    try {
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+        await navigator.share({
+          title: `${invoice.number} · ${t("detail.payLinkShareTitle")}`,
+          text: t("detail.payLinkShareText", { number: invoice.number }),
+          url,
+        });
+        toast.push({ title: t("detail.payLinkShared"), tone: "success" });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      toast.push({ title: t("common.copied"), tone: "success" });
+    } catch (err) {
+      // User abort on share is fine
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.push({ title: t("common.copied"), tone: "success" });
+      } catch {
+        toast.push({ title: t("common.copyFailed"), tone: "error" });
+      }
+    } finally {
+      setShareBusy(false);
+    }
+  }
+
   const summary = `${invoice.number} · ${invoice.customerName} · Total ${formatMoney(total)} · Paid ${formatMoney(paidCents)} · Balance ${formatMoney(balance)}`;
 
   return (
@@ -157,6 +192,26 @@ export default function InvoiceDetailClient({
         <CopyChip value={summary} label={t("common.copySummary")} />
         <CopyChip value={invoice.customerEmail} label={t("common.copyEmail")} />
         <CopyChip value={invoice.customerPhone} label={t("common.copyPhone")} />
+        {invoice.payToken ? (
+          <>
+            <CopyChip
+              value={
+                typeof window !== "undefined"
+                  ? `${window.location.origin}${payPath}`
+                  : payPath
+              }
+              label={t("detail.copyPayLink")}
+            />
+            <button
+              type="button"
+              disabled={shareBusy}
+              className="admin-chip"
+              onClick={() => void sharePayLink()}
+            >
+              {t("detail.sharePayLink")}
+            </button>
+          </>
+        ) : null}
         {balance > 0 && status !== "paid" && status !== "void" && (
           <button
             type="button"
@@ -309,6 +364,19 @@ export default function InvoiceDetailClient({
           </dl>
           <div>
             <h2 className="admin-card-title">{t("detail.payments")}</h2>
+            {invoice.payToken ? (
+              <p className="mt-2 text-[0.6875rem] leading-relaxed text-muted">
+                {t("detail.payLinkHint")}{" "}
+                <a
+                  href={payPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+                >
+                  {payPath}
+                </a>
+              </p>
+            ) : null}
             {stripeCheckoutReady && balance > 0 && status !== "void" ? (
               <button
                 type="button"

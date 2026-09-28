@@ -6,6 +6,7 @@ import { demoUnitCentsForService } from "@/lib/db/demo-amounts";
 import { memoryQuotesRepo } from "@/lib/db/memory/quotes";
 import type { InvoicesRepo } from "@/lib/db/repos/types";
 import type { InvoiceRecord, InvoiceStatus } from "@/lib/db/types";
+import { DEMO_PAY_TOKENS, generatePayToken } from "@/lib/pay/token";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -59,6 +60,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       ],
       notes: "Demo invoice. 50% deposit recorded.",
       demo: true,
+      payToken: DEMO_PAY_TOKENS.inv_seed_1,
     },
     {
       id: "inv_seed_2",
@@ -82,6 +84,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       ],
       notes: "Draft from scheduled quote — not sent.",
       demo: true,
+      payToken: DEMO_PAY_TOKENS.inv_seed_2,
     },
     {
       id: "inv_seed_3",
@@ -105,6 +108,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       ],
       notes: "Paid in full — demo seed.",
       demo: true,
+      payToken: DEMO_PAY_TOKENS.inv_seed_3,
     },
   ];
 }
@@ -122,6 +126,12 @@ export const memoryInvoicesRepo: InvoicesRepo = {
 
   async get(id) {
     return store().find((i) => i.id === id);
+  },
+
+  async getByPayToken(token) {
+    const t = token.trim();
+    if (!t) return undefined;
+    return store().find((i) => i.payToken === t);
   },
 
   async createFromQuote(quoteId) {
@@ -152,6 +162,7 @@ export const memoryInvoicesRepo: InvoicesRepo = {
       ],
       notes: `Created from quote ${quote.id}. Synthetic demo amount — not a real bid.`,
       demo: true,
+      payToken: generatePayToken(),
     };
     store().unshift(record);
     return record;

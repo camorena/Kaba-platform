@@ -369,7 +369,7 @@ const en = {
       stripeKeySet: "Set",
       stripeKeyMissing: "Not set",
       stripeRoutes:
-        "Routes: {checkout} (admin) · {webhook} (Stripe → app). Migration: db/migrations/0003_stripe.sql.",
+        "Routes: {checkout} (admin) · /api/pay/[token]/checkout (public) · {webhook} (Stripe → app). Migrations: 0003_stripe + 0004_pay_token.",
       aboutTitle: "About this admin",
       aboutBody:
         "Low-cost ops tools and craft notes for demos — no paid analytics or messaging APIs.",
@@ -753,6 +753,12 @@ const en = {
     recordFirstPayment: "Record first payment →",
     collectDeposit: "Collect deposit (Stripe)",
     stripeNotConnected: "Stripe not connected — set keys in Settings → Platform to open Checkout.",
+    copyPayLink: "Copy pay link",
+    sharePayLink: "Share pay link",
+    payLinkShareTitle: "Pay your invoice",
+    payLinkShareText: "Pay deposit for invoice {number}",
+    payLinkShared: "Pay link shared",
+    payLinkHint: "Customer pay link (no admin login):",
     billTo: "Bill to",
     descriptionCol: "Description"
   }

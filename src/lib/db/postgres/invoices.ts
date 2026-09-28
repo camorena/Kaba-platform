@@ -13,6 +13,7 @@ import {
 import { createPostgresQuotesRepo } from "@/lib/db/postgres/quotes";
 import type { InvoicesRepo } from "@/lib/db/repos/types";
 import type { InvoiceLine, InvoiceRecord, InvoiceStatus } from "@/lib/db/types";
+import { generatePayToken } from "@/lib/pay/token";
 
 async function loadLines(invoiceIds: string[]): Promise<Map<string, InvoiceLine[]>> {
   const map = new Map<string, InvoiceLine[]>();
@@ -70,17 +71,31 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
       return mapInvoice(rows[0], lines.get(id) ?? []);
     },
 
+    async getByPayToken(token) {
+      const t = token.trim();
+      if (!t) return undefined;
+      const { rows } = await query<InvoiceRow>(
+        `select * from invoices where pay_token = $1`,
+        [t],
+      );
+      if (!rows[0]) return undefined;
+      const id = rows[0].id;
+      const lines = await loadLines([id]);
+      return mapInvoice(rows[0], lines.get(id) ?? []);
+    },
+
     async createFromQuote(quoteId) {
       const quote = await quotes.get(quoteId);
       if (!quote) return null;
 
       const unit = demoUnitCentsForService(quote.serviceType);
       const number = await nextInvoiceNumber();
+      const payToken = generatePayToken();
       const { rows } = await query<InvoiceRow>(
         `insert into invoices (
            number, quote_id, customer_id, customer_name, customer_email,
-           customer_phone, address, status, notes, demo
-         ) values ($1,$2,$3,$4,$5,$6,$7,'draft',$8,true)
+           customer_phone, address, status, notes, demo, pay_token
+         ) values ($1,$2,$3,$4,$5,$6,$7,'draft',$8,true,$9)
          returning *`,
         [
           number,
@@ -91,6 +106,7 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
           quote.phone,
           quote.address,
           `Created from quote ${quote.id}. Synthetic demo amount — not a real bid.`,
+          payToken,
         ],
       );
       const inv = rows[0];

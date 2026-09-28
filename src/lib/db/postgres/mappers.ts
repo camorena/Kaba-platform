@@ -99,6 +99,7 @@ export type InvoiceRow = {
   status: InvoiceStatus;
   notes: string;
   demo: boolean;
+  pay_token: string;
   created_at: Date | string;
   updated_at: Date | string;
 };
@@ -137,6 +138,7 @@ export function mapInvoice(
     status: row.status,
     notes: row.notes,
     demo: Boolean(row.demo),
+    payToken: row.pay_token,
     createdAt: iso(row.created_at),
     updatedAt: iso(row.updated_at),
     lines,

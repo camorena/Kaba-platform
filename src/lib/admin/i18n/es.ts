@@ -386,7 +386,7 @@ const es = {
       stripeKeySet: "Definida",
       stripeKeyMissing: "Sin definir",
       stripeRoutes:
-        "Rutas: {checkout} (admin) · {webhook} (Stripe → app). Migración: db/migrations/0003_stripe.sql.",
+        "Rutas: {checkout} (admin) · /api/pay/[token]/checkout (público) · {webhook} (Stripe → app). Migraciones: 0003_stripe + 0004_pay_token.",
       aboutTitle: "Acerca de este admin",
       aboutBody:
         "Herramientas operativas de bajo costo y notas de diseño para demos — sin analítica ni mensajería de pago.",
@@ -793,6 +793,12 @@ const es = {
     recordFirstPayment: "Registrar primer pago →",
     collectDeposit: "Cobrar anticipo (Stripe)",
     stripeNotConnected: "Stripe sin conexión — defina las claves en Configuración → Plataforma para abrir Checkout.",
+    copyPayLink: "Copiar enlace de pago",
+    sharePayLink: "Compartir enlace de pago",
+    payLinkShareTitle: "Pague su factura",
+    payLinkShareText: "Pague el anticipo de la factura {number}",
+    payLinkShared: "Enlace de pago compartido",
+    payLinkHint: "Enlace de pago del cliente (sin inicio de sesión de administración):",
     billTo: "Facturar a",
     descriptionCol: "Descripción"
   }

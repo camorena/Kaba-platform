@@ -1,25 +1,30 @@
 /**
- * Create a Stripe Checkout Session for an invoice deposit.
- * Requires STRIPE_SECRET_KEY. Without keys → 503 honest “not connected”.
+ * Public Checkout Session for an invoice deposit — authenticated by pay token only.
+ * No admin cookie. Without Stripe keys → 503 with honest posture.
  */
 
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/admin/auth";
-import { getInvoice, invoiceSubtotalCents } from "@/lib/admin/invoices-store";
+import { getInvoiceByPayToken, invoiceSubtotalCents } from "@/lib/admin/invoices-store";
 import { paidCentsForInvoice } from "@/lib/admin/payments-store";
 import { appOrigin } from "@/lib/pay/origin";
+import { isValidPayTokenShape, payPath } from "@/lib/pay/token";
+import { getStripe } from "@/lib/stripe/client";
 import {
   getStripeStatus,
   suggestedDepositCents,
 } from "@/lib/stripe/config";
-import { getStripe } from "@/lib/stripe/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
-  if (!(await isAdminAuthenticated())) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+export async function POST(
+  request: Request,
+  context: { params: Promise<{ token: string }> },
+) {
+  const { token: raw } = await context.params;
+  const token = decodeURIComponent(raw ?? "").trim();
+  if (!token || !isValidPayTokenShape(token)) {
+    return NextResponse.json({ error: "Invalid pay token." }, { status: 400 });
   }
 
   const status = getStripeStatus();
@@ -27,7 +32,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "Stripe is not connected. Set STRIPE_SECRET_KEY (and ideally STRIPE_WEBHOOK_SECRET + NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY).",
+          "Online card payment is not available. Stripe keys are not configured.",
         stripe: status,
       },
       { status: 503 },
@@ -42,19 +47,7 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { invoiceId?: string; amountCents?: number };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
-  }
-
-  const invoiceId = String(body.invoiceId ?? "").trim();
-  if (!invoiceId) {
-    return NextResponse.json({ error: "invoiceId required." }, { status: 400 });
-  }
-
-  const invoice = await getInvoice(invoiceId);
+  const invoice = await getInvoiceByPayToken(token);
   if (!invoice) {
     return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
   }
@@ -63,6 +56,14 @@ export async function POST(request: Request) {
       { error: `Invoice is ${invoice.status} — cannot collect a deposit.` },
       { status: 400 },
     );
+  }
+
+  let body: { amountCents?: number } = {};
+  try {
+    const text = await request.text();
+    if (text.trim()) body = JSON.parse(text) as { amountCents?: number };
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
   }
 
   const total = invoiceSubtotalCents(invoice);
@@ -88,8 +89,9 @@ export async function POST(request: Request) {
   }
 
   const origin = appOrigin(request);
-  const successUrl = `${origin}/admin/invoices/${invoice.id}?checkout=success&session_id={CHECKOUT_SESSION_ID}`;
-  const cancelUrl = `${origin}/admin/invoices/${invoice.id}?checkout=cancel`;
+  const path = payPath(invoice.payToken);
+  const successUrl = `${origin}${path}?checkout=success&session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${origin}${path}?checkout=cancel`;
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -112,6 +114,7 @@ export async function POST(request: Request) {
       invoiceId: invoice.id,
       invoiceNumber: invoice.number,
       purpose: "invoice_deposit",
+      payToken: invoice.payToken,
     },
     success_url: successUrl,
     cancel_url: cancelUrl,

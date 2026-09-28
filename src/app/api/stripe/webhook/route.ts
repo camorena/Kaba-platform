@@ -10,7 +10,10 @@
 
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { getInvoice } from "@/lib/admin/invoices-store";
 import { recordPayment } from "@/lib/admin/payments-store";
+import { notifyPaymentReceived } from "@/lib/db/notify";
+import { buildPaymentReceiptStub } from "@/lib/pay/receipt";
 import { getStripe } from "@/lib/stripe/client";
 import {
   getStripeStatus,
@@ -115,6 +118,21 @@ async function handleCheckoutCompleted(event: Stripe.Event): Promise<void> {
   if (!payment) {
     throw new Error(
       `Failed to record payment for invoice ${invoiceId} (session ${session.id})`,
+    );
+  }
+
+  // Persist-then-notify: payment row is source of truth; notify is best-effort.
+  const invoice = await getInvoice(invoiceId);
+  if (invoice) {
+    const notify = await notifyPaymentReceived({ payment, invoice });
+    const receipt = buildPaymentReceiptStub(payment, invoice);
+    console.info(
+      "[stripe/webhook] payment recorded",
+      payment.id,
+      "notify:",
+      notify.reason,
+      "receipt:",
+      receipt.receiptNumber,
     );
   }
 }

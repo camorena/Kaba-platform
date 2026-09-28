@@ -68,6 +68,8 @@ export type InvoiceRecord = {
   notes: string;
   /** Demo flag — seed/stub invoices are synthetic. */
   demo: boolean;
+  /** Opaque public pay-link token (/pay/[token]). */
+  payToken: string;
 };
 
 export type PaymentRecord = {

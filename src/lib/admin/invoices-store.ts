@@ -28,6 +28,12 @@ export async function getInvoice(
   return getRepos().invoices.get(id);
 }
 
+export async function getInvoiceByPayToken(
+  token: string,
+): Promise<InvoiceRecord | undefined> {
+  return getRepos().invoices.getByPayToken(token);
+}
+
 export async function createInvoiceFromQuote(
   quoteId: string,
 ): Promise<InvoiceRecord | null> {

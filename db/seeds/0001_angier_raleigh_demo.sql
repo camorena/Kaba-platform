@@ -212,7 +212,7 @@ insert into quote_notes (id, quote_id, author_id, author_label, body, created_at
 
 insert into invoices (
   id, number, quote_id, customer_id, customer_name, customer_email, customer_phone,
-  address, status, notes, demo, created_at, updated_at
+  address, status, notes, demo, pay_token, created_at, updated_at
 ) values
   ('d4000001-0001-4000-8000-000000000001', 'KF-1001',
    'b2000001-0001-4000-8000-000000000004',
@@ -220,6 +220,7 @@ insert into invoices (
    'Alicia Brooks', 'alicia.b@example.com', '(919) 555-0199',
    '102 Briarcliff Dr, Cary, NC 27511', 'partial',
    'Demo invoice. 50% deposit recorded.', true,
+   'kf_pay_demo_1001_alicia',
    now() - interval '80 hours', now() - interval '72 hours'),
 
   ('d4000001-0001-4000-8000-000000000002', 'KF-1002',
@@ -228,6 +229,7 @@ insert into invoices (
    'Chris Nguyen', 'chris.n@example.com', '(919) 555-0172',
    '312 Oak Grove Ln, Fuquay-Varina, NC 27526', 'draft',
    'Draft from scheduled quote — not sent. Demo amounts only.', true,
+   'kf_pay_demo_1002_chris',
    now() - interval '48 hours', now() - interval '48 hours'),
 
   ('d4000001-0001-4000-8000-000000000003', 'KF-1003',
@@ -236,6 +238,7 @@ insert into invoices (
    'Sam Ortega', 'sam.o@example.com', '(919) 555-0160',
    '9 Holly Tree Way, Holly Springs, NC 27540', 'paid',
    'Paid in full — demo seed.', true,
+   'kf_pay_demo_1003_sam',
    now() - interval '200 hours', now() - interval '160 hours'),
 
   ('d4000001-0001-4000-8000-000000000004', 'KF-1004',
@@ -244,6 +247,7 @@ insert into invoices (
    'Elena Vargas', 'elena.v@example.com', '(919) 555-0112',
    '19 Beaver Creek Ct, Apex, NC 27502', 'sent',
    'Estimate invoice sent while waiting on HOA. Demo only.', true,
+   'kf_pay_demo_1004_elena',
    now() - interval '9 days', now() - interval '9 days'),
 
   ('d4000001-0001-4000-8000-000000000005', 'KF-1005',
@@ -252,6 +256,7 @@ insert into invoices (
    'Derek Holt', 'derek.holt@example.com', '(919) 555-0155',
    '2200 Capital Blvd, Wake Forest, NC 27587', 'void',
    'Voided after site walk cancelled. Demo only.', true,
+   'kf_pay_demo_1005_derek',
    now() - interval '12 days', now() - interval '11 days');
 
 insert into invoice_lines (id, invoice_id, description, quantity, unit_cents, sort_order) values

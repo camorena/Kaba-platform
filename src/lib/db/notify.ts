@@ -10,7 +10,7 @@
  * Today: no-op stub with a clear TODO. Wire Nodemailer / Resend / etc. later.
  */
 
-import type { QuoteRecord } from "@/lib/db/types";
+import type { InvoiceRecord, PaymentRecord, QuoteRecord } from "@/lib/db/types";
 
 export type NotifyQuoteResult = {
   /** Always false until a real mailer is wired. */
@@ -45,5 +45,30 @@ export function notificationPatchFromResult(
   return {
     notifiedAt: result.delivered ? new Date().toISOString() : null,
     notifyAttempts: previousAttempts + 1,
+  };
+}
+
+
+export type NotifyPaymentResult = {
+  /** Always false until a real mailer is wired. */
+  delivered: boolean;
+  reason: string;
+};
+
+/**
+ * After webhook (or manual record) persists a payment — optional owner/customer notify.
+ * Intentionally a no-op stub; receipt stub is built separately for the pay UI.
+ *
+ * TODO(mail): email receipt + owner alert once transport exists.
+ */
+export async function notifyPaymentReceived(input: {
+  payment: PaymentRecord;
+  invoice: InvoiceRecord;
+}): Promise<NotifyPaymentResult> {
+  void input;
+  return {
+    delivered: false,
+    reason:
+      "notifyPaymentReceived is a no-op stub — configure mail transport before production receipts.",
   };
 }

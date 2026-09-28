@@ -48,6 +48,8 @@ export type QuotesRepo = {
 export type InvoicesRepo = {
   list(): Promise<InvoiceRecord[]>;
   get(id: string): Promise<InvoiceRecord | undefined>;
+  /** Lookup by opaque public pay token. */
+  getByPayToken(token: string): Promise<InvoiceRecord | undefined>;
   createFromQuote(quoteId: string): Promise<InvoiceRecord | null>;
   updateStatus(
     id: string,
