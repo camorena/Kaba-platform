@@ -4,6 +4,7 @@ import {
   listPaymentsForInvoice,
   paidCentsForInvoice,
 } from "@/lib/admin/payments-store";
+import { isStripeCheckoutReady } from "@/lib/stripe/config";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -29,12 +30,14 @@ export default async function AdminInvoiceDetailPage({
 
   const payments = await listPaymentsForInvoice(invoice.id);
   const paidCents = await paidCentsForInvoice(invoice.id);
+  const stripeCheckoutReady = isStripeCheckoutReady();
 
   return (
     <InvoiceDetailClient
       invoice={invoice}
       payments={payments}
       paidCents={paidCents}
+      stripeCheckoutReady={stripeCheckoutReady}
     />
   );
 }

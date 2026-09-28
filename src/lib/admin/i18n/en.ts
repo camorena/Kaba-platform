@@ -180,7 +180,11 @@ const en = {
         "Quotes, invoices, and payments are in-memory. Cold starts reset the list. Persist before trusting production leads (persist-then-notify).",
       blockerStripe: "Stripe (or payment rail)",
       blockerStripeDetail:
-        "Payments page is a stub ledger only — no Checkout, webhooks, or PCI scope yet.",
+        "Stripe keys are not set — Payments shows “not connected”; no Checkout or webhooks yet.",
+      blockerStripePartial:
+        "STRIPE_SECRET_KEY is set (Checkout ready) but STRIPE_WEBHOOK_SECRET is missing — payments will not record from Stripe until the webhook is wired.",
+      blockerStripeWired:
+        "Stripe Checkout + webhook scaffolding is on. Still test in Stripe test mode, confirm deposits, and harden before live charges.",
       blockerHours: "Hours & contact",
       blockerHoursOk:
         "Public site shows {phone} · {email}. Hours: {hours}. Editable business fields will move into Settings when the DB lands.",
@@ -201,7 +205,7 @@ const en = {
     },
     payments: {
       title: "Payments",
-      description: "Stub ledger linked to invoices. No Stripe, ACH, or card capture — recording only for UI foundation."
+      description: "Ledger linked to invoices. Manual stub recording always works; Stripe Checkout opens when keys are set."
     },
     customers: {
       title: "Customers",
@@ -351,11 +355,21 @@ const en = {
       dataFilesLabel: "Schema, seeds & repos",
       stripeTitle: "Payments & Stripe",
       stripeBadge: "Not connected",
+      stripeBadgeCheckout: "Checkout ready",
+      stripeBadgeConnected: "Connected",
       stripeBody:
-        "Stripe is not integrated. The Payments page records stub ledger rows and can mark invoices partial or paid. There is no Checkout, Payment Intents, Connect, webhooks, or PCI scope in this app yet.",
-      stripePlan1: "Planned — deposit and balance collection against invoices",
-      stripePlan2: "Planned — webhook-driven status, receipts, and reconciliation",
-      stripeEnv: "Environment placeholders (unused)",
+        "Stripe keys are not set. The Payments page still records manual ledger rows and can mark invoices partial or paid. No live charges without keys.",
+      stripeBodyCheckout:
+        "STRIPE_SECRET_KEY is set — admin can open Stripe Checkout for an invoice deposit. Add STRIPE_WEBHOOK_SECRET so completed sessions write payment rows (persist-then-notify).",
+      stripeBodyConnected:
+        "Secret + webhook secrets are set. Checkout creates deposit sessions; the webhook records payments via the payments repo (idempotent by Stripe event id). Use Stripe test keys for demos — no live charges without live keys.",
+      stripePlan1: "Deposit Checkout against an invoice (50% of total, capped at balance)",
+      stripePlan2: "Webhook writes the payment row first (idempotent by event id), then invoice status updates",
+      stripeEnv: "Environment keys",
+      stripeKeySet: "Set",
+      stripeKeyMissing: "Not set",
+      stripeRoutes:
+        "Routes: {checkout} (admin) · {webhook} (Stripe → app). Migration: db/migrations/0003_stripe.sql.",
       aboutTitle: "About this admin",
       aboutBody:
         "Low-cost ops tools and craft notes for demos — no paid analytics or messaging APIs.",
@@ -499,7 +513,7 @@ const en = {
     csvHeaders: "Number,Customer,Email,Address,Total,Paid,Balance,Status,Created"
   },
   payments: {
-    recordTitle: "Record payment (stub)",
+    recordTitle: "Record payment",
     invoice: "Invoice",
     selectInvoice: "Select an invoice.",
     amount: "Amount",
@@ -511,10 +525,19 @@ const en = {
     notesPh: "Optional",
     fixFields: "Fix the highlighted fields.",
     recordFailed: "Recording failed.",
-    recordedOk: "Payment recorded (demo stub — no Stripe).",
+    recordedOk: "Payment recorded on the ledger.",
     recordPayment: "Record payment",
+    collectDeposit: "Collect deposit (Stripe)",
+    checkoutFailed: "Could not start Stripe Checkout.",
+    stripeNotReady: "Stripe is not connected — set STRIPE_SECRET_KEY first.",
+    stripeNotConnectedTitle: "Stripe not connected.",
+    stripeNotConnectedBody:
+      "This form writes a ledger row only. Card collection needs Stripe keys — see",
+    stripeConnectedTitle: "Stripe Checkout available.",
+    stripeConnectedBody:
+      "Use “Collect deposit” to open Checkout for this invoice, or record a manual payment. Status:",
     emptyTitle: "No payments recorded",
-    emptyDesc: "Use the stub form above to attach a demo payment to an invoice.",
+    emptyDesc: "Record a manual payment or collect a Stripe deposit when keys are set.",
     colInvoice: "Invoice",
     colCustomer: "Customer",
     colAmount: "Amount",
@@ -699,7 +722,7 @@ const en = {
       "after the site visit, create a demo invoice from this quote, then record payments on the invoice detail. Amounts stay synthetic until Stripe + DB are wired.",
     balanceDueTitle: "Balance due:",
     balanceDueBody:
-      "Record a stub payment or adjust status — Stripe Checkout is not connected yet.",
+      "Record a payment or adjust status. Collect a Stripe deposit when keys are set.",
     sourceQuote: "Source quote",
     lineItems: "Line items",
     qty: "Qty",
@@ -728,6 +751,8 @@ const en = {
     relatedQuote: "Related quote",
     noneRecorded: "None recorded yet.",
     recordFirstPayment: "Record first payment →",
+    collectDeposit: "Collect deposit (Stripe)",
+    stripeNotConnected: "Stripe not connected — set keys in Settings → Platform to open Checkout.",
     billTo: "Bill to",
     descriptionCol: "Description"
   }

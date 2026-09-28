@@ -82,6 +82,10 @@ export type PaymentRecord = {
   reference: string;
   notes: string;
   demo: boolean;
+  /** Stripe event.id when recorded from webhook — idempotency key. */
+  stripeEventId: string | null;
+  /** Checkout Session id (cs_…) when from Stripe Checkout. */
+  stripeCheckoutSessionId: string | null;
 };
 
 export type CustomerRecord = {

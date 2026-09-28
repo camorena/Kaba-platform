@@ -23,10 +23,12 @@ export default function InvoiceDetailClient({
   invoice,
   payments,
   paidCents,
+  stripeCheckoutReady = false,
 }: {
   invoice: InvoiceRecord;
   payments: PaymentRecord[];
   paidCents: number;
+  stripeCheckoutReady?: boolean;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -34,6 +36,7 @@ export default function InvoiceDetailClient({
   const [status, setStatus] = useState<InvoiceStatus>(invoice.status);
   const [busy, setBusy] = useState(false);
   const [confirmVoid, setConfirmVoid] = useState(false);
+  const [checkoutBusy, setCheckoutBusy] = useState(false);
   const total = invoice.lines.reduce(
     (s, l) => s + l.quantity * l.unitCents,
     0,
@@ -71,6 +74,29 @@ export default function InvoiceDetailClient({
 
   function printInvoice() {
     window.print();
+  }
+
+  async function collectDeposit() {
+    if (!stripeCheckoutReady || balance <= 0) return;
+    setCheckoutBusy(true);
+    try {
+      const res = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoiceId: invoice.id }),
+      });
+      const data = (await res.json()) as { error?: string; url?: string | null };
+      if (!res.ok || !data.url) {
+        toast.push({
+          title: data.error || t("payments.checkoutFailed"),
+          tone: "error",
+        });
+        return;
+      }
+      window.location.href = data.url;
+    } finally {
+      setCheckoutBusy(false);
+    }
   }
 
   const summary = `${invoice.number} · ${invoice.customerName} · Total ${formatMoney(total)} · Paid ${formatMoney(paidCents)} · Balance ${formatMoney(balance)}`;
@@ -283,6 +309,22 @@ export default function InvoiceDetailClient({
           </dl>
           <div>
             <h2 className="admin-card-title">{t("detail.payments")}</h2>
+            {stripeCheckoutReady && balance > 0 && status !== "void" ? (
+              <button
+                type="button"
+                disabled={checkoutBusy || busy}
+                onClick={() => void collectDeposit()}
+                className="btn-secondary mt-2 w-full text-sm disabled:opacity-60"
+              >
+                {checkoutBusy
+                  ? t("common.saving")
+                  : t("detail.collectDeposit")}
+              </button>
+            ) : !stripeCheckoutReady ? (
+              <p className="mt-2 text-[0.6875rem] leading-relaxed text-muted">
+                {t("detail.stripeNotConnected")}
+              </p>
+            ) : null}
             {payments.length === 0 ? (
               <div className="mt-2 rounded-lg border border-dashed border-ink/12 px-3 py-4 text-center">
                 <p className="text-xs text-muted">{t("detail.noneRecorded")}</p>

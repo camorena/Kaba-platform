@@ -19,10 +19,12 @@ export default function PaymentsPanel({
   payments,
   invoices,
   preselectInvoiceId,
+  stripeCheckoutReady = false,
 }: {
   payments: PaymentRecord[];
   invoices: InvoiceRecord[];
   preselectInvoiceId?: string | null;
+  stripeCheckoutReady?: boolean;
 }) {
   const router = useRouter();
   const { t, locale } = useAdminI18n();
@@ -99,16 +101,77 @@ export default function PaymentsPanel({
     }
   }
 
+  async function startCheckout() {
+    setError(null);
+    setOk(null);
+    setTouched({ invoiceId: true, amount: true });
+    const next = validate();
+    setFieldErrors(next);
+    if (Object.keys(next).length) {
+      setError(t("payments.fixFields"));
+      return;
+    }
+    if (!stripeCheckoutReady) {
+      setError(t("payments.stripeNotReady"));
+      return;
+    }
+    const dollars = Number.parseFloat(amount);
+    setBusy(true);
+    try {
+      const res = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          invoiceId,
+          amountCents: Math.round(dollars * 100),
+        }),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        url?: string | null;
+      };
+      if (!res.ok) {
+        setError(data.error || t("payments.checkoutFailed"));
+        return;
+      }
+      if (!data.url) {
+        setError(t("payments.checkoutFailed"));
+        return;
+      }
+      window.location.href = data.url;
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-sky-700/20 bg-sky-50 px-3 py-2.5 text-xs leading-relaxed text-sky-950 dark:border-sky-400/20 dark:bg-sky-950/35 dark:text-sky-100">
-        <strong className="font-semibold">No Stripe yet.</strong> This form only
-        writes an in-memory payment stub linked to an invoice. Card/ACH
-        collection, webhooks, and reconciliation are not connected — see{" "}
-        <Link href="/admin/settings" className="font-semibold underline">
-          Settings
-        </Link>
-        .
+      <div
+        className={`rounded-lg border px-3 py-2.5 text-xs leading-relaxed ${
+          stripeCheckoutReady
+            ? "border-emerald-700/20 bg-emerald-50 text-emerald-950 dark:border-emerald-400/20 dark:bg-emerald-950/35 dark:text-emerald-100"
+            : "border-sky-700/20 bg-sky-50 text-sky-950 dark:border-sky-400/20 dark:bg-sky-950/35 dark:text-sky-100"
+        }`}
+      >
+        {stripeCheckoutReady ? (
+          <>
+            <strong className="font-semibold">{t("payments.stripeConnectedTitle")}</strong>{" "}
+            {t("payments.stripeConnectedBody")}{" "}
+            <Link href="/admin/settings#settings-platform" className="font-semibold underline">
+              {t("nav.settings")}
+            </Link>
+            .
+          </>
+        ) : (
+          <>
+            <strong className="font-semibold">{t("payments.stripeNotConnectedTitle")}</strong>{" "}
+            {t("payments.stripeNotConnectedBody")}{" "}
+            <Link href="/admin/settings#settings-platform" className="font-semibold underline">
+              {t("nav.settings")}
+            </Link>
+            .
+          </>
+        )}
       </div>
 
       <form onSubmit={submit} className="admin-card space-y-3" noValidate>
@@ -237,13 +300,25 @@ export default function PaymentsPanel({
             {ok}
           </p>
         )}
-        <button
-          type="submit"
-          disabled={busy}
-          className="btn-primary text-sm disabled:opacity-60"
-        >
-          {busy ? t("common.saving") : t("payments.recordPayment")}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn-primary text-sm disabled:opacity-60"
+          >
+            {busy ? t("common.saving") : t("payments.recordPayment")}
+          </button>
+          {stripeCheckoutReady ? (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void startCheckout()}
+              className="btn-secondary text-sm disabled:opacity-60"
+            >
+              {busy ? t("common.saving") : t("payments.collectDeposit")}
+            </button>
+          ) : null}
+        </div>
       </form>
 
       {payments.length === 0 ? (

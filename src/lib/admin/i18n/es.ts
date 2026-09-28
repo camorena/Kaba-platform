@@ -183,7 +183,11 @@ const es = {
         "Cotizaciones, facturas y pagos están en memoria. Los arranques en frío reinician la lista. Persista antes de confiar en leads de producción (persistir y luego notificar).",
       blockerStripe: "Stripe (o riel de pagos)",
       blockerStripeDetail:
-        "La página de Pagos es solo un libro provisional: aún no hay Checkout, webhooks ni alcance PCI.",
+        "Las claves de Stripe no están definidas — Pagos muestra “sin conexión”; aún no hay Checkout ni webhooks.",
+      blockerStripePartial:
+        "STRIPE_SECRET_KEY está definida (Checkout listo) pero falta STRIPE_WEBHOOK_SECRET — los pagos no se registrarán desde Stripe hasta conectar el webhook.",
+      blockerStripeWired:
+        "El andamiaje de Stripe Checkout + webhook está activo. Aún debe probar en modo de prueba de Stripe, confirmar depósitos y endurecer antes de cobros en vivo.",
       blockerHours: "Horario y contacto",
       blockerHoursOk:
         "El sitio público muestra {phone} · {email}. Horario: {hours}. Los campos de negocio editables pasarán a Configuración cuando exista la base de datos.",
@@ -208,7 +212,7 @@ const es = {
     payments: {
       title: "Pagos",
       description:
-        "Libro provisional vinculado a facturas. Sin Stripe, ACH ni captura de tarjeta: solo registro para la base de la interfaz."
+        "Libro vinculado a facturas. El registro manual siempre funciona; Stripe Checkout se abre cuando hay claves."
     },
     customers: {
       title: "Clientes",
@@ -368,11 +372,21 @@ const es = {
       dataFilesLabel: "Esquema, semillas y repositorios",
       stripeTitle: "Pagos y Stripe",
       stripeBadge: "Sin conexión",
+      stripeBadgeCheckout: "Checkout listo",
+      stripeBadgeConnected: "Conectado",
       stripeBody:
-        "Stripe no está integrado. La página de Pagos registra filas provisionales y puede marcar facturas como parciales o pagadas. Aún no hay Checkout, Payment Intents, Connect, webhooks ni alcance PCI en esta aplicación.",
-      stripePlan1: "Planificado — cobro de anticipo y saldo contra facturas",
-      stripePlan2: "Planificado — estado por webhooks, recibos y conciliación",
-      stripeEnv: "Variables de entorno (sin uso)",
+        "Las claves de Stripe no están definidas. La página de Pagos sigue registrando filas manuales y puede marcar facturas como parciales o pagadas. No hay cobros en vivo sin claves.",
+      stripeBodyCheckout:
+        "STRIPE_SECRET_KEY está definida — el admin puede abrir Stripe Checkout para un anticipo de factura. Agregue STRIPE_WEBHOOK_SECRET para que las sesiones completadas escriban filas de pago (persistir y luego notificar).",
+      stripeBodyConnected:
+        "El secreto y el secreto del webhook están definidos. Checkout crea sesiones de anticipo; el webhook registra pagos vía el repositorio (idempotente por id de evento de Stripe). Use claves de prueba para demos — no hay cobros en vivo sin claves live.",
+      stripePlan1: "Checkout de anticipo contra una factura (50 % del total, limitado al saldo)",
+      stripePlan2: "El webhook escribe primero la fila de pago (idempotente por id de evento) y luego actualiza el estado de la factura",
+      stripeEnv: "Variables de entorno",
+      stripeKeySet: "Definida",
+      stripeKeyMissing: "Sin definir",
+      stripeRoutes:
+        "Rutas: {checkout} (admin) · {webhook} (Stripe → app). Migración: db/migrations/0003_stripe.sql.",
       aboutTitle: "Acerca de este admin",
       aboutBody:
         "Herramientas operativas de bajo costo y notas de diseño para demos — sin analítica ni mensajería de pago.",
@@ -530,7 +544,7 @@ const es = {
     csvHeaders: "Número,Cliente,Correo,Dirección,Total,Pagado,Saldo,Estado,Creada"
   },
   payments: {
-    recordTitle: "Registrar pago (provisional)",
+    recordTitle: "Registrar pago",
     invoice: "Factura",
     selectInvoice: "Seleccione una factura.",
     amount: "Monto",
@@ -542,11 +556,20 @@ const es = {
     notesPh: "Opcional",
     fixFields: "Corrija los campos resaltados.",
     recordFailed: "No se pudo registrar.",
-    recordedOk: "Pago registrado (demo provisional — sin Stripe).",
+    recordedOk: "Pago registrado en el libro.",
     recordPayment: "Registrar pago",
+    collectDeposit: "Cobrar anticipo (Stripe)",
+    checkoutFailed: "No se pudo iniciar Stripe Checkout.",
+    stripeNotReady: "Stripe no está conectado — defina STRIPE_SECRET_KEY primero.",
+    stripeNotConnectedTitle: "Stripe sin conexión.",
+    stripeNotConnectedBody:
+      "Este formulario solo escribe una fila en el libro. La captura con tarjeta requiere claves de Stripe — vea",
+    stripeConnectedTitle: "Stripe Checkout disponible.",
+    stripeConnectedBody:
+      "Use “Cobrar anticipo” para abrir Checkout en esta factura, o registre un pago manual. Estado:",
     emptyTitle: "No hay pagos registrados",
     emptyDesc:
-      "Use el formulario provisional arriba para asociar un pago de demostración a una factura.",
+      "Registre un pago manual o cobre un anticipo con Stripe cuando haya claves.",
     colInvoice: "Factura",
     colCustomer: "Cliente",
     colAmount: "Monto",
@@ -738,7 +761,7 @@ const es = {
       "tras la visita al sitio, cree una factura de demostración desde esta cotización y registre pagos en el detalle de la factura. Los montos siguen siendo sintéticos hasta conectar Stripe y la base de datos.",
     balanceDueTitle: "Saldo por cobrar:",
     balanceDueBody:
-      "Registre un pago provisional o ajuste el estado — Stripe Checkout aún no está conectado.",
+      "Registre un pago o ajuste el estado. Cobre un anticipo con Stripe cuando haya claves.",
     sourceQuote: "Cotización de origen",
     lineItems: "Partidas",
     qty: "Cant.",
@@ -768,6 +791,8 @@ const es = {
     created: "Creada",
     noneRecorded: "Aún no hay registros.",
     recordFirstPayment: "Registrar primer pago →",
+    collectDeposit: "Cobrar anticipo (Stripe)",
+    stripeNotConnected: "Stripe sin conexión — defina las claves en Configuración → Plataforma para abrir Checkout.",
     billTo: "Facturar a",
     descriptionCol: "Descripción"
   }

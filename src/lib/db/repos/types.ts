@@ -76,7 +76,13 @@ export type PaymentsRepo = {
     method: PaymentMethod;
     reference?: string;
     notes?: string;
+    /** When set, inserts are idempotent by this Stripe event id. */
+    stripeEventId?: string | null;
+    stripeCheckoutSessionId?: string | null;
+    demo?: boolean;
   }): Promise<PaymentRecord | null>;
+  /** Lookup by Stripe event id (webhook idempotency). */
+  getByStripeEventId(eventId: string): Promise<PaymentRecord | undefined>;
   stats(): Promise<{ total: number; recordedCents: number }>;
 };
 

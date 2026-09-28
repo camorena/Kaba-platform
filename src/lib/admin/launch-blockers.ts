@@ -7,6 +7,7 @@
  */
 
 import { getAuthMode, isAuthConfigured } from "@/lib/admin/auth";
+import { getStripeStatus } from "@/lib/stripe/config";
 import { siteConfig } from "@/lib/site";
 
 export type LaunchBlocker = {
@@ -21,6 +22,7 @@ export type LaunchBlocker = {
 export function getLaunchBlockers(): LaunchBlocker[] {
   const mode = getAuthMode();
   const authConfigured = isAuthConfigured();
+  const stripe = getStripeStatus();
   const hoursLine = [
     siteConfig.hours.weekdays,
     siteConfig.hours.saturday,
@@ -40,6 +42,13 @@ export function getLaunchBlockers(): LaunchBlocker[] {
     authDetailKey = "pages.dashboard.blockerAuthCredentials";
   } else {
     authDetailKey = "pages.dashboard.blockerAuthStub";
+  }
+
+  let stripeDetailKey = "pages.dashboard.blockerStripeDetail";
+  if (stripe.webhookReady) {
+    stripeDetailKey = "pages.dashboard.blockerStripeWired";
+  } else if (stripe.checkoutReady) {
+    stripeDetailKey = "pages.dashboard.blockerStripePartial";
   }
 
   return [
@@ -68,7 +77,8 @@ export function getLaunchBlockers(): LaunchBlocker[] {
     {
       id: "stripe",
       labelKey: "pages.dashboard.blockerStripe",
-      detailKey: "pages.dashboard.blockerStripeDetail",
+      detailKey: stripeDetailKey,
+      // Scaffolding ≠ production-ready (test mode, receipts, reconciliation still open).
       clear: false,
       href: "/admin/settings#settings-platform",
     },

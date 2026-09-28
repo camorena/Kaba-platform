@@ -56,6 +56,14 @@ export default function SettingsClient({
   rolesDoc = null,
   dataAdapter = "memory",
   databaseUrlConfigured = false,
+  stripe = {
+    secretKeyConfigured: false,
+    publishableKeyConfigured: false,
+    webhookSecretConfigured: false,
+    checkoutReady: false,
+    webhookReady: false,
+    badge: "not_connected" as const,
+  },
   roles = ["owner", "editor", "viewer"],
 }: {
   configured: boolean;
@@ -67,6 +75,14 @@ export default function SettingsClient({
   rolesDoc?: string | null;
   dataAdapter?: string;
   databaseUrlConfigured?: boolean;
+  stripe?: {
+    secretKeyConfigured: boolean;
+    publishableKeyConfigured: boolean;
+    webhookSecretConfigured: boolean;
+    checkoutReady: boolean;
+    webhookReady: boolean;
+    badge: "not_connected" | "checkout_ready" | "connected";
+  };
   roles?: string[];
 }) {
   const { t } = useAdminI18n();
@@ -411,6 +427,7 @@ export default function SettingsClient({
                     "src/lib/db/",
                     "src/lib/db/postgres/",
                     "db/migrations/0001_ops_foundation.sql",
+                    "db/migrations/0003_stripe.sql",
                     "db/seeds/0001_angier_raleigh_demo.sql",
                     "npm run db:migrate / db:seed",
                   ].map((path) => (
@@ -437,23 +454,75 @@ export default function SettingsClient({
                   <h3 className="admin-card-title">
                     {t("pages.settings.stripeTitle")}
                   </h3>
-                  <span className="admin-badge admin-badge-muted rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
-                    {t("pages.settings.stripeBadge")}
+                  <span
+                    className={`admin-badge rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                      stripe.badge === "connected"
+                        ? "admin-badge-emerald"
+                        : stripe.badge === "checkout_ready"
+                          ? "admin-badge-violet"
+                          : "admin-badge-muted"
+                    }`}
+                  >
+                    {stripe.badge === "connected"
+                      ? t("pages.settings.stripeBadgeConnected")
+                      : stripe.badge === "checkout_ready"
+                        ? t("pages.settings.stripeBadgeCheckout")
+                        : t("pages.settings.stripeBadge")}
                   </span>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {t("pages.settings.stripeBody")}
+                  {stripe.badge === "connected"
+                    ? t("pages.settings.stripeBodyConnected")
+                    : stripe.badge === "checkout_ready"
+                      ? t("pages.settings.stripeBodyCheckout")
+                      : t("pages.settings.stripeBody")}
                 </p>
+                <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-1">
+                  {(
+                    [
+                      ["STRIPE_SECRET_KEY", stripe.secretKeyConfigured],
+                      ["STRIPE_WEBHOOK_SECRET", stripe.webhookSecretConfigured],
+                      [
+                        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+                        stripe.publishableKeyConfigured,
+                      ],
+                    ] as const
+                  ).map(([env, ok]) => (
+                    <div
+                      key={env}
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 bg-surface/40 px-3 py-2"
+                    >
+                      <dt>
+                        <Code>{env}</Code>
+                      </dt>
+                      <dd className="font-medium text-ink">
+                        {ok
+                          ? t("pages.settings.stripeKeySet")
+                          : t("pages.settings.stripeKeyMissing")}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
                 <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
                   <li>{t("pages.settings.stripePlan1")}</li>
                   <li>{t("pages.settings.stripePlan2")}</li>
                 </ul>
+                <p className="mt-3 text-xs leading-relaxed text-muted">
+                  {withCode(
+                    t("pages.settings.stripeRoutes", {
+                      checkout: "POST /api/payments/checkout",
+                      webhook: "POST /api/stripe/webhook",
+                    }),
+                    ["POST /api/payments/checkout", "POST /api/stripe/webhook"],
+                  )}
+                </p>
                 <p className="admin-section-label mt-4">
                   {t("pages.settings.stripeEnv")}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Code>STRIPE_SECRET_KEY</Code>
                   <Code>STRIPE_WEBHOOK_SECRET</Code>
+                  <Code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</Code>
                 </div>
               </article>
             </div>

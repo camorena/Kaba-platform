@@ -58,9 +58,9 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 | `/admin/quotes/[id]` | Detail, notes, status UX, create-invoice stub |
 | `/admin/invoices` | List + create-from-quote (synthetic demo $) |
 | `/admin/invoices/[id]` | Detail, line items, balance, status |
-| `/admin/payments` | List + record-payment stub (no Stripe) |
+| `/admin/payments` | List + record payment; Stripe Checkout when keys set |
 | `/admin/customers` | Derived from quote contacts |
-| `/admin/settings` | Live auth mode, trust claims (server save), Stripe docs |
+| `/admin/settings` | Live auth mode, trust claims, Stripe status (Platform) |
 
 ### How data flows today
 
@@ -69,7 +69,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-Schema: `db/migrations/0001_ops_foundation.sql`. Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v4.md`. **Stripe is not connected** — see `/admin/settings`.
+Schema: `db/migrations/0001_ops_foundation.sql`. Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v5.md`. Stripe is optional — without keys the UI says **not connected**; with test keys admin can collect an invoice deposit via Checkout + webhook.
 
 ### Auth (dual mode)
 
@@ -101,6 +101,16 @@ Business details live in `src/lib/site.ts`:
 - Hours
 - Service and gallery content
 - Canonical `siteUrl` used by metadata, sitemap, and JSON-LD
+
+## Stripe (optional)
+
+| Variable | Required | Purpose |
+| -------- | -------- | ------- |
+| `STRIPE_SECRET_KEY` | No | Create Checkout Sessions (`sk_test_…` for demos) |
+| `STRIPE_WEBHOOK_SECRET` | No | Verify `POST /api/stripe/webhook` |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No | Documented for future Elements |
+
+Without keys the build and Payments UI stay honest (“not connected”). No live charges unless you set live keys. See `preview/REUSE_PORT_v5.md`.
 
 ## Analytics (optional)
 

@@ -1,5 +1,5 @@
 /**
- * In-memory PaymentsRepo — stub ledger, no Stripe.
+ * In-memory PaymentsRepo — stub ledger + Stripe webhook idempotency.
  */
 
 import { memoryInvoicesRepo } from "@/lib/db/memory/invoices";
@@ -33,6 +33,8 @@ function seedPayments(): PaymentRecord[] {
       reference: "CHK-44821",
       notes: "50% deposit — demo",
       demo: true,
+      stripeEventId: null,
+      stripeCheckoutSessionId: null,
     },
     {
       id: "pay_seed_2",
@@ -46,8 +48,22 @@ function seedPayments(): PaymentRecord[] {
       reference: "ACH-demo-991",
       notes: "Paid in full — demo",
       demo: true,
+      stripeEventId: null,
+      stripeCheckoutSessionId: null,
     },
   ];
+}
+
+async function syncInvoiceStatus(invoiceId: string): Promise<void> {
+  const inv = await memoryInvoicesRepo.get(invoiceId);
+  if (!inv) return;
+  const paid = await memoryPaymentsRepo.paidCentsForInvoice(invoiceId);
+  const total = memoryInvoicesRepo.subtotalCents(inv);
+  if (paid >= total && total > 0) {
+    await memoryInvoicesRepo.updateStatus(inv.id, "paid");
+  } else if (paid > 0 && inv.status !== "void") {
+    await memoryInvoicesRepo.updateStatus(inv.id, "partial");
+  }
 }
 
 export const memoryPaymentsRepo: PaymentsRepo = {
@@ -65,6 +81,12 @@ export const memoryPaymentsRepo: PaymentsRepo = {
 
   async get(id) {
     return store().find((p) => p.id === id);
+  },
+
+  async getByStripeEventId(eventId) {
+    const id = eventId.trim();
+    if (!id) return undefined;
+    return store().find((p) => p.stripeEventId === id);
   },
 
   async paidCentsForInvoice(invoiceId) {
@@ -87,6 +109,12 @@ export const memoryPaymentsRepo: PaymentsRepo = {
     if (!inv) return null;
     if (input.amountCents <= 0) return null;
 
+    const stripeEventId = input.stripeEventId?.trim() || null;
+    if (stripeEventId) {
+      const existing = await memoryPaymentsRepo.getByStripeEventId(stripeEventId);
+      if (existing) return existing;
+    }
+
     const record: PaymentRecord = {
       id: `pay_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
       createdAt: new Date().toISOString(),
@@ -98,18 +126,13 @@ export const memoryPaymentsRepo: PaymentsRepo = {
       status: "recorded",
       reference: (input.reference ?? "").trim(),
       notes: (input.notes ?? "").trim(),
-      demo: true,
+      demo: input.demo ?? true,
+      stripeEventId,
+      stripeCheckoutSessionId:
+        input.stripeCheckoutSessionId?.trim() || null,
     };
     store().unshift(record);
-
-    const paid = await memoryPaymentsRepo.paidCentsForInvoice(inv.id);
-    const total = memoryInvoicesRepo.subtotalCents(inv);
-    if (paid >= total && total > 0) {
-      await memoryInvoicesRepo.updateStatus(inv.id, "paid");
-    } else if (paid > 0 && inv.status !== "void") {
-      await memoryInvoicesRepo.updateStatus(inv.id, "partial");
-    }
-
+    await syncInvoiceStatus(inv.id);
     return record;
   },
 

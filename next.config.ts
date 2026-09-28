@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Keep pg out of the bundler — Node native pool client.
-  serverExternalPackages: ["pg"],
+  // Keep Node-native / large SDKs out of the bundler.
+  serverExternalPackages: ["pg", "stripe"],
 };
 
 export default nextConfig;

@@ -154,6 +154,8 @@ export type PaymentRow = {
   reference: string;
   notes: string;
   demo: boolean;
+  stripe_event_id?: string | null;
+  stripe_checkout_session_id?: string | null;
   created_at: Date | string;
 };
 
@@ -170,6 +172,8 @@ export function mapPayment(row: PaymentRow): PaymentRecord {
     reference: row.reference,
     notes: row.notes,
     demo: Boolean(row.demo),
+    stripeEventId: row.stripe_event_id ?? null,
+    stripeCheckoutSessionId: row.stripe_checkout_session_id ?? null,
   };
 }
 

@@ -1,5 +1,5 @@
 /**
- * Postgres PaymentsRepo — stub ledger until Stripe.
+ * Postgres PaymentsRepo — ledger + Stripe webhook idempotency (0003_stripe.sql).
  */
 
 import { query } from "@/lib/db/postgres/connection";
@@ -9,6 +9,18 @@ import type { PaymentsRepo } from "@/lib/db/repos/types";
 
 export function createPostgresPaymentsRepo(): PaymentsRepo {
   const invoices = createPostgresInvoicesRepo();
+
+  async function syncInvoiceStatus(invoiceId: string): Promise<void> {
+    const inv = await invoices.get(invoiceId);
+    if (!inv) return;
+    const paid = await repo.paidCentsForInvoice(invoiceId);
+    const total = invoices.subtotalCents(inv);
+    if (paid >= total && total > 0) {
+      await invoices.updateStatus(inv.id, "paid");
+    } else if (paid > 0 && inv.status !== "void") {
+      await invoices.updateStatus(inv.id, "partial");
+    }
+  }
 
   const repo: PaymentsRepo = {
     async list() {
@@ -44,6 +56,19 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
       return rows[0] ? mapPayment(rows[0]) : undefined;
     },
 
+    async getByStripeEventId(eventId) {
+      const id = eventId.trim();
+      if (!id) return undefined;
+      const { rows } = await query<PaymentRow>(
+        `select p.*, i.number as invoice_number, i.customer_name
+         from payments p
+         join invoices i on i.id = p.invoice_id
+         where p.stripe_event_id = $1`,
+        [id],
+      );
+      return rows[0] ? mapPayment(rows[0]) : undefined;
+    },
+
     async paidCentsForInvoice(invoiceId) {
       const { rows } = await query<{ sum: string | null }>(
         `select coalesce(sum(amount_cents), 0)::text as sum
@@ -73,34 +98,48 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
       if (!inv) return null;
       if (input.amountCents <= 0) return null;
 
-      const { rows } = await query<PaymentRow>(
-        `insert into payments (
-           invoice_id, amount_cents, method, status, reference, notes, demo
-         ) values ($1, $2, $3, 'recorded', $4, $5, true)
-         returning *`,
-        [
-          inv.id,
-          input.amountCents,
-          input.method,
-          (input.reference ?? "").trim(),
-          (input.notes ?? "").trim(),
-        ],
-      );
-      const payment = mapPayment({
-        ...rows[0],
-        invoice_number: inv.number,
-        customer_name: inv.customerName,
-      });
-
-      const paid = await repo.paidCentsForInvoice(inv.id);
-      const total = invoices.subtotalCents(inv);
-      if (paid >= total && total > 0) {
-        await invoices.updateStatus(inv.id, "paid");
-      } else if (paid > 0 && inv.status !== "void") {
-        await invoices.updateStatus(inv.id, "partial");
+      const stripeEventId = input.stripeEventId?.trim() || null;
+      if (stripeEventId) {
+        const existing = await repo.getByStripeEventId(stripeEventId);
+        if (existing) return existing;
       }
 
-      return payment;
+      const demo = input.demo ?? true;
+      const sessionId = input.stripeCheckoutSessionId?.trim() || null;
+
+      try {
+        const { rows } = await query<PaymentRow>(
+          `insert into payments (
+             invoice_id, amount_cents, method, status, reference, notes, demo,
+             stripe_event_id, stripe_checkout_session_id
+           ) values ($1, $2, $3, 'recorded', $4, $5, $6, $7, $8)
+           returning *`,
+          [
+            inv.id,
+            input.amountCents,
+            input.method,
+            (input.reference ?? "").trim(),
+            (input.notes ?? "").trim(),
+            demo,
+            stripeEventId,
+            sessionId,
+          ],
+        );
+        const payment = mapPayment({
+          ...rows[0],
+          invoice_number: inv.number,
+          customer_name: inv.customerName,
+        });
+        await syncInvoiceStatus(inv.id);
+        return payment;
+      } catch (err) {
+        // Concurrent webhook retry — unique stripe_event_id
+        if (stripeEventId) {
+          const existing = await repo.getByStripeEventId(stripeEventId);
+          if (existing) return existing;
+        }
+        throw err;
+      }
     },
 
     async stats() {

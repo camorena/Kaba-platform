@@ -1,6 +1,6 @@
 /**
- * Payment store facade — stub ledger, no Stripe.
- * See db/migrations/0001_ops_foundation.sql + src/lib/db/.
+ * Payment store facade — ledger via data adapter; Stripe webhook writes here too.
+ * See db/migrations/0001_ops_foundation.sql + 0003_stripe.sql + src/lib/db/.
  */
 
 import "server-only";
@@ -36,12 +36,21 @@ export async function getPayment(
   return getRepos().payments.get(id);
 }
 
+export async function getPaymentByStripeEventId(
+  eventId: string,
+): Promise<PaymentRecord | undefined> {
+  return getRepos().payments.getByStripeEventId(eventId);
+}
+
 export async function recordPayment(input: {
   invoiceId: string;
   amountCents: number;
   method: PaymentMethod;
   reference?: string;
   notes?: string;
+  stripeEventId?: string | null;
+  stripeCheckoutSessionId?: string | null;
+  demo?: boolean;
 }): Promise<PaymentRecord | null> {
   return getRepos().payments.record(input);
 }
