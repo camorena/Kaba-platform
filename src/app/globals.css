@@ -1339,16 +1339,6 @@ a.btn-ghost {
   }
 }
 
-@keyframes chat-teaser-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
 
 @keyframes chat-msg-in {
   from {
@@ -1433,10 +1423,6 @@ a.btn-ghost {
     animation: chat-panel-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .chat-teaser {
-    animation: chat-teaser-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
   .chat-msg {
     animation: chat-msg-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
@@ -1454,30 +1440,6 @@ a.btn-ghost {
   }
 }
 
-/* Hide estimate pill while chat owns bottom chrome */
-html[data-chat-open="true"] .floating-cta-root {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* Floating CTA entrance */
-
-@keyframes floating-cta-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .floating-cta {
-    animation: floating-cta-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-}
 
 /* Process timeline connector on services */
 .process-timeline {
@@ -2192,8 +2154,6 @@ html[data-chat-open="true"] .floating-cta-root {
 
   header,
   footer,
-  .floating-cta,
-  .floating-cta-root,
   .chat-widget-root,
   .print\:hidden {
     display: none !important;
@@ -2253,9 +2213,7 @@ html[data-chat-open="true"] .floating-cta-root {
   .hero-reveal-d5,
   .hero-reveal-visual,
   .hero-kenburns,
-  .floating-cta,
   .chat-panel,
-  .chat-teaser,
   .chat-msg,
   .chat-typing-dot,
   .chat-launcher-pulse,
@@ -2284,7 +2242,6 @@ html[data-chat-open="true"] .floating-cta-root {
 
 /* Hide floating chrome while the mobile nav is open so pills don't
    sit above the menu (they use z-55 / z-60; header menu is z-70). */
-html[data-mobile-nav="open"] .floating-cta-root,
 html[data-mobile-nav="open"] .chat-widget-root {
   visibility: hidden;
   pointer-events: none;

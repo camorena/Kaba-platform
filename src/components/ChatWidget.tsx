@@ -39,7 +39,6 @@ const emptyLead: LeadPayload = {
   message: "",
 };
 
-const TEASER_KEY = "kaba-chat-teaser-dismissed";
 const REPLY_DELAY_MS = 420;
 
 function isExternalHref(href: string) {
@@ -69,7 +68,6 @@ export default function ChatWidget() {
   const [leadSent, setLeadSent] = useState(false);
   const [unread, setUnread] = useState(false);
   const [typing, setTyping] = useState(false);
-  const [teaserVisible, setTeaserVisible] = useState(false);
   const [composerError, setComposerError] = useState<string | null>(null);
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -85,7 +83,7 @@ export default function ChatWidget() {
     el.scrollTop = el.scrollHeight;
   }, []);
 
-  // Signal FloatingCta + CSS that chat owns the bottom chrome
+  // Signal CSS that chat owns the bottom chrome
   useEffect(() => {
     document.documentElement.dataset.chatOpen = open ? "true" : "false";
     return () => {
@@ -93,18 +91,6 @@ export default function ChatWidget() {
     };
   }, [open]);
 
-  // Soft teaser nudge after a beat (once per session)
-  useEffect(() => {
-    let dismissed = false;
-    try {
-      dismissed = sessionStorage.getItem(TEASER_KEY) === "1";
-    } catch {
-      /* ignore */
-    }
-    if (dismissed) return;
-    const t = window.setTimeout(() => setTeaserVisible(true), 3200);
-    return () => window.clearTimeout(t);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -165,21 +151,6 @@ export default function ChatWidget() {
   function openPanel() {
     setOpen(true);
     setUnread(false);
-    setTeaserVisible(false);
-    try {
-      sessionStorage.setItem(TEASER_KEY, "1");
-    } catch {
-      /* ignore */
-    }
-  }
-
-  function dismissTeaser() {
-    setTeaserVisible(false);
-    try {
-      sessionStorage.setItem(TEASER_KEY, "1");
-    } catch {
-      /* ignore */
-    }
   }
 
   function pushBot(reply: ChatReply) {
@@ -315,53 +286,6 @@ export default function ChatWidget() {
   return (
     <div className="chat-widget-root pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-end p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pr-[max(0.75rem,env(safe-area-inset-right))]">
       <div className="pointer-events-auto relative flex flex-col items-end gap-2.5 sm:gap-3">
-        {/* Teaser nudge */}
-        {teaserVisible && !open && (
-          <div
-            className="chat-teaser absolute bottom-[calc(100%+0.65rem)] right-0 flex max-w-[min(18.5rem,calc(100vw-4.5rem))] items-start gap-2 rounded-2xl rounded-br-md border border-ink/[0.08] bg-surface px-3.5 py-3 text-left shadow-[var(--shadow-lg)] dark:border-cream/10"
-            role="status"
-          >
-            <div className="min-w-0 flex-1">
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-bronze">
-                Free estimate
-              </p>
-              <p className="mt-0.5 text-sm leading-snug text-ink">
-                Need a fence estimate? Ask here — or call{" "}
-                <a
-                  href={siteConfig.phoneHref}
-                  className="font-semibold text-navy underline-offset-2 hover:underline dark:text-bronze"
-                >
-                  {siteConfig.phone}
-                </a>
-                .
-              </p>
-              <button
-                type="button"
-                onClick={openPanel}
-                className="focus-ring mt-2 inline-flex items-center gap-1 rounded-full bg-navy px-3 py-1 text-[0.6875rem] font-semibold text-cream transition hover:bg-navy-light"
-              >
-                Open chat
-                <span aria-hidden>→</span>
-              </button>
-            </div>
-            <button
-              type="button"
-              className="focus-ring -mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-ink/5 hover:text-ink"
-              aria-label="Dismiss chat tip"
-              onClick={dismissTeaser}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path
-                  d="M6 6l12 12M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          </div>
-        )}
-
         {/* Panel */}
         {open && (
           <div
