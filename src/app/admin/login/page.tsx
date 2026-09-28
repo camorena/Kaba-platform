@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import LoginForm from "@/components/admin/LoginForm";
+import SiteCredit from "@/components/SiteCredit";
 import ThemeToggle from "@/components/ThemeToggle";
 import { getAdminPassword, isAdminAuthenticated } from "@/lib/admin/auth";
 
@@ -53,6 +54,9 @@ export default async function AdminLoginPage() {
           ← Back to public site
         </Link>
       </p>
+      <footer className="mt-8 border-t border-ink/8 pt-5 text-center">
+        <SiteCredit tone="admin" />
+      </footer>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import AdminPageTransition from "@/components/admin/AdminPageTransition";
 import { ToastProvider, useToast } from "@/components/admin/Toast";
 import ThemeToggle from "@/components/ThemeToggle";
+import SiteCredit from "@/components/SiteCredit";
 
 const CommandPalette = dynamic(() => import("@/components/admin/CommandPalette"), {
   ssr: false,
@@ -256,6 +257,13 @@ function AdminShellInner({
           <AdminPageTransition>{children}</AdminPageTransition>
         </main>
       </div>
+
+      <footer className="border-t border-ink/8 bg-[var(--admin-panel)]">
+        <div className="mx-auto flex max-w-[90rem] flex-col gap-2 px-3 py-4 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-5 lg:px-6">
+          <p>Kaba Fence Admin</p>
+          <SiteCredit tone="admin" />
+        </div>
+      </footer>
 
       <CommandPalette
         open={cmdOpen}

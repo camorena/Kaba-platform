@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import SiteCredit from "@/components/SiteCredit";
 import {
   fencingOptionsNav,
   footerLinks,
@@ -190,6 +191,8 @@ export default function Footer() {
                 </Link>
               </span>
             ))}
+            <span aria-hidden className="text-cream/25">|</span>
+            <SiteCredit />
           </div>
         </div>
       </div>
