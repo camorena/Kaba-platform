@@ -3,8 +3,9 @@ import Link from "next/link";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
+import { getPublishedFaqs } from "@/lib/cms/public";
 import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/jsonld";
-import { defaultOgImage, faqs, siteConfig } from "@/lib/site";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Frequently Asked Questions";
 const description = `Answers about fence timelines, permits, materials, deck repairs, and service area from ${siteConfig.name} in Angier and Raleigh NC.`;
@@ -26,12 +27,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function FaqPage() {
+  const faqItems = getPublishedFaqs();
+
   return (
     <>
       <JsonLd
         data={[
-          faqPageJsonLd(),
+          faqPageJsonLd(faqItems),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
             { name: "FAQ", path: "/faq" },
@@ -61,7 +66,7 @@ export default function FaqPage() {
 
       <section className="container-page section-y">
         <Reveal className="mx-auto max-w-3xl">
-          <FaqAccordion items={faqs} />
+          <FaqAccordion items={faqItems} />
         </Reveal>
       </section>
 

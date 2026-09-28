@@ -1,11 +1,13 @@
 export {
   CONTENT_TYPES,
   listContentTypes,
+  listContentTypesByPhase,
   resolveContentType,
   type ContentTypeKey,
   type ContentTypeSpec,
   type FieldSpec,
   type FieldKind,
+  type CmsRegistryPhase,
 } from "@/lib/cms/content-types";
 export type { ContentDocument, ContentFieldValue } from "@/lib/cms/types";
 export {
@@ -19,6 +21,13 @@ export {
   CMS_PUBLIC_ROADMAP,
   shippedContentKeys,
   upcomingContentTypes,
+  cutoverContentTypes,
   type CmsPhase,
   type PlannedContentType,
 } from "@/lib/cms/roadmap";
+
+export {
+  getPublishedFaqs,
+  faqsSourceIsCms,
+  type PublishedFaq,
+} from "@/lib/cms/public";

@@ -8,16 +8,33 @@ import "server-only";
 import { resolveContentType } from "@/lib/cms/content-types";
 import type { ContentDocument, ContentFieldValue } from "@/lib/cms/types";
 import {
+  aboutLocalTrust,
+  aboutStats,
+  companyValues,
+  deckMaterials,
   deckServices,
   faqs,
   fencingServices,
+  fenceMaterials,
   galleryProjects,
+  howItWorks,
+  kabaExperience,
+  materialGuidance,
+  processTimeline,
+  serviceTowns,
+  siteConfig,
+  testimonials,
+  trustPoints,
 } from "@/lib/site";
 
 let store: Map<string, ContentDocument[]> | null = null;
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+function joinLines(items: readonly string[]): string {
+  return items.join("\n");
 }
 
 function seed(): Map<string, ContentDocument[]> {
@@ -101,6 +118,327 @@ function seed(): Map<string, ContentDocument[]> {
     })),
   );
 
+  const siteCopyRows: {
+    key: string;
+    group: string;
+    label: string;
+    value: string;
+  }[] = [
+    { key: "site.tagline", group: "hero", label: "Tagline", value: siteConfig.tagline },
+    {
+      key: "site.description",
+      group: "hero",
+      label: "Description",
+      value: siteConfig.description,
+    },
+    {
+      key: "site.serviceArea",
+      group: "hero",
+      label: "Service area blurb",
+      value: siteConfig.serviceArea,
+    },
+    { key: "hero.label", group: "hero", label: "Hero label", value: siteConfig.heroLabel },
+    {
+      key: "hero.headline",
+      group: "hero",
+      label: "Hero headline",
+      value: siteConfig.heroHeadline,
+    },
+    { key: "hero.sub", group: "hero", label: "Hero sub", value: siteConfig.heroSub },
+    ...howItWorks.map((step) => ({
+      key: `howItWorks.${step.step}.title`,
+      group: "how-it-works",
+      label: `How it works ${step.step} title`,
+      value: step.title,
+    })),
+    ...howItWorks.map((step) => ({
+      key: `howItWorks.${step.step}.description`,
+      group: "how-it-works",
+      label: `How it works ${step.step} description`,
+      value: step.description,
+    })),
+    ...processTimeline.flatMap((step) => [
+      {
+        key: `process.${step.step}.title`,
+        group: "process",
+        label: `Process ${step.step} title`,
+        value: step.title,
+      },
+      {
+        key: `process.${step.step}.eyebrow`,
+        group: "process",
+        label: `Process ${step.step} eyebrow`,
+        value: step.eyebrow,
+      },
+      {
+        key: `process.${step.step}.description`,
+        group: "process",
+        label: `Process ${step.step} description`,
+        value: step.description,
+      },
+    ]),
+    ...kabaExperience.flatMap((item) => [
+      {
+        key: `experience.${item.id}.title`,
+        group: "experience",
+        label: `Experience ${item.id} title`,
+        value: item.title,
+      },
+      {
+        key: `experience.${item.id}.description`,
+        group: "experience",
+        label: `Experience ${item.id} description`,
+        value: item.description,
+      },
+    ]),
+    ...trustPoints.map((tp, i) => ({
+      key: `trust.${i + 1}`,
+      group: "trust",
+      label: `Trust point ${i + 1}`,
+      value: tp.label,
+    })),
+  ];
+
+  map.set(
+    "site-copy",
+    siteCopyRows.map((row, i) => ({
+      id: `copy_${row.key.replace(/\./g, "_")}`,
+      type: "site-copy",
+      status: "published" as const,
+      sortOrder: i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        key: row.key,
+        group: row.group,
+        label: row.label,
+        value: row.value,
+        sortOrder: i + 1,
+      },
+    })),
+  );
+
+  const aboutDocs: ContentDocument[] = [
+    ...aboutLocalTrust.map((item, i) => ({
+      id: `about_trust_${i + 1}`,
+      type: "about",
+      status: "published" as const,
+      sortOrder: i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        kind: "local-trust",
+        title: item.title,
+        description: item.description,
+        sortOrder: i + 1,
+      },
+    })),
+    ...aboutStats.map((item, i) => ({
+      id: `about_stat_${i + 1}`,
+      type: "about",
+      status: "published" as const,
+      sortOrder: 100 + i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        kind: "stats",
+        title: item.value,
+        description: item.label,
+        sortOrder: 100 + i + 1,
+      },
+    })),
+    ...companyValues.map((item, i) => ({
+      id: `about_value_${i + 1}`,
+      type: "about",
+      status: "published" as const,
+      sortOrder: 200 + i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        kind: "values",
+        title: item.title,
+        description: item.description,
+        sortOrder: 200 + i + 1,
+      },
+    })),
+  ];
+  map.set("about", aboutDocs);
+
+  map.set(
+    "testimonials",
+    testimonials.map((t, i) => ({
+      id: `testimonial_${i + 1}`,
+      type: "testimonials",
+      status: "published" as const,
+      sortOrder: i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        quote: t.quote,
+        name: t.name,
+        town: t.town,
+        sortOrder: i + 1,
+      },
+    })),
+  );
+
+  map.set(
+    "service-area",
+    serviceTowns.map((town, i) => ({
+      id: `town_${town.name.toLowerCase().replace(/\s+/g, "-")}`,
+      type: "service-area",
+      status: "published" as const,
+      sortOrder: i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        name: town.name,
+        region: town.region,
+        note: town.note,
+        sortOrder: i + 1,
+      },
+    })),
+  );
+
+  const materialDocs: ContentDocument[] = [
+    ...fenceMaterials.map((m, i) => ({
+      id: `mat_fence_${m.id}`,
+      type: "materials",
+      status: "published" as const,
+      sortOrder: i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        kind: "fence",
+        name: m.name,
+        slug: m.id,
+        tagline: m.tagline,
+        bestFor: m.bestFor,
+        lifespan: m.lifespan,
+        maintenance: m.maintenance,
+        privacy: m.privacy,
+        upkeep: m.upkeep,
+        costTier: m.costTier,
+        image: m.image,
+        servicesHref: m.servicesHref,
+        pros: joinLines(m.pros),
+        cons: joinLines(m.cons),
+        tip: m.tip,
+        sortOrder: i + 1,
+      },
+    })),
+    ...deckMaterials.map((m, i) => ({
+      id: `mat_deck_${m.id}`,
+      type: "materials",
+      status: "published" as const,
+      sortOrder: 100 + i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        kind: "deck",
+        name: m.name,
+        slug: m.id,
+        tagline: "",
+        bestFor: m.bestFor,
+        lifespan: m.lifespan,
+        maintenance: m.maintenance,
+        privacy: "",
+        upkeep: "",
+        costTier: "",
+        image: "",
+        servicesHref: "",
+        pros: joinLines(m.pros),
+        cons: joinLines(m.cons),
+        tip: m.tip,
+        sortOrder: 100 + i + 1,
+      },
+    })),
+    ...materialGuidance.map((g, i) => ({
+      id: `mat_guide_${i + 1}`,
+      type: "materials",
+      status: "published" as const,
+      sortOrder: 200 + i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        kind: "guidance",
+        name: g.title,
+        slug: `guidance-${i + 1}`,
+        tagline: "",
+        bestFor: "",
+        lifespan: "",
+        maintenance: "",
+        privacy: "",
+        upkeep: "",
+        costTier: "",
+        image: "",
+        servicesHref: "",
+        pros: "",
+        cons: "",
+        tip: g.body,
+        sortOrder: 200 + i + 1,
+      },
+    })),
+  ];
+  map.set("materials", materialDocs);
+
+  type GallerySeed = {
+    id: string;
+    title: string;
+    caption: string;
+    image: string;
+    beforeImage?: string;
+    beforeCaption?: string;
+  };
+  const gallerySeed = galleryProjects as readonly GallerySeed[];
+  const seenPaths = new Set<string>();
+  const mediaDocs: ContentDocument[] = [];
+  let mediaOrder = 0;
+  for (const project of gallerySeed) {
+    const image = project.image;
+    const caption = project.caption || project.title;
+    if (!seenPaths.has(image)) {
+      seenPaths.add(image);
+      mediaOrder += 1;
+      mediaDocs.push({
+        id: `media_${project.id}`,
+        type: "media",
+        status: "published",
+        sortOrder: mediaOrder,
+        updatedAt: nowIso(),
+        fields: {
+          path: image,
+          alt: caption,
+          provenance: "kaba",
+          width: null,
+          height: null,
+          notes: "Seeded from galleryProjects. Place binaries under public/gallery/.",
+          sortOrder: mediaOrder,
+        },
+      });
+    }
+    const beforeImage =
+      "beforeImage" in project && typeof project.beforeImage === "string"
+        ? project.beforeImage
+        : null;
+    const beforeCaption =
+      "beforeCaption" in project && typeof project.beforeCaption === "string"
+        ? project.beforeCaption
+        : `Before — ${project.title}`;
+    if (beforeImage && !seenPaths.has(beforeImage)) {
+      seenPaths.add(beforeImage);
+      mediaOrder += 1;
+      mediaDocs.push({
+        id: `media_before_${project.id}`,
+        type: "media",
+        status: "published",
+        sortOrder: mediaOrder,
+        updatedAt: nowIso(),
+        fields: {
+          path: beforeImage,
+          alt: beforeCaption,
+          provenance: "kaba",
+          width: null,
+          height: null,
+          notes: "Before image. Place binaries under public/gallery/before/.",
+          sortOrder: mediaOrder,
+        },
+      });
+    }
+  }
+  map.set("media", mediaDocs);
+
   return map;
 }
 
@@ -152,7 +490,7 @@ export function updateContent(
       if (!(field.name in patch.fields)) continue;
       if (field.locked) continue;
       let value = patch.fields[field.name];
-      if (field.kind === "number" && value !== null && value !== undefined) {
+      if (field.kind === "number" && value !== null && value !== undefined && value !== "") {
         value = Number(value);
         if (!Number.isFinite(value)) value = current.fields[field.name] ?? 0;
       }

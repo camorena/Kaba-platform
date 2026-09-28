@@ -2,19 +2,30 @@
 
 import Link from "next/link";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
-import type { ContentTypeSpec } from "@/lib/cms/content-types";
+import type { ContentTypeSpec, CmsRegistryPhase } from "@/lib/cms/content-types";
 import type { PlannedContentType } from "@/lib/cms/roadmap";
+
+const PHASES: CmsRegistryPhase[] = ["A", "B", "C"];
 
 export default function ContentHubClient({
   types,
   counts,
   upcoming,
+  cutoverKeys,
 }: {
   types: ContentTypeSpec[];
   counts: Record<string, number>;
   upcoming: PlannedContentType[];
+  cutoverKeys: string[];
 }) {
   const { t, locale } = useAdminI18n();
+  const cutover = new Set(cutoverKeys);
+
+  const phaseTitle: Record<CmsRegistryPhase, string> = {
+    A: t("pages.content.phaseA"),
+    B: t("pages.content.phaseB"),
+    C: t("pages.content.phaseC"),
+  };
 
   return (
     <div className="space-y-8">
@@ -22,38 +33,50 @@ export default function ContentHubClient({
         {t("pages.content.hubIntro")}
       </p>
 
-      <div>
-        <h2 className="admin-section-label mb-3">
-          {t("pages.content.phaseA")}
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {types.map((spec) => {
-            const plural = locale === "es" ? spec.pluralEs : spec.plural;
-            const count = counts[spec.key] ?? 0;
-            return (
-              <Link
-                key={spec.key}
-                href={`/admin/content/${spec.key}`}
-                className="admin-glass-panel admin-gold-rail admin-touch block p-4 transition hover:ring-1 hover:ring-bronze/30 sm:p-5"
-              >
-                <p className="admin-section-label">{spec.key}</p>
-                <h3 className="admin-card-title mt-1">{plural}</h3>
-                <p className="mt-2 text-sm text-muted">
-                  {t("pages.content.count", { count })}
-                </p>
-                <p className="mt-2 text-xs text-muted">
-                  {t("pages.content.mirrors", { source: spec.siteSource })}
-                </p>
-                {spec.publicPath ? (
-                  <p className="mt-1 text-xs text-muted">
-                    {t("pages.content.publicPath", { path: spec.publicPath })}
-                  </p>
-                ) : null}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+      {PHASES.map((phase) => {
+        const group = types.filter((spec) => spec.phase === phase);
+        if (group.length === 0) return null;
+        return (
+          <div key={phase}>
+            <h2 className="admin-section-label mb-3">{phaseTitle[phase]}</h2>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {group.map((spec) => {
+                const plural = locale === "es" ? spec.pluralEs : spec.plural;
+                const count = counts[spec.key] ?? 0;
+                const isLive = cutover.has(spec.key);
+                return (
+                  <Link
+                    key={spec.key}
+                    href={`/admin/content/${spec.key}`}
+                    className="admin-glass-panel admin-gold-rail admin-touch block p-4 transition hover:ring-1 hover:ring-bronze/30 sm:p-5"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="admin-section-label">{spec.key}</p>
+                      {isLive ? (
+                        <span className="admin-badge admin-badge-emerald rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                          {t("pages.content.liveBadge")}
+                        </span>
+                      ) : null}
+                    </div>
+                    <h3 className="admin-card-title mt-1">{plural}</h3>
+                    <p className="mt-2 text-sm text-muted">
+                      {t("pages.content.count", { count })}
+                    </p>
+                    <p className="mt-2 text-xs text-muted">
+                      {t("pages.content.mirrors", { source: spec.siteSource })}
+                    </p>
+                    {spec.publicPath ? (
+                      <p className="mt-1 text-xs text-muted">
+                        {t("pages.content.publicPath", { path: spec.publicPath })}
+                      </p>
+                    ) : null}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
 
       {upcoming.length > 0 ? (
         <div>

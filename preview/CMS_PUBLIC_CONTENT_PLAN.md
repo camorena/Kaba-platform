@@ -1,8 +1,8 @@
 # Public site content — admin CMS plan
 
 **Date:** 2026-09-28 (America/Chicago)  
-**Code:** `src/lib/cms/` · registry `content-types.ts` · roadmap `roadmap.ts`  
-**Companion:** `preview/REUSE_PORT_v7.md`
+**Code:** `src/lib/cms/` · registry `content-types.ts` · roadmap `roadmap.ts` · public readers `public.ts`  
+**Companion:** `preview/REUSE_PORT_v8.md`
 
 Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (images, text, services, gallery/projects, about, FAQs, etc.) without ripping `src/lib/site.ts` until each type is ready.
 
@@ -12,9 +12,9 @@ Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (image
 
 1. **Allow-list registry** — route params select a content-type *key*, never a raw SQL table name (prior kaba-fence pattern).
 2. **Persist public truth carefully** — claims (towns served, authorship, prices) stay gated; FAQ answers never carry dollar prices.
-3. **site.ts until cutover** — marketing pages keep importing `site.ts`. Admin stubs edit a parallel memory (or optional Postgres) store. Cut over **one type at a time**.
+3. **site.ts until cutover** — marketing pages keep importing `site.ts` except types with an explicit `getPublished*` cutover.
 4. **Admin EN + Formal Colombian Spanish** already; public bilingual is optional Phase D.
-5. **Media later** — Phase A stores image *paths*; Phase C adds upload, alt required, EXIF strip, provenance.
+5. **Media** — Phase C stores path/alt/provenance; drop files in `public/gallery/` (no paid storage required). Binary upload + EXIF strip later.
 
 ---
 
@@ -22,48 +22,53 @@ Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (image
 
 | Phase | Types | Admin | Public swap |
 |-------|--------|-------|-------------|
-| **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit stubs | Still `site.ts` |
-| **B** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | Swap readers per type |
-| **C** | `media` | Media library | Projects/services reference media ids |
+| **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit | **faqs → `/faq` cut over (v8)**; others still `site.ts` |
+| **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | Still `site.ts` |
+| **C (v8)** | `media` | Media library scaffold | Projects/services still use path strings |
 | **D** | `i18n-public` | Locale fields on documents | Optional `/es` marketing |
 
-Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hub UI lists Phase A as editable and B–D as “upcoming”.
+Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hub UI groups Phase A–C as editable and D as “upcoming”.
 
 ---
 
-## Phase A — shipped stubs (v7)
+## Phase A — shipped (v7) + FAQ cutover (v8)
 
-| Key | Mirrors today | Public routes |
-|-----|---------------|---------------|
-| `fence-types` | `fencingServices` | `/services`, home cards |
-| `services` | `deckServices` | `/services`, residential/commercial |
-| `projects` | `galleryProjects` | `/gallery`, home teaser |
-| `faqs` | `faqs` | `/faq`, chatbot later |
+| Key | Mirrors today | Public routes | Live reader |
+|-----|---------------|---------------|-------------|
+| `fence-types` | `fencingServices` | `/services`, home cards | `site.ts` |
+| `services` | `deckServices` | `/services`, residential/commercial | `site.ts` |
+| `projects` | `galleryProjects` | `/gallery`, home teaser | `site.ts` |
+| `faqs` | `faqs` | `/faq` | **`getPublishedFaqs()`** (CMS published → else `site.ts`) |
 
-**Storage:** memory default (`src/lib/cms/memory-store.ts`), seeded from `site.ts`. Optional SQL: `db/migrations/0005_cms_content.sql` (`cms_documents`).
+**Storage:** memory default (`src/lib/cms/memory-store.ts`), seeded from `site.ts`. Optional SQL: `db/migrations/0005_cms_content.sql` + `0006_cms_content_phase_bc.sql`.
 
 **Admin:** `/admin/content` · `/admin/content/[type]` · `/admin/content/[type]/[id]` · `PATCH /api/admin/content/[type]`.
 
+**Not cut over:** chatbot still imports `faqs` from `site.ts`.
+
 ---
 
-## Phase B — copy & structured pages
+## Phase B — copy & structured pages (v8 admin)
 
 | Key | Replaces in site.ts | Notes |
 |-----|---------------------|--------|
-| `site-copy` | `siteConfig` hero/tagline, `howItWorks`, `processTimeline`, `kabaExperience`, `trustPoints`, nav labels | Keyed strings, not raw HTML |
+| `site-copy` | `siteConfig` hero/tagline, `howItWorks`, `processTimeline`, `kabaExperience`, `trustPoints` | Keyed strings, not raw HTML |
 | `about` | `aboutLocalTrust`, `aboutStats`, `companyValues` | Keep trust-claims separate |
 | `testimonials` | `testimonials` | Name + town + quote; no fake ratings |
 | `service-area` | `serviceTowns` | Geographic claim — honesty required |
-| `materials` | `fenceMaterials`, comparisons, `deckMaterials` | Guidance only; no prices |
+| `materials` | `fenceMaterials`, `materialGuidance`, `deckMaterials` | Guidance only; no dollar prices |
+
+Admin list/edit seeded from `site.ts`. **Public pages still import `site.ts`.**
 
 ---
 
-## Phase C — media upload
+## Phase C — media scaffold (v8)
 
-- New `media` type + storage (Supabase Storage or equivalent; prior ADR preferred Storage over Blob).
-- Fields: file, **alt** (required), provenance (`kaba` | `stock` | `other`), width/height.
-- Projects / fence-types reference `mediaId` instead of `/gallery/...` paths.
-- Strip EXIF on upload; refuse publish without alt.
+- Type `media` with fields: **path**, **alt** (required), **provenance** (`kaba` | `stock` | `other`), optional width/height, notes.
+- **No paid storage:** place binaries under `public/gallery/` (and `public/gallery/before/`). Path field stores the public URL path.
+- Upload stub / EXIF strip deferred — refuse to claim cloud upload until wired.
+- Seeded from `galleryProjects` image + before paths.
+- Projects / fence-types still reference path strings until a later mediaId cutover.
 
 ---
 
@@ -78,11 +83,11 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 ## Publish workflow (target)
 
 1. **draft** → editor saves in admin (memory/SQL).  
-2. **in_review** (optional, Phase B+) → owner check for claims.  
-3. **published** → on cutover, public `getPublished(type)` reads CMS; `revalidatePath` / tag.  
-4. **rollback** — keep previous published JSON snapshot (prior CMS had this; add when editors are non-technical).
+2. **in_review** (optional) → owner check for claims.  
+3. **published** → for cut-over types, public `getPublished(type)` reads CMS; `revalidatePath` / tag when leaving memory.  
+4. **rollback** — keep previous published JSON snapshot when editors are non-technical.
 
-v7 stubs only expose draft | published on the memory row; **publishing does not change the live site yet**.
+v8: publishing **FAQs** changes `/faq` (and FAQ JSON-LD). Publishing other types does **not** change the live site yet.
 
 ---
 
@@ -90,19 +95,33 @@ v7 stubs only expose draft | published on the memory row; **publishing does not 
 
 ```text
 1. Admin edits work in memory/SQL and look correct in /admin/content/[type].
-2. Add src/lib/cms/public.ts → getPublishedFenceTypes() etc. with site.ts fallback.
+2. Add src/lib/cms/public.ts → getPublished*() with site.ts fallback.
 3. Change one marketing page to call getPublished* instead of site.ts export.
 4. When stable, remove the site.ts export (or re-export from CMS for one release).
 5. Repeat for the next type. Never big-bang delete site.ts.
 ```
 
+**Done (v8):** step 2–3 for `faqs` → `/faq` + `faqPageJsonLd(items)`.
+
 Document each cutover in a new `REUSE_PORT_vN.md` note.
+
+---
+
+## Live vs site.ts (v8 snapshot)
+
+| Surface | Source |
+|---------|--------|
+| `/faq` accordion + FAQ JSON-LD | CMS published FAQs (`getPublishedFaqs`) |
+| Chatbot FAQ answers | `site.ts` `faqs` |
+| Home, services, gallery, about, reviews, materials, service-area, how-it-works, nav | `site.ts` |
+| Admin Content hub list/edit (all Phase A–C types) | CMS memory (seeded from `site.ts`) |
 
 ---
 
 ## Non-goals (until named phase)
 
-- Ripping `site.ts` in v7  
-- Live media upload without alt/provenance  
+- Ripping `site.ts` wholesale  
+- Live media binary upload without alt/provenance  
 - Public Spanish site without explicit product ask  
 - Full draft→review→rollback before an editor owns content daily  
+- Cutting over high-risk claim surfaces (service-area, trust) without review  

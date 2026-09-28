@@ -24,7 +24,7 @@ const NAV_BASE: { href: string; keywords?: string }[] = [
   { href: "/admin/templates", keywords: "sms email follow-up copy plantillas" },
   { href: "/admin/activity", keywords: "feed timeline log actividad" },
   { href: "/admin/reports", keywords: "charts analytics informes" },
-  { href: "/admin/content", keywords: "cms fence types services projects faqs contenido" },
+  { href: "/admin/content", keywords: "cms fence types services projects faqs site copy about testimonials materials media contenido" },
   { href: "/admin/settings", keywords: "auth env configuración" },
 ];
 

@@ -1,11 +1,12 @@
 /**
- * Public-site CMS roadmap — which admin pages will own marketing content,
+ * Public-site CMS roadmap — which admin pages own marketing content,
  * and how they replace `src/lib/site.ts` over time.
  *
- * v7 ships Phase A stubs only (fence-types / services / projects / faqs).
- * Later phases add types below; do not rip site.ts until each type’s cutover.
+ * v8 ships Phase A + B admin stubs + Phase C media scaffold.
+ * FAQ (/faq) optionally reads CMS via getPublishedFaqs(); all other
+ * public pages still use site.ts until each cutover.
  *
- * See preview/REUSE_PORT_v7.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v8.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -22,12 +23,14 @@ export type PlannedContentType = {
   publicPaths: string[];
   /** Shipped in current codebase (list/edit stubs). */
   shipped: boolean;
+  /** Public marketing page reads CMS when published (partial cutover). */
+  publicCutover?: boolean;
   notes: string;
 };
 
 /**
  * Full inventory of PUBLIC content the owner should eventually edit in admin.
- * Phase A = shipped scaffold. B–D = planned (hub may show as “upcoming”).
+ * Phase A–C = shipped scaffold. D = planned (hub may show as “upcoming”).
  */
 export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
   {
@@ -58,7 +61,7 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     siteSources: ["galleryProjects"],
     publicPaths: ["/gallery", "/"],
     shipped: true,
-    notes: "Before/after + captions. Media upload in Phase C.",
+    notes: "Before/after + captions. Media refs in Phase C.",
   },
   {
     key: "faqs",
@@ -66,9 +69,10 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "FAQs",
     pluralEs: "Preguntas frecuentes",
     siteSources: ["faqs"],
-    publicPaths: ["/faq", "chatbot answers"],
+    publicPaths: ["/faq"],
     shipped: true,
-    notes: "No prices in answers. Chatbot should read same source after swap.",
+    publicCutover: true,
+    notes: "v8: /faq + FAQ JSON-LD read getPublishedFaqs(). Chatbot still site.ts.",
   },
   {
     key: "site-copy",
@@ -77,15 +81,14 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     pluralEs: "Textos y CTAs del sitio",
     siteSources: [
       "siteConfig (tagline, hero*, description)",
-      "navLinks / footerLinks labels",
       "howItWorks",
       "processTimeline",
       "kabaExperience",
       "trustPoints",
     ],
     publicPaths: ["/", "header/footer", "/how-it-works"],
-    shipped: false,
-    notes: "Keyed copy bag (hero, CTAs). Prefer keys over free-form HTML.",
+    shipped: true,
+    notes: "Keyed copy bag. Prefer keys over free-form HTML. Not cut over yet.",
   },
   {
     key: "about",
@@ -94,8 +97,8 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     pluralEs: "Página Nosotros",
     siteSources: ["aboutLocalTrust", "aboutStats", "companyValues"],
     publicPaths: ["/about"],
-    shipped: false,
-    notes: "Story blocks + stats. Claims stay gated via trust-claims.",
+    shipped: true,
+    notes: "Story blocks + stats. Claims stay gated via trust-claims. Not cut over.",
   },
   {
     key: "testimonials",
@@ -104,8 +107,8 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     pluralEs: "Reseñas / testimonios",
     siteSources: ["testimonials"],
     publicPaths: ["/reviews", "/"],
-    shipped: false,
-    notes: "Quote, name, town. No fake star counts without proof.",
+    shipped: true,
+    notes: "Quote, name, town. No fake star counts. Not cut over.",
   },
   {
     key: "service-area",
@@ -114,18 +117,18 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     pluralEs: "Ciudades de servicio",
     siteSources: ["serviceTowns", "siteConfig.serviceArea"],
     publicPaths: ["/service-area", "JSON-LD areaServed"],
-    shipped: false,
-    notes: "Town list is a claim — keep honest vs service footprint.",
+    shipped: true,
+    notes: "Town list is a claim — keep honest. Not cut over.",
   },
   {
     key: "materials",
     phase: "B",
     plural: "Materials guide",
     pluralEs: "Guía de materiales",
-    siteSources: ["fenceMaterials", "materialComparison", "materialGuidance", "deckMaterials"],
+    siteSources: ["fenceMaterials", "materialGuidance", "deckMaterials"],
     publicPaths: ["/materials"],
-    shipped: false,
-    notes: "Guidance copy only — no dollar prices in CMS cards.",
+    shipped: true,
+    notes: "Guidance copy only — no dollar prices. Not cut over.",
   },
   {
     key: "media",
@@ -134,8 +137,9 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     pluralEs: "Biblioteca de medios",
     siteSources: ["public/gallery/* paths referenced by projects & services"],
     publicPaths: ["all image consumers"],
-    shipped: false,
-    notes: "Upload + alt required + EXIF strip. Provenance (kaba vs stock).",
+    shipped: true,
+    notes:
+      "Path + alt + provenance scaffold. Drop files in public/gallery/ — no paid storage. Binary upload/EXIF later.",
   },
   {
     key: "i18n-public",
@@ -155,4 +159,8 @@ export function shippedContentKeys(): string[] {
 
 export function upcomingContentTypes(): PlannedContentType[] {
   return CMS_PUBLIC_ROADMAP.filter((t) => !t.shipped);
+}
+
+export function cutoverContentTypes(): PlannedContentType[] {
+  return CMS_PUBLIC_ROADMAP.filter((t) => t.publicCutover);
 }

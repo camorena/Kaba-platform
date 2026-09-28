@@ -1,8 +1,9 @@
 /**
- * Public marketing content (single source for the live site today).
+ * Public marketing content (primary source for the live site).
  *
- * CMS cutover: admin Phase A stubs live under src/lib/cms/ and /admin/content.
- * Do not delete exports here until each type follows the swap path in
+ * CMS: admin Phase A–C under src/lib/cms/ and /admin/content.
+ * Partial cutover: /faq reads getPublishedFaqs() (CMS with site.ts fallback).
+ * Do not delete other exports until each type follows the swap path in
  * preview/CMS_PUBLIC_CONTENT_PLAN.md (getPublished* + one page at a time).
  */
 

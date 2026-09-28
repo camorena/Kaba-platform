@@ -1,4 +1,4 @@
-import { absoluteUrl, faqs, siteConfig, siteUrl } from "@/lib/site";
+import { absoluteUrl, faqs as siteFaqs, siteConfig, siteUrl } from "@/lib/site";
 
 type JsonLd = Record<string, unknown>;
 
@@ -82,11 +82,13 @@ export function breadcrumbJsonLd(
   };
 }
 
-export function faqPageJsonLd(): JsonLd {
+export function faqPageJsonLd(
+  items: readonly { question: string; answer: string }[] = siteFaqs,
+): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: items.map((faq) => ({
       "@type": "Question",
       name: faq.question,
       acceptedAnswer: {
