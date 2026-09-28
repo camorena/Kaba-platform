@@ -23,6 +23,14 @@ function loadItems(): PriceBookItem[] {
   }
 }
 
+function filterClass(active: boolean): string {
+  return `admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
+    active
+      ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
+      : "text-muted hover:bg-[var(--admin-panel)] hover:text-ink"
+  }`;
+}
+
 export default function PriceBookPanel() {
   const toast = useToast();
   const { t } = useAdminI18n();
@@ -34,6 +42,7 @@ export default function PriceBookPanel() {
   const [draftDollars, setDraftDollars] = useState("100");
   const [qtyById, setQtyById] = useState<Record<string, number>>({});
   const [filter, setFilter] = useState("all");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     setItems(loadItems());
@@ -54,11 +63,23 @@ export default function PriceBookPanel() {
     return ["all", ...[...set].sort()];
   }, [items]);
 
-  const visible = useMemo(
-    () =>
-      filter === "all" ? items : items.filter((i) => i.category === filter),
-    [items, filter],
-  );
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: items.length };
+    for (const i of items) counts[i.category] = (counts[i.category] ?? 0) + 1;
+    return counts;
+  }, [items]);
+
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((i) => {
+      if (filter !== "all" && i.category !== filter) return false;
+      if (!q) return true;
+      const hay = [i.name, i.category, i.unit, i.notes ?? ""]
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(q);
+    });
+  }, [items, filter, query]);
 
   const estimateCents = useMemo(() => {
     return items.reduce((sum, item) => {
@@ -100,6 +121,11 @@ export default function PriceBookPanel() {
     toast.push({ title: t("pricebook.restoredDefaults"), tone: "info" });
   }
 
+  function clearFilters() {
+    setFilter("all");
+    setQuery("");
+  }
+
   if (!ready) {
     return (
       <div className="admin-skeleton h-40 w-full rounded-xl" aria-hidden />
@@ -108,47 +134,82 @@ export default function PriceBookPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="admin-glass-panel admin-gold-rail flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-5">
+      <div className="admin-glass-panel flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-5">
         <div>
           <p className="admin-card-title">{t("pricebook.estimate")}</p>
-          <p className="mt-1 text-xs text-muted">
-            {t("pricebook.estimateHint")}
-          </p>
+          <p className="mt-1 text-xs text-muted">{t("pricebook.estimateHint")}</p>
           <p className="mt-2 font-display text-2xl font-semibold tabular-nums text-ink">
             {formatMoney(estimateCents)}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1">
           <button
             type="button"
-            className="admin-chip"
+            className={filterClass(false)}
             onClick={() => setQtyById({})}
           >
             {t("pricebook.clearQty")}
           </button>
-          <button type="button" className="admin-chip" onClick={resetDefaults}>
+          <button type="button" className={filterClass(false)} onClick={resetDefaults}>
             {t("pricebook.resetDefaults")}
           </button>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5">
-        {categories.map((c) => (
-          <button
-            key={c}
-            type="button"
-            onClick={() => setFilter(c)}
-            className={`admin-chip capitalize ${filter === c ? "admin-chip-active" : ""}`}
-          >
-            {c === "all" ? t("common.all") : c}
-          </button>
-        ))}
+      <div className="admin-toolbar flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap gap-1">
+          {categories.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setFilter(c)}
+              className={`${filterClass(filter === c)} capitalize`}
+              aria-pressed={filter === c}
+            >
+              {c === "all" ? t("common.all") : c} ({categoryCounts[c] ?? 0})
+            </button>
+          ))}
+        </div>
+        <div className="relative min-w-0 flex-1 sm:max-w-xs">
+          <label htmlFor="pricebook-search" className="sr-only">
+            {t("pricebook.searchLabel")}
+          </label>
+          <input
+            id="pricebook-search"
+            type="search"
+            placeholder={t("pricebook.searchPlaceholder")}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="field-input !mt-0 w-full py-2 text-sm"
+          />
+        </div>
       </div>
 
       {visible.length === 0 ? (
         <EmptyState
-          title={t("pricebook.emptyCategory")}
-          description={t("pricebook.emptyDesc")}
+          title={
+            items.length === 0
+              ? t("pricebook.emptyTitle")
+              : filter !== "all" && !query
+                ? t("pricebook.emptyCategory")
+                : t("common.noMatches")
+          }
+          description={
+            items.length === 0
+              ? t("pricebook.emptyDesc")
+              : t("common.noMatchesDesc")
+          }
+          action={
+            filter !== "all" || query ? (
+              <button
+                type="button"
+                className="btn-secondary-light admin-touch text-sm"
+                onClick={clearFilters}
+              >
+                {t("common.clearFilters")}
+              </button>
+            ) : undefined
+          }
         />
       ) : (
         <>
@@ -160,14 +221,16 @@ export default function PriceBookPanel() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="font-semibold text-ink">{item.name}</p>
-                      <p className="text-[0.625rem] uppercase tracking-wide text-muted">
-                        {item.category}
-                        {item.notes ? ` · ${item.notes}` : ""}
+                      <p className="mt-0.5 text-[0.6875rem] text-muted">
+                        <span className="admin-settings-chip">{item.category}</span>
+                        {item.notes ? (
+                          <span className="ml-1.5">{item.notes}</span>
+                        ) : null}
                       </p>
                     </div>
                     <button
                       type="button"
-                      className="admin-touch shrink-0 text-xs font-semibold text-muted hover:text-danger"
+                      className="admin-touch shrink-0 text-xs font-medium text-muted hover:text-danger"
                       onClick={() => removeItem(item.id)}
                     >
                       {t("pricebook.remove")}
@@ -183,7 +246,9 @@ export default function PriceBookPanel() {
                       </p>
                     </div>
                     <label className="block">
-                      <span className="admin-section-label">{t("pricebook.colQty")}</span>
+                      <span className="admin-section-label">
+                        {t("pricebook.colQty")}
+                      </span>
                       <input
                         type="number"
                         min={0}
@@ -207,16 +272,26 @@ export default function PriceBookPanel() {
               );
             })}
           </ul>
-          <div className="admin-table-wrap admin-gold-rail hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] md:block">
+          <div className="admin-table-wrap hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] md:block">
             <div className="overflow-x-auto">
               <table className="admin-table min-w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-[color:var(--admin-border)]">
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colItem")}</th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colUnit")}</th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colRate")}</th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colQty")}</th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colLine")}</th>
+                  <tr className="border-b border-ink/10 text-[0.625rem] uppercase tracking-wider text-muted">
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">
+                      {t("pricebook.colItem")}
+                    </th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">
+                      {t("pricebook.colUnit")}
+                    </th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">
+                      {t("pricebook.colRate")}
+                    </th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">
+                      {t("pricebook.colQty")}
+                    </th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">
+                      {t("pricebook.colLine")}
+                    </th>
                     <th className="px-3 py-2.5 font-semibold sm:px-4">
                       <span className="sr-only">{t("pricebook.remove")}</span>
                     </th>
@@ -232,9 +307,11 @@ export default function PriceBookPanel() {
                       >
                         <td className="px-3 py-2.5 sm:px-4">
                           <div className="font-semibold text-ink">{item.name}</div>
-                          <div className="text-[0.625rem] uppercase tracking-wide text-muted">
-                            {item.category}
-                            {item.notes ? ` · ${item.notes}` : ""}
+                          <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[0.6875rem] text-muted">
+                            <span className="admin-settings-chip">
+                              {item.category}
+                            </span>
+                            {item.notes ? <span>{item.notes}</span> : null}
                           </div>
                         </td>
                         <td className="px-3 py-2.5 text-muted sm:px-4">
@@ -268,7 +345,7 @@ export default function PriceBookPanel() {
                         <td className="px-3 py-2.5 sm:px-4">
                           <button
                             type="button"
-                            className="text-xs font-semibold text-muted hover:text-danger"
+                            className="text-xs font-medium text-muted hover:text-danger"
                             onClick={() => removeItem(item.id)}
                           >
                             {t("pricebook.remove")}
@@ -284,7 +361,7 @@ export default function PriceBookPanel() {
         </>
       )}
 
-      <section className="admin-card">
+      <section className="admin-glass-panel p-4 sm:p-5">
         <h2 className="admin-card-title">{t("pricebook.addCustom")}</h2>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
           <input
@@ -318,7 +395,7 @@ export default function PriceBookPanel() {
         <button
           type="button"
           onClick={addItem}
-          className="btn-primary mt-3 text-sm"
+          className="btn-primary admin-touch mt-3 text-sm"
         >
           {t("pricebook.addToBook")}
         </button>

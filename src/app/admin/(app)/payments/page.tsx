@@ -19,7 +19,7 @@ export default async function AdminPaymentsPage({
 
   return (
     <>
-      <AdminPageChrome page="payments" />
+      <AdminPageChrome page="payments" showDictMeta />
       <PaymentsPanel
         payments={payments}
         invoices={invoices}

@@ -210,27 +210,32 @@ const en = {
     },
     payments: {
       title: "Payments",
-      description: "Ledger linked to invoices. Manual stub recording always works; Stripe Checkout opens when keys are set."
+      meta: "Ledger",
+      description: "Ledger linked to invoices. Manual recording always works; Stripe Checkout when keys are set."
     },
     customers: {
       title: "Customers",
-      description: "Derived from quote contacts (email/phone). Not a CRM — unique keys collapse duplicate submissions.",
-      meta: "Relationship layer · stub",
+      description: "Contacts from quotes (email/phone). Unique keys collapse duplicates — not a CRM.",
+      meta: "Directory",
       emptyTitle: "No customers yet",
       emptyDesc: "Customers appear when quotes land in the store.",
       directory: "Directory",
       colCustomer: "Customer",
       colQuotes: "Quotes",
       colLocations: "Locations",
-      colLatest: "Latest"
+      colLatest: "Latest",
+      searchLabel: "Search customers",
+      searchPlaceholder: "Search name, email, phone…",
+      filterActive: "Repeat",
+      filterSingle: "Single"
     },
     schedule: {
       title: "Schedule",
-      description: "Stub calendar of site visits and installs derived from scheduled / won quotes. Not a booking system yet.",
-      meta: "Field ops · demo",
+      description: "Site visits and installs from scheduled / won quotes. Demo calendar — not booking yet.",
+      meta: "Field ops",
       upcoming: "Upcoming jobs",
       emptyTitle: "No scheduled work",
-      emptyDesc: "Mark a quote as scheduled or won to seed stub calendar jobs.",
+      emptyDesc: "Mark a quote as scheduled or won to seed calendar jobs.",
       dow: {
         sun: "Sun",
         mon: "Mon",
@@ -243,8 +248,8 @@ const en = {
     },
     pricebook: {
       title: "Price book",
-      meta: "Estimating · local",
-      description: "Field rates for ballpark estimates. Edits stay in your browser (localStorage) — no Stripe, no database."
+      meta: "Estimating",
+      description: "Field rates for ballpark estimates. Saved in this browser only — no Stripe, no database."
     },
     templates: {
       title: "Templates",
@@ -253,12 +258,15 @@ const en = {
     },
     activity: {
       title: "Activity",
-      description: "Unified feed of quote updates, invoices, and payments from the in-memory stores.",
+      meta: "Feed",
+      description: "Quote, invoice, and payment updates from the in-memory stores.",
       emptyTitle: "Quiet so far",
       emptyDesc: "Pipeline events will stream here as quotes and invoices move.",
       kindQuote: "Quote",
       kindInvoice: "Invoice",
-      kindPayment: "Payment"
+      kindPayment: "Payment",
+      searchLabel: "Search activity",
+      searchPlaceholder: "Search subject or detail…"
     },
     reports: {
       title: "Reports",
@@ -614,6 +622,7 @@ const en = {
     invoice: "Invoice",
     selectInvoice: "Select an invoice.",
     amount: "Amount",
+    amountUsd: "Amount (USD)",
     amountInvalid: "Enter a valid amount greater than zero.",
     method: "Method",
     reference: "Reference",
@@ -629,10 +638,14 @@ const en = {
     stripeNotReady: "Stripe is not connected — set STRIPE_SECRET_KEY first.",
     stripeNotConnectedTitle: "Stripe not connected.",
     stripeNotConnectedBody:
-      "This form writes a ledger row only. Card collection needs Stripe keys — see",
+      "Ledger-only until Stripe keys are set — see",
     stripeConnectedTitle: "Stripe Checkout available.",
     stripeConnectedBody:
-      "Use “Collect deposit” to open Checkout for this invoice, or record a manual payment. Status:",
+      "Collect a deposit via Checkout, or record a manual payment — see",
+    stripeChipReady: "Stripe ready",
+    stripeChipOff: "Ledger only",
+    searchLabel: "Search payments",
+    searchPlaceholder: "Search invoice, customer, method…",
     emptyTitle: "No payments recorded",
     emptyDesc: "Record a manual payment or collect a Stripe deposit when keys are set.",
     colInvoice: "Invoice",
@@ -755,7 +768,9 @@ const en = {
   },
   pricebook: {
     estimate: "Quick estimate",
-    estimateHint: "Set quantities — totals stay on this device (localStorage).",
+    estimateHint: "Set quantities — totals stay on this device.",
+    searchLabel: "Search price book",
+    searchPlaceholder: "Search item or category…",
     qty: "Qty",
     unit: "Unit",
     lineTotal: "Line",

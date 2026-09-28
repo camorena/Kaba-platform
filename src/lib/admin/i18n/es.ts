@@ -216,31 +216,36 @@ const es = {
     },
     payments: {
       title: "Pagos",
+      meta: "Libro",
       description:
-        "Libro vinculado a facturas. El registro manual siempre funciona; Stripe Checkout se abre cuando hay claves."
+        "Libro vinculado a facturas. El registro manual siempre funciona; Stripe Checkout cuando hay claves."
     },
     customers: {
       title: "Clientes",
       description:
-        "Derivados de contactos de cotización (correo/teléfono). No es un CRM: las claves únicas consolidan envíos duplicados.",
-      meta: "Relación · provisional",
+        "Contactos de cotizaciones (correo/teléfono). Las claves únicas consolidan duplicados — no es un CRM.",
+      meta: "Directorio",
       emptyTitle: "Aún no hay clientes",
       emptyDesc: "Los clientes aparecen cuando llegan cotizaciones al sistema.",
       directory: "Directorio",
       colCustomer: "Cliente",
       colQuotes: "Cotizaciones",
       colLocations: "Ubicaciones",
-      colLatest: "Más reciente"
+      colLatest: "Más reciente",
+      searchLabel: "Buscar clientes",
+      searchPlaceholder: "Buscar nombre, correo, teléfono…",
+      filterActive: "Recurrentes",
+      filterSingle: "Únicos"
     },
     schedule: {
       title: "Agenda",
       description:
-        "Calendario provisional de visitas e instalaciones a partir de cotizaciones agendadas o ganadas. Aún no es un sistema de reservas.",
-      meta: "Operaciones de campo · demo",
+        "Visitas e instalaciones a partir de cotizaciones agendadas o ganadas. Calendario demo — aún no es reservas.",
+      meta: "Campo",
       upcoming: "Próximos trabajos",
       emptyTitle: "Sin trabajos agendados",
       emptyDesc:
-        "Marque una cotización como agendada o ganada para generar trabajos de demostración.",
+        "Marque una cotización como agendada o ganada para generar trabajos en el calendario.",
       dow: {
         sun: "Dom",
         mon: "Lun",
@@ -253,9 +258,9 @@ const es = {
     },
     pricebook: {
       title: "Lista de precios",
-      meta: "Estimación · local",
+      meta: "Estimación",
       description:
-        "Tarifas de campo para estimados rápidos. Los cambios permanecen en su navegador (localStorage): sin Stripe ni base de datos."
+        "Tarifas de campo para estimados rápidos. Solo en este navegador — sin Stripe ni base de datos."
     },
     templates: {
       title: "Plantillas",
@@ -265,14 +270,17 @@ const es = {
     },
     activity: {
       title: "Actividad",
+      meta: "Feed",
       description:
-        "Feed unificado de actualizaciones de cotizaciones, facturas y pagos desde el almacenamiento en memoria.",
+        "Actualizaciones de cotizaciones, facturas y pagos desde el almacenamiento en memoria.",
       emptyTitle: "Sin actividad por ahora",
       emptyDesc:
         "Los eventos del pipeline aparecerán aquí a medida que avancen cotizaciones y facturas.",
       kindQuote: "Cotización",
       kindInvoice: "Factura",
-      kindPayment: "Pago"
+      kindPayment: "Pago",
+      searchLabel: "Buscar actividad",
+      searchPlaceholder: "Buscar asunto o detalle…"
     },
     reports: {
       title: "Informes",
@@ -643,6 +651,7 @@ const es = {
     invoice: "Factura",
     selectInvoice: "Seleccione una factura.",
     amount: "Monto",
+    amountUsd: "Monto (USD)",
     amountInvalid: "Ingrese un monto válido mayor que cero.",
     method: "Método",
     reference: "Referencia",
@@ -658,10 +667,14 @@ const es = {
     stripeNotReady: "Stripe no está conectado — defina STRIPE_SECRET_KEY primero.",
     stripeNotConnectedTitle: "Stripe sin conexión.",
     stripeNotConnectedBody:
-      "Este formulario solo escribe una fila en el libro. La captura con tarjeta requiere claves de Stripe — vea",
+      "Solo libro hasta que haya claves de Stripe — vea",
     stripeConnectedTitle: "Stripe Checkout disponible.",
     stripeConnectedBody:
-      "Use “Cobrar anticipo” para abrir Checkout en esta factura, o registre un pago manual. Estado:",
+      "Cobre un anticipo con Checkout, o registre un pago manual — vea",
+    stripeChipReady: "Stripe listo",
+    stripeChipOff: "Solo libro",
+    searchLabel: "Buscar pagos",
+    searchPlaceholder: "Buscar factura, cliente, método…",
     emptyTitle: "No hay pagos registrados",
     emptyDesc:
       "Registre un pago manual o cobre un anticipo con Stripe cuando haya claves.",
@@ -788,7 +801,9 @@ const es = {
   pricebook: {
     estimate: "Estimado rápido",
     estimateHint:
-      "Defina cantidades — los totales permanecen en este dispositivo (localStorage).",
+      "Defina cantidades — los totales permanecen en este dispositivo.",
+    searchLabel: "Buscar lista de precios",
+    searchPlaceholder: "Buscar partida o categoría…",
     qty: "Cant.",
     unit: "Unidad",
     lineTotal: "Línea",
