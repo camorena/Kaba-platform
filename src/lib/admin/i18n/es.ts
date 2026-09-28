@@ -35,7 +35,10 @@ const es = {
       "Puerta por cookie de contraseña solo para el andamiaje. Defina AUTH_SECRET para credenciales contra profiles, o conserve el stub para demos — antes de datos reales de clientes en producción.",
     adminNav: "Navegación del administrador",
     jumpHint: "Presione __KBD__ para ir a cualquier sección.",
-    creditPrefix: "Sitio elaborado por"
+    creditPrefix: "Sitio elaborado por",
+    moreActions: "Más acciones",
+    closeMore: "Cerrar más acciones",
+    appearance: "Apariencia"
   },
   lang: {
     label: "Idioma",
@@ -689,6 +692,7 @@ const es = {
     label: "Notificaciones",
     unread: "Notificaciones, {count} sin leer",
     markAll: "Marcar todas como leídas",
+    close: "Cerrar notificaciones",
     stubFooter:
       "Feed provisional — sin push, correo ni tiempo real aún. Solo para la interfaz.",
     n1title: "Cotización nueva · Jordan Miles",

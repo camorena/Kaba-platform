@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import LanguageToggle from "@/components/admin/LanguageToggle";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import NotificationCenter from "@/components/admin/NotificationCenter";
@@ -171,6 +171,8 @@ function AdminShellInner({
   /** Mounted while open or closing (exit animation). */
   const [drawerMounted, setDrawerMounted] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
 
   const openCmd = useCallback(() => setCmdOpen(true), []);
   const closeCmd = useCallback(() => setCmdOpen(false), []);
@@ -189,9 +191,10 @@ function AdminShellInner({
     setDrawerOpen(false);
   }, []);
 
-  // Close drawer smoothly on route change (nav link or command palette).
+  // Close drawer / overflow smoothly on route change (nav link or command palette).
   useEffect(() => {
     setDrawerOpen(false);
+    setMoreOpen(false);
   }, [pathname]);
 
   // Unmount after exit transition ends.
@@ -221,6 +224,22 @@ function AdminShellInner({
       window.removeEventListener("keydown", onKey);
     };
   }, [drawerMounted, drawerOpen]);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    function onDoc(e: MouseEvent) {
+      if (!moreRef.current?.contains(e.target as Node)) setMoreOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMoreOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [moreOpen]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -258,11 +277,11 @@ function AdminShellInner({
     <div className="admin-app min-h-full text-ink">
       <header className="admin-topbar sticky top-0 z-40 border-b border-white/[0.08] bg-[#0a0c10]/95 text-cream shadow-[0_1px_0_0_rgba(192,139,58,0.4)] pt-[env(safe-area-inset-top,0px)]">
         <div className="h-[2px] w-full bg-gradient-to-r from-bronze-dark via-bronze-light to-bronze-dark" aria-hidden />
-        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-5 lg:px-6">
+        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-1.5 px-3 py-1.5 sm:gap-3 sm:px-5 md:px-6 lg:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
-              className="admin-touch -ml-1 rounded-md p-2 text-cream/80 transition hover:bg-white/10 hover:text-cream lg:hidden"
+              className="admin-touch -ml-1 inline-flex h-11 w-11 items-center justify-center rounded-md text-cream/80 transition hover:bg-white/10 hover:text-cream lg:hidden"
               aria-label={t("shell.openMenu")}
               aria-expanded={drawerOpen}
               onClick={openDrawer}
@@ -287,11 +306,12 @@ function AdminShellInner({
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-0.5 sm:gap-1.5">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            {/* Desktop / tablet search trigger */}
             <button
               type="button"
               onClick={openCmd}
-              className="admin-search-trigger admin-touch hidden items-center gap-2 rounded-md border border-white/12 bg-white/[0.06] px-2.5 py-1.5 text-xs text-cream/75 transition hover:border-bronze/45 hover:bg-white/10 hover:text-cream sm:inline-flex"
+              className="admin-search-trigger admin-touch hidden items-center gap-2 rounded-md border border-white/12 bg-white/[0.06] px-2.5 py-1.5 text-xs text-cream/75 transition hover:border-bronze/45 hover:bg-white/10 hover:text-cream md:inline-flex"
               aria-label={t("shell.openCommandPalette")}
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -300,43 +320,120 @@ function AdminShellInner({
               <span>{t("shell.search")}</span>
               <kbd className="admin-kbd admin-kbd-dark ml-1">⌘K</kbd>
             </button>
-            <button
-              type="button"
-              onClick={openCmd}
-              className="admin-touch rounded-md p-2 text-cream/70 transition hover:bg-white/10 hover:text-cream sm:hidden"
-              aria-label={t("shell.search")}
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
-              </svg>
-            </button>
             <NotificationCenter />
             <button
               type="button"
               onClick={openShortcuts}
-              className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream md:inline"
+              className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream lg:inline"
               title={t("shell.keyboardShortcuts")}
             >
               ?
             </button>
-            <LanguageToggle variant="dark" />
-            <ThemeToggle variant="dark" className="!h-9 !w-9" />
+            {/* Desktop: language + theme inline */}
+            <div className="hidden items-center gap-1 md:flex">
+              <LanguageToggle variant="dark" />
+              <ThemeToggle variant="dark" className="!h-9 !w-9" />
+            </div>
             <Link
               href="/"
-              className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream sm:inline"
+              className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream md:inline"
             >
               {t("shell.viewSite")}
             </Link>
+            {/* Phone: overflow sheet for search / language / theme / site */}
+            <div className="relative md:hidden" ref={moreRef}>
+              <button
+                type="button"
+                className="admin-touch inline-flex h-11 w-11 items-center justify-center rounded-md text-cream/70 transition hover:bg-white/10 hover:text-cream"
+                aria-label={t("shell.moreActions")}
+                aria-expanded={moreOpen}
+                aria-haspopup="menu"
+                onClick={() => setMoreOpen((v) => !v)}
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                </svg>
+              </button>
+              {moreOpen && (
+                <>
+                  <button
+                    type="button"
+                    className="admin-more-backdrop"
+                    aria-label={t("shell.closeMore")}
+                    onClick={() => setMoreOpen(false)}
+                  />
+                  <div
+                    role="menu"
+                    aria-label={t("shell.moreActions")}
+                    className="admin-more-panel"
+                  >
+                    <div className="admin-cmd-rail" aria-hidden />
+                    <div className="flex flex-col gap-1 p-2">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="admin-touch flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-ink transition hover:bg-[var(--admin-row-hover)]"
+                        onClick={() => {
+                          setMoreOpen(false);
+                          openCmd();
+                        }}
+                      >
+                        <svg className="h-4 w-4 shrink-0 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
+                        </svg>
+                        {t("shell.search")}
+                        <kbd className="admin-kbd ml-auto">⌘K</kbd>
+                      </button>
+                      <div className="rounded-lg px-3 py-2.5">
+                        <p className="mb-2 text-[0.625rem] font-bold uppercase tracking-wider text-muted">
+                          {t("lang.label")}
+                        </p>
+                        <LanguageToggle variant="light" />
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg px-3 py-2">
+                        <p className="text-[0.625rem] font-bold uppercase tracking-wider text-muted">
+                          {t("shell.appearance")}
+                        </p>
+                        <ThemeToggle variant="default" className="!h-11 !w-11" />
+                      </div>
+                      <Link
+                        href="/"
+                        role="menuitem"
+                        className="admin-touch flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition hover:bg-[var(--admin-row-hover)]"
+                        onClick={() => setMoreOpen(false)}
+                      >
+                        <svg className="h-4 w-4 shrink-0 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        {t("shell.viewSite")}
+                      </Link>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="admin-touch flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-ink transition hover:bg-[var(--admin-row-hover)]"
+                        onClick={() => {
+                          setMoreOpen(false);
+                          openShortcuts();
+                        }}
+                      >
+                        <span className="flex h-4 w-4 shrink-0 items-center justify-center text-xs font-bold text-muted" aria-hidden>?</span>
+                        {t("shell.keyboardShortcuts")}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
             <button
               type="button"
               onClick={() => void logout()}
               aria-label={t("shell.signOut")}
-              className="admin-touch inline-flex items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-bronze-light/90 to-bronze-dark px-2.5 py-2 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.32),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:brightness-105 active:scale-[0.98]"
+              className="admin-touch inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-bronze-light/90 to-bronze-dark px-2.5 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.32),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:brightness-105 active:scale-[0.98] sm:h-auto sm:min-w-0 sm:py-2"
             >
-              <svg className="h-4 w-4 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <svg className="h-4 w-4 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
               </svg>
-              <span className="hidden sm:inline">{t("shell.signOut")}</span>
+              <span className="hidden md:inline">{t("shell.signOut")}</span>
             </button>
           </div>
         </div>
@@ -427,7 +524,7 @@ function AdminShellInner({
           </p>
         </aside>
 
-        <main className="admin-main min-w-0 px-[max(0.75rem,env(safe-area-inset-left))] py-3.5 pr-[max(0.75rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-4 lg:px-6 lg:py-5">
+        <main className="admin-main min-w-0 px-[max(1rem,env(safe-area-inset-left))] py-3.5 pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-4 lg:px-6 lg:py-5">
           {children}
         </main>
       </div>

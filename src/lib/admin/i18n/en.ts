@@ -34,7 +34,10 @@ const en = {
     authWarning: "Password-cookie gate for scaffolding only. Set AUTH_SECRET for credentials against profiles, or keep the stub for demos — before live customer data in production.",
     adminNav: "Admin navigation",
     jumpHint: "Press __KBD__ to jump anywhere.",
-    creditPrefix: "Website crafted by"
+    creditPrefix: "Website crafted by",
+    moreActions: "More actions",
+    closeMore: "Close more actions",
+    appearance: "Appearance"
   },
   lang: {
     label: "Language",
@@ -658,7 +661,8 @@ const en = {
   notifications: {
     label: "Notifications",
     unread: "Notifications, {count} unread",
-    markAll: "Mark all read",
+    markAll: "Mark all as read",
+    close: "Close notifications",
     stubFooter: "Stub feed — no push, email, or realtime yet. Wired for craft only.",
     n1title: "New quote · Jordan Miles",
     n1body: "Wood fence request from Angier — needs first contact.",

@@ -2526,12 +2526,110 @@ a.btn-ghost {
 
 .admin-notify-panel {
   animation: admin-page-enter 180ms ease-out;
+  z-index: 60;
+  overflow: hidden;
+  border-radius: 0.875rem;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  /* Mobile: nearly full-width sheet under topbar */
+  position: fixed;
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+  top: max(3.75rem, calc(env(safe-area-inset-top, 0px) + 3.25rem));
+  width: auto;
+  max-height: min(32rem, calc(100dvh - 5rem));
+}
+.admin-notify-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  border: 0;
+  background: color-mix(in srgb, #05080e 45%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.admin-notify-body {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+@media (min-width: 640px) {
+  .admin-notify-panel {
+    position: absolute;
+    left: auto;
+    right: 0;
+    top: calc(100% + 0.4rem);
+    width: min(22rem, calc(100vw - 1.5rem));
+    max-height: none;
+  }
+  .admin-notify-backdrop {
+    display: none;
+  }
+}
+
+/* Topbar overflow ("more") sheet — phone only */
+.admin-more-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  border: 0;
+  background: color-mix(in srgb, #05080e 40%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.admin-more-panel {
+  position: fixed;
+  z-index: 60;
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+  top: max(3.75rem, calc(env(safe-area-inset-top, 0px) + 3.25rem));
+  overflow: hidden;
+  border-radius: 0.875rem;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  animation: admin-page-enter 180ms ease-out;
+}
+@media (min-width: 768px) {
+  .admin-more-backdrop,
+  .admin-more-panel {
+    display: none;
+  }
+}
+
+/* Sticky first column when a table must scroll horizontally (tablet+) */
+@media (max-width: 1279px) {
+  .admin-table-wrap .admin-table th:first-child,
+  .admin-table-wrap .admin-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--admin-panel);
+  }
+  .admin-table-wrap .admin-table thead th:first-child {
+    z-index: 2;
+    background: var(--admin-panel);
+  }
+  .admin-table-wrap .admin-table tbody tr:hover td:first-child {
+    background: var(--admin-row-hover);
+  }
 }
 
 @media print {
   .admin-drawer-root,
   .admin-dialog-root,
   .admin-notify-panel,
+  .admin-notify-backdrop,
+  .admin-more-panel,
+  .admin-more-backdrop,
   .admin-bulk-bar,
   footer {
     display: none !important;
@@ -2559,6 +2657,7 @@ a.btn-ghost {
   .admin-drawer-backdrop,
   .admin-dialog-panel,
   .admin-notify-panel,
+  .admin-more-panel,
   .admin-bulk-bar {
     animation: none !important;
     transition: none !important;
@@ -3177,8 +3276,8 @@ html[data-mobile-nav="open"] .chat-widget-root {
 
 @media (min-width: 640px) {
   .admin-main {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 
@@ -3323,4 +3422,31 @@ html[data-mobile-nav="open"] .chat-widget-root {
 }
 .dark .admin-content-sticky {
   background: color-mix(in srgb, var(--admin-bg, #1a1c1f) 92%, transparent);
+}
+
+/* —— Admin v24: responsive chrome polish —— */
+.admin-topbar .admin-touch {
+  /* Prefer true 44px targets in the dense topbar */
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+}
+@media (min-width: 768px) {
+  .admin-topbar .admin-touch.admin-search-trigger,
+  .admin-topbar a.admin-touch {
+    min-width: 0;
+  }
+}
+.admin-page-header {
+  gap: 0.75rem;
+}
+@media (max-width: 639px) {
+  .admin-page-header {
+    gap: 0.65rem;
+  }
+  .admin-page-header > .flex.shrink-0 {
+    width: 100%;
+  }
+  .admin-page-header > .flex.shrink-0 > * {
+    flex: 1 1 auto;
+  }
 }

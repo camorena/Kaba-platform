@@ -16,7 +16,7 @@ export default function PageHeader({
 }) {
   return (
     <header className="admin-page-header mb-4 flex flex-col gap-3 sm:mb-5 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         {crumbs && crumbs.length > 0 ? <Breadcrumbs items={crumbs} /> : null}
         {meta}
         <div className="admin-title-rule mb-2" aria-hidden />
@@ -30,7 +30,9 @@ export default function PageHeader({
         )}
       </div>
       {actions && (
-        <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>
+        <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
+          {actions}
+        </div>
       )}
     </header>
   );
