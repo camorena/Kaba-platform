@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import ContentListClient from "@/components/admin/cms/ContentListClient";
-import { listContent, resolveContentType } from "@/lib/cms";
+import {
+  CMS_PUBLIC_ROADMAP,
+  listContent,
+  resolveContentType,
+} from "@/lib/cms";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +19,17 @@ export async function generateMetadata({
   return { title: spec ? spec.plural : "Content" };
 }
 
+function cutoverMeta(type: string): { isPublicCutover: boolean; livePaths: string } {
+  const planned = CMS_PUBLIC_ROADMAP.find((t) => t.key === type);
+  if (!planned?.publicCutover) {
+    return { isPublicCutover: false, livePaths: "" };
+  }
+  const livePaths = planned.publicPaths
+    .map((p) => (p === "/" ? "home" : p))
+    .join(", ");
+  return { isPublicCutover: true, livePaths };
+}
+
 export default async function AdminContentListPage({
   params,
 }: {
@@ -24,11 +39,17 @@ export default async function AdminContentListPage({
   const spec = resolveContentType(type);
   if (!spec) notFound();
   const documents = listContent(type);
+  const { isPublicCutover, livePaths } = cutoverMeta(type);
 
   return (
     <>
       <AdminPageChrome page="content" showDictMeta />
-      <ContentListClient spec={spec} documents={documents} />
+      <ContentListClient
+        spec={spec}
+        documents={documents}
+        isPublicCutover={isPublicCutover}
+        livePaths={livePaths}
+      />
     </>
   );
 }

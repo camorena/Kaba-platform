@@ -2,11 +2,10 @@
  * Public-site CMS roadmap — which admin pages own marketing content,
  * and how they replace `src/lib/site.ts` over time.
  *
- * v8 ships Phase A + B admin stubs + Phase C media scaffold.
- * FAQ (/faq) optionally reads CMS via getPublishedFaqs(); all other
- * public pages still use site.ts until each cutover.
+ * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects
+ * via getPublished* (CMS published → site.ts fallback).
  *
- * See preview/REUSE_PORT_v8.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v9.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -61,7 +60,8 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     siteSources: ["galleryProjects"],
     publicPaths: ["/gallery", "/"],
     shipped: true,
-    notes: "Before/after + captions. Media refs in Phase C.",
+    publicCutover: true,
+    notes: "v9: /gallery + home work teaser read getPublishedProjects().",
   },
   {
     key: "faqs",
@@ -72,7 +72,7 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     publicPaths: ["/faq"],
     shipped: true,
     publicCutover: true,
-    notes: "v8: /faq + FAQ JSON-LD read getPublishedFaqs(). Chatbot still site.ts.",
+    notes: "v8+: /faq + FAQ JSON-LD read getPublishedFaqs(). Chatbot still site.ts.",
   },
   {
     key: "site-copy",
@@ -108,7 +108,8 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     siteSources: ["testimonials"],
     publicPaths: ["/reviews", "/"],
     shipped: true,
-    notes: "Quote, name, town. No fake star counts. Not cut over.",
+    publicCutover: true,
+    notes: "v9: /reviews + home teaser read getPublishedTestimonials(). No fake star ratings.",
   },
   {
     key: "service-area",

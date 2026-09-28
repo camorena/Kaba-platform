@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import ContentEditClient from "@/components/admin/cms/ContentEditClient";
-import { getContent, resolveContentType } from "@/lib/cms";
+import {
+  CMS_PUBLIC_ROADMAP,
+  getContent,
+  resolveContentType,
+} from "@/lib/cms";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +25,17 @@ export async function generateMetadata({
   return { title };
 }
 
+function cutoverMeta(type: string): { isPublicCutover: boolean; livePaths: string } {
+  const planned = CMS_PUBLIC_ROADMAP.find((t) => t.key === type);
+  if (!planned?.publicCutover) {
+    return { isPublicCutover: false, livePaths: "" };
+  }
+  const livePaths = planned.publicPaths
+    .map((p) => (p === "/" ? "home" : p))
+    .join(", ");
+  return { isPublicCutover: true, livePaths };
+}
+
 export default async function AdminContentEditPage({
   params,
 }: {
@@ -31,11 +46,17 @@ export default async function AdminContentEditPage({
   if (!spec) notFound();
   const document = getContent(type, id);
   if (!document) notFound();
+  const { isPublicCutover, livePaths } = cutoverMeta(type);
 
   return (
     <>
       <AdminPageChrome page="content" showDictMeta />
-      <ContentEditClient spec={spec} document={document} />
+      <ContentEditClient
+        spec={spec}
+        document={document}
+        isPublicCutover={isPublicCutover}
+        livePaths={livePaths}
+      />
     </>
   );
 }

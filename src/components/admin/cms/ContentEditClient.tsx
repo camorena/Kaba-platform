@@ -11,9 +11,13 @@ import type { ContentDocument, ContentFieldValue } from "@/lib/cms/types";
 export default function ContentEditClient({
   spec,
   document: initial,
+  isPublicCutover,
+  livePaths,
 }: {
   spec: ContentTypeSpec;
   document: ContentDocument;
+  isPublicCutover: boolean;
+  livePaths: string;
 }) {
   const { t, locale } = useAdminI18n();
   const toast = useToast();
@@ -79,7 +83,9 @@ export default function ContentEditClient({
       </div>
 
       <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs leading-relaxed text-amber-900 dark:text-amber-200">
-        {t("pages.content.editStubNote")}
+        {isPublicCutover
+          ? t("pages.content.editStubNoteLive", { paths: livePaths })
+          : t("pages.content.editStubNoteAdmin")}
       </p>
 
       <div className="admin-glass-panel space-y-4 p-4 sm:p-5">
@@ -95,6 +101,11 @@ export default function ContentEditClient({
             <option value="draft">{t("pages.content.statusDraft")}</option>
             <option value="published">{t("pages.content.statusPublished")}</option>
           </select>
+          <span className="mt-1.5 block text-xs text-muted">
+            {isPublicCutover
+              ? t("pages.content.statusHelpLive", { paths: livePaths })
+              : t("pages.content.statusHelpAdmin")}
+          </span>
         </label>
 
         {spec.fields.map((field) => {

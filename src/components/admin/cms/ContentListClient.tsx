@@ -8,19 +8,27 @@ import type { ContentDocument } from "@/lib/cms/types";
 export default function ContentListClient({
   spec,
   documents,
+  isPublicCutover,
+  livePaths,
 }: {
   spec: ContentTypeSpec;
   documents: ContentDocument[];
+  isPublicCutover: boolean;
+  livePaths: string;
 }) {
   const { t, locale } = useAdminI18n();
   const plural = locale === "es" ? spec.pluralEs : spec.plural;
   const titleField = spec.titleField;
+  const publishedCount = documents.filter((d) => d.status === "published").length;
+  const draftCount = documents.length - publishedCount;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted">
-          {t("pages.content.listHint", { plural })}
+          {isPublicCutover
+            ? t("pages.content.listHintLive", { plural, paths: livePaths })
+            : t("pages.content.listHintAdmin", { plural })}
         </p>
         <Link
           href="/admin/content"
@@ -28,6 +36,24 @@ export default function ContentListClient({
         >
           {t("pages.content.backHub")}
         </Link>
+      </div>
+
+      <div className="flex flex-wrap gap-2 text-xs">
+        <span className="admin-badge admin-badge-emerald rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
+          {t("pages.content.statusPublished")}: {publishedCount}
+        </span>
+        <span className="admin-badge admin-badge-muted rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
+          {t("pages.content.statusDraft")}: {draftCount}
+        </span>
+        {isPublicCutover ? (
+          <span className="admin-badge admin-badge-emerald rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
+            {t("pages.content.liveBadge", { paths: livePaths })}
+          </span>
+        ) : (
+          <span className="admin-badge admin-badge-muted rounded-full px-2.5 py-1 font-bold uppercase tracking-[0.08em]">
+            {t("pages.content.adminOnlyBadge")}
+          </span>
+        )}
       </div>
 
       <div className="admin-glass-panel hidden overflow-x-auto md:block">

@@ -5,7 +5,7 @@
  * Route params select a KEY here — never a raw table name (allow-list).
  *
  * Phase A–C shipped as admin stubs. Public marketing still reads
- * `src/lib/site.ts` except optional FAQ cutover via `getPublishedFaqs()`.
+ * `src/lib/site.ts` except cutovers via `getPublishedFaqs()`, `getPublishedTestimonials()`, `getPublishedProjects()`.
  */
 
 export type FieldKind =
@@ -187,6 +187,22 @@ export const CONTENT_TYPES: Readonly<Record<string, ContentTypeSpec>> = {
       },
       { name: "caption", label: "Caption", labelEs: "Leyenda", kind: "text", maxLength: 240 },
       { name: "image", label: "Image path", labelEs: "Ruta de imagen", kind: "text", maxLength: 240 },
+      {
+        name: "beforeImage",
+        label: "Before image path",
+        labelEs: "Ruta imagen antes",
+        kind: "text",
+        maxLength: 240,
+        hint: "Optional. Drop file under public/gallery/before/.",
+        hintEs: "Opcional. Coloque el archivo en public/gallery/before/.",
+      },
+      {
+        name: "beforeCaption",
+        label: "Before caption",
+        labelEs: "Leyenda antes",
+        kind: "text",
+        maxLength: 240,
+      },
       { name: "city", label: "City", labelEs: "Ciudad", kind: "text", maxLength: 80 },
       { name: "isFeatured", label: "Feature on homepage", labelEs: "Destacar en inicio", kind: "checkbox" },
       { name: "sortOrder", label: "Order", labelEs: "Orden", kind: "number" },

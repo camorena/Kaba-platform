@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { galleryProjects } from "@/lib/site";
+import type { PublishedProject } from "@/lib/cms/types";
 
 type Filter = "All" | "fence" | "deck";
 type ViewMode = "gallery" | "before-after";
-type Project = (typeof galleryProjects)[number];
+type Project = PublishedProject;
 
 function hasBefore(
   p: Project,
@@ -14,7 +14,11 @@ function hasBefore(
   return "beforeImage" in p && typeof (p as { beforeImage?: string }).beforeImage === "string";
 }
 
-export default function GalleryGrid() {
+export default function GalleryGrid({
+  projects: allProjects,
+}: {
+  projects: PublishedProject[];
+}) {
   const [filter, setFilter] = useState<Filter>("All");
   const [viewMode, setViewMode] = useState<ViewMode>("gallery");
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -23,9 +27,9 @@ export default function GalleryGrid() {
   const triggerRef = useRef<HTMLElement | null>(null);
 
   const filtered = useMemo(() => {
-    if (filter === "All") return galleryProjects;
-    return galleryProjects.filter((p) => p.category === filter);
-  }, [filter]);
+    if (filter === "All") return allProjects;
+    return allProjects.filter((p) => p.category === filter);
+  }, [filter, allProjects]);
 
   const projects = useMemo(() => {
     if (viewMode === "before-after") return filtered.filter(hasBefore);
@@ -100,7 +104,7 @@ export default function GalleryGrid() {
     }
   }, [projects, activeId]);
 
-  const beforeCount = galleryProjects.filter(hasBefore).length;
+  const beforeCount = allProjects.filter(hasBefore).length;
 
   return (
     <div className="min-w-0">

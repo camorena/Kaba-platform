@@ -11,15 +11,15 @@ export default function ContentHubClient({
   types,
   counts,
   upcoming,
-  cutoverKeys,
+  cutoverLabels,
 }: {
   types: ContentTypeSpec[];
   counts: Record<string, number>;
   upcoming: PlannedContentType[];
-  cutoverKeys: string[];
+  /** key → human paths shown on live badge, e.g. "/faq" or "/reviews, home" */
+  cutoverLabels: Record<string, string>;
 }) {
   const { t, locale } = useAdminI18n();
-  const cutover = new Set(cutoverKeys);
 
   const phaseTitle: Record<CmsRegistryPhase, string> = {
     A: t("pages.content.phaseA"),
@@ -43,7 +43,7 @@ export default function ContentHubClient({
               {group.map((spec) => {
                 const plural = locale === "es" ? spec.pluralEs : spec.plural;
                 const count = counts[spec.key] ?? 0;
-                const isLive = cutover.has(spec.key);
+                const livePaths = cutoverLabels[spec.key];
                 return (
                   <Link
                     key={spec.key}
@@ -52,11 +52,15 @@ export default function ContentHubClient({
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="admin-section-label">{spec.key}</p>
-                      {isLive ? (
+                      {livePaths ? (
                         <span className="admin-badge admin-badge-emerald rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
-                          {t("pages.content.liveBadge")}
+                          {t("pages.content.liveBadge", { paths: livePaths })}
                         </span>
-                      ) : null}
+                      ) : (
+                        <span className="admin-badge admin-badge-muted rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                          {t("pages.content.adminOnlyBadge")}
+                        </span>
+                      )}
                     </div>
                     <h3 className="admin-card-title mt-1">{plural}</h3>
                     <p className="mt-2 text-sm text-muted">
@@ -70,6 +74,15 @@ export default function ContentHubClient({
                         {t("pages.content.publicPath", { path: spec.publicPath })}
                       </p>
                     ) : null}
+                    {livePaths ? (
+                      <p className="mt-2 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                        {t("pages.content.publishAffects", { paths: livePaths })}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-xs text-muted">
+                        {t("pages.content.publishAdminOnly")}
+                      </p>
+                    )}
                   </Link>
                 );
               })}

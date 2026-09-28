@@ -9,7 +9,13 @@ export {
   type FieldKind,
   type CmsRegistryPhase,
 } from "@/lib/cms/content-types";
-export type { ContentDocument, ContentFieldValue } from "@/lib/cms/types";
+export type {
+  ContentDocument,
+  ContentFieldValue,
+  PublishedFaq,
+  PublishedTestimonial,
+  PublishedProject,
+} from "@/lib/cms/types";
 export {
   listContent,
   getContent,
@@ -29,5 +35,8 @@ export {
 export {
   getPublishedFaqs,
   faqsSourceIsCms,
-  type PublishedFaq,
+  getPublishedTestimonials,
+  testimonialsSourceIsCms,
+  getPublishedProjects,
+  projectsSourceIsCms,
 } from "@/lib/cms/public";

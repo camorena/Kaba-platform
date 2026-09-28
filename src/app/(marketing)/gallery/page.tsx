@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import GalleryGrid from "@/components/GalleryGrid";
 import Reveal from "@/components/Reveal";
+import { getPublishedProjects } from "@/lib/cms/public";
 import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Project Gallery";
@@ -25,7 +26,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default function GalleryPage() {
+  const projects = getPublishedProjects();
+
   return (
     <>
       <section className="page-hero">
@@ -43,7 +48,7 @@ export default function GalleryPage() {
       </section>
 
       <section className="container-page section-y">
-        <GalleryGrid />
+        <GalleryGrid projects={projects} />
       </section>
 
       <section className="section-alt py-12 lg:py-16">

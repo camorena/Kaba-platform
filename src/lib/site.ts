@@ -2,7 +2,10 @@
  * Public marketing content (primary source for the live site).
  *
  * CMS: admin Phase A–C under src/lib/cms/ and /admin/content.
- * Partial cutover: /faq reads getPublishedFaqs() (CMS with site.ts fallback).
+ * Partial cutovers (CMS published → site.ts fallback):
+ *   getPublishedFaqs() → /faq
+ *   getPublishedTestimonials() → /reviews + home
+ *   getPublishedProjects() → /gallery + home teaser
  * Do not delete other exports until each type follows the swap path in
  * preview/CMS_PUBLIC_CONTENT_PLAN.md (getPublished* + one page at a time).
  */

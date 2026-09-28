@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-28 (America/Chicago)  
 **Code:** `src/lib/cms/` · registry `content-types.ts` · roadmap `roadmap.ts` · public readers `public.ts`  
-**Companion:** `preview/REUSE_PORT_v8.md`
+**Companion:** `preview/REUSE_PORT_v9.md`
 
 Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (images, text, services, gallery/projects, about, FAQs, etc.) without ripping `src/lib/site.ts` until each type is ready.
 
@@ -22,9 +22,9 @@ Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (image
 
 | Phase | Types | Admin | Public swap |
 |-------|--------|-------|-------------|
-| **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit | **faqs → `/faq` cut over (v8)**; others still `site.ts` |
-| **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | Still `site.ts` |
-| **C (v8)** | `media` | Media library scaffold | Projects/services still use path strings |
+| **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit | **faqs → `/faq` (v8)**; **projects → `/gallery` + home (v9)** |
+| **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | **testimonials → `/reviews` + home (v9)**; others still `site.ts` |
+| **C (v8)** | `media` | Media library scaffold | Projects still path strings (+ beforeImage in CMS) |
 | **D** | `i18n-public` | Locale fields on documents | Optional `/es` marketing |
 
 Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hub UI groups Phase A–C as editable and D as “upcoming”.
@@ -37,7 +37,7 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 |-----|---------------|---------------|-------------|
 | `fence-types` | `fencingServices` | `/services`, home cards | `site.ts` |
 | `services` | `deckServices` | `/services`, residential/commercial | `site.ts` |
-| `projects` | `galleryProjects` | `/gallery`, home teaser | `site.ts` |
+| `projects` | `galleryProjects` | `/gallery`, home teaser | **`getPublishedProjects()`** (CMS published → else `site.ts`) |
 | `faqs` | `faqs` | `/faq` | **`getPublishedFaqs()`** (CMS published → else `site.ts`) |
 
 **Storage:** memory default (`src/lib/cms/memory-store.ts`), seeded from `site.ts`. Optional SQL: `db/migrations/0005_cms_content.sql` + `0006_cms_content_phase_bc.sql`.
@@ -54,11 +54,11 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 |-----|---------------------|--------|
 | `site-copy` | `siteConfig` hero/tagline, `howItWorks`, `processTimeline`, `kabaExperience`, `trustPoints` | Keyed strings, not raw HTML |
 | `about` | `aboutLocalTrust`, `aboutStats`, `companyValues` | Keep trust-claims separate |
-| `testimonials` | `testimonials` | Name + town + quote; no fake ratings |
+| `testimonials` | `testimonials` | **Cut over (v9):** name + town + quote; no fake ratings |
 | `service-area` | `serviceTowns` | Geographic claim — honesty required |
 | `materials` | `fenceMaterials`, `materialGuidance`, `deckMaterials` | Guidance only; no dollar prices |
 
-Admin list/edit seeded from `site.ts`. **Public pages still import `site.ts`.**
+Admin list/edit seeded from `site.ts`. Public cutovers: faqs, testimonials, projects.
 
 ---
 
@@ -87,7 +87,7 @@ Admin list/edit seeded from `site.ts`. **Public pages still import `site.ts`.**
 3. **published** → for cut-over types, public `getPublished(type)` reads CMS; `revalidatePath` / tag when leaving memory.  
 4. **rollback** — keep previous published JSON snapshot when editors are non-technical.
 
-v8: publishing **FAQs** changes `/faq` (and FAQ JSON-LD). Publishing other types does **not** change the live site yet.
+v9: publishing **FAQs**, **testimonials**, or **projects** changes their cutover surfaces. Other types stay admin-only.
 
 ---
 
@@ -101,19 +101,22 @@ v8: publishing **FAQs** changes `/faq` (and FAQ JSON-LD). Publishing other types
 5. Repeat for the next type. Never big-bang delete site.ts.
 ```
 
-**Done (v8):** step 2–3 for `faqs` → `/faq` + `faqPageJsonLd(items)`.
+**Done (v8):** `faqs` → `/faq` + JSON-LD.  
+**Done (v9):** `testimonials` → `/reviews` + home; `projects` → `/gallery` + home teaser.
 
 Document each cutover in a new `REUSE_PORT_vN.md` note.
 
 ---
 
-## Live vs site.ts (v8 snapshot)
+## Live vs site.ts (v9 snapshot)
 
 | Surface | Source |
 |---------|--------|
 | `/faq` accordion + FAQ JSON-LD | CMS published FAQs (`getPublishedFaqs`) |
+| `/reviews` + home review cards | CMS published testimonials (`getPublishedTestimonials`) |
+| `/gallery` + home work teaser | CMS published projects (`getPublishedProjects`) |
 | Chatbot FAQ answers | `site.ts` `faqs` |
-| Home, services, gallery, about, reviews, materials, service-area, how-it-works, nav | `site.ts` |
+| Services, about, materials, service-area, how-it-works, site-copy, nav | `site.ts` |
 | Admin Content hub list/edit (all Phase A–C types) | CMS memory (seeded from `site.ts`) |
 
 ---

@@ -3,11 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import {
+  getPublishedProjects,
+  getPublishedTestimonials,
+} from "@/lib/cms/public";
+import {
   fencingServices,
-  galleryProjects,
   kabaExperience,
   siteConfig,
-  testimonials,
   trustPoints,
   yourNeeds,
 } from "@/lib/site";
@@ -22,6 +24,8 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
 };
+
+export const dynamic = "force-dynamic";
 
 function NeedIcon({ icon }: { icon: (typeof yourNeeds)[number]["icon"] }) {
   const common = "h-5 w-5";
@@ -101,8 +105,10 @@ function TrustIcon({ icon }: { icon: (typeof trustPoints)[number]["icon"] }) {
 }
 
 export default function HomePage() {
-  const teaser = galleryProjects.filter((p) => p.category === "fence").slice(0, 4);
-  const homeReviews = testimonials.slice(0, 3);
+  const teaser = getPublishedProjects()
+    .filter((p) => p.category === "fence")
+    .slice(0, 4);
+  const homeReviews = getPublishedTestimonials().slice(0, 3);
 
   return (
     <>
@@ -351,20 +357,14 @@ export default function HomePage() {
           <ul className="mt-10 grid gap-5 sm:grid-cols-3">
             {homeReviews.map((review, i) => (
               <Reveal as="li" key={review.name} delay={i * 80} className="review-card flex flex-col">
-                <div className="flex items-center justify-between">
-                  <span
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-lg font-bold shadow-sm"
-                    aria-hidden
-                    style={{ color: "#4285F4" }}
-                  >
-                    G
-                  </span>
-                  <span className="stars-gold text-sm" aria-label="5 out of 5 stars">
-                    ★★★★★
-                  </span>
-                </div>
-                <p className="mt-4 flex-1 text-sm leading-relaxed text-muted">
-                  “{review.quote}”
+                <span
+                  className="font-display text-3xl leading-none text-bronze/50"
+                  aria-hidden
+                >
+                  “
+                </span>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
+                  {review.quote}
                 </p>
                 <p className="mt-5 text-sm font-semibold text-ink">
                   {review.name}{" "}

@@ -82,23 +82,36 @@ function seed(): Map<string, ContentDocument[]> {
 
   map.set(
     "projects",
-    galleryProjects.map((p, i) => ({
-      id: `proj_${p.id}`,
-      type: "projects",
-      status: "published" as const,
-      sortOrder: i + 1,
-      updatedAt: nowIso(),
-      fields: {
-        title: p.title,
-        slug: p.id,
-        category: p.category,
-        caption: p.caption,
-        image: p.image,
-        city: "",
-        isFeatured: i < 3,
+    galleryProjects.map((p, i) => {
+      const seed = p as {
+        id: string;
+        title: string;
+        category: "fence" | "deck";
+        caption: string;
+        image: string;
+        beforeImage?: string;
+        beforeCaption?: string;
+      };
+      return {
+        id: `proj_${seed.id}`,
+        type: "projects",
+        status: "published" as const,
         sortOrder: i + 1,
-      },
-    })),
+        updatedAt: nowIso(),
+        fields: {
+          title: seed.title,
+          slug: seed.id,
+          category: seed.category,
+          caption: seed.caption,
+          image: seed.image,
+          beforeImage: seed.beforeImage ?? "",
+          beforeCaption: seed.beforeCaption ?? "",
+          city: "",
+          isFeatured: i < 3,
+          sortOrder: i + 1,
+        },
+      };
+    }),
   );
 
   map.set(

@@ -10,11 +10,20 @@ import {
 export const metadata = { title: "Content" };
 export const dynamic = "force-dynamic";
 
+function formatCutoverPaths(paths: string[]): string {
+  return paths
+    .map((p) => (p === "/" ? "home" : p))
+    .join(", ");
+}
+
 export default async function AdminContentHubPage() {
   const types = listContentTypes();
   const counts = contentCounts();
   const upcoming = [...upcomingContentTypes()];
-  const cutoverKeys = cutoverContentTypes().map((t) => t.key);
+  const cutoverLabels: Record<string, string> = {};
+  for (const item of cutoverContentTypes()) {
+    cutoverLabels[item.key] = formatCutoverPaths([...item.publicPaths]);
+  }
 
   return (
     <>
@@ -23,7 +32,7 @@ export default async function AdminContentHubPage() {
         types={types}
         counts={counts}
         upcoming={upcoming}
-        cutoverKeys={cutoverKeys}
+        cutoverLabels={cutoverLabels}
       />
     </>
   );
