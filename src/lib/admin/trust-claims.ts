@@ -1,41 +1,37 @@
 /**
  * Owner-asserted trust claims — Settings toggles shaped for a future DB row.
  *
- * Today: browser localStorage stub (same honesty pattern as the price book).
- * Public marketing still uses `site.ts` trustPoints until a durable store exists;
- * do not wire the public hero bar to localStorage (server cannot read it).
+ * Today:
+ *   - Browser localStorage stub for Settings UI (client).
+ *   - Server memory singleton (memoryTrustClaimsRepo) for getTrustClaimsForPublic().
+ * Public marketing still uses `site.ts` trustPoints until a durable store feeds
+ * the public reader; do not wire the public hero bar to localStorage.
  *
  * API shape (stable for DB swap):
  *   TrustClaims { claimFreeEstimates, claimLocallyOwned, updatedAt }
- *   getTrustClaimsForPublic() — server-safe reader (defaults until DB)
+ *   getTrustClaimsForPublic() — server-safe reader
  *   read/writeTrustClaimsClient() — Settings UI only
  */
 
-export type TrustClaims = {
-  /** Owner confirms estimates are genuinely free (no minimum / travel fee). */
-  claimFreeEstimates: boolean;
-  /** Owner confirms locally owned (not a branch/franchise). */
-  claimLocallyOwned: boolean;
-  /** ISO timestamp of last Settings save, or null if never saved. */
-  updatedAt: string | null;
-};
+import {
+  DEFAULT_TRUST_CLAIMS,
+  memoryTrustClaimsRepo,
+} from "@/lib/db/memory/trust-claims";
+import type { TrustClaimsRecord } from "@/lib/db/types";
+
+export type TrustClaims = TrustClaimsRecord;
 
 export const TRUST_CLAIMS_STORAGE_KEY = "kaba-admin-trust-claims-v1";
 
-/** Defaults stay off — we will not assert a claim the owner has not confirmed. */
-export const DEFAULT_TRUST_CLAIMS: TrustClaims = {
-  claimFreeEstimates: false,
-  claimLocallyOwned: false,
-  updatedAt: null,
-};
+export { DEFAULT_TRUST_CLAIMS };
 
 /**
  * Server / public reader.
- * Until Postgres (or equivalent) holds site_settings, returns defaults.
- * Marketing pages keep using `trustPoints` in site.ts; this is the swap point.
+ * Memory adapter today; when Postgres site_settings lands, point this at
+ * getRepos().trustClaims.get() (or keep memoryTrustClaimsRepo as the memory path).
  */
 export function getTrustClaimsForPublic(): TrustClaims {
-  return { ...DEFAULT_TRUST_CLAIMS };
+  return memoryTrustClaimsRepo.get();
 }
 
 export function readTrustClaimsClient(): TrustClaims {

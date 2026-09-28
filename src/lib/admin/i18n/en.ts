@@ -286,18 +286,35 @@ const en = {
       authLocal: "Local development — set the variable in {envFile}.",
       authProd: "Production — set the same variable in your Vercel project environment.",
       authReplace:
-        "Replace with Auth.js, Clerk, or equivalent — plus roles — before handling live customer data.",
+        "Replace with Auth.js, Clerk, or equivalent — plus roles from profiles — before handling live customer data. Session contract: getCurrentAdmin() → SessionAdmin (stub: true, role owner).",
       authRotate:
         "The password is never shown or edited here. Rotate it in your host environment, then redeploy or restart.",
+      rolesTitle: "Roles roadmap",
+      rolesBody:
+        "Planned capability ranks (owner › editor › viewer) live in {dal}. Every Server Action should start with requireRole; pages use requirePageRole. No fake multi-user accounts yet — the stub always resolves as owner.",
+      rolesStubNote:
+        "Today every successful ADMIN_PASSWORD login is treated as owner. Editors and viewers appear here so the Security UI matches the DAL contract before real auth lands.",
+      rolesDocLabel: "ADMIN_ROLES_DOC",
+      rolesDocHint:
+        "Optional: set {env} in the environment to show an ops note here (documentation only — not a role grant).",
+      roleDesc: {
+        owner: "Full access — users, roles, billing settings, destructive actions.",
+        editor: "Create and edit quotes, invoices, payments, and content. No user admin.",
+        viewer: "Read-only ops views. No mutations."
+      },
       platformTitle: "Data & integrations",
       platformBody:
         "How this demo holds quotes, invoices, and payments — and what is intentionally not wired yet.",
       dataTitle: "Data stores",
       dataBadge: "In-memory",
+      dataBadgeDb: "Database",
       dataBody:
-        "Quotes, invoices, and payments live in process memory with seeded demo rows. On Vercel serverless, a cold start resets the list. Public {endpoint} still accepts marketing-form submissions on the warm instance that receives them.",
-      dataNext: "Next: Postgres or SQLite (Drizzle or Prisma) with migrations.",
-      dataFilesLabel: "Store modules",
+        "Adapter {adapter} (env {adapterEnv}, default memory). Quotes, invoices, and payments use the repo layer under src/lib/db/ with seeded demo rows. On Vercel serverless, a cold start resets the memory list. Public {endpoint} still accepts marketing-form submissions on the warm instance that receives them.",
+      dataNext:
+        "Next: apply db/migrations/0001_ops_foundation.sql, implement Postgres repos, set KABA_DATA_ADAPTER=postgres + DATABASE_URL.",
+      dataNotify:
+        "Quote create uses persist-then-notify: the row is saved first; {notify} is a no-op stub until mail is wired.",
+      dataFilesLabel: "Schema & repos",
       stripeTitle: "Payments & Stripe",
       stripeBadge: "Not connected",
       stripeBody:

@@ -303,18 +303,35 @@ const es = {
       authProd:
         "Producción — configure la misma variable en el entorno del proyecto de Vercel.",
       authReplace:
-        "Reemplácela con Auth.js, Clerk o equivalente — más roles — antes de manejar datos reales de clientes.",
+        "Reemplácela con Auth.js, Clerk o equivalente — más roles desde profiles — antes de manejar datos reales de clientes. Contrato de sesión: getCurrentAdmin() → SessionAdmin (stub: true, rol owner).",
       authRotate:
         "La contraseña nunca se muestra ni se edita aquí. Rótela en el entorno del alojamiento y luego vuelva a desplegar o reiniciar.",
+      rolesTitle: "Hoja de ruta de roles",
+      rolesBody:
+        "Los rangos planificados (owner › editor › viewer) viven en {dal}. Toda Server Action debe comenzar con requireRole; las páginas usan requirePageRole. Aún no hay cuentas multiusuario simuladas: el stub siempre se resuelve como owner.",
+      rolesStubNote:
+        "Hoy, cada inicio de sesión exitoso con ADMIN_PASSWORD se trata como owner. Editor y viewer aparecen aquí para que la interfaz de Seguridad coincida con el contrato del DAL antes de la autenticación real.",
+      rolesDocLabel: "ADMIN_ROLES_DOC",
+      rolesDocHint:
+        "Opcional: defina {env} en el entorno para mostrar una nota operativa aquí (solo documentación — no otorga un rol).",
+      roleDesc: {
+        owner: "Acceso total: usuarios, roles, facturación y acciones destructivas.",
+        editor: "Crear y editar cotizaciones, facturas, pagos y contenido. Sin administración de usuarios.",
+        viewer: "Vistas operativas de solo lectura. Sin cambios."
+      },
       platformTitle: "Datos e integraciones",
       platformBody:
         "Cómo esta demostración conserva cotizaciones, facturas y pagos — y qué permanece intencionalmente sin conectar.",
       dataTitle: "Almacenamiento de datos",
       dataBadge: "En memoria",
+      dataBadgeDb: "Base de datos",
       dataBody:
-        "Cotizaciones, facturas y pagos viven en la memoria del proceso con filas de demostración. En Vercel serverless, un arranque en frío reinicia la lista. El {endpoint} público sigue aceptando envíos del formulario de marketing en la instancia activa que los recibe.",
-      dataNext: "Siguiente: Postgres o SQLite (Drizzle o Prisma) con migraciones.",
-      dataFilesLabel: "Módulos de almacenamiento",
+        "Adaptador {adapter} (variable {adapterEnv}, predeterminado memory). Cotizaciones, facturas y pagos usan la capa de repositorios en src/lib/db/ con filas de demostración. En Vercel serverless, un arranque en frío reinicia la lista en memoria. El {endpoint} público sigue aceptando envíos del formulario de marketing en la instancia activa que los recibe.",
+      dataNext:
+        "Siguiente: aplicar db/migrations/0001_ops_foundation.sql, implementar repositorios Postgres, definir KABA_DATA_ADAPTER=postgres + DATABASE_URL.",
+      dataNotify:
+        "La creación de cotizaciones usa persistir y luego notificar: primero se guarda la fila; {notify} es un stub sin efecto hasta conectar el correo.",
+      dataFilesLabel: "Esquema y repositorios",
       stripeTitle: "Pagos y Stripe",
       stripeBadge: "Sin conexión",
       stripeBody:

@@ -46,7 +46,17 @@ function withCode(text: string, tokens: string[]): ReactNode {
   );
 }
 
-export default function SettingsClient({ configured }: { configured: boolean }) {
+export default function SettingsClient({
+  configured,
+  rolesDoc = null,
+  dataAdapter = "memory",
+  roles = ["owner", "editor", "viewer"],
+}: {
+  configured: boolean;
+  rolesDoc?: string | null;
+  dataAdapter?: string;
+  roles?: string[];
+}) {
   const { t } = useAdminI18n();
   const [active, setActive] = useState<string>(SECTIONS[0].id);
 
@@ -188,6 +198,51 @@ export default function SettingsClient({ configured }: { configured: boolean }) 
                 {t("pages.settings.authRotate")}
               </p>
             </aside>
+
+            <div className="mt-5 border-t border-[color:var(--admin-border)] pt-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-bronze">
+                {t("pages.settings.rolesTitle")}
+              </p>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+                {withCode(
+                  t("pages.settings.rolesBody", { dal: "src/lib/admin/dal.ts" }),
+                  ["src/lib/admin/dal.ts"],
+                )}
+              </p>
+              <ul className="mt-3 space-y-2">
+                {roles.map((role) => (
+                  <li
+                    key={role}
+                    className="flex flex-col gap-0.5 rounded-lg border border-[color:var(--admin-border)] bg-[color:var(--admin-surface-2)] px-3 py-2 sm:flex-row sm:items-baseline sm:gap-3"
+                  >
+                    <span className="shrink-0 font-mono text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-bronze">
+                      {role}
+                    </span>
+                    <span className="text-sm text-muted">
+                      {t(`pages.settings.roleDesc.${role}`)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-sm leading-relaxed text-muted">
+                {t("pages.settings.rolesStubNote")}
+              </p>
+              {rolesDoc ? (
+                <aside className="mt-3 rounded-lg border border-dashed border-bronze/40 bg-bronze/5 px-3 py-2" role="note">
+                  <p className="text-[0.625rem] font-bold uppercase tracking-[0.1em] text-bronze">
+                    {t("pages.settings.rolesDocLabel")}
+                  </p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm text-ink">{rolesDoc}</p>
+                </aside>
+              ) : (
+                <p className="mt-3 text-xs text-muted">
+                  {withCode(
+                    t("pages.settings.rolesDocHint", { env: "ADMIN_ROLES_DOC" }),
+                    ["ADMIN_ROLES_DOC"],
+                  )}
+                </p>
+              )}
+            </div>
           </section>
 
           {/* Platform */}
@@ -218,15 +273,19 @@ export default function SettingsClient({ configured }: { configured: boolean }) 
                     {t("pages.settings.dataTitle")}
                   </h3>
                   <span className="admin-badge admin-badge-violet rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
-                    {t("pages.settings.dataBadge")}
+                    {dataAdapter === "memory"
+                      ? t("pages.settings.dataBadge")
+                      : t("pages.settings.dataBadgeDb")}
                   </span>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-muted">
                   {withCode(
                     t("pages.settings.dataBody", {
                       endpoint: "POST /api/quotes",
+                      adapter: dataAdapter,
+                      adapterEnv: "KABA_DATA_ADAPTER",
                     }),
-                    ["POST /api/quotes"],
+                    ["POST /api/quotes", "KABA_DATA_ADAPTER", dataAdapter],
                   )}
                 </p>
                 <p className="admin-section-label mt-4">
@@ -234,9 +293,9 @@ export default function SettingsClient({ configured }: { configured: boolean }) 
                 </p>
                 <ul className="mt-2 space-y-1.5">
                   {[
-                    "src/lib/admin/quotes-store.ts",
-                    "src/lib/admin/invoices-store.ts",
-                    "src/lib/admin/payments-store.ts",
+                    "src/lib/db/",
+                    "db/migrations/0001_ops_foundation.sql",
+                    "src/lib/admin/*-store.ts",
                   ].map((path) => (
                     <li key={path}>
                       <Code>{path}</Code>
@@ -245,6 +304,14 @@ export default function SettingsClient({ configured }: { configured: boolean }) 
                 </ul>
                 <p className="mt-3 text-sm font-medium text-ink">
                   {t("pages.settings.dataNext")}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-muted">
+                  {withCode(
+                    t("pages.settings.dataNotify", {
+                      notify: "notifyQuoteCreated",
+                    }),
+                    ["notifyQuoteCreated"],
+                  )}
                 </p>
               </article>
 

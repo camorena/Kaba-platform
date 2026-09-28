@@ -4,8 +4,13 @@ import {
   addQuote,
   bulkUpdateQuoteStatus,
   listQuotes,
+  updateQuote,
 } from "@/lib/admin/quotes-store";
 import { QUOTE_STATUSES, type QuoteStatus } from "@/lib/admin/status";
+import {
+  notificationPatchFromResult,
+  notifyQuoteCreated,
+} from "@/lib/db/notify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,6 +56,12 @@ export async function PATCH(request: Request) {
   return NextResponse.json({ ok: true, ...result, status });
 }
 
+/**
+ * Public quote intake — persist-then-notify.
+ * 1. Validate + addQuote (row is source of truth).
+ * 2. notifyQuoteCreated (no-op stub today).
+ * 3. Record notifyAttempts / notifiedAt; never fail the request if mail fails.
+ */
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -80,6 +91,7 @@ export async function POST(request: Request) {
     );
   }
 
+  // 1. Persist first.
   const quote = addQuote({
     name,
     phone,
@@ -91,5 +103,38 @@ export async function POST(request: Request) {
     source,
   });
 
-  return NextResponse.json({ ok: true, id: quote.id }, { status: 201 });
+  // 2. Notify second (stub no-op — must not throw away the saved row).
+  let notifyDelivered = false;
+  let notifyReason = "skipped";
+  try {
+    const notifyResult = await notifyQuoteCreated(quote);
+    notifyDelivered = notifyResult.delivered;
+    notifyReason = notifyResult.reason;
+    updateQuote(
+      quote.id,
+      notificationPatchFromResult(quote.notifyAttempts, notifyResult),
+    );
+  } catch (err) {
+    notifyReason =
+      err instanceof Error ? err.message : "notifyQuoteCreated threw";
+    updateQuote(quote.id, {
+      notifyAttempts: quote.notifyAttempts + 1,
+      notifiedAt: null,
+    });
+    console.error(
+      "[quotes] ALERT: quote %s saved but notify failed: %s",
+      quote.id,
+      notifyReason,
+    );
+  }
+
+  return NextResponse.json(
+    {
+      ok: true,
+      id: quote.id,
+      notified: notifyDelivered,
+      notifyReason,
+    },
+    { status: 201 },
+  );
 }

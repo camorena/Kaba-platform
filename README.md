@@ -61,12 +61,12 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 
 ### How data flows today
 
-1. Public `/quote` → `POST /api/quotes` → in-memory `quotes-store` (seed rows keep UI usable).
+1. Public `/quote` → `POST /api/quotes` → **persist** via repo layer (`KABA_DATA_ADAPTER=memory` default) → **notify** stub (`notifyQuoteCreated`, no-op).
 2. Admin `PATCH /api/quotes/[id]` updates status and internal notes.
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-On Vercel cold starts the in-memory lists reset. Swap for a real DB before relying on this for leads. **Stripe is not connected** — see `/admin/settings`.
+Schema draft: `db/migrations/0001_ops_foundation.sql`. Types/repos: `src/lib/db/`. On Vercel cold starts the memory lists reset. Flip to Postgres later without rewriting UI (see `preview/REUSE_PORT_v2.md`). **Stripe is not connected** — see `/admin/settings`.
 
 ### Auth warning
 
