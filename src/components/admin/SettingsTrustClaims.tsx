@@ -129,32 +129,31 @@ export default function SettingsTrustClaims() {
     <form
       id="settings-trust"
       onSubmit={onSave}
-      className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+      className="admin-glass-panel scroll-mt-24 p-4 sm:p-5"
       noValidate
       aria-labelledby="settings-trust-title"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <p className="admin-section-label">{t("pages.settings.navTrust")}</p>
-        <span className="admin-badge admin-badge-amber rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+        <h2 id="settings-trust-title" className="admin-card-title">
+          {t("pages.settings.trustTitle")}
+        </h2>
+        <span className={`admin-settings-chip ${storage === "server" ? "admin-settings-chip-ok" : "admin-settings-chip-warn"}`}>
           {t(badgeKey)}
         </span>
         {adapter ? (
-          <span className="admin-badge admin-badge-violet rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+          <span className="admin-settings-chip admin-settings-chip-info">
             {adapter}
           </span>
         ) : null}
       </div>
-      <h2 id="settings-trust-title" className="admin-card-title mt-1">
-        {t("pages.settings.trustTitle")}
-      </h2>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+      <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted">
         {t("pages.settings.trustBody")}
       </p>
 
       <fieldset className="mt-5 space-y-4" disabled={!hydrated || busy}>
         <legend className="sr-only">{t("pages.settings.trustTitle")}</legend>
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-row-hover)]/40 px-3 py-3 transition hover:border-bronze/35">
+        <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-[color-mix(in_srgb,var(--ink)_3%,transparent)] px-3 py-3 transition hover:bg-[color-mix(in_srgb,var(--bronze)_8%,transparent)]">
           <input
             type="checkbox"
             className="mt-1 h-4 w-4 shrink-0 rounded border-ink/25 text-bronze focus:ring-bronze"
@@ -175,7 +174,7 @@ export default function SettingsTrustClaims() {
           </span>
         </label>
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-row-hover)]/40 px-3 py-3 transition hover:border-bronze/35">
+        <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-[color-mix(in_srgb,var(--ink)_3%,transparent)] px-3 py-3 transition hover:bg-[color-mix(in_srgb,var(--bronze)_8%,transparent)]">
           <input
             type="checkbox"
             className="mt-1 h-4 w-4 shrink-0 rounded border-ink/25 text-bronze focus:ring-bronze"
@@ -198,10 +197,8 @@ export default function SettingsTrustClaims() {
       </fieldset>
 
       <aside className="admin-settings-callout mt-4" role="note">
-        <p className="text-xs font-bold uppercase tracking-[0.1em] text-amber-950 dark:text-amber-100">
-          {t("pages.settings.trustPublicNoteLabel")}
-        </p>
-        <p className="mt-1 text-xs leading-relaxed text-amber-950/90 dark:text-amber-100/90">
+        <p>{t("pages.settings.trustPublicNoteLabel")}</p>
+        <p className="mt-1 text-xs leading-relaxed">
           {t("pages.settings.trustPublicNote")}
         </p>
       </aside>

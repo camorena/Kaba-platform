@@ -121,7 +121,7 @@ export default function SettingsProfile() {
     <form
       id="settings-profile"
       onSubmit={onSubmit}
-      className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+      className="admin-glass-panel scroll-mt-24 p-4 sm:p-5"
       noValidate
       aria-labelledby="settings-profile-title"
     >
@@ -135,15 +135,14 @@ export default function SettingsProfile() {
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="admin-section-label">{t("pages.settings.navProfile")}</p>
-            <span className="admin-badge admin-badge-amber rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+            <h2 id="settings-profile-title" className="admin-card-title">
+              {t("profile.title")}
+            </h2>
+            <span className="admin-settings-chip admin-settings-chip-warn">
               {t("profile.badge")}
             </span>
           </div>
-          <h2 id="settings-profile-title" className="admin-card-title mt-1">
-            {t("profile.title")}
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted">
             {t("profile.body")}
           </p>
         </div>

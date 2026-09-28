@@ -19,21 +19,16 @@ export default function SettingsAppearance() {
   return (
     <section
       id="settings-appearance"
-      className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+      className="admin-glass-panel scroll-mt-24 p-4 sm:p-5"
       aria-labelledby="settings-appearance-title"
     >
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="admin-section-label">{t("pages.settings.navAppearance")}</p>
-          <h2
-            id="settings-appearance-title"
-            className="admin-card-title mt-1"
-          >
-            {t("pages.settings.appearanceTitle")}
-          </h2>
-        </div>
-      </div>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+      <h2
+        id="settings-appearance-title"
+        className="admin-card-title"
+      >
+        {t("pages.settings.appearanceTitle")}
+      </h2>
+      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted">
         {t("pages.settings.appearanceBody")}
       </p>
 
@@ -58,7 +53,7 @@ export default function SettingsAppearance() {
             {t("pages.settings.themeHelp")}
           </p>
           <div
-            className="mt-3 inline-flex items-center rounded-md border border-ink/12 bg-[var(--admin-panel)] p-0.5 shadow-[var(--shadow-xs)]"
+            className="mt-3 inline-flex items-center rounded-md bg-[color-mix(in_srgb,var(--ink)_4%,transparent)] p-0.5"
             role="group"
             aria-labelledby="settings-theme-label"
           >
@@ -73,9 +68,9 @@ export default function SettingsAppearance() {
                 <button
                   key={opt.id}
                   type="button"
-                  className={`admin-touch rounded px-3 py-1.5 text-[0.6875rem] font-bold uppercase tracking-[0.08em] transition ${
+                  className={`admin-touch rounded px-3 py-1.5 text-xs font-medium transition ${
                     active
-                      ? "bg-gradient-to-b from-bronze-light/90 to-bronze-dark text-white shadow-[0_1px_2px_rgba(11,17,26,0.12)]"
+                      ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
                       : "text-muted hover:bg-[var(--admin-row-hover)] hover:text-ink"
                   }`}
                   aria-pressed={active}

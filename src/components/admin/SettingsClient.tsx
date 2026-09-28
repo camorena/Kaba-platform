@@ -160,7 +160,7 @@ export default function SettingsClient({
           </ul>
         </nav>
 
-        <div className="admin-settings-panels space-y-4">
+        <div className="admin-settings-panels space-y-5">
           <SettingsProfile />
           <SettingsAppearance />
           <SettingsTrustClaims />
@@ -168,18 +168,18 @@ export default function SettingsClient({
           {/* Security */}
           <section
             id="settings-security"
-            className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+            className="admin-glass-panel scroll-mt-24 p-4 sm:p-5"
             aria-labelledby="settings-security-title"
           >
             <div className="flex flex-wrap items-center gap-2">
-              <p className="admin-section-label">
-                {t("pages.settings.navSecurity")}
-              </p>
+              <h2 id="settings-security-title" className="admin-card-title">
+                {t("pages.settings.securityTitle")}
+              </h2>
               <span
-                className={`admin-badge rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                className={`admin-settings-chip ${
                   authMode === "credentials"
-                    ? "admin-badge-emerald"
-                    : "admin-badge-amber"
+                    ? "admin-settings-chip-ok"
+                    : "admin-settings-chip-warn"
                 }`}
               >
                 {authMode === "credentials"
@@ -187,13 +187,7 @@ export default function SettingsClient({
                   : t("pages.settings.securityBadge")}
               </span>
             </div>
-            <h2 id="settings-security-title" className="admin-card-title mt-1">
-              {t("pages.settings.securityTitle")}
-            </h2>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.08em] text-bronze">
-              {t("pages.settings.authTitle")}
-            </p>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+            <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted">
               {authMode === "credentials"
                 ? withCode(
                     t("pages.settings.authBodyCredentials", {
@@ -230,18 +224,12 @@ export default function SettingsClient({
                 <dt>{t("pages.settings.authStatus")}</dt>
                 <dd>
                   <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.6875rem] font-bold ${
+                    className={`admin-settings-chip ${
                       configured
-                        ? "admin-badge admin-badge-emerald"
-                        : "admin-badge admin-badge-rose"
+                        ? "admin-settings-chip-ok"
+                        : "admin-settings-chip-danger"
                     }`}
                   >
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        configured ? "bg-emerald-600 dark:bg-emerald-300" : "bg-rose-600 dark:bg-rose-300"
-                      }`}
-                      aria-hidden
-                    />
                     {configured
                       ? authMode === "credentials"
                         ? t("pages.settings.credentialsConfigured")
@@ -306,21 +294,19 @@ export default function SettingsClient({
             </dl>
 
             <aside className="admin-settings-callout mt-4" role="note">
-              <p className="text-xs font-bold uppercase tracking-[0.1em] text-amber-950 dark:text-amber-100">
-                {t("pages.settings.securityBadge")}
-              </p>
-              <p className="mt-1 text-xs leading-relaxed text-amber-950/90 dark:text-amber-100/90">
+              <p>{t("pages.settings.securityBadge")}</p>
+              <p className="mt-1 text-xs leading-relaxed">
                 {authMode === "credentials"
                   ? t("pages.settings.authRotateCredentials")
                   : t("pages.settings.authRotate")}
               </p>
             </aside>
 
-            <div className="mt-5 border-t border-[color:var(--admin-border)] pt-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-bronze">
+            <div className="mt-5 border-t border-[color:var(--admin-border)]/60 pt-4">
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted">
                 {t("pages.settings.rolesTitle")}
               </p>
-              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+              <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted">
                 {withCode(
                   t(
                     authMode === "credentials"
@@ -335,7 +321,7 @@ export default function SettingsClient({
                 {roles.map((role) => (
                   <li
                     key={role}
-                    className="flex flex-col gap-0.5 rounded-lg border border-[color:var(--admin-border)] bg-[color:var(--admin-surface-2)] px-3 py-2 sm:flex-row sm:items-baseline sm:gap-3"
+                    className="flex flex-col gap-0.5 rounded-lg bg-[color-mix(in_srgb,var(--ink)_3%,transparent)] px-3 py-2 sm:flex-row sm:items-baseline sm:gap-3"
                   >
                     <span className="shrink-0 font-mono text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-bronze">
                       {role}
@@ -352,11 +338,11 @@ export default function SettingsClient({
                   : t("pages.settings.rolesStubNote")}
               </p>
               {rolesDoc ? (
-                <aside className="mt-3 rounded-lg border border-dashed border-bronze/40 bg-bronze/5 px-3 py-2" role="note">
-                  <p className="text-[0.625rem] font-bold uppercase tracking-[0.1em] text-bronze">
+                <aside className="mt-3 px-0.5" role="note">
+                  <p className="text-[0.6875rem] font-medium text-muted">
                     {t("pages.settings.rolesDocLabel")}
                   </p>
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-ink">{rolesDoc}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm text-muted">{rolesDoc}</p>
                 </aside>
               ) : (
                 <p className="mt-3 text-xs text-muted">
@@ -376,9 +362,6 @@ export default function SettingsClient({
             aria-labelledby="settings-platform-title"
           >
             <div className="px-0.5">
-              <p className="admin-section-label">
-                {t("pages.settings.navPlatform")}
-              </p>
               <h2
                 id="settings-platform-title"
                 className="font-display text-lg font-semibold tracking-[-0.02em] text-ink"
@@ -391,18 +374,18 @@ export default function SettingsClient({
             </div>
 
             <div className="grid gap-3 lg:grid-cols-2">
-              <article className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+              <article className="admin-glass-panel p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="admin-card-title">
                     {t("pages.settings.dataTitle")}
                   </h3>
-                  <span className="admin-badge admin-badge-violet rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                  <span className="admin-settings-chip admin-settings-chip-info">
                     {dataAdapter === "memory"
                       ? t("pages.settings.dataBadge")
                       : t("pages.settings.dataBadgeDb")}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
+                <p className="mt-1.5 text-sm leading-relaxed text-muted">
                   {withCode(
                     t("pages.settings.dataBody", {
                       endpoint: "POST /api/quotes",
@@ -413,16 +396,16 @@ export default function SettingsClient({
                   )}
                 </p>
                 <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-                  <div className="rounded-lg border border-border/60 bg-surface/40 px-3 py-2">
-                    <dt className="admin-section-label">
+                  <div className="admin-settings-stat">
+                    <dt className="text-[0.6875rem] text-muted">
                       {t("pages.settings.dataAdapterLabel")}
                     </dt>
                     <dd className="mt-1 font-medium text-ink">
                       <Code>{dataAdapter}</Code>
                     </dd>
                   </div>
-                  <div className="rounded-lg border border-border/60 bg-surface/40 px-3 py-2">
-                    <dt className="admin-section-label">
+                  <div className="admin-settings-stat">
+                    <dt className="text-[0.6875rem] text-muted">
                       {t("pages.settings.dataUrlLabel")}
                     </dt>
                     <dd className="mt-1 font-medium text-ink">
@@ -437,7 +420,7 @@ export default function SettingsClient({
                     {t("pages.settings.dataPostgresMissingUrl")}
                   </p>
                 ) : null}
-                <p className="admin-section-label mt-4">
+                <p className="mt-4 text-[0.6875rem] font-medium text-muted">
                   {t("pages.settings.dataFilesLabel")}
                 </p>
                 <ul className="mt-2 space-y-1.5">
@@ -470,18 +453,18 @@ export default function SettingsClient({
                 </p>
               </article>
 
-              <article className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+              <article className="admin-glass-panel p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="admin-card-title">
                     {t("pages.settings.stripeTitle")}
                   </h3>
                   <span
-                    className={`admin-badge rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                    className={`admin-settings-chip ${
                       stripe.badge === "connected"
-                        ? "admin-badge-emerald"
+                        ? "admin-settings-chip-ok"
                         : stripe.badge === "checkout_ready"
-                          ? "admin-badge-violet"
-                          : "admin-badge-muted"
+                          ? "admin-settings-chip-info"
+                          : ""
                     }`}
                   >
                     {stripe.badge === "connected"
@@ -491,7 +474,7 @@ export default function SettingsClient({
                         : t("pages.settings.stripeBadge")}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
+                <p className="mt-1.5 text-sm leading-relaxed text-muted">
                   {stripe.badge === "connected"
                     ? t("pages.settings.stripeBodyConnected")
                     : stripe.badge === "checkout_ready"
@@ -511,12 +494,12 @@ export default function SettingsClient({
                   ).map(([env, ok]) => (
                     <div
                       key={env}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 bg-surface/40 px-3 py-2"
+                      className="admin-settings-stat flex flex-wrap items-center justify-between gap-2"
                     >
                       <dt>
                         <Code>{env}</Code>
                       </dt>
-                      <dd className="font-medium text-ink">
+                      <dd className="text-sm text-muted">
                         {ok
                           ? t("pages.settings.stripeKeySet")
                           : t("pages.settings.stripeKeyMissing")}
@@ -537,7 +520,7 @@ export default function SettingsClient({
                     ["POST /api/payments/checkout", "POST /api/stripe/webhook"],
                   )}
                 </p>
-                <p className="admin-section-label mt-4">
+                <p className="mt-4 text-[0.6875rem] font-medium text-muted">
                   {t("pages.settings.stripeEnv")}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -547,16 +530,16 @@ export default function SettingsClient({
                 </div>
               </article>
 
-              <article className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+              <article className="admin-glass-panel p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="admin-card-title">
                     {t("pages.settings.mailTitle")}
                   </h3>
                   <span
-                    className={`admin-badge rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                    className={`admin-settings-chip ${
                       mail.badge === "resend" || mail.badge === "smtp"
-                        ? "admin-badge-emerald"
-                        : "admin-badge-muted"
+                        ? "admin-settings-chip-ok"
+                        : ""
                     }`}
                   >
                     {mail.badge === "resend"
@@ -566,7 +549,7 @@ export default function SettingsClient({
                         : t("pages.settings.mailBadge")}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
+                <p className="mt-1.5 text-sm leading-relaxed text-muted">
                   {mail.badge === "resend"
                     ? t("pages.settings.mailBodyResend")
                     : mail.badge === "smtp"
@@ -584,12 +567,12 @@ export default function SettingsClient({
                   ).map(([env, ok]) => (
                     <div
                       key={env}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 bg-surface/40 px-3 py-2"
+                      className="admin-settings-stat flex flex-wrap items-center justify-between gap-2"
                     >
                       <dt>
                         <Code>{env}</Code>
                       </dt>
-                      <dd className="font-medium text-ink">
+                      <dd className="text-sm text-muted">
                         {ok
                           ? t("pages.settings.mailKeySet")
                           : t("pages.settings.mailKeyMissing")}
@@ -610,7 +593,7 @@ export default function SettingsClient({
                     ["notifyQuoteCreated", "notifyPaymentReceived"],
                   )}
                 </p>
-                <p className="admin-section-label mt-4">
+                <p className="mt-4 text-[0.6875rem] font-medium text-muted">
                   {t("pages.settings.mailEnv")}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -629,29 +612,28 @@ export default function SettingsClient({
           {/* About */}
           <section
             id="settings-about"
-            className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+            className="admin-glass-panel scroll-mt-24 p-4 sm:p-5"
             aria-labelledby="settings-about-title"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="admin-section-label">
-                  {t("pages.settings.navAbout")}
-                </p>
-                <h2 id="settings-about-title" className="admin-card-title mt-1">
-                  {t("pages.settings.aboutTitle")}
-                </h2>
-                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 id="settings-about-title" className="admin-card-title">
+                    {t("pages.settings.aboutTitle")}
+                  </h2>
+                  <span className="admin-settings-chip">
+                    {t("pages.settings.aboutVersion", { version: "0.1.0" })}
+                  </span>
+                </div>
+                <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted">
                   {t("pages.settings.aboutBody")}
                 </p>
               </div>
-              <p className="shrink-0 rounded-full border border-[var(--admin-border)] bg-[var(--admin-row-hover)] px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.1em] text-muted">
-                {t("pages.settings.aboutVersion", { version: "0.1.0" })}
-              </p>
             </div>
 
             <div className="mt-5 grid gap-5 lg:grid-cols-2">
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-ink">
+                <h3 className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted">
                   {t("pages.settings.opsTitle")}
                 </h3>
                 <p className="mt-1 text-sm text-muted">
@@ -678,7 +660,7 @@ export default function SettingsClient({
               </div>
 
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-ink">
+                <h3 className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted">
                   {t("pages.settings.craftTitle")}
                 </h3>
                 <p className="mt-1 text-sm leading-relaxed text-muted">
@@ -708,7 +690,7 @@ export default function SettingsClient({
               </div>
             </div>
 
-            <footer className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--admin-border)] pt-4">
+            <footer className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--admin-border)]/60 pt-4">
               <p className="text-[0.6875rem] text-muted">
                 {t("pages.settings.aboutCredit")}{" "}
                 <a
