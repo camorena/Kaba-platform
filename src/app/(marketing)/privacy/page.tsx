@@ -192,7 +192,7 @@ export default function PrivacyPage() {
               </a>
               , or visit our{" "}
               <Link
-                href="/quote"
+                href="/contact"
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
               >
                 quote page

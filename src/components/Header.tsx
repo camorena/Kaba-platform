@@ -4,17 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import ThemeToggle from "@/components/ThemeToggle";
-import { navLinks, siteConfig } from "@/lib/site";
+import {
+  fencingOptionsNav,
+  navLinks,
+  siteConfig,
+} from "@/lib/site";
 
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileFenceOpen, setMobileFenceOpen] = useState(false);
   const [navPath, setNavPath] = useState(pathname);
   const [scrolled, setScrolled] = useState(false);
   const menuId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileNavRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const scrollLockY = useRef(0);
   const bodyStylePrev = useRef<{
     overflow: string;
@@ -25,10 +31,11 @@ export default function Header() {
     width: string;
   } | null>(null);
 
-  // Close mobile nav on route change (adjust state during render).
   if (navPath !== pathname) {
     setNavPath(pathname);
     if (open) setOpen(false);
+    setDropdownOpen(false);
+    setMobileFenceOpen(false);
   }
 
   useEffect(() => {
@@ -40,8 +47,19 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Body scroll lock + Escape. scrollY is captured in toggleMenu() before
-  // layout flips to fixed header, so restore is accurate even under Strict Mode.
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
   useEffect(() => {
     if (!open) {
       document.documentElement.removeAttribute("data-mobile-nav");
@@ -88,10 +106,11 @@ export default function Header() {
     return () => {
       window.clearTimeout(t);
       document.removeEventListener("keydown", onKeyDown);
-      // Defer unlock so React Strict Mode remount can re-claim the lock.
       const restoreY = scrollLockY.current;
       queueMicrotask(() => {
-        if (document.documentElement.getAttribute("data-mobile-nav") === "open") {
+        if (
+          document.documentElement.getAttribute("data-mobile-nav") === "open"
+        ) {
           return;
         }
         const prev = bodyStylePrev.current;
@@ -105,14 +124,13 @@ export default function Header() {
           body.style.right = prev.right;
           body.style.width = prev.width;
         }
-        window.scrollTo({ top: restoreY, left: 0, behavior: 'instant' });
+        window.scrollTo({ top: restoreY, left: 0, behavior: "instant" });
       });
     };
   }, [open]);
 
   function captureScrollY() {
     if (!open) {
-      // pointerdown fires before focus scrolls the sticky control into view.
       scrollLockY.current = window.scrollY;
     }
   }
@@ -123,14 +141,16 @@ export default function Header() {
 
   function closeMenu() {
     setOpen(false);
-    window.setTimeout(() => menuButtonRef.current?.focus({ preventScroll: true }), 0);
+    window.setTimeout(
+      () => menuButtonRef.current?.focus({ preventScroll: true }),
+      0,
+    );
   }
 
-  const barHeight = "h-[3.75rem] lg:h-[4.25rem]";
+  const barHeight = "h-[4rem] lg:h-[4.5rem]";
 
   return (
     <>
-      {/* Keep document flow when header becomes fixed while the menu is open */}
       {open && <div className={`md:hidden ${barHeight}`} aria-hidden />}
       {open && (
         <button
@@ -146,16 +166,12 @@ export default function Header() {
           open ? "fixed inset-x-0" : "sticky"
         } ${
           scrolled
-            ? "border-ink/[0.1] bg-ivory/92 shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_28%,transparent),0_12px_32px_color-mix(in_srgb,var(--navy)_8%,transparent)] dark:border-cream/12 dark:bg-ivory/94 dark:shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_30%,transparent),0_12px_32px_color-mix(in_srgb,#000_42%,transparent)]"
-            : "border-ink/[0.07] bg-ivory/85 shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_18%,transparent),0_10px_28px_color-mix(in_srgb,var(--navy)_5%,transparent)] dark:border-cream/10 dark:shadow-[0_1px_0_color-mix(in_srgb,var(--bronze)_22%,transparent),0_10px_28px_color-mix(in_srgb,#000_35%,transparent)]"
+            ? "border-ink/[0.1] bg-white/95 shadow-[0_8px_28px_rgba(10,12,16,0.06)]"
+            : "border-ink/[0.06] bg-white/90"
         }`}
         data-scrolled={scrolled ? "true" : "false"}
         data-mobile-nav-open={open ? "true" : "false"}
       >
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bronze/65 to-transparent"
-          aria-hidden
-        />
         <div
           className={`container-page flex items-center justify-between gap-3 transition-[height] duration-300 sm:gap-4 ${barHeight}`}
         >
@@ -169,38 +185,100 @@ export default function Header() {
               alt=""
               width={44}
               height={44}
-              className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+              className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
               priority
             />
-            <span className="truncate font-display text-[1.05rem] font-semibold tracking-tight text-ink transition-opacity duration-300 group-hover:opacity-80 sm:text-lg">
+            <span className="font-display text-[1.05rem] font-semibold tracking-tight text-ink whitespace-nowrap sm:text-lg">
               {siteConfig.name}
             </span>
           </Link>
 
           <nav
-            className="hidden items-center gap-0.5 md:flex"
+            className="hidden items-center gap-0.5 lg:flex"
             aria-label="Main navigation"
           >
             {navLinks.map((link) => {
-              const active =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href);
+              const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+              if ("hasDropdown" in link && link.hasDropdown) {
+                return (
+                  <div
+                    key={link.href}
+                    className="relative"
+                    ref={dropdownRef}
+                    onMouseEnter={() => setDropdownOpen(true)}
+                    onMouseLeave={() => setDropdownOpen(false)}
+                  >
+                    <button
+                      type="button"
+                      className={`focus-ring inline-flex items-center gap-1 rounded-md px-3 py-2 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors ${
+                        active || pathname.startsWith("/services")
+                          ? "bg-ink/[0.05] text-ink"
+                          : "text-muted hover:bg-ivory-muted hover:text-ink"
+                      }`}
+                      aria-expanded={dropdownOpen}
+                      aria-haspopup="true"
+                      onClick={() => setDropdownOpen((v) => !v)}
+                    >
+                      {link.label}
+                      <svg
+                        className={`h-3.5 w-3.5 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {dropdownOpen && (
+                      <div className="absolute left-0 top-full z-50 min-w-[14rem] pt-2">
+                        <ul className="rounded-xl border border-ink/[0.08] bg-white py-2 shadow-lg">
+                          <li>
+                            <Link
+                              href="/services"
+                              className="focus-ring block px-4 py-2.5 text-sm font-semibold text-ink hover:bg-ivory-muted"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              All fencing options
+                            </Link>
+                          </li>
+                          {fencingOptionsNav.map((item) => (
+                            <li key={item.href}>
+                              <Link
+                                href={item.href}
+                                className="focus-ring block px-4 py-2.5 text-sm text-muted hover:bg-ivory-muted hover:text-ink"
+                                onClick={() => setDropdownOpen(false)}
+                              >
+                                {item.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`focus-ring relative rounded-md px-3 py-2 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors lg:px-3.5 ${
+                  className={`focus-ring relative rounded-md px-3 py-2 text-[0.8125rem] font-semibold tracking-[-0.01em] transition-colors ${
                     active
-                      ? "bg-ink/[0.055] text-ink dark:bg-cream/[0.08]"
+                      ? "bg-ink/[0.05] text-ink"
                       : "text-muted hover:bg-ivory-muted hover:text-ink"
                   }`}
                 >
                   {link.label}
                   {active && (
                     <span
-                      className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-gradient-to-r from-bronze-dark via-bronze to-bronze-light lg:inset-x-3.5"
+                      className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-bronze"
                       aria-hidden
                     />
                   )}
@@ -209,18 +287,37 @@ export default function Header() {
             })}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            <ThemeToggle />
-            <Link
-              href="/quote"
-              className="focus-ring btn-primary hidden min-h-0 px-3.5 py-2 text-sm md:inline-flex lg:px-4"
+          <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
+            <a
+              href={siteConfig.phoneHref}
+              className="focus-ring btn-phone hidden 2xl:inline-flex"
             >
-              Get a Free Quote
+              <svg
+                className="h-4 w-4 text-bronze"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                />
+              </svg>
+              {siteConfig.phone}
+            </a>
+            <Link
+              href="/contact"
+              className="focus-ring btn-primary hidden min-h-0 px-3.5 py-2.5 text-[0.75rem] uppercase tracking-[0.06em] md:inline-flex lg:px-4"
+            >
+              Request a Free Estimate
             </Link>
             <button
               ref={menuButtonRef}
               type="button"
-              className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-lg text-ink hover:bg-ivory-muted md:hidden"
+              className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-lg text-ink hover:bg-ivory-muted lg:hidden"
               aria-expanded={open}
               aria-controls={menuId}
               aria-label={open ? "Close menu" : "Open menu"}
@@ -263,54 +360,104 @@ export default function Header() {
         </div>
 
         {open && (
-            <div
-              ref={mobileNavRef}
-              id={menuId}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Site menu"
-              className="absolute inset-x-0 top-full z-[66] max-h-[min(100dvh-3.5rem,34rem)] overflow-y-auto border-t border-ink/[0.07] bg-ivory/98 shadow-[0_24px_48px_color-mix(in_srgb,var(--navy)_18%,transparent)] backdrop-blur-xl dark:border-cream/10 dark:bg-ivory/96 md:hidden"
+          <div
+            ref={mobileNavRef}
+            id={menuId}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            className="absolute inset-x-0 top-full z-[66] max-h-[min(100dvh-3.5rem,36rem)] overflow-y-auto border-t border-ink/[0.07] bg-white/98 shadow-xl backdrop-blur-xl lg:hidden"
+          >
+            <nav
+              className="container-page flex flex-col gap-1 py-3.5 pb-6"
+              aria-label="Mobile navigation"
             >
-              <nav
-                className="container-page flex flex-col gap-1 py-3.5 pb-6"
-                aria-label="Mobile navigation"
-              >
-                {navLinks.map((link) => {
-                  const active =
-                    link.href === "/"
-                      ? pathname === "/"
-                      : pathname.startsWith(link.href);
+              {navLinks.map((link) => {
+                const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+                if ("hasDropdown" in link && link.hasDropdown) {
                   return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      aria-current={active ? "page" : undefined}
-                      onClick={closeMenu}
-                      className={`focus-ring rounded-md px-3 py-3.5 text-base font-medium transition-colors ${
-                        active
-                          ? "bg-ink/[0.05] text-ink dark:bg-cream/[0.08]"
-                          : "text-muted hover:bg-ivory-muted hover:text-ink"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
+                    <div key={link.href} className="flex flex-col">
+                      <button
+                        type="button"
+                        className={`focus-ring flex items-center justify-between rounded-md px-3 py-3.5 text-base font-medium ${
+                          active
+                            ? "bg-ink/[0.05] text-ink"
+                            : "text-muted hover:bg-ivory-muted hover:text-ink"
+                        }`}
+                        aria-expanded={mobileFenceOpen}
+                        onClick={() => setMobileFenceOpen((v) => !v)}
+                      >
+                        {link.label}
+                        <svg
+                          className={`h-4 w-4 transition-transform ${mobileFenceOpen ? "rotate-180" : ""}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {mobileFenceOpen && (
+                        <div className="ml-3 flex flex-col border-l border-ink/10 pl-3">
+                          <Link
+                            href="/services"
+                            onClick={closeMenu}
+                            className="focus-ring rounded-md px-3 py-2.5 text-sm font-semibold text-ink"
+                          >
+                            All fencing options
+                          </Link>
+                          {fencingOptionsNav.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={closeMenu}
+                              className="focus-ring rounded-md px-3 py-2.5 text-sm text-muted hover:text-ink"
+                            >
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   );
-                })}
-                <Link
-                  href="/quote"
-                  onClick={closeMenu}
-                  className="focus-ring btn-primary mt-2 w-full py-3.5 text-center"
-                >
-                  Get a Free Quote
-                </Link>
-                <a
-                  href={siteConfig.phoneHref}
-                  className="focus-ring btn-secondary-light mt-1 w-full py-3.5 text-center"
-                >
-                  Call {siteConfig.phone}
-                </a>
-              </nav>
-            </div>
+                }
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    onClick={closeMenu}
+                    className={`focus-ring rounded-md px-3 py-3.5 text-base font-medium transition-colors ${
+                      active
+                        ? "bg-ink/[0.05] text-ink"
+                        : "text-muted hover:bg-ivory-muted hover:text-ink"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+              <Link
+                href="/contact"
+                onClick={closeMenu}
+                className="focus-ring btn-primary mt-2 w-full py-3.5 text-center text-sm uppercase tracking-[0.06em]"
+              >
+                Request a Free Estimate
+              </Link>
+              <a
+                href={siteConfig.phoneHref}
+                className="focus-ring btn-secondary-light mt-1 w-full py-3.5 text-center"
+              >
+                Call {siteConfig.phone}
+              </a>
+            </nav>
+          </div>
         )}
       </header>
     </>

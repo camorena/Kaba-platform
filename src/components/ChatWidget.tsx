@@ -259,7 +259,7 @@ export default function ChatWidget() {
         role: "bot",
         text: formatLeadConfirmation(lead),
         cta: { label: "Finish on quote page", href: "/quote" },
-        suggestions: ["Fence services", "Deck services", "Materials", "Hours & contact"],
+        suggestions: ["Fence services", "Materials", "Service area", "Hours & contact"],
       },
     ]);
     setLead(emptyLead);
@@ -295,7 +295,7 @@ export default function ChatWidget() {
 
   function renderCta(cta: NonNullable<ChatReply["cta"]>) {
     const className =
-      "focus-ring chat-cta mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-bronze px-3 py-1.5 text-xs font-semibold text-navy shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark";
+      "focus-ring chat-cta mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-bronze px-3 py-1.5 text-xs font-semibold text-white shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark";
     if (isExternalHref(cta.href)) {
       return (
         <a href={cta.href} className={className}>
@@ -326,7 +326,7 @@ export default function ChatWidget() {
                 Free estimate
               </p>
               <p className="mt-0.5 text-sm leading-snug text-ink">
-                Need a fence or deck quote? Ask here — or call{" "}
+                Need a fence estimate? Ask here — or call{" "}
                 <a
                   href={siteConfig.phoneHref}
                   className="font-semibold text-navy underline-offset-2 hover:underline dark:text-bronze"
@@ -400,7 +400,7 @@ export default function ChatWidget() {
                   {siteConfig.name}
                 </p>
                 <p className="truncate text-[0.6875rem] text-cream/70 sm:text-xs">
-                  Online · Fence &amp; deck help
+                  Online · Fence help
                 </p>
               </div>
               <a
@@ -623,12 +623,12 @@ export default function ChatWidget() {
                     <div className="flex flex-wrap items-center gap-2 pt-0.5">
                       <button
                         type="submit"
-                        className="focus-ring inline-flex flex-1 items-center justify-center rounded-lg bg-bronze px-3 py-2 text-xs font-semibold text-navy shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark sm:flex-none"
+                        className="focus-ring inline-flex flex-1 items-center justify-center rounded-lg bg-bronze px-3 py-2 text-xs font-semibold text-white shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark sm:flex-none"
                       >
                         Send contact info
                       </button>
                       <Link
-                        href="/quote"
+                        href="/contact"
                         className="focus-ring text-xs font-medium text-muted underline-offset-2 hover:text-ink hover:underline"
                       >
                         Or open quote form
@@ -673,7 +673,7 @@ export default function ChatWidget() {
                 Call {siteConfig.phone}
               </a>
               <Link
-                href="/quote"
+                href="/contact"
                 className="focus-ring flex flex-1 items-center justify-center gap-1.5 border-l border-ink/[0.06] px-2 py-2 text-[0.6875rem] font-semibold text-ink transition hover:bg-bronze/10 dark:border-cream/10"
               >
                 Free quote
@@ -704,7 +704,7 @@ export default function ChatWidget() {
                     setInput(e.target.value);
                     if (composerError) setComposerError(null);
                   }}
-                  placeholder="Ask about fences, decks, quotes…"
+                  placeholder="Ask about fencing, estimates…"
                   autoComplete="off"
                   enterKeyHint="send"
                   className="min-w-0 flex-1 rounded-xl border border-ink/10 bg-background px-3 py-2.5 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40 dark:border-cream/15"
@@ -728,7 +728,7 @@ export default function ChatWidget() {
         <button
           ref={openButtonRef}
           type="button"
-          className={`focus-ring chat-launcher group relative flex h-14 w-14 items-center justify-center rounded-full bg-navy text-bronze shadow-[var(--shadow-lg),0_0_0_3px_color-mix(in_srgb,var(--bronze)_35%,transparent)] transition hover:scale-[1.04] hover:bg-navy-light active:scale-[0.98] ${
+          className={`focus-ring chat-launcher group relative flex h-14 w-14 items-center justify-center rounded-full bg-[#0a0c10] text-bronze shadow-[var(--shadow-lg),0_0_0_3px_color-mix(in_srgb,var(--bronze)_35%,transparent)] transition hover:scale-[1.04] hover:bg-navy-light active:scale-[0.98] ${
             open ? "hidden sm:flex" : "flex"
           }`}
           aria-expanded={open}

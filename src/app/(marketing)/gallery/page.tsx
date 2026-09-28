@@ -56,8 +56,8 @@ export default function GalleryPage() {
             Request a free quote and we&apos;ll take a look at your property.
           </p>
           <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-            <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
-              Get a Free Quote
+            <Link href="/contact" className="focus-ring btn-primary w-full justify-center sm:w-auto">
+              Request a Free Estimate
             </Link>
             <Link href="/materials" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
               Materials guide

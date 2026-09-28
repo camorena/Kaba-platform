@@ -12,6 +12,7 @@ import {
 type RevealProps = {
   children: ReactNode;
   className?: string;
+  id?: string;
   /** Extra delay in ms after entering viewport */
   delay?: number;
   /** as="section" | "div" | "li" | "article" etc. */
@@ -27,6 +28,7 @@ type RevealProps = {
 export default function Reveal({
   children,
   className = "",
+  id,
   delay = 0,
   as: Tag = "div",
   from = "up",
@@ -70,6 +72,7 @@ export default function Reveal({
   return (
     <Tag
       ref={ref as never}
+      id={id}
       className={`reveal reveal-${from} ${visible ? "reveal-in" : ""} ${className}`}
       style={style}
     >

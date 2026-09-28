@@ -29,13 +29,13 @@ const hours = `${siteConfig.hours.weekdays}; ${siteConfig.hours.saturday}; ${sit
 export const DEFAULT_SUGGESTIONS = [
   "Get a quote",
   "Fence services",
-  "Deck services",
   "Materials",
   "Service area",
+  "Hours & contact",
 ] as const;
 
 export const WELCOME_REPLY: ChatReply = {
-  text: `Hi — I'm the ${siteConfig.name} helper. Ask about fence & deck work, materials, where we serve, or free estimates. Prefer a person? Call ${phone} or leave your number below.`,
+  text: `Hi — I'm the ${siteConfig.name} helper. Ask about fencing, materials, where we serve, or free estimates. Prefer a person? Call ${phone} or leave your number below.`,
   suggestions: [...DEFAULT_SUGGESTIONS],
 };
 
@@ -159,7 +159,7 @@ export function getBotReply(rawInput: string): ChatReply {
     return {
       text: `You're welcome! Call ${phone} anytime, or request a free estimate on our quote page.`,
       suggestions: ["Get a quote", "Hours & contact", "Materials"],
-      cta: { label: "Get a free quote", href: "/quote" },
+      cta: { label: "Request a free estimate", href: "/contact" },
     };
   }
 
@@ -186,7 +186,7 @@ export function getBotReply(rawInput: string): ChatReply {
       text: `We offer free on-site estimates across ${area}. Share your name and phone below and we'll follow up — or jump to the full quote form. Prefer to talk now? Call ${phone}.`,
       collectLead: true,
       suggestions: ["Fence services", "Deck services", "Service area", "Materials"],
-      cta: { label: "Open quote form", href: "/quote" },
+      cta: { label: "Request a free estimate", href: "/contact" },
     };
   }
 
@@ -237,7 +237,7 @@ export function getBotReply(rawInput: string): ChatReply {
     return {
       text: `${siteConfig.name} serves ${area}. Nearby and unsure? Leave your city with a quote request and we'll confirm.`,
       suggestions: ["Get a quote", "Hours & contact", "Fence services"],
-      cta: { label: "Request a quote", href: "/quote" },
+      cta: { label: "Request a free estimate", href: "/contact" },
     };
   }
 
@@ -275,7 +275,7 @@ export function getBotReply(rawInput: string): ChatReply {
     return {
       text: `Most projects use a deposit to schedule and balance at walkthrough. Payment details are covered during your free estimate — we don't process credit decisions on this site. Call ${phone} or request a quote and we'll walk you through options.`,
       suggestions: ["Get a quote", "Hours & contact"],
-      cta: { label: "Request a quote", href: "/quote" },
+      cta: { label: "Request a free estimate", href: "/contact" },
     };
   }
 
@@ -312,9 +312,9 @@ export function getBotReply(rawInput: string): ChatReply {
     ])
   ) {
     return {
-      text: "Here's how it works: (1) Request a quote online or by phone. (2) We visit for an on-site estimate with a clear written price. (3) Our crew builds or repairs on schedule and cleans up. Ready to start?",
+      text: "Here's how it works: (1) Request a free estimate online or by phone. (2) We visit for an on-site estimate with a clear written price. (3) Our crew builds or repairs on schedule and cleans up. Ready to start?",
       suggestions: ["Get a quote", "Hours & contact", "Materials"],
-      cta: { label: "Get a free quote", href: "/quote" },
+      cta: { label: "Request a free estimate", href: "/contact" },
     };
   }
 
@@ -324,7 +324,7 @@ export function getBotReply(rawInput: string): ChatReply {
     return {
       text: detail,
       suggestions: ["Get a quote", "Fence services", "Deck services", "Materials"],
-      cta: { label: "Get a free quote", href: "/quote" },
+      cta: { label: "Request a free estimate", href: "/contact" },
       collectLead: includesAny(q, ["quote", "estimate", "price", "cost"]),
     };
   }
@@ -361,7 +361,7 @@ export function getBotReply(rawInput: string): ChatReply {
     return {
       text: faqAnswer,
       suggestions: ["Get a quote", "Fence services", "Materials"],
-      cta: { label: "Get a free quote", href: "/quote" },
+      cta: { label: "Request a free estimate", href: "/contact" },
     };
   }
 
@@ -388,7 +388,7 @@ export function getBotReply(rawInput: string): ChatReply {
   return {
     text: `I didn't catch that. I can help with fence & deck services, materials, our service area (${area.split(",")[0]} & nearby), hours, or a free quote. Or call ${phone} and talk to the crew.`,
     suggestions: [...DEFAULT_SUGGESTIONS],
-    cta: { label: "Get a free quote", href: "/quote" },
+    cta: { label: "Request a free estimate", href: "/contact" },
   };
 }
 

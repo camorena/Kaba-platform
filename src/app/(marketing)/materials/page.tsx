@@ -204,8 +204,8 @@ export default function MaterialsPage() {
             your free estimate.
           </p>
           <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-            <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
-              Get a Free Quote
+            <Link href="/contact" className="focus-ring btn-primary w-full justify-center sm:w-auto">
+              Request a Free Estimate
             </Link>
             <Link href="/faq" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
               Read the FAQ

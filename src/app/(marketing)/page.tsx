@@ -1,248 +1,207 @@
 import type { Metadata } from "next";
-import WatermarkedImage from "@/components/WatermarkedImage";
+import Image from "next/image";
 import Link from "next/link";
-import FaqAccordion from "@/components/FaqAccordion";
-import ServiceIcon from "@/components/ServiceIcon";
 import Reveal from "@/components/Reveal";
+import WatermarkedImage from "@/components/WatermarkedImage";
 import {
-  deckServices,
   fencingServices,
   galleryProjects,
-  howItWorks,
+  kabaExperience,
   siteConfig,
   testimonials,
   trustPoints,
+  yourNeeds,
 } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
-    absolute: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
+    absolute: `${siteConfig.name} | Fence Company in Raleigh, NC`,
   },
-  description:
-    "Kaba Fence installs and repairs wood, vinyl, chain-link, and aluminum fencing plus decks across Angier, Raleigh, and nearby NC communities. Free on-site estimates.",
+  description: siteConfig.description,
   openGraph: {
-    title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
-    description:
-      "Local fence and deck installation, repairs, and free estimates in Angier, Raleigh, and surrounding NC communities.",
+    title: `${siteConfig.name} | Fence Company in Raleigh, NC`,
+    description: siteConfig.description,
   },
 };
 
+function NeedIcon({ icon }: { icon: (typeof yourNeeds)[number]["icon"] }) {
+  const common = "h-5 w-5";
+  if (icon === "paw") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M8.5 10.5c.8-1.5-.2-3.2-1.8-3.2S5 9 5.8 10.5 8 12 8.5 10.5zm7 0c.8-1.5-.2-3.2-1.8-3.2S12 9 12.8 10.5 15 12 15.5 10.5zM7 15.5c1.2-1.8 3.2-1.4 5-1.4s3.8-.4 5 1.4c.7 1-1.1 2.6-2.6 1.8-1.1-.6-2.2-.7-2.4-.7s-1.3.1-2.4.7c-1.5.8-3.3-.8-2.6-1.8zM6.2 7.2c.9-1.2-.1-2.8-1.6-2.6S2.8 6.5 3.7 7.7s2.5.6 2.5-.5zm11.6 0c.9-1.2-.1-2.8-1.6-2.6s-1.8 1.9-.9 3.1 2.5.6 2.5-.5z" />
+      </svg>
+    );
+  }
+  if (icon === "home") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+}
+
+function ExpIcon({ icon }: { icon: (typeof kabaExperience)[number]["icon"] }) {
+  const common = "h-6 w-6";
+  if (icon === "listen") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M8 10h8M8 14h5m7-2a9 9 0 11-3.2-6.9L21 5v4h-4" />
+      </svg>
+    );
+  }
+  if (icon === "guide") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v14l-7-3-7 3V6a2 2 0 012-2z" />
+      </svg>
+    );
+  }
+  if (icon === "build") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+  );
+}
+
+function TrustIcon({ icon }: { icon: (typeof trustPoints)[number]["icon"] }) {
+  const common = "h-5 w-5 text-bronze";
+  if (icon === "home") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+      </svg>
+    );
+  }
+  if (icon === "shield") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  );
+}
+
 export default function HomePage() {
-  const featured = [
-    ...fencingServices.slice(0, 3),
-    ...deckServices.slice(0, 2),
-  ];
-  const teaser = galleryProjects.slice(0, 4);
+  const teaser = galleryProjects.filter((p) => p.category === "fence").slice(0, 4);
+  const homeReviews = testimonials.slice(0, 3);
 
   return (
     <>
-      {/* Hero — editorial split with cinematic gallery photo */}
-      <section className="relative overflow-hidden bg-navy text-cream">
-        <div className="hero-mesh" aria-hidden />
-        <div className="container-page relative grid items-center gap-9 py-12 sm:gap-12 sm:py-16 lg:grid-cols-12 lg:gap-12 lg:py-20 xl:gap-16 xl:py-24">
-          <div className="relative min-w-0 lg:col-span-5 xl:col-span-5">
-            <span
-              className="pointer-events-none absolute -left-5 top-1 hidden h-[5rem] w-px bg-gradient-to-b from-bronze via-bronze/45 to-transparent xl:block"
-              aria-hidden
-            />
-            <p className="eyebrow eyebrow-light hero-reveal">
-              Angier · Raleigh NC · Surrounding Areas
+      {/* Hero — full-bleed wood fence */}
+      <section className="hero-fullbleed">
+        <div className="hero-fullbleed-bg">
+          <Image
+            src="/gallery/cedar-privacy.jpg"
+            alt="Horizontal wood privacy fence in a backyard"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        </div>
+        <div className="hero-fullbleed-wash" aria-hidden />
+
+        <div className="container-page relative z-[2] flex flex-1 flex-col justify-center py-16 sm:py-20 lg:py-28">
+          <div className="max-w-2xl">
+            <p className="hero-reveal text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-white/90">
+              {siteConfig.heroLabel}
             </p>
-            <h1 className="hero-reveal hero-reveal-d1 mt-5 max-w-[15ch] text-[2rem] font-semibold leading-[1.1] tracking-[-0.034em] sm:mt-6 sm:max-w-[17ch] sm:text-[2.65rem] sm:leading-[1.06] lg:text-[3.15rem] lg:leading-[1.05] xl:max-w-[14ch] xl:text-[3.45rem]">
-              Strong fences. Beautiful decks.{" "}
-              <em className="not-italic text-bronze">Built for Carolina homes.</em>
+            <h1 className="hero-reveal hero-reveal-d1 mt-4 font-display text-[2.15rem] font-semibold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.85rem] lg:text-[3.5rem] lg:leading-[1.08]">
+              {siteConfig.heroHeadline}
             </h1>
-            <p className="hero-reveal hero-reveal-d2 mt-5 max-w-[36rem] text-[0.9875rem] leading-[1.65] text-cream/80 sm:mt-6 sm:text-lg sm:leading-[1.65]">
-              {siteConfig.name} installs and repairs wood, vinyl, chain-link,
-              and aluminum fencing—plus deck repairs, rebuilds, and new
-              builds—across Angier, Raleigh, and nearby communities.
+            <p className="hero-reveal hero-reveal-d2 mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
+              {siteConfig.heroSub}
             </p>
-            <div className="hero-reveal hero-reveal-d3 mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-3.5">
+            <div className="hero-reveal hero-reveal-d3 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
-                href="/quote"
-                className="focus-ring btn-primary w-full justify-center sm:w-auto sm:min-w-[12.5rem]"
+                href="/contact"
+                className="focus-ring btn-primary w-full justify-center gap-2 sm:w-auto"
               >
-                Get a Free Quote
+                Request Free Estimate
+                <span aria-hidden>→</span>
               </Link>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring btn-secondary w-full justify-center sm:w-auto"
+                className="focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[0.6875rem] border border-white/40 bg-white/10 px-5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18 sm:w-auto"
               >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
                 Call {siteConfig.phone}
               </a>
             </div>
-            <p className="hero-reveal hero-reveal-d4 hero-trust mt-7 sm:mt-8">
-              <span>Free on-site estimates</span>
-              <span className="hero-trust-sep" aria-hidden />
-              <span>No obligation</span>
-              <span className="hero-trust-sep" aria-hidden />
-              <span>Local Wake &amp; Harnett crew</span>
-            </p>
-          </div>
-
-          <div className="hero-reveal-visual relative lg:col-span-7">
-            <div
-              className="pointer-events-none absolute -inset-5 rounded-[2.25rem] opacity-80 blur-3xl sm:-inset-7"
-              aria-hidden
-              style={{
-                background:
-                  "radial-gradient(ellipse at 55% 42%, color-mix(in srgb, var(--bronze) 32%, transparent), transparent 68%)",
-              }}
-            />
-            <div className="hero-frame relative aspect-[4/3] w-full sm:aspect-[5/3.35] lg:ml-1 lg:aspect-[5/3.5] lg:min-h-[25rem] xl:ml-2 xl:min-h-[29rem]">
-              {/* Top-right keeps the hero mark clear of the bottom caption chrome. */}
-              <WatermarkedImage
-                src="/gallery/cedar-privacy.jpg"
-                alt="Cedar privacy fence installation for a Raleigh-area home"
-                fill
-                priority
-                sizes="(min-width: 1280px) 42rem, (min-width: 1024px) 55vw, 100vw"
-                className="hero-frame-img hero-kenburns"
-                watermarkSize="lg"
-                watermarkPosition="tr"
-              />
-              <div className="hero-cinematic" aria-hidden />
-              <div className="hero-overlay absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                  <div className="hero-pill">
-                    <span className="hero-pill-dot" aria-hidden />
-                    Cedar privacy · Raleigh
-                  </div>
-                  <ul className="hidden max-w-xs space-y-1.5 rounded-xl border border-white/12 bg-navy-dark/65 p-3.5 text-[0.75rem] leading-snug text-cream/92 shadow-lg backdrop-blur-md sm:block lg:max-w-[15.75rem]">
-                    {[
-                      "Clear written estimates",
-                      "Quality materials, matched to budget",
-                      "Job sites left cleaner than found",
-                    ].map((item) => (
-                      <li key={item} className="flex gap-2">
-                        <span
-                          className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-bronze"
-                          aria-hidden
-                        />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </section>
 
-      {/* Trust strip */}
-      <section
-        className="section-ink-rail border-b border-ink/[0.08] bg-surface"
-        aria-label="Trust points"
-      >
-        <Reveal from="none" className="mx-auto max-w-6xl">
-          <ul className="trust-rail">
+        <div className="hero-trust-bar">
+          <ul className="container-page grid gap-4 py-5 sm:grid-cols-3 sm:gap-6 sm:py-6">
             {trustPoints.map((point) => (
-              <li key={point.label} className="trust-rail-item">
-                <span className="trust-rail-dot" aria-hidden />
+              <li
+                key={point.label}
+                className="flex items-center justify-center gap-3 text-center text-sm font-semibold text-white/92 sm:justify-start sm:text-left"
+              >
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10">
+                  <TrustIcon icon={point.icon} />
+                </span>
                 {point.label}
               </li>
             ))}
           </ul>
-        </Reveal>
+        </div>
       </section>
 
-      {/* Featured services */}
-      <section className="container-page section-y">
-        <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-          <div className="max-w-xl">
-            <p className="eyebrow">What we do</p>
-            <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
-              Featured services
-            </h2>
-            <p className="mt-3.5 max-w-lg text-[0.9875rem] leading-relaxed text-muted sm:text-base">
-              From backyard privacy fences to full deck rebuilds, we handle the
-              projects that protect and improve your outdoor living space.
-            </p>
-          </div>
-          <Link href="/services" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
-            View all services →
-          </Link>
-        </Reveal>
-        <ul className="mt-9 grid gap-4 sm:mt-11 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-          {featured.map((service, i) => (
-            <Reveal as="li" key={service.slug} delay={i * 70} className="card p-5 sm:p-6">
-              <span className="icon-badge">
-                <ServiceIcon slug={service.slug} />
-              </span>
-              <h3 className="mt-4 font-display text-lg font-semibold tracking-tight text-ink">
-                {service.title}
-              </h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted">
-                {service.summary}
-              </p>
-            </Reveal>
-          ))}
-          <Reveal as="li" delay={350} className="relative flex flex-col justify-center overflow-hidden rounded-[1rem] border border-bronze/25 bg-navy p-5 text-cream shadow-md sm:p-6">
-            <div
-              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full opacity-50"
-              aria-hidden
-              style={{
-                background:
-                  "radial-gradient(circle, color-mix(in srgb, var(--bronze) 50%, transparent), transparent 70%)",
-              }}
-            />
-            <p className="relative text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
-              Custom work
-            </p>
-            <h3 className="relative mt-2.5 font-display text-lg font-semibold tracking-tight">
-              Need something else?
-            </h3>
-            <p className="relative mt-2.5 text-sm leading-relaxed text-cream/78">
-              Gate installs, railing upgrades, storm damage repairs—ask us. If
-              we can help, we will.
-            </p>
-            <Link
-              href="/quote"
-              className="focus-ring btn-primary relative mt-5 w-fit"
-            >
-              Get a Free Quote
-            </Link>
-          </Reveal>
-        </ul>
-      </section>
-
-      {/* Customer notes */}
-      <section className="section-soft section-y">
+      {/* Your Needs */}
+      <section className="bg-white section-y">
         <div className="container-page">
-          <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-            <div className="max-w-xl">
-              <p className="eyebrow">Good work travels</p>
-              <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
-                Trusted by local homeowners
-              </h2>
-              <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
-                A few words from neighbors who called us for their next outdoor project.
-              </p>
-            </div>
-            <Link href="/reviews" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
-              Read all reviews →
-            </Link>
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+              Your Needs
+            </p>
+            <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.5rem]">
+              A Fence That Fits the Way You Live.
+            </h2>
           </Reveal>
-          <ul className="mt-9 grid gap-4 sm:mt-11 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-            {testimonials.map((testimonial, i) => (
-              <Reveal as="li" key={testimonial.name} delay={i * 80} className="card flex flex-col p-5 sm:p-6">
-                <span
-                  className="font-display text-[2.5rem] leading-none text-bronze/55"
-                  aria-hidden
-                >
-                  “
-                </span>
-                <p className="mt-2 text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
-                  {testimonial.quote}
-                </p>
-                <div className="mt-auto pt-6">
-                  <span className="accent-bar mb-3.5" aria-hidden />
-                  <p className="text-sm font-semibold text-ink">
-                    {testimonial.name}
-                  </p>
-                  <p className="mt-1 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
-                    {testimonial.town}
+          <ul className="mt-10 grid gap-6 sm:mt-12 sm:grid-cols-3">
+            {yourNeeds.map((need, i) => (
+              <Reveal as="li" key={need.id} delay={i * 80} className="need-card">
+                <div className="relative aspect-[4/3] overflow-hidden bg-ivory-muted">
+                  <Image
+                    src={need.image}
+                    alt=""
+                    fill
+                    sizes="(min-width: 640px) 33vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="relative px-5 pb-6 pt-8 text-center">
+                  <span className="absolute -top-5 left-1/2 inline-flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-bronze text-white shadow-md">
+                    <NeedIcon icon={need.icon} />
+                  </span>
+                  <h3 className="font-display text-lg font-semibold text-ink">
+                    {need.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {need.description}
                   </p>
                 </div>
               </Reveal>
@@ -251,147 +210,193 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Recent work teaser */}
-      <section className="section-alt section-y">
+      {/* Fencing Options */}
+      <section className="bg-ivory-muted/60 section-y">
         <div className="container-page">
-          <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-            <div className="max-w-xl">
-              <p className="eyebrow">Portfolio</p>
-              <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
-                Recent work
-              </h2>
-              <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
-                A look at fence and deck projects we&apos;ve completed for
-                neighbors in Angier, Raleigh, and nearby towns.
-              </p>
-            </div>
-            <Link href="/gallery" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
-              Browse gallery →
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+              Fencing Options
+            </p>
+            <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.5rem]">
+              Find the Right Fence for Your Property.
+            </h2>
+          </Reveal>
+          <ul className="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
+            {fencingServices.map((svc, i) => (
+              <Reveal as="li" key={svc.slug} delay={i * 70}>
+                <Link href={`/services#${svc.slug}`} className="option-card group block h-full">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-ivory-muted">
+                    <Image
+                      src={svc.image}
+                      alt={svc.title}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="bg-white px-4 py-4 text-center">
+                    <p className="text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-ink">
+                      {svc.title}
+                    </p>
+                    <p className="mt-1.5 text-xs text-muted">{svc.tagline}</p>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </ul>
+          <Reveal className="mt-10 flex justify-center">
+            <Link href="/services" className="focus-ring btn-primary gap-2">
+              Explore Fencing Options
+              <span aria-hidden>→</span>
             </Link>
           </Reveal>
-          <ul className="mt-9 grid grid-cols-1 gap-4 sm:mt-11 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12 lg:gap-6">
-            {teaser.map((project, index) => (
-              <Reveal
-                as="li"
-                key={project.id}
-                delay={index * 70}
-                className={`card overflow-hidden ${
-                  index === 0
-                    ? "lg:col-span-5"
-                    : index === 1
-                      ? "lg:col-span-7"
-                      : "lg:col-span-6"
-                }`}
-              >
-                <div
-                  className={`relative overflow-hidden bg-ivory-muted ${
-                    index < 2 ? "aspect-[16/10] sm:aspect-[5/3]" : "aspect-[4/3]"
-                  }`}
-                >
+        </div>
+      </section>
+
+      {/* The Kaba Experience */}
+      <section className="relative overflow-hidden bg-[#0a0c10] section-y text-cream">
+        <div className="pointer-events-none absolute inset-0 opacity-25" aria-hidden>
+          <Image
+            src="/gallery/cedar-privacy.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-[#0a0c10]/80" />
+        </div>
+        <div className="container-page relative">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+              The Kaba Experience
+            </p>
+            <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-white sm:text-3xl lg:text-[2.5rem]">
+              A Better Fence Experience.
+            </h2>
+          </Reveal>
+          <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {kabaExperience.map((step, i) => (
+              <Reveal as="li" key={step.id} delay={i * 80} className="text-center">
+                <span className="exp-icon mx-auto">
+                  <ExpIcon icon={step.icon} />
+                </span>
+                <h3 className="mt-5 font-display text-lg font-semibold text-white">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-cream/70">
+                  {step.description}
+                </p>
+              </Reveal>
+            ))}
+          </ul>
+          <Reveal className="mt-12 text-center">
+            <p className="font-script text-3xl text-bronze sm:text-4xl">
+              We Listen. We Guide. We Build. We Care.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Our Work strip */}
+      <section className="bg-white section-y">
+        <div className="container-page">
+          <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">
+              See the Kaba Difference.
+            </h2>
+            <Link href="/gallery" className="focus-ring btn-primary gap-2 self-start sm:self-auto">
+              View Our Work
+              <span aria-hidden>→</span>
+            </Link>
+          </Reveal>
+          <ul className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 lg:grid-cols-4">
+            {teaser.map((project, i) => (
+              <Reveal as="li" key={project.id} delay={i * 60} className="overflow-hidden rounded-xl">
+                <div className="relative aspect-[4/3] bg-ivory-muted">
                   <WatermarkedImage
                     src={project.image}
-                    alt={`${project.title}. ${project.caption}.`}
+                    alt={project.caption}
                     fill
-                    sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
-                    className="gallery-img object-cover"
+                    sizes="(min-width: 1024px) 25vw, 50vw"
+                    className="object-cover"
                     watermarkSize="sm"
                   />
                 </div>
-                <div className="border-t border-ink/[0.06] bg-surface px-4 py-3.5 sm:px-5">
-                  <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
-                    {project.category}
-                  </p>
-                  <p className="mt-1.5 text-sm font-semibold tracking-tight text-ink">
-                    {project.title}
-                  </p>
-                </div>
               </Reveal>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="container-page section-y">
-        <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-          <div className="max-w-xl">
-            <p className="eyebrow">Process</p>
-            <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
-              How it works
-            </h2>
-            <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
-              Straightforward from first call to finished project—no surprises.
-            </p>
-          </div>
-          <Link href="/how-it-works" className="focus-ring btn-ghost inline-flex min-h-11 items-center shrink-0 self-start sm:self-auto">
-            See full process →
-          </Link>
-        </Reveal>
-        <ol className="mt-10 grid gap-8 border-t border-ink/[0.08] pt-10 sm:mt-12 md:grid-cols-3 md:gap-8 md:pt-12">
-          {howItWorks.map((step, i) => (
-            <Reveal as="li" key={step.step} delay={i * 90} className="relative">
-              {i < howItWorks.length - 1 && (
-                <span
-                  className="pointer-events-none absolute left-[3.25rem] top-[1.375rem] hidden h-px w-[calc(100%-1.5rem)] bg-gradient-to-r from-bronze/40 via-bronze/15 to-transparent md:block"
-                  aria-hidden
-                />
-              )}
-              <span className="step-badge">{step.step}</span>
-              <h3 className="mt-5 font-display text-xl font-semibold tracking-tight text-ink">
-                {step.title}
-              </h3>
-              <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-muted">
-                {step.description}
-              </p>
-            </Reveal>
-          ))}
-        </ol>
-      </section>
-
-      {/* FAQ */}
-      <section className="section-soft section-y">
+      {/* Reviews */}
+      <section className="bg-ivory-muted/60 section-y">
         <div className="container-page">
-          <div className="grid gap-8 lg:grid-cols-12 lg:gap-12 lg:items-start">
-            <Reveal className="max-w-md lg:col-span-4">
-              <p className="eyebrow">FAQ</p>
-              <h2 className="mt-3 text-[1.85rem] font-semibold tracking-[-0.028em] text-ink sm:mt-3.5 sm:text-3xl lg:text-[2.35rem] lg:leading-[1.12]">
-                Common questions
-              </h2>
-              <p className="mt-3.5 text-[0.9875rem] leading-relaxed text-muted sm:text-base">
-                Quick answers about timelines, permits, materials, and deck repairs.
+          <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+                Reviews
               </p>
-              <Link href="/faq" className="focus-ring btn-ghost mt-5 inline-flex min-h-11 items-center">
-                View all FAQs →
-              </Link>
-            </Reveal>
-            <Reveal className="lg:col-span-8" delay={100}>
-              <FaqAccordion />
-            </Reveal>
-          </div>
+              <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">
+                Trusted by Homeowners in Our Community.
+              </h2>
+            </div>
+            <Link href="/reviews" className="focus-ring btn-primary gap-2 self-start sm:self-auto">
+              Read Our Reviews
+              <span aria-hidden>→</span>
+            </Link>
+          </Reveal>
+          <ul className="mt-10 grid gap-5 sm:grid-cols-3">
+            {homeReviews.map((review, i) => (
+              <Reveal as="li" key={review.name} delay={i * 80} className="review-card flex flex-col">
+                <div className="flex items-center justify-between">
+                  <span
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-lg font-bold shadow-sm"
+                    aria-hidden
+                    style={{ color: "#4285F4" }}
+                  >
+                    G
+                  </span>
+                  <span className="stars-gold text-sm" aria-label="5 out of 5 stars">
+                    ★★★★★
+                  </span>
+                </div>
+                <p className="mt-4 flex-1 text-sm leading-relaxed text-muted">
+                  “{review.quote}”
+                </p>
+                <p className="mt-5 text-sm font-semibold text-ink">
+                  {review.name}{" "}
+                  <span className="font-normal text-muted">| {review.town}</span>
+                </p>
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* Quote CTA */}
-      <section className="band-dark section-ink-rail py-14 sm:py-16 lg:py-20">
-        <Reveal className="container-page relative max-w-2xl text-center">
-          <span className="accent-bar mx-auto mb-6" aria-hidden />
-          <h2 className="font-display text-[1.85rem] font-semibold tracking-[-0.028em] sm:text-3xl lg:text-[2.5rem] lg:leading-[1.12]">
-            Ready for a free estimate?
-          </h2>
-          <p className="mt-4 text-[0.9875rem] leading-relaxed text-cream/80 sm:text-base">
-            Tell us about your fence or deck project. We&apos;ll schedule an
-            on-site visit in Angier, Raleigh, or your nearby NC community—and
-            give you a clear quote with no obligation.
-          </p>
-          <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-3.5">
-            <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto sm:min-w-[12.5rem]">
-              Get a Free Quote
+      {/* Final CTA */}
+      <section className="bg-[#0a0c10] py-14 sm:py-16 lg:py-20">
+        <Reveal className="container-page flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-xl">
+            <h2 className="font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-white sm:text-3xl lg:text-[2.5rem]">
+              Ready to Start Your Fence Project?
+            </h2>
+            <p className="mt-3 text-base text-cream/70">
+              Let&apos;s talk about what you need.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:items-start lg:items-end">
+            <Link href="/contact" className="focus-ring btn-primary gap-2">
+              Request a Free Estimate
+              <span aria-hidden>→</span>
             </Link>
             <a
               href={siteConfig.phoneHref}
-              className="focus-ring btn-secondary w-full justify-center sm:w-auto"
+              className="focus-ring inline-flex items-center gap-2 text-sm font-semibold text-white/90 transition hover:text-bronze"
             >
-              Or call {siteConfig.phone}
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              Call {siteConfig.phone}
             </a>
           </div>
         </Reveal>

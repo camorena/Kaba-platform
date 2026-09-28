@@ -89,8 +89,8 @@ export default function ReviewsPage() {
             Angier, Raleigh, or a nearby NC town.
           </p>
           <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-            <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
-              Get a Free Quote
+            <Link href="/contact" className="focus-ring btn-primary w-full justify-center sm:w-auto">
+              Request a Free Estimate
             </Link>
             <Link href="/gallery" className="focus-ring btn-secondary-light w-full justify-center sm:w-auto">
               Browse gallery

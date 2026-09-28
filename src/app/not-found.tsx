@@ -55,7 +55,7 @@ export default function NotFound() {
                 Back to home
               </Link>
               <Link
-                href="/quote"
+                href="/contact"
                 className="focus-ring btn-secondary-light w-full justify-center sm:w-auto"
               >
                 Request a quote

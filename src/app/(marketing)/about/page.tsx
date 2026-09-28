@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import { defaultOgImage, companyValues, siteConfig, trustPoints } from "@/lib/site";
 
 const title = "About Our Crew";
-const description = `Meet ${siteConfig.name}—a local Angier & Raleigh NC fence and deck crew focused on clear estimates, solid craftsmanship, and clean job sites.`;
+const description = `Meet ${siteConfig.name}—a local & family-owned fence company serving Raleigh, NC & surrounding areas with clear estimates and solid craftsmanship.`;
 
 export const metadata: Metadata = {
   title,
@@ -27,7 +27,7 @@ export default function AboutPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
             {siteConfig.name} started with a simple idea: fence and deck work
-            done right for Angier, Raleigh, and the towns in between—honest
+            done right for Raleigh, NC and surrounding areas—honest
             estimates, materials that survive Carolina weather, and a job site
             left cleaner than we found it.
           </p>
@@ -39,17 +39,17 @@ export default function AboutPage() {
           <Reveal className="lg:col-span-5">
             <span className="accent-bar" aria-hidden />
             <h2 className="mt-4 text-2xl font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
-              Rooted in Angier. Working across the Triangle edge.
+              Local & family-owned. Serving Raleigh and surrounding areas.
             </h2>
             <p className="mt-4 leading-relaxed text-muted">
               We’re homeowners ourselves. We know what a leaning fence after a
-              storm feels like, and how much a solid deck changes weekend plans.
+              storm feels like, and how much privacy and peace of mind matter.
               That’s why we show up on time, explain the options in plain
               language, and stand behind the work.
             </p>
             <p className="mt-4 leading-relaxed text-muted">
               Whether it’s a cedar privacy run in Raleigh, vinyl for an HOA
-              neighborhood, or a deck rebuild in Angier, you’ll get the same
+              neighborhood, or a chain-link repair nearby, you’ll get the same
               careful crew from first measure to final walkthrough.
             </p>
           </Reveal>
@@ -126,8 +126,8 @@ export default function AboutPage() {
               clear written quote.
             </p>
             <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-              <Link href="/quote" className="focus-ring btn-primary w-full justify-center sm:w-auto">
-                Get a Free Quote
+              <Link href="/contact" className="focus-ring btn-primary w-full justify-center sm:w-auto">
+                Request a Free Estimate
               </Link>
               <a
                 href={siteConfig.phoneHref}

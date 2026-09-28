@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { DM_Sans, Fraunces, Geist_Mono } from "next/font/google";
+import { Inter, Playfair_Display, Great_Vibes, Geist_Mono } from "next/font/google";
 import ThemeProvider from "@/components/ThemeProvider";
 import Analytics from "@/components/Analytics";
 import { defaultOgImage, siteConfig, siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const dmSans = DM_Sans({
+const inter = Inter({
   variable: "--font-dm-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -13,12 +13,19 @@ const dmSans = DM_Sans({
   preload: true,
 });
 
-const fraunces = Fraunces({
+const playfair = Playfair_Display({
   variable: "--font-fraunces",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
   display: "swap",
   preload: true,
+});
+
+const greatVibes = Great_Vibes({
+  variable: "--font-great-vibes",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -28,22 +35,22 @@ const geistMono = Geist_Mono({
 });
 
 const defaultDescription =
-  "Local fence and deck installation, repairs, and free estimates in Angier, Raleigh, and surrounding NC communities.";
+  "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish. Free estimates.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
+    default: `${siteConfig.name} | Fence Company in Raleigh, NC`,
     template: `%s | ${siteConfig.name}`,
   },
   description: defaultDescription,
   keywords: [
+    "fence company Raleigh NC",
     "fence installation",
-    "deck repair",
-    "Angier NC",
-    "Raleigh fence",
+    "wood fence",
     "vinyl fence",
-    "cedar privacy fence",
+    "aluminum fence",
+    "chain link fence",
     "free fence estimate",
   ],
   authors: [{ name: siteConfig.name }],
@@ -63,13 +70,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: siteConfig.name,
-    title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
+    title: `${siteConfig.name} | Fence Company in Raleigh, NC`,
     description: defaultDescription,
     images: [defaultOgImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} | Fence & Deck Repair in Angier & Raleigh`,
+    title: `${siteConfig.name} | Fence Company in Raleigh, NC`,
     description: defaultDescription,
     images: [defaultOgImage.url],
   },
@@ -88,7 +95,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${dmSans.variable} ${fraunces.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${playfair.variable} ${greatVibes.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeProvider>

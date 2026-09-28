@@ -36,7 +36,7 @@ export default function FloatingCta() {
   }, []);
 
   useEffect(() => {
-    if (pathname === "/quote" || dismissed || chatOpen) return;
+    if (pathname === "/quote" || pathname === "/contact" || dismissed || chatOpen) return;
     function onScroll() {
       setScrolledPastHero(window.scrollY > 420);
     }
@@ -54,7 +54,7 @@ export default function FloatingCta() {
     <div className="floating-cta-root pointer-events-none fixed bottom-0 left-0 z-[55] p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))]">
       <div className="pointer-events-auto flex items-center gap-1.5">
         <Link
-          href="/quote"
+          href="/contact"
           className="focus-ring floating-cta group inline-flex items-center gap-2 rounded-full bg-navy pl-1.5 pr-4 py-1.5 text-sm font-semibold text-cream shadow-[var(--shadow-lg),0_0_0_1px_color-mix(in_srgb,var(--bronze)_40%,transparent)] transition hover:bg-navy-light"
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bronze text-navy shadow-[inset_0_1px_0_color-mix(in_srgb,#fff_40%,transparent)]">

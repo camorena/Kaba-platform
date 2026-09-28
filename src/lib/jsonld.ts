@@ -23,10 +23,11 @@ export function localBusinessJsonLd(): JsonLd {
       addressCountry: "US",
     },
     areaServed: [
-      { "@type": "City", name: "Angier" },
       { "@type": "City", name: "Raleigh" },
+      { "@type": "City", name: "Apex" },
+      { "@type": "City", name: "Holly Springs" },
+      { "@type": "City", name: "Cary" },
       { "@type": "AdministrativeArea", name: "Wake County" },
-      { "@type": "AdministrativeArea", name: "Harnett County" },
       {
         "@type": "GeoCircle",
         description: siteConfig.serviceArea,
@@ -43,12 +44,12 @@ export function localBusinessJsonLd(): JsonLd {
     knowsAbout: [
       "Fence installation",
       "Fence repair",
-      "Deck installation",
-      "Deck repair",
       "Wood fencing",
       "Vinyl fencing",
       "Chain-link fencing",
       "Aluminum fencing",
+      "Residential fencing",
+      "Commercial fencing",
     ],
   };
 }

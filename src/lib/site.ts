@@ -1,85 +1,100 @@
 export const siteConfig = {
   name: "Kaba Fence",
-  tagline: "Fence & Deck Repair and Installation",
+  tagline: "We Listen. We Guide. We Build. We Care.",
   description:
-    "Kaba Fence builds and repairs fences and decks for homeowners in Angier, Raleigh, and surrounding North Carolina communities.",
-  serviceArea:
-    "Angier, Raleigh, Fuquay-Varina, Clayton, Holly Springs, and surrounding communities",
-  phone: "(919) 555-0147",
-  phoneHref: "tel:+19195550147",
-  email: "hello@kabafence.com",
-  emailHref: "mailto:hello@kabafence.com",
+    "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
+  serviceArea: "Raleigh, NC & surrounding areas",
+  phone: "(919) 292-4777",
+  phoneHref: "tel:+19192924777",
+  email: "kabafencellc@gmail.com",
+  emailHref: "mailto:kabafencellc@gmail.com",
   hours: {
     weekdays: "Monday – Friday: 8:00 AM – 5:00 PM",
     saturday: "Saturday: By appointment",
     sunday: "Sunday: Closed",
   },
   address: {
-    city: "Angier",
+    city: "Raleigh",
     state: "NC",
-    zip: "27501",
-    region: "Serving Angier, Raleigh & surrounding communities",
+    zip: "",
+    region: "Raleigh, NC & Surrounding Areas",
+  },
+  heroLabel: "Fence Company in Raleigh, NC & Surrounding Areas",
+  heroHeadline: "A Better Fence Starts With a Better Experience.",
+  heroSub:
+    "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
+  social: {
+    facebook: "https://www.facebook.com/",
+    instagram: "https://www.instagram.com/",
+    linkedin: "https://www.linkedin.com/",
   },
 } as const;
 
-/** Primary header + footer nav (kept lean for mobile). */
+/** Primary header nav matching client mockup. */
 export const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
-  { href: "/gallery", label: "Gallery" },
+  { href: "/residential", label: "Residential" },
+  { href: "/commercial", label: "Commercial" },
+  { href: "/services", label: "Fencing Options", hasDropdown: true },
+  { href: "/gallery", label: "Our Work" },
   { href: "/about", label: "About" },
-  { href: "/reviews", label: "Reviews" },
-  { href: "/materials", label: "Materials" },
-  { href: "/quote", label: "Quote" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
-/** Secondary links — footer (+ optional secondary surfaces). */
+export const fencingOptionsNav = [
+  { href: "/services#wood", label: "Wood Fencing", slug: "wood" },
+  { href: "/services#vinyl", label: "Vinyl Fencing", slug: "vinyl" },
+  { href: "/services#aluminum", label: "Aluminum Fencing", slug: "aluminum" },
+  { href: "/services#chain-link", label: "Chain Link Fencing", slug: "chain-link" },
+] as const;
+
+/** Secondary links — footer extras. */
 export const footerLinks = [
   { href: "/service-area", label: "Service area" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/faq", label: "FAQ" },
+  { href: "/reviews", label: "Reviews" },
 ] as const;
 
 export const fencingServices = [
   {
     slug: "wood",
     title: "Wood Fencing",
+    tagline: "Privacy · Natural · Customizable",
     summary:
       "Classic privacy and picket fences built with quality lumber for lasting curb appeal.",
     details:
       "From cedar privacy panels to traditional picket styles, we install and repair wood fences that stand up to Carolina weather and look great for years.",
+    image: "/gallery/cedar-privacy.jpg",
   },
   {
     slug: "vinyl",
     title: "Vinyl Fencing",
+    tagline: "Privacy · Low Maintenance · Clean",
     summary:
       "Low-maintenance vinyl that keeps its color and never needs staining or painting.",
     details:
       "Ideal for busy homeowners who want privacy and style without the upkeep. Available in white, tan, and other popular finishes.",
-  },
-  {
-    slug: "chain-link",
-    title: "Chain-Link Fencing",
-    summary:
-      "Durable, affordable security fencing for yards, pets, and commercial lots.",
-    details:
-      "Galvanized and vinyl-coated options. Great for pet containment, sports courts, and secure perimeters.",
+    image: "/gallery/vinyl-privacy.jpg",
   },
   {
     slug: "aluminum",
-    title: "Aluminum & Ornamental",
+    title: "Aluminum Fencing",
+    tagline: "Elegant · Durable · Open",
     summary:
       "Elegant, rust-resistant aluminum that adds security without blocking the view.",
     details:
       "Ornamental aluminum and iron-look styles that elevate your property while keeping kids and pets safely inside.",
+    image: "/gallery/aluminum-ornamental.jpg",
   },
   {
-    slug: "privacy",
-    title: "Privacy Fencing",
+    slug: "chain-link",
+    title: "Chain Link Fencing",
+    tagline: "Practical · Secure · Cost-Conscious",
     summary:
-      "Solid panels that create a private outdoor space for your family.",
+      "Durable, affordable security fencing for yards, pets, and commercial lots.",
     details:
-      "Wood, vinyl, or composite privacy systems sized and styled for Angier and Raleigh-area homes.",
+      "Galvanized and vinyl-coated options. Great for pet containment, sports courts, and secure perimeters.",
+    image: "/gallery/chain-link.jpg",
   },
 ] as const;
 
@@ -118,6 +133,57 @@ export const deckServices = [
   },
 ] as const;
 
+export const yourNeeds = [
+  {
+    id: "pets",
+    title: "A Safer Yard for Pets",
+    description: "Secure spaces for more freedom and peace of mind.",
+    image: "/gallery/cedar-privacy.jpg",
+    icon: "paw" as const,
+  },
+  {
+    id: "privacy",
+    title: "More Privacy at Home",
+    description: "Create a private, comfortable space for your family.",
+    image: "/gallery/vinyl-privacy.jpg",
+    icon: "home" as const,
+  },
+  {
+    id: "repair",
+    title: "Repair What You Already Have",
+    description: "Restore function without replacing more than necessary.",
+    image: "/gallery/deck-repair.jpg",
+    icon: "wrench" as const,
+  },
+] as const;
+
+export const kabaExperience = [
+  {
+    id: "listen",
+    title: "We Listen.",
+    description: "Your needs come first.",
+    icon: "listen" as const,
+  },
+  {
+    id: "guide",
+    title: "We Guide.",
+    description: "Clear options. Honest guidance.",
+    icon: "guide" as const,
+  },
+  {
+    id: "build",
+    title: "We Build.",
+    description: "Professional craftsmanship. Attention to detail.",
+    icon: "build" as const,
+  },
+  {
+    id: "care",
+    title: "We Care.",
+    description: "Support before, during and after installation.",
+    icon: "care" as const,
+  },
+] as const;
+
 export const galleryProjects = [
   {
     id: "cedar-privacy",
@@ -130,10 +196,10 @@ export const galleryProjects = [
   },
   {
     id: "vinyl-privacy",
-    title: "White Vinyl Privacy — Angier",
+    title: "White Vinyl Privacy — Raleigh Area",
     category: "fence" as const,
     image: "/gallery/vinyl-privacy.jpg",
-    caption: "White vinyl privacy — Angier",
+    caption: "White vinyl privacy — Raleigh area",
     beforeImage: "/gallery/before/vinyl-privacy.jpg",
     beforeCaption: "Dated wood run prior to low-maintenance vinyl",
   },
@@ -153,10 +219,10 @@ export const galleryProjects = [
   },
   {
     id: "deck-new-build",
-    title: "New Elevated Deck — Angier",
+    title: "New Elevated Deck — Raleigh Area",
     category: "deck" as const,
     image: "/gallery/deck-new-build.jpg",
-    caption: "New elevated deck — Angier",
+    caption: "New elevated deck — Raleigh area",
     beforeImage: "/gallery/before/deck-new-build.jpg",
     beforeCaption: "Worn deck surface before rebuild",
   },
@@ -169,13 +235,12 @@ export const galleryProjects = [
   },
 ] as const;
 
-/** Compact 3-step summary used on home + services. */
 export const howItWorks = [
   {
     step: "1",
     title: "Request a Quote",
     description:
-      "Tell us about your fence or deck project online or by phone. We serve Angier, Raleigh, and nearby towns.",
+      "Tell us about your fence project online or by phone. We serve Raleigh, NC and surrounding areas.",
   },
   {
     step: "2",
@@ -191,103 +256,71 @@ export const howItWorks = [
   },
 ] as const;
 
-/** Full process timeline for /how-it-works. */
 export const processTimeline = [
   {
     step: "01",
     title: "Estimate",
     eyebrow: "Free on-site visit",
     description:
-      "Share your goals online or by phone. We schedule a free visit, measure carefully, and deliver a clear written estimate with material options that fit Angier and Raleigh homes.",
+      "Share your goals online or by phone. We schedule a free visit, measure carefully, and deliver a clear written estimate with material options for Raleigh-area homes.",
   },
   {
     step: "02",
     title: "Design",
     eyebrow: "Materials & layout",
     description:
-      "Together we lock in style, height, gates, and finishes—wood, vinyl, chain-link, aluminum, or deck systems—plus any HOA or permit considerations for your neighborhood.",
+      "Together we lock in style, height, gates, and finishes—wood, vinyl, chain-link, or aluminum—plus any HOA or permit considerations for your neighborhood.",
   },
   {
     step: "03",
     title: "Build",
     eyebrow: "Crafted on schedule",
     description:
-      "Our local crew installs or repairs on the agreed timeline. We protect landscaping, set posts and framing properly, and keep the job site organized every day.",
+      "Our local crew installs or repairs on the agreed timeline. We protect landscaping, set posts properly, and keep the job site organized every day.",
   },
   {
     step: "04",
     title: "Walkthrough",
     eyebrow: "Clean finish",
     description:
-      "We walk the finished fence or deck with you, adjust gates and hardware, haul debris, and make sure everything feels solid before we leave.",
+      "We walk the finished fence with you, adjust gates and hardware, haul debris, and make sure everything feels solid before we leave.",
   },
 ] as const;
 
 export const trustPoints = [
-  { label: "Local to Angier & Raleigh" },
-  { label: "Free On-Site Estimates" },
-  { label: "Quality Materials" },
-  { label: "Clean Job Sites" },
+  { label: "Local & Family-Owned", icon: "home" as const },
+  { label: "Licensed & Insured", icon: "shield" as const },
+  { label: "Raleigh, NC & Surrounding Areas", icon: "pin" as const },
 ] as const;
 
 export const companyValues = [
   {
-    title: "Local & accountable",
+    title: "We listen first",
     description:
-      "We’re based in Angier and work across the Raleigh area. When you call, you’re talking to the crew that shows up—not a national call center.",
+      "Your goals for privacy, pets, curb appeal, or repairs come first. We ask the right questions before we recommend a fence.",
   },
   {
-    title: "Clear estimates",
+    title: "Clear, honest guidance",
     description:
-      "Written quotes with materials, scope, and timeline spelled out. No vague ranges, no surprise line items after the posts are set.",
+      "Written estimates with materials, scope, and timeline spelled out. No vague ranges, no surprise line items after the posts are set.",
   },
   {
     title: "Built for Carolina weather",
     description:
-      "We specify lumber, fasteners, and finishes that hold up to heat, humidity, and storms—so your fence or deck lasts.",
+      "We specify lumber, fasteners, and finishes that hold up to heat, humidity, and storms—so your fence lasts.",
   },
   {
-    title: "Job sites left clean",
+    title: "Support after install",
     description:
-      "Cut-offs hauled, lawn protected, gates swinging true. Neighbors should notice the new fence—not the mess.",
+      "We’re here before, during, and after installation. Job sites left clean. Neighbors should notice the new fence—not the mess.",
   },
 ] as const;
 
 export const serviceTowns = [
   {
-    name: "Angier",
-    region: "Harnett County",
-    note: "Home base — fence installs, deck rebuilds, and repairs across town and nearby rural lots.",
-  },
-  {
     name: "Raleigh",
     region: "Wake County",
-    note: "Privacy fences, ornamental aluminum, and deck projects for in-town and suburban homes.",
-  },
-  {
-    name: "Fuquay-Varina",
-    region: "Wake County",
-    note: "New builds and replacements for growing neighborhoods and larger backyard lots.",
-  },
-  {
-    name: "Holly Springs",
-    region: "Wake County",
-    note: "HOA-friendly vinyl and wood privacy systems, plus deck rail and stair upgrades.",
-  },
-  {
-    name: "Clayton",
-    region: "Johnston County",
-    note: "Chain-link, wood privacy, and deck repair for homes east of Raleigh.",
-  },
-  {
-    name: "Garner",
-    region: "Wake County",
-    note: "Fence replacements and deck refreshes for established neighborhoods.",
-  },
-  {
-    name: "Cary",
-    region: "Wake County",
-    note: "Select ornamental and privacy projects where schedule and access allow.",
+    note: "Privacy fences, ornamental aluminum, and residential projects for in-town and suburban homes.",
   },
   {
     name: "Apex",
@@ -295,14 +328,29 @@ export const serviceTowns = [
     note: "Wood and vinyl fencing with clean installs for suburban yards.",
   },
   {
-    name: "Dunn",
-    region: "Harnett County",
-    note: "Rural and in-town fence lines, pet enclosures, and deck repairs.",
+    name: "Holly Springs",
+    region: "Wake County",
+    note: "HOA-friendly vinyl and wood privacy systems.",
   },
   {
-    name: "Lillington",
-    region: "Harnett County",
-    note: "Fence and deck work for Harnett County homeowners south of Angier.",
+    name: "Cary",
+    region: "Wake County",
+    note: "Select ornamental and privacy projects where schedule and access allow.",
+  },
+  {
+    name: "Fuquay-Varina",
+    region: "Wake County",
+    note: "New builds and replacements for growing neighborhoods and larger backyard lots.",
+  },
+  {
+    name: "Garner",
+    region: "Wake County",
+    note: "Fence replacements and refreshes for established neighborhoods.",
+  },
+  {
+    name: "Clayton",
+    region: "Johnston County",
+    note: "Chain-link, wood privacy, and repairs for homes east of Raleigh.",
   },
   {
     name: "Knightdale",
@@ -314,44 +362,59 @@ export const serviceTowns = [
     region: "Wake County",
     note: "Select projects in northern Wake—ask us about current scheduling.",
   },
+  {
+    name: "Angier",
+    region: "Harnett County",
+    note: "Fence installs and repairs across town and nearby rural lots.",
+  },
+  {
+    name: "Dunn",
+    region: "Harnett County",
+    note: "Rural and in-town fence lines and pet enclosures.",
+  },
+  {
+    name: "Lillington",
+    region: "Harnett County",
+    note: "Fence work for Harnett County homeowners south of the Triangle.",
+  },
 ] as const;
 
 export const testimonials = [
   {
     quote:
-      "Kaba Fence replaced our tired backyard fence in two days and left the yard spotless. The new cedar looks fantastic.",
-    name: "Megan R.",
-    town: "Fuquay-Varina",
+      "Excellent communication and beautiful work. Our backyard privacy fence looks amazing and the crew left everything spotless.",
+    name: "Sarah M.",
+    town: "Apex, NC",
   },
   {
     quote:
-      "They repaired our deck stairs and railing quickly, explained every step, and made the whole process easy.",
-    name: "Chris & Dana P.",
-    town: "Holly Springs",
+      "From the estimate to the final walkthrough, everything was easy. Clear pricing, on-time crew, and a fence we’re proud of.",
+    name: "Michael R.",
+    town: "Raleigh, NC",
   },
   {
     quote:
-      "From the first estimate to the final gate adjustment, the crew was on time, thoughtful, and dependable.",
-    name: "Laura T.",
-    town: "Clayton",
+      "Great experience! The team was respectful of our property, answered every question, and finished ahead of schedule.",
+    name: "Jennifer T.",
+    town: "Holly Springs, NC",
   },
   {
     quote:
       "We needed vinyl privacy that would pass HOA review. Kaba walked us through options, got it approved, and installed it cleanly.",
     name: "Jordan M.",
-    town: "Cary",
+    town: "Cary, NC",
   },
   {
     quote:
       "Storm damage took out a section of our fence. They matched the existing panels and had us secure again within the week.",
     name: "Pat & Elena S.",
-    town: "Angier",
+    town: "Garner, NC",
   },
   {
     quote:
-      "Our new elevated deck feels solid and the railings look sharp. Clear quote, steady communication, no drama.",
+      "Professional from start to finish. Honest guidance on materials and a fence that feels solid for our dogs.",
     name: "Marcus W.",
-    town: "Raleigh",
+    town: "Raleigh, NC",
   },
 ] as const;
 
@@ -364,7 +427,7 @@ export const faqs = [
   {
     question: "Do you handle permits and HOA approvals?",
     answer:
-      "We help you understand local permit and HOA requirements for Angier, Raleigh, and nearby towns. When a permit is needed, we'll guide the paperwork and build to the approved plan.",
+      "We help you understand local permit and HOA requirements for Raleigh and nearby towns. When a permit is needed, we'll guide the paperwork and build to the approved plan.",
   },
   {
     question: "What materials hold up best in North Carolina weather?",
@@ -372,24 +435,24 @@ export const faqs = [
       "Cedar and pressure-treated wood, vinyl, and powder-coated aluminum all perform well here. The right choice depends on privacy goals, budget, and how much maintenance you want. We'll walk you through options on site.",
   },
   {
-    question: "Can you repair an existing deck instead of replacing it?",
+    question: "Can you repair an existing fence instead of replacing it?",
     answer:
-      "Often yes. We inspect framing, joists, boards, and railings first. If the structure is sound, targeted repairs and railing upgrades can restore safety and look without a full rebuild.",
+      "Often yes. We inspect posts, panels, and gates first. If the structure is sound, targeted repairs can restore function and look without a full replacement.",
   },
   {
     question: "What towns do you serve?",
     answer:
-      "We’re based in Angier and regularly work in Raleigh, Fuquay-Varina, Holly Springs, Clayton, Garner, Cary, Apex, Dunn, Lillington, Knightdale, Wake Forest, and nearby communities. If you’re close and unsure, call—we’ll let you know.",
+      "We serve Raleigh, NC and surrounding areas including Apex, Holly Springs, Cary, Fuquay-Varina, Garner, Clayton, Knightdale, Wake Forest, and nearby communities. If you’re close and unsure, call—we’ll let you know.",
   },
   {
     question: "Is the estimate really free?",
     answer:
-      "Yes. On-site estimates for residential fence and deck projects are free and no-obligation. You’ll leave with a written scope and price so you can decide on your timeline.",
+      "Yes. On-site estimates for residential fence projects are free and no-obligation. You’ll leave with a written scope and price so you can decide on your timeline.",
   },
   {
     question: "How do I prepare for install day?",
     answer:
-      "Clear access along the fence or deck line when you can, note underground utilities we’ve already marked through 811, and let us know about pets or locked gates. We’ll confirm details before we arrive.",
+      "Clear access along the fence line when you can, note underground utilities we’ve already marked through 811, and let us know about pets or locked gates. We’ll confirm details before we arrive.",
   },
   {
     question: "Do you build gates and hardware upgrades?",
@@ -410,11 +473,14 @@ export function absoluteUrl(path = "/"): string {
 /** All public indexable routes for sitemap. */
 export const sitemapRoutes = [
   { path: "/", changeFrequency: "weekly" as const, priority: 1 },
+  { path: "/residential", changeFrequency: "monthly" as const, priority: 0.9 },
+  { path: "/commercial", changeFrequency: "monthly" as const, priority: 0.85 },
   { path: "/services", changeFrequency: "monthly" as const, priority: 0.9 },
   { path: "/gallery", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/about", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/contact", changeFrequency: "monthly" as const, priority: 0.9 },
+  { path: "/quote", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/reviews", changeFrequency: "monthly" as const, priority: 0.7 },
-  { path: "/quote", changeFrequency: "monthly" as const, priority: 0.9 },
   { path: "/service-area", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/how-it-works", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/materials", changeFrequency: "monthly" as const, priority: 0.75 },
@@ -423,17 +489,15 @@ export const sitemapRoutes = [
   { path: "/terms", changeFrequency: "yearly" as const, priority: 0.3 },
 ] as const;
 
-
-
 /** Default Open Graph / Twitter image used across marketing pages. */
 export const defaultOgImage = {
   url: "/gallery/cedar-privacy.jpg",
   width: 1280,
   height: 720,
-  alt: "Cedar privacy fence installation by Kaba Fence",
+  alt: "Wood privacy fence installation by Kaba Fence in Raleigh, NC",
 } as const;
 
-/** Fence & deck materials guide for /materials. */
+/** Fence materials guide for /materials. */
 export const fenceMaterials = [
   {
     id: "cedar",
@@ -443,7 +507,7 @@ export const fenceMaterials = [
     maintenance: "Periodic cleaning; seal or stain every few years",
     pros: ["Natural look", "Insect & rot resistance", "Takes stain beautifully"],
     cons: ["Higher lumber cost", "Needs occasional finish work"],
-    tip: "Ideal for Raleigh and Angier yards that want classic wood privacy without going full pressure-treated look.",
+    tip: "Ideal for Raleigh-area yards that want classic wood privacy.",
   },
   {
     id: "pressure-treated",
@@ -453,7 +517,7 @@ export const fenceMaterials = [
     maintenance: "Let dry, then seal; watch for warping early on",
     pros: ["Affordable", "Widely available", "Strong for posts & panels"],
     cons: ["Can warp/check while drying", "Less premium look than cedar"],
-    tip: "Great workhorse material when we size posts correctly and leave room for Carolina humidity.",
+    tip: "Great workhorse material when we size posts correctly for Carolina humidity.",
   },
   {
     id: "vinyl",
@@ -540,6 +604,6 @@ export const materialFaqs = [
 
 /** Legal / utility links shown in footer bottom bar. */
 export const legalLinks = [
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms of Service" },
 ] as const;
