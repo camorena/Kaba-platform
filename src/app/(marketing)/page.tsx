@@ -378,14 +378,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="bg-[#0a0c10] py-14 sm:py-16 lg:py-20">
-        <Reveal className="container-page flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+      {/* Final CTA — own fence photo band (separate from solid charcoal footer) */}
+      <section className="relative isolate overflow-hidden py-16 sm:py-20 lg:py-24">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <Image
+            src="/gallery/cedar-privacy.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-[#0a0c10]/68" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c10]/35 via-transparent to-[#0a0c10]/55" />
+        </div>
+        <Reveal className="container-page relative z-[1] flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-xl">
             <h2 className="font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-white sm:text-3xl lg:text-[2.5rem]">
               Ready to Start Your Fence Project?
             </h2>
-            <p className="mt-3 text-base text-cream/70">
+            <p className="mt-3 text-base text-white/75">
               Let&apos;s talk about what you need.
             </p>
           </div>
@@ -396,7 +407,7 @@ export default function HomePage() {
             </Link>
             <a
               href={siteConfig.phoneHref}
-              className="focus-ring inline-flex items-center gap-2 text-sm font-semibold text-white/90 transition hover:text-bronze"
+              className="focus-ring inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-bronze"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
