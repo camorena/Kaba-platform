@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import WatermarkedImage from "@/components/WatermarkedImage";
 import {
   fencingServices,
   galleryProjects,
@@ -318,13 +317,12 @@ export default function HomePage() {
             {teaser.map((project, i) => (
               <Reveal as="li" key={project.id} delay={i * 60} className="overflow-hidden rounded-xl">
                 <div className="relative aspect-[4/3] bg-ivory-muted">
-                  <WatermarkedImage
+                  <Image
                     src={project.image}
                     alt={project.caption}
                     fill
                     sizes="(min-width: 1024px) 25vw, 50vw"
                     className="object-cover"
-                    watermarkSize="sm"
                   />
                 </div>
               </Reveal>

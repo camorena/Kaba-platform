@@ -1,6 +1,6 @@
 "use client";
 
-import WatermarkedImage from "@/components/WatermarkedImage";
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { galleryProjects } from "@/lib/site";
 
@@ -182,13 +182,12 @@ export default function GalleryGrid() {
                 onClick={(e) => openAt(project.id, e.currentTarget)}
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-ivory-muted">
-                  <WatermarkedImage
+                  <Image
                     src={project.image}
                     alt={`${project.title}. ${project.caption}.`}
                     fill
                     sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     className="gallery-img object-cover"
-                    watermarkSize="sm"
                   />
                   <span className="absolute bottom-3 left-3 rounded-full bg-surface/95 px-2.5 py-1 text-xs font-semibold capitalize tracking-tight text-ink shadow-sm backdrop-blur-sm ring-1 ring-ink/5">
                     {project.category}
@@ -291,7 +290,7 @@ export default function GalleryGrid() {
               </div>
             </div>
             <div className="lightbox-stage">
-              <WatermarkedImage
+              <Image
                 src={
                   hasBefore(active) && !compareShowAfter
                     ? active.beforeImage
@@ -305,8 +304,6 @@ export default function GalleryGrid() {
                 fill
                 sizes="100vw"
                 className="object-contain"
-                watermarkSize="md"
-                watermarkPosition="br"
                 priority
               />
             </div>
@@ -346,13 +343,12 @@ function BeforeAfterCard({
         onClick={(e) => onOpen(e.currentTarget)}
       >
         <div className="relative aspect-[16/10] overflow-hidden bg-ivory-muted">
-          <WatermarkedImage
+          <Image
             src={src}
             alt={`${project.title} — ${showAfter ? "after" : "before"}. ${caption}.`}
             fill
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="gallery-img object-cover"
-            watermarkSize="sm"
           />
           <span className="absolute left-3 top-3 rounded-full bg-navy/90 px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-wider text-cream shadow-sm">
             {showAfter ? "After" : "Before"}
