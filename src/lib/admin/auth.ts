@@ -9,6 +9,9 @@ import { cookies } from "next/headers";
  *
  * Set ADMIN_PASSWORD in the environment. If unset, /admin shows a setup
  * notice and rejects login attempts.
+ *
+ * Role checks and the path toward requireRole live in `dal.ts` — keep this
+ * stub working until real auth replaces it.
  */
 export const ADMIN_SESSION_COOKIE = "kaba_admin_session";
 export const ADMIN_SESSION_VALUE = "stub-ok";

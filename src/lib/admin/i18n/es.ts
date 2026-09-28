@@ -151,7 +151,40 @@ const es = {
       templatesHint: "Copiar seguimientos",
       pricebookHint: "Tarifas de referencia",
       newQuoteMeta: "Cotización nueva · {service}",
-      invoiceMeta: "{status} · {customer}"
+      invoiceMeta: "{status} · {customer}",
+      goneQuiet: "Sin respuesta",
+      goneQuietHint: "Sin movimiento por {days}+ días",
+      goneQuietIntro:
+        "Cotizaciones abiertas (nueva, contactada o agendada) sin actualización de estado o notas durante {days} días o más. Son las fugas Estimado → Silencio.",
+      quietForDays: "En silencio desde hace {count} día",
+      quietForDays_plural: "En silencio desde hace {count} días",
+      viewQuietQuotes: "Ver todas las cotizaciones en silencio →",
+      unknownHint: "No se pudo leer",
+      beforeLaunch: "Antes del lanzamiento",
+      outstandingCount: "{count} pendiente",
+      outstandingCount_plural: "{count} pendientes",
+      blockersClear: "Todo listo",
+      blockerDone: " — listo",
+      blockerOutstanding: " — pendiente",
+      blockerPhotos: "Fotografías de trabajos reales",
+      blockerPhotosDetail:
+        "La galería aún depende de imágenes de marketing. Proyectos debe mostrar trabajos construidos por Kaba: agregue fotos reales del sitio antes de atribuir autoría.",
+      blockerAuth: "Autenticación real",
+      blockerAuthStub:
+        "La puerta provisional ADMIN_PASSWORD está configurada, pero no es autenticación multiusuario. Reemplácela con Auth.js/Clerk (o equivalente) + roles antes de datos reales de clientes — vea Configuración → Seguridad y src/lib/admin/dal.ts.",
+      blockerAuthMissing:
+        "ADMIN_PASSWORD no está configurada. Defínala en local y en Vercel; luego reemplace la puerta provisional antes de producción.",
+      blockerDb: "Base de datos durable",
+      blockerDbDetail:
+        "Cotizaciones, facturas y pagos están en memoria. Los arranques en frío reinician la lista. Persista antes de confiar en leads de producción (persistir y luego notificar).",
+      blockerStripe: "Stripe (o riel de pagos)",
+      blockerStripeDetail:
+        "La página de Pagos es solo un libro provisional: aún no hay Checkout, webhooks ni alcance PCI.",
+      blockerHours: "Horario y contacto",
+      blockerHoursOk:
+        "El sitio público muestra {phone} · {email}. Horario: {hours}. Los campos de negocio editables pasarán a Configuración cuando exista la base de datos.",
+      blockerHoursMissing:
+        "Faltan teléfono, correo u horario en la configuración del sitio. Un contratista local pierde llamadas sin horario claro."
     },
     quotes: {
       title: "Cotizaciones",
@@ -240,6 +273,7 @@ const es = {
       navAria: "Secciones de configuración",
       navProfile: "Perfil",
       navAppearance: "Apariencia",
+      navTrust: "Afirmaciones de confianza",
       navSecurity: "Seguridad",
       navPlatform: "Plataforma",
       navAbout: "Acerca de",
@@ -307,7 +341,26 @@ const es = {
       craftPalette: "Paleta de comandos",
       craftShortcuts: "Hoja de atajos",
       craftCharts: "Los gráficos son SVG y CSS puros — sin Chart.js ni analítica de pago",
-      craftLazy: "La paleta y los atajos se cargan con importación dinámica"
+      craftLazy: "La paleta y los atajos se cargan con importación dinámica",
+      trustBadge: "Provisional local",
+      trustTitle: "Acerca de su negocio",
+      trustBody:
+        "Estas opciones se mostrarán como insignias de confianza cuando un almacén durable alimente el sitio público. Permanecen desactivadas aquí hasta que usted las confirme: no afirmaremos algo sobre el negocio que usted no nos haya dicho.",
+      trustFreeEstimates: "Ofrecemos estimados gratis",
+      trustFreeEstimatesHint:
+        "Confirme solo si el estimado es realmente gratis: sin monto mínimo ni cargo de desplazamiento.",
+      trustLocallyOwned: "Somos de propiedad local",
+      trustLocallyOwnedHint:
+        "De propiedad y operación en el área de Raleigh / Angier, no una sucursal ni una franquicia.",
+      trustPublicNoteLabel: "Sitio público",
+      trustPublicNote:
+        "La barra de confianza del marketing en vivo aún proviene de site.ts. Estos interruptores se guardan en localStorage (kaba-admin-trust-claims-v1) con una forma de API lista para una fila de base de datos: getTrustClaimsForPublic() es el punto de intercambio.",
+      trustSave: "Guardar afirmaciones",
+      trustSaving: "Guardando…",
+      trustSavedTitle: "Afirmaciones guardadas",
+      trustSavedDesc: "Almacenadas en este dispositivo hasta que una base de datos reemplace localStorage.",
+      trustSavedInline: "Guardado en este dispositivo",
+      trustStorageHint: "Se guarda solo en localStorage de este navegador."
     }
   },
   login: {
@@ -344,6 +397,13 @@ const es = {
     networkError: "Error de red. Inténtelo de nuevo."
   },
   quotes: {
+    goneQuiet: "Sin respuesta",
+    goneQuietIntro:
+      "Sin movimiento por {days}+ días mientras sigue nueva, contactada o agendada.",
+    goneQuietCount: "{count} cotización en silencio",
+    goneQuietCount_plural: "{count} cotizaciones en silencio",
+    quietForDays: "En silencio desde hace {count} día",
+    quietForDays_plural: "En silencio desde hace {count} días",
     searchLabel: "Buscar cotizaciones",
     searchPlaceholder: "Buscar nombre, teléfono, servicio…",
     exportTitle: "Descargar cotizaciones filtradas en CSV",

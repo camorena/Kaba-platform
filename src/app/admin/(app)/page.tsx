@@ -1,25 +1,68 @@
 import DashboardClient from "@/components/admin/DashboardClient";
+import { getLaunchBlockers } from "@/lib/admin/launch-blockers";
 import { invoiceStats, listInvoices } from "@/lib/admin/invoices-store";
 import { listPayments, paidCentsMap, paymentStats } from "@/lib/admin/payments-store";
-import { listQuotes, quoteStats } from "@/lib/admin/quotes-store";
+import {
+  listQuietQuotes,
+  listQuotes,
+  quietQuoteCount,
+  quoteStats,
+  QUIET_DAYS_THRESHOLD,
+} from "@/lib/admin/quotes-store";
 import { QUOTE_STATUSES } from "@/lib/admin/status";
+import { daysSince } from "@/lib/admin/format";
 
 export const metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const quotes = listQuotes();
-  const qStats = quoteStats();
-  const paidMap = paidCentsMap();
-  const iStats = invoiceStats(paidMap);
-  const pStats = paymentStats();
+  // In-memory stores always resolve; shape as number | null so UI never lies
+  // with a silent 0 if a future DB read fails (unknown ≠ fake 0).
+  let qStats: {
+    new: number | null;
+    total: number | null;
+    won: number | null;
+    scheduled: number | null;
+  };
+  let iStats: { open: number | null; totalOpenCents: number | null };
+  let pStats: { recordedCents: number | null; total: number | null };
+  let quietCount: number | null;
+  let quotes = listQuotes();
+  let quiet = listQuietQuotes();
+  let recentInvoices = listInvoices().slice(0, 4);
+  let recentPayments = listPayments().slice(0, 3);
+  let blockers = getLaunchBlockers();
+
+  try {
+    const paidMap = paidCentsMap();
+    const qs = quoteStats();
+    qStats = {
+      new: qs.new,
+      total: qs.total,
+      won: qs.won,
+      scheduled: qs.scheduled,
+    };
+    const is = invoiceStats(paidMap);
+    iStats = { open: is.open, totalOpenCents: is.totalOpenCents };
+    const ps = paymentStats();
+    pStats = { recordedCents: ps.recordedCents, total: ps.total };
+    quietCount = quietQuoteCount();
+  } catch {
+    qStats = { new: null, total: null, won: null, scheduled: null };
+    iStats = { open: null, totalOpenCents: null };
+    pStats = { recordedCents: null, total: null };
+    quietCount = null;
+    quotes = [];
+    quiet = [];
+    recentInvoices = [];
+    recentPayments = [];
+  }
+
   const recent = quotes.slice(0, 5);
-  const recentInvoices = listInvoices().slice(0, 4);
-  const recentPayments = listPayments().slice(0, 3);
 
   const needsAction = [
     ...quotes
-      .filter((q) => q.status === "new")
+      .filter((q) => q.status === "new" && !quiet.some((qq) => qq.id === q.id))
       .map((q) => ({
         id: q.id,
         href: `/admin/quotes/${q.id}`,
@@ -50,6 +93,17 @@ export default async function AdminDashboardPage() {
       qStats={qStats}
       iStats={iStats}
       pStats={pStats}
+      quietCount={quietCount}
+      quietDays={QUIET_DAYS_THRESHOLD}
+      quietQuotes={quiet.slice(0, 6).map((q) => ({
+        id: q.id,
+        name: q.name,
+        serviceType: q.serviceType,
+        status: q.status,
+        updatedAt: q.updatedAt,
+        quietDays: daysSince(q.updatedAt),
+      }))}
+      launchBlockers={blockers}
       needsAction={needsAction}
       funnel={funnel}
       recent={recent.map((q) => ({

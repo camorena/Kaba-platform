@@ -5,13 +5,17 @@ import EmptyState from "@/components/admin/EmptyState";
 import { useToast } from "@/components/admin/Toast";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { downloadCsv } from "@/lib/admin/csv";
-import { formatShortDate } from "@/lib/admin/format";
+import { daysSince, formatShortDate } from "@/lib/admin/format";
 import {
   QUOTE_STATUSES,
   quoteStatusTone,
   type QuoteStatus,
 } from "@/lib/admin/status";
-import type { QuoteRecord } from "@/lib/admin/quotes-store";
+import {
+  isQuietQuote,
+  QUIET_DAYS_THRESHOLD,
+  type QuoteRecord,
+} from "@/lib/admin/quotes-store";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -53,6 +57,14 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
       return hay.includes(q);
     });
   }, [quotes, query, statusFilter]);
+
+  const quietQuotes = useMemo(
+    () =>
+      quotes
+        .filter((q) => isQuietQuote(q))
+        .sort((a, b) => +new Date(a.updatedAt) - +new Date(b.updatedAt)),
+    [quotes],
+  );
 
   const allFilteredSelected =
     filtered.length > 0 && filtered.every((q) => selected.has(q.id));
@@ -176,6 +188,57 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
 
   return (
     <div className="space-y-3">
+      {quietQuotes.length > 0 && (
+        <section
+          id="gone-quiet"
+          className="overflow-hidden rounded-xl border border-amber-500/30 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]"
+          aria-labelledby="quotes-gone-quiet-heading"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/8 bg-gradient-to-r from-amber-500/15 to-transparent px-3 py-2 sm:px-4">
+            <div className="min-w-0">
+              <h2 id="quotes-gone-quiet-heading" className="admin-section-label">
+                {t("quotes.goneQuiet")}
+              </h2>
+              <p className="mt-0.5 text-xs text-muted">
+                {t("quotes.goneQuietIntro", { days: QUIET_DAYS_THRESHOLD })}
+              </p>
+            </div>
+            <span className="rounded-full border border-amber-500/35 bg-amber-500/10 px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
+              {t(
+                quietQuotes.length === 1
+                  ? "quotes.goneQuietCount"
+                  : "quotes.goneQuietCount_plural",
+                { count: quietQuotes.length },
+              )}
+            </span>
+          </div>
+          <ul className="divide-y divide-ink/6">
+            {quietQuotes.map((q) => (
+              <li key={`quiet-${q.id}`}>
+                <Link
+                  href={`/admin/quotes/${q.id}`}
+                  className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-sm transition hover:bg-[var(--admin-row-hover)] sm:px-4"
+                >
+                  <div className="min-w-0">
+                    <span className="font-semibold text-ink">{q.name}</span>
+                    <span className="text-muted"> · {q.serviceType}</span>
+                    <div className="text-[0.6875rem] text-amber-800 dark:text-amber-200/90">
+                      {t("quotes.quietForDays", { count: daysSince(q.updatedAt) })}
+                      {" · "}
+                      {q.address}
+                    </div>
+                  </div>
+                  <StatusBadge
+                    label={quoteStatusLabel(locale, q.status)}
+                    tone={quoteStatusTone[q.status]}
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <div className="admin-toolbar flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative min-w-0 flex-1 sm:max-w-xs">
           <label htmlFor="quote-search" className="sr-only">

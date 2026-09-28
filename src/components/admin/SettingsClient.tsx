@@ -4,12 +4,14 @@ import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import SettingsAppearance from "@/components/admin/SettingsAppearance";
 import SettingsProfile from "@/components/admin/SettingsProfile";
+import SettingsTrustClaims from "@/components/admin/SettingsTrustClaims";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 const SECTIONS = [
   { id: "settings-profile", labelKey: "pages.settings.navProfile" },
   { id: "settings-appearance", labelKey: "pages.settings.navAppearance" },
+  { id: "settings-trust", labelKey: "pages.settings.navTrust" },
   { id: "settings-security", labelKey: "pages.settings.navSecurity" },
   { id: "settings-platform", labelKey: "pages.settings.navPlatform" },
   { id: "settings-about", labelKey: "pages.settings.navAbout" },
@@ -105,6 +107,7 @@ export default function SettingsClient({ configured }: { configured: boolean }) 
         <div className="admin-settings-panels space-y-4">
           <SettingsProfile />
           <SettingsAppearance />
+          <SettingsTrustClaims />
 
           {/* Security */}
           <section

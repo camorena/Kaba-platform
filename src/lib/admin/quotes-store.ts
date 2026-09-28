@@ -32,8 +32,8 @@ export type QuoteRecord = {
 const seed: QuoteRecord[] = [
   {
     id: "q_seed_1",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
     name: "Jordan Miles",
     phone: "(919) 555-0188",
     email: "jordan.miles@example.com",
@@ -47,8 +47,8 @@ const seed: QuoteRecord[] = [
   },
   {
     id: "q_seed_2",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 50).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 40).toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(),
     name: "Priya Shah",
     phone: "(919) 555-0133",
     email: "priya.shah@example.com",
@@ -58,12 +58,12 @@ const seed: QuoteRecord[] = [
     preferredContact: "email",
     source: "seed",
     status: "contacted",
-    notes: "Left voicemail 9/25. Prefers Saturday morning.",
+    notes: "Left voicemail. Prefers Saturday morning. No reply since.",
   },
   {
     id: "q_seed_3",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 90).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 70).toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
     name: "Chris Nguyen",
     phone: "(919) 555-0172",
     email: "chris.n@example.com",
@@ -89,6 +89,21 @@ const seed: QuoteRecord[] = [
     source: "seed",
     status: "won",
     notes: "Approved $8,400. Ready to invoice deposit.",
+  },
+  {
+    id: "q_seed_5",
+    createdAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    name: "Marcus Webb",
+    phone: "(919) 555-0144",
+    email: "marcus.webb@example.com",
+    serviceType: "Chain Link",
+    address: "Garner, NC",
+    description: "Replace damaged chain-link along driveway (~60 ft).",
+    preferredContact: "phone",
+    source: "seed",
+    status: "new",
+    notes: "",
   },
 ];
 
@@ -238,4 +253,38 @@ export function listCustomers() {
   return [...map.values()].sort(
     (a, b) => +new Date(b.latestQuoteAt) - +new Date(a.latestQuoteAt),
   );
+}
+
+/** Open pipeline statuses that can "go quiet" (Estimate → Silence). */
+export const QUIET_QUOTE_STATUSES: readonly QuoteStatus[] = [
+  "new",
+  "contacted",
+  "scheduled",
+];
+
+/** Days without status/notes movement before a quote is "gone quiet". */
+export const QUIET_DAYS_THRESHOLD = 3;
+
+export function isQuietQuote(
+  q: QuoteRecord,
+  thresholdDays = QUIET_DAYS_THRESHOLD,
+  now = Date.now(),
+): boolean {
+  if (!QUIET_QUOTE_STATUSES.includes(q.status)) return false;
+  const ageMs = now - new Date(q.updatedAt).getTime();
+  return ageMs >= thresholdDays * 86_400_000;
+}
+
+/** Quotes in new|contacted|scheduled with no movement for threshold days+. */
+export function listQuietQuotes(
+  thresholdDays = QUIET_DAYS_THRESHOLD,
+): QuoteRecord[] {
+  const now = Date.now();
+  return listQuotes()
+    .filter((q) => isQuietQuote(q, thresholdDays, now))
+    .sort((a, b) => +new Date(a.updatedAt) - +new Date(b.updatedAt));
+}
+
+export function quietQuoteCount(thresholdDays = QUIET_DAYS_THRESHOLD): number {
+  return listQuietQuotes(thresholdDays).length;
 }

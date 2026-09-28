@@ -36,3 +36,8 @@ export function formatShortDate(iso: string): string {
     minute: "2-digit",
   });
 }
+
+/** Whole days since an ISO timestamp (floor). */
+export function daysSince(iso: string, now = Date.now()): number {
+  return Math.max(0, Math.floor((now - new Date(iso).getTime()) / 86_400_000));
+}

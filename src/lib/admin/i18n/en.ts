@@ -148,7 +148,40 @@ const en = {
       templatesHint: "Copy follow-ups",
       pricebookHint: "Reference rates",
       newQuoteMeta: "New quote · {service}",
-      invoiceMeta: "{status} · {customer}"
+      invoiceMeta: "{status} · {customer}",
+      goneQuiet: "Gone quiet",
+      goneQuietHint: "No movement for {days}+ days",
+      goneQuietIntro:
+        "Open quotes (new, contacted, or scheduled) with no status or notes update for {days} or more days. These are the Estimate → Silence leaks.",
+      quietForDays: "Quiet for {count} day",
+      quietForDays_plural: "Quiet for {count} days",
+      viewQuietQuotes: "Open all quiet quotes →",
+      unknownHint: "Could not be read",
+      beforeLaunch: "Before launch",
+      outstandingCount: "{count} outstanding",
+      outstandingCount_plural: "{count} outstanding",
+      blockersClear: "All clear",
+      blockerDone: " — done",
+      blockerOutstanding: " — outstanding",
+      blockerPhotos: "Photographs of real jobs",
+      blockerPhotosDetail:
+        "Gallery still relies on marketing imagery. Our Work / Projects should show jobs Kaba built — add real site photos before claiming authorship.",
+      blockerAuth: "Real authentication",
+      blockerAuthStub:
+        "ADMIN_PASSWORD cookie stub is configured, but it is not multi-user auth. Replace with Auth.js/Clerk (or equivalent) + roles before live customer data — see Settings → Security and src/lib/admin/dal.ts.",
+      blockerAuthMissing:
+        "ADMIN_PASSWORD is not set. Configure it locally and in Vercel, then replace the stub before production.",
+      blockerDb: "Durable database",
+      blockerDbDetail:
+        "Quotes, invoices, and payments are in-memory. Cold starts reset the list. Persist before trusting production leads (persist-then-notify).",
+      blockerStripe: "Stripe (or payment rail)",
+      blockerStripeDetail:
+        "Payments page is a stub ledger only — no Checkout, webhooks, or PCI scope yet.",
+      blockerHours: "Hours & contact",
+      blockerHoursOk:
+        "Public site shows {phone} · {email}. Hours: {hours}. Editable business fields will move into Settings when the DB lands.",
+      blockerHoursMissing:
+        "Phone, email, or hours missing from site config. Local contractors lose calls without clear hours."
     },
     quotes: {
       title: "Quotes",
@@ -225,6 +258,7 @@ const en = {
       navAria: "Settings sections",
       navProfile: "Profile",
       navAppearance: "Appearance",
+      navTrust: "Trust claims",
       navSecurity: "Security",
       navPlatform: "Platform",
       navAbout: "About",
@@ -289,7 +323,26 @@ const en = {
       craftPalette: "Command palette",
       craftShortcuts: "Shortcuts sheet",
       craftCharts: "Charts are pure SVG and CSS — no Chart.js or paid analytics",
-      craftLazy: "Palette and shortcuts load via dynamic import"
+      craftLazy: "Palette and shortcuts load via dynamic import",
+      trustBadge: "Local stub",
+      trustTitle: "About your business",
+      trustBody:
+        "These show as trust badges once a durable settings store feeds the public site. They stay off here until you confirm them — we will not state something about the business that you have not told us.",
+      trustFreeEstimates: "We give free estimates",
+      trustFreeEstimatesHint:
+        "Confirm only if an estimate is genuinely free — no minimum job size, no travel charge.",
+      trustLocallyOwned: "We are locally owned",
+      trustLocallyOwnedHint:
+        "Owned and run from the Raleigh / Angier area, rather than a branch or a franchise.",
+      trustPublicNoteLabel: "Public site",
+      trustPublicNote:
+        "The live marketing trust bar still comes from site.ts. These toggles save to localStorage (kaba-admin-trust-claims-v1) with an API shape ready for a DB row — getTrustClaimsForPublic() is the swap point.",
+      trustSave: "Save trust claims",
+      trustSaving: "Saving…",
+      trustSavedTitle: "Trust claims saved",
+      trustSavedDesc: "Stored on this device until a database replaces localStorage.",
+      trustSavedInline: "Saved on this device",
+      trustStorageHint: "Saves to localStorage on this browser only."
     }
   },
   login: {
@@ -322,6 +375,13 @@ const en = {
     networkError: "Network error. Try again."
   },
   quotes: {
+    goneQuiet: "Gone quiet",
+    goneQuietIntro:
+      "No movement for {days}+ days while still new, contacted, or scheduled.",
+    goneQuietCount: "{count} quiet quote",
+    goneQuietCount_plural: "{count} quiet quotes",
+    quietForDays: "Quiet for {count} day",
+    quietForDays_plural: "Quiet for {count} days",
     searchLabel: "Search quotes",
     searchPlaceholder: "Search name, phone, service…",
     exportTitle: "Download filtered quotes as CSV",
