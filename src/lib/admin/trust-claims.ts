@@ -1,11 +1,13 @@
 /**
- * Owner-asserted trust claims — Settings toggles shaped for a future DB row.
+ * Owner-asserted trust claims — Settings toggles + client fallback.
  *
- * Client-safe module (localStorage stub). Server public reader lives in
- * trust-claims-server.ts so this file never pulls pg into the browser bundle.
+ * Prefer the server API (`/api/admin/trust-claims`) which writes through the
+ * data adapter (memory or Postgres site_settings). localStorage remains a
+ * fallback when the API is unreachable.
  *
- * Public marketing still uses `site.ts` trustPoints until a durable store feeds
- * the public reader; do not wire the public hero bar to localStorage.
+ * Public marketing still uses `site.ts` trustPoints until badges call
+ * getTrustClaimsForPublic() (server adapter). Do not wire the public hero
+ * bar to localStorage.
  */
 
 import { DEFAULT_TRUST_CLAIMS } from "@/lib/db/memory/trust-claims";

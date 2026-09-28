@@ -30,7 +30,7 @@ const en = {
     signOut: "Sign out",
     signedOut: "Signed out",
     authStubStrong: "Auth stub — not production-ready.",
-    authWarning: "Password-cookie gate for scaffolding only. Replace with real auth (Auth.js/Clerk + roles) before handling live customer data in production.",
+    authWarning: "Password-cookie gate for scaffolding only. Set AUTH_SECRET for credentials against profiles, or keep the stub for demos — before live customer data in production.",
     adminNav: "Admin navigation",
     jumpHint: "Press __KBD__ to jump anywhere.",
     creditPrefix: "Website crafted by"
@@ -168,9 +168,13 @@ const en = {
         "Gallery still relies on marketing imagery. Our Work / Projects should show jobs Kaba built — add real site photos before claiming authorship.",
       blockerAuth: "Real authentication",
       blockerAuthStub:
-        "ADMIN_PASSWORD cookie stub is configured, but it is not multi-user auth. Replace with Auth.js/Clerk (or equivalent) + roles before live customer data — see Settings → Security and src/lib/admin/dal.ts.",
+        "ADMIN_PASSWORD cookie stub is configured, but it is not multi-user auth. Set AUTH_SECRET to enable credentials against profiles, or keep the stub for demos — see Settings → Security and src/lib/admin/dal.ts.",
+      blockerAuthCredentials:
+        "Credentials mode is on (AUTH_SECRET + profiles.role). Still add MFA, rate limits, and production secrets before live customer PII — see Settings → Security.",
+      blockerAuthCredentialsMissing:
+        "AUTH_SECRET is unset while credentials mode was expected, or secret is missing. Set AUTH_SECRET and seed an owner profile.",
       blockerAuthMissing:
-        "ADMIN_PASSWORD is not set. Configure it locally and in Vercel, then replace the stub before production.",
+        "ADMIN_PASSWORD is not set. Configure it locally and in Vercel, or set AUTH_SECRET for credentials mode.",
       blockerDb: "Durable database",
       blockerDbDetail:
         "Quotes, invoices, and payments are in-memory. Cold starts reset the list. Persist before trusting production leads (persist-then-notify).",
@@ -274,26 +278,50 @@ const en = {
       themeDark: "Dark",
       securityTitle: "Access & authentication",
       securityBadge: "Stub gate",
+      securityBadgeCredentials: "Credentials",
       authTitle: "Authentication",
       authBody:
         "Access uses a single shared password in {passwordEnv}. A successful sign-in sets an httpOnly cookie ({cookie}) for about 12 hours. This is not multi-user auth, MFA, CSRF hardening, rate limiting, or an audit log.",
-      authStatus: "Password status",
+      authBodyCredentials:
+        "Live mode: credentials against the {profiles} table. Sessions are HMAC-signed with {secretEnv} (cookie {cookie}, ~12 hours). Role comes from profiles.role on every request — not a forged client claim. Still not MFA, rate limiting, or a full audit log.",
+      authStatus: "Auth status",
+      authModeLabel: "Live mode",
+      authModeStubHint: "Default — ADMIN_PASSWORD cookie stub (no AUTH_SECRET).",
+      authModeCredentialsHint: "AUTH_SECRET is set — email/password against profiles.",
       passwordConfigured: "Configured",
       passwordMissing: "Missing",
+      credentialsConfigured: "AUTH_SECRET set",
+      credentialsMissing: "AUTH_SECRET missing",
+      authSessionLabel: "This session",
+      authSessionValue: "Role {role} · {stub}",
+      authSessionStub: "stub owner",
+      authSessionLive: "from profiles",
+      authFallbackLabel: "Stub password",
+      authFallbackNote: "ADMIN_PASSWORD remains in the environment but is unused while AUTH_SECRET enables credentials mode. Remove AUTH_SECRET to fall back to the stub.",
       authLocalLabel: "Local",
       authProdLabel: "Production",
       authRoadmapLabel: "Roadmap",
       authLocal: "Local development — set the variable in {envFile}.",
+      authLocalCredentials: "Local — set {secretEnv} in {envFile}, migrate/seed profiles, then sign in with owner@kabafence.example.",
       authProd: "Production — set the same variable in your Vercel project environment.",
+      authProdCredentials: "Production — set AUTH_SECRET (and DATABASE_URL if using Postgres profiles) in your host environment. Prefer a long random secret.",
       authReplace:
-        "Replace with Auth.js, Clerk, or equivalent — plus roles from profiles — before handling live customer data. Session contract: getCurrentAdmin() → SessionAdmin (stub: true, role owner).",
+        "Enable credentials mode with AUTH_SECRET (profiles.role) or keep the stub. Optional later: wrap with Auth.js for OAuth. Session contract: getCurrentAdmin() → SessionAdmin.",
+      authReplaceCredentials:
+        "Credentials mode is live. Optional later: Auth.js for OAuth providers — keep getCurrentAdmin() as the resolver. Still add MFA / rate limits before public internet exposure.",
       authRotate:
         "The password is never shown or edited here. Rotate it in your host environment, then redeploy or restart.",
+      authRotateCredentials:
+        "Rotate AUTH_SECRET and profile passwords in the host / database — never in this UI. Redeploy or restart after rotating the secret (existing sessions invalidate).",
       rolesTitle: "Roles roadmap",
       rolesBody:
-        "Planned capability ranks (owner › editor › viewer) live in {dal}. Every Server Action should start with requireRole; pages use requirePageRole. No fake multi-user accounts yet — the stub always resolves as owner.",
+        "Capability ranks (owner › editor › viewer) live in {dal}. Every Server Action should start with requireRole; pages use requirePageRole. Stub mode always resolves as owner.",
+      rolesBodyCredentials:
+        "Capability ranks (owner › editor › viewer) live in {dal}. Credentials sessions load role from profiles on each request. Mutations should call requireRole; pages use requirePageRole.",
       rolesStubNote:
-        "Today every successful ADMIN_PASSWORD login is treated as owner. Editors and viewers appear here so the Security UI matches the DAL contract before real auth lands.",
+        "Today every successful ADMIN_PASSWORD login is treated as owner. Editors and viewers appear here so the Security UI matches the DAL contract — enable AUTH_SECRET + profiles to use real roles.",
+      rolesCredentialsNote:
+        "This session’s role comes from the profiles row. Seed ships an owner; add editor/viewer rows in Postgres (or memory) as needed. No fake accounts beyond the demo owner.",
       rolesDocLabel: "ADMIN_ROLES_DOC",
       rolesDocHint:
         "Optional: set {env} in the environment to show an ops note here (documentation only — not a role grant).",
@@ -347,7 +375,8 @@ const en = {
       craftShortcuts: "Shortcuts sheet",
       craftCharts: "Charts are pure SVG and CSS — no Chart.js or paid analytics",
       craftLazy: "Palette and shortcuts load via dynamic import",
-      trustBadge: "Local stub",
+      trustBadge: "Local fallback",
+      trustBadgeServer: "Server",
       trustTitle: "About your business",
       trustBody:
         "These show as trust badges once a durable settings store feeds the public site. They stay off here until you confirm them — we will not state something about the business that you have not told us.",
@@ -359,13 +388,17 @@ const en = {
         "Owned and run from the Raleigh / Angier area, rather than a branch or a franchise.",
       trustPublicNoteLabel: "Public site",
       trustPublicNote:
-        "The live marketing trust bar still comes from site.ts. These toggles save to localStorage (kaba-admin-trust-claims-v1) with an API shape ready for a DB row — getTrustClaimsForPublic() is the swap point.",
+        "The live marketing trust bar still comes from site.ts until you wire badges to getTrustClaimsForPublic(). Saves go to the server adapter (memory or Postgres site_settings); localStorage is only a fallback if the API is unreachable.",
       trustSave: "Save trust claims",
       trustSaving: "Saving…",
       trustSavedTitle: "Trust claims saved",
       trustSavedDesc: "Stored on this device until a database replaces localStorage.",
+      trustSavedDescServer: "Saved on the server ({adapter}). Public reader: getTrustClaimsForPublic().",
+      trustSavedDescLocal: "Server save failed — stored on this device only (localStorage fallback).",
       trustSavedInline: "Saved on this device",
-      trustStorageHint: "Saves to localStorage on this browser only."
+      trustSavedInlineServer: "Saved on server",
+      trustStorageHint: "Saves to localStorage on this browser only.",
+      trustStorageHintServer: "Saves via /api/admin/trust-claims to the active data adapter."
     }
   },
   login: {
@@ -380,11 +413,14 @@ const en = {
     h3: "Agency craft",
     h3body: "Gold · charcoal · cream, Playfair/Inter, dark/light, ⌘K palette.",
     authStrong: "Auth stub — not production-ready.",
+    authStrongCredentials: "Credentials mode — profiles.role.",
     authBody: "Shared password cookie only. Replace before handling live customer data.",
+    authBodyCredentials: "Email and password against staff profiles. Role is loaded from the database on each request.",
     brandShort: "Kaba Fence",
     signInTitle: "Admin sign-in",
     signInMobileSub: "Quotes, invoices, and payments foundation.",
     signInDesktopSub: "Enter the shared stub password to continue.",
+    emailLabel: "Email",
     backSite: "← Back to public site",
     passwordLabel: "Admin password",
     show: "Show",
@@ -392,8 +428,11 @@ const en = {
     signIn: "Sign in",
     signingIn: "Signing in…",
     stubNote: "Stub auth only — cookie session lasts ~12 hours. Not suitable as sole protection for customer PII in production.",
+    credentialsNote: "Credentials session (~12 hours). Demo owner: owner@kabafence.example / change-me-owner. Rotate before production.",
     notConfiguredTitle: "Admin password not configured",
     notConfiguredBody: "Set {passwordEnv} in {envFile} (or your host env) and restart the server. This gate is a temporary stub — replace with real auth before any production use.",
+    notConfiguredCredentialsTitle: "Credentials mode not ready",
+    notConfiguredCredentialsBody: "Set {secretEnv} in {envFile} (or your host env) and restart. Seed an owner profile (npm run db:seed) or use the memory demo owner.",
     loginFailed: "Could not sign in.",
     networkError: "Network error. Try again."
   },

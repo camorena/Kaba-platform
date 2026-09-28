@@ -13,6 +13,7 @@ import type {
   QuoteRecord,
   QuoteStatus,
   TrustClaimsRecord,
+  ProfileRecord,
 } from "@/lib/db/types";
 
 function iso(value: Date | string | null | undefined): string {
@@ -190,5 +191,29 @@ export function mapTrustClaims(row: SiteSettingsRow | undefined): TrustClaimsRec
     claimFreeEstimates: Boolean(row.claim_free_estimates),
     claimLocallyOwned: Boolean(row.claim_locally_owned),
     updatedAt: isoOrNull(row.updated_at),
+  };
+}
+
+export type ProfileRow = {
+  id: string;
+  email: string;
+  full_name: string;
+  role: ProfileRecord["role"];
+  is_active: boolean;
+  password_hash: string;
+  created_at: Date | string;
+  updated_at: Date | string;
+};
+
+export function mapProfile(row: ProfileRow): ProfileRecord {
+  return {
+    id: row.id,
+    email: row.email,
+    fullName: row.full_name,
+    role: row.role,
+    isActive: Boolean(row.is_active),
+    passwordHash: row.password_hash ?? "",
+    createdAt: iso(row.created_at),
+    updatedAt: iso(row.updated_at),
   };
 }

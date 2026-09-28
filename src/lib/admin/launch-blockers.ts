@@ -6,7 +6,7 @@
  * Unknown facts use clear=false with honest detail — never pretend green.
  */
 
-import { getAdminPassword } from "@/lib/admin/auth";
+import { getAuthMode, isAuthConfigured } from "@/lib/admin/auth";
 import { siteConfig } from "@/lib/site";
 
 export type LaunchBlocker = {
@@ -19,7 +19,8 @@ export type LaunchBlocker = {
 };
 
 export function getLaunchBlockers(): LaunchBlocker[] {
-  const authConfigured = Boolean(getAdminPassword());
+  const mode = getAuthMode();
+  const authConfigured = isAuthConfigured();
   const hoursLine = [
     siteConfig.hours.weekdays,
     siteConfig.hours.saturday,
@@ -28,6 +29,18 @@ export function getLaunchBlockers(): LaunchBlocker[] {
     .filter(Boolean)
     .join(" · ");
   const contactOk = Boolean(siteConfig.phone?.trim() && siteConfig.email?.trim());
+
+  let authDetailKey: string;
+  if (!authConfigured) {
+    authDetailKey =
+      mode === "credentials"
+        ? "pages.dashboard.blockerAuthCredentialsMissing"
+        : "pages.dashboard.blockerAuthMissing";
+  } else if (mode === "credentials") {
+    authDetailKey = "pages.dashboard.blockerAuthCredentials";
+  } else {
+    authDetailKey = "pages.dashboard.blockerAuthStub";
+  }
 
   return [
     {
@@ -40,9 +53,8 @@ export function getLaunchBlockers(): LaunchBlocker[] {
     {
       id: "auth",
       labelKey: "pages.dashboard.blockerAuth",
-      detailKey: authConfigured
-        ? "pages.dashboard.blockerAuthStub"
-        : "pages.dashboard.blockerAuthMissing",
+      detailKey: authDetailKey,
+      // Credentials mode is better than the stub but still not MFA / production-hardened.
       clear: false,
       href: "/admin/settings#settings-security",
     },
@@ -69,8 +81,6 @@ export function getLaunchBlockers(): LaunchBlocker[] {
       detailVars: contactOk
         ? { hours: hoursLine || "—", phone: siteConfig.phone, email: siteConfig.email }
         : undefined,
-      // Hours/contact live in site.ts today — marked clear when present there.
-      // Settings business fields will own this once the DB lands.
       clear: contactOk && hoursLine.length > 0,
       href: "/admin/settings#settings-trust",
     },

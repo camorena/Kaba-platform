@@ -15,6 +15,7 @@ import type {
   QuoteRecord,
   QuoteStatus,
   TrustClaimsRecord,
+  ProfileRecord,
 } from "@/lib/db/types";
 
 export type QuotesRepo = {
@@ -84,6 +85,13 @@ export type CustomersRepo = {
   list(): Promise<CustomerRecord[]>;
 };
 
+
+export type ProfilesRepo = {
+  getById(id: string): Promise<ProfileRecord | undefined>;
+  getByEmail(email: string): Promise<ProfileRecord | undefined>;
+  list(): Promise<ProfileRecord[]>;
+};
+
 export type TrustClaimsRepo = {
   get(): Promise<TrustClaimsRecord>;
   save(
@@ -98,4 +106,5 @@ export type DataRepos = {
   payments: PaymentsRepo;
   customers: CustomersRepo;
   trustClaims: TrustClaimsRepo;
+  profiles: ProfilesRepo;
 };

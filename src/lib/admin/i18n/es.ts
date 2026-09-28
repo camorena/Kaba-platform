@@ -31,7 +31,7 @@ const es = {
     signedOut: "Sesión cerrada",
     authStubStrong: "Autenticación provisional — no apta para producción.",
     authWarning:
-      "Acceso por contraseña y cookie solo para el prototipo. Reemplácela con autenticación real (Auth.js/Clerk + roles) antes de manejar datos de clientes en producción.",
+      "Puerta por cookie de contraseña solo para el andamiaje. Defina AUTH_SECRET para credenciales contra profiles, o conserve el stub para demos — antes de datos reales de clientes en producción.",
     adminNav: "Navegación del administrador",
     jumpHint: "Presione __KBD__ para ir a cualquier sección.",
     creditPrefix: "Sitio elaborado por"
@@ -171,9 +171,13 @@ const es = {
         "La galería aún depende de imágenes de marketing. Proyectos debe mostrar trabajos construidos por Kaba: agregue fotos reales del sitio antes de atribuir autoría.",
       blockerAuth: "Autenticación real",
       blockerAuthStub:
-        "La puerta provisional ADMIN_PASSWORD está configurada, pero no es autenticación multiusuario. Reemplácela con Auth.js/Clerk (o equivalente) + roles antes de datos reales de clientes — vea Configuración → Seguridad y src/lib/admin/dal.ts.",
+        "La puerta provisional ADMIN_PASSWORD está configurada, pero no es autenticación multiusuario. Defina AUTH_SECRET para credenciales contra profiles, o conserve el stub para demos — vea Configuración → Seguridad y src/lib/admin/dal.ts.",
+      blockerAuthCredentials:
+        "El modo de credenciales está activo (AUTH_SECRET + profiles.role). Aún debe añadir MFA, límites de tasa y secretos de producción antes de PII real — vea Configuración → Seguridad.",
+      blockerAuthCredentialsMissing:
+        "Falta AUTH_SECRET o el secreto no está definido. Configure AUTH_SECRET y siembre un perfil owner.",
       blockerAuthMissing:
-        "ADMIN_PASSWORD no está configurada. Defínala en local y en Vercel; luego reemplace la puerta provisional antes de producción.",
+        "ADMIN_PASSWORD no está configurada. Defínala en local y en Vercel, o configure AUTH_SECRET para el modo de credenciales.",
       blockerDb: "Base de datos durable",
       blockerDbDetail:
         "Cotizaciones, facturas y pagos están en memoria. Los arranques en frío reinician la lista. Persista antes de confiar en leads de producción (persistir y luego notificar).",
@@ -290,27 +294,51 @@ const es = {
       themeDark: "Oscuro",
       securityTitle: "Acceso y autenticación",
       securityBadge: "Puerta provisional",
+      securityBadgeCredentials: "Credenciales",
       authTitle: "Autenticación",
       authBody:
         "El acceso usa una contraseña compartida en {passwordEnv}. Un inicio de sesión exitoso establece una cookie httpOnly ({cookie}) por aproximadamente 12 horas. Esto no es autenticación multiusuario, MFA, endurecimiento CSRF, límite de tasa ni registro de auditoría.",
-      authStatus: "Estado de la contraseña",
+      authBodyCredentials:
+        "Modo en vivo: credenciales contra la tabla {profiles}. Las sesiones se firman con HMAC mediante {secretEnv} (cookie {cookie}, ~12 horas). El rol proviene de profiles.role en cada solicitud — no de una afirmación falsificada del cliente. Aún no hay MFA, límite de tasa ni registro de auditoría completo.",
+      authStatus: "Estado de autenticación",
+      authModeLabel: "Modo en vivo",
+      authModeStubHint: "Predeterminado — stub con cookie ADMIN_PASSWORD (sin AUTH_SECRET).",
+      authModeCredentialsHint: "AUTH_SECRET está definido — correo/contraseña contra profiles.",
       passwordConfigured: "Configurada",
       passwordMissing: "Ausente",
+      credentialsConfigured: "AUTH_SECRET definido",
+      credentialsMissing: "Falta AUTH_SECRET",
+      authSessionLabel: "Esta sesión",
+      authSessionValue: "Rol {role} · {stub}",
+      authSessionStub: "owner provisional",
+      authSessionLive: "desde profiles",
+      authFallbackLabel: "Contraseña provisional",
+      authFallbackNote: "ADMIN_PASSWORD permanece en el entorno pero no se usa mientras AUTH_SECRET habilita el modo de credenciales. Quite AUTH_SECRET para volver al stub.",
       authLocalLabel: "Local",
       authProdLabel: "Producción",
       authRoadmapLabel: "Hoja de ruta",
       authLocal: "Desarrollo local — configure la variable en {envFile}.",
+      authLocalCredentials: "Local — defina {secretEnv} en {envFile}, migre/siembre profiles e inicie sesión con owner@kabafence.example.",
       authProd:
         "Producción — configure la misma variable en el entorno del proyecto de Vercel.",
+      authProdCredentials: "Producción — defina AUTH_SECRET (y DATABASE_URL si usa profiles en Postgres) en el entorno del alojamiento. Prefiera un secreto largo y aleatorio.",
       authReplace:
-        "Reemplácela con Auth.js, Clerk o equivalente — más roles desde profiles — antes de manejar datos reales de clientes. Contrato de sesión: getCurrentAdmin() → SessionAdmin (stub: true, rol owner).",
+        "Active el modo de credenciales con AUTH_SECRET (profiles.role) o conserve el stub. Opcional después: Auth.js para OAuth. Contrato de sesión: getCurrentAdmin() → SessionAdmin.",
+      authReplaceCredentials:
+        "El modo de credenciales está activo. Opcional después: Auth.js para proveedores OAuth — conserve getCurrentAdmin() como resolver. Aún debe añadir MFA / límites de tasa antes de exposición pública.",
       authRotate:
         "La contraseña nunca se muestra ni se edita aquí. Rótela en el entorno del alojamiento y luego vuelva a desplegar o reiniciar.",
+      authRotateCredentials:
+        "Rote AUTH_SECRET y las contraseñas de profiles en el alojamiento / base de datos — nunca en esta interfaz. Vuelva a desplegar o reinicie tras rotar el secreto (las sesiones existentes quedan invalidadas).",
       rolesTitle: "Hoja de ruta de roles",
       rolesBody:
-        "Los rangos planificados (owner › editor › viewer) viven en {dal}. Toda Server Action debe comenzar con requireRole; las páginas usan requirePageRole. Aún no hay cuentas multiusuario simuladas: el stub siempre se resuelve como owner.",
+        "Los rangos (owner › editor › viewer) viven en {dal}. Toda Server Action debe comenzar con requireRole; las páginas usan requirePageRole. El modo stub siempre se resuelve como owner.",
+      rolesBodyCredentials:
+        "Los rangos (owner › editor › viewer) viven en {dal}. Las sesiones de credenciales cargan el rol desde profiles en cada solicitud. Las mutaciones deben llamar requireRole; las páginas usan requirePageRole.",
       rolesStubNote:
-        "Hoy, cada inicio de sesión exitoso con ADMIN_PASSWORD se trata como owner. Editor y viewer aparecen aquí para que la interfaz de Seguridad coincida con el contrato del DAL antes de la autenticación real.",
+        "Hoy, cada inicio de sesión exitoso con ADMIN_PASSWORD se trata como owner. Editor y viewer aparecen aquí para que la interfaz de Seguridad coincida con el DAL — active AUTH_SECRET + profiles para roles reales.",
+      rolesCredentialsNote:
+        "El rol de esta sesión proviene de la fila en profiles. La semilla incluye un owner; agregue filas editor/viewer en Postgres (o memoria) según necesite. No hay cuentas simuladas más allá del owner de demostración.",
       rolesDocLabel: "ADMIN_ROLES_DOC",
       rolesDocHint:
         "Opcional: defina {env} en el entorno para mostrar una nota operativa aquí (solo documentación — no otorga un rol).",
@@ -365,7 +393,8 @@ const es = {
       craftShortcuts: "Hoja de atajos",
       craftCharts: "Los gráficos son SVG y CSS puros — sin Chart.js ni analítica de pago",
       craftLazy: "La paleta y los atajos se cargan con importación dinámica",
-      trustBadge: "Provisional local",
+      trustBadge: "Respaldo local",
+      trustBadgeServer: "Servidor",
       trustTitle: "Acerca de su negocio",
       trustBody:
         "Estas opciones se mostrarán como insignias de confianza cuando un almacén durable alimente el sitio público. Permanecen desactivadas aquí hasta que usted las confirme: no afirmaremos algo sobre el negocio que usted no nos haya dicho.",
@@ -377,13 +406,17 @@ const es = {
         "De propiedad y operación en el área de Raleigh / Angier, no una sucursal ni una franquicia.",
       trustPublicNoteLabel: "Sitio público",
       trustPublicNote:
-        "La barra de confianza del marketing en vivo aún proviene de site.ts. Estos interruptores se guardan en localStorage (kaba-admin-trust-claims-v1) con una forma de API lista para una fila de base de datos: getTrustClaimsForPublic() es el punto de intercambio.",
+        "La barra de confianza del marketing en vivo aún proviene de site.ts hasta que conecte las insignias a getTrustClaimsForPublic(). Los cambios se guardan en el adaptador del servidor (memory o site_settings de Postgres); localStorage solo es respaldo si la API no está disponible.",
       trustSave: "Guardar afirmaciones",
       trustSaving: "Guardando…",
       trustSavedTitle: "Afirmaciones guardadas",
-      trustSavedDesc: "Almacenadas en este dispositivo hasta que una base de datos reemplace localStorage.",
+      trustSavedDesc: "Almacenado en este dispositivo hasta que una base de datos reemplace localStorage.",
+      trustSavedDescServer: "Guardado en el servidor ({adapter}). Lector público: getTrustClaimsForPublic().",
+      trustSavedDescLocal: "Falló el guardado en el servidor — solo en este dispositivo (respaldo localStorage).",
       trustSavedInline: "Guardado en este dispositivo",
-      trustStorageHint: "Se guarda solo en localStorage de este navegador."
+      trustSavedInlineServer: "Guardado en el servidor",
+      trustStorageHint: "Se guarda solo en localStorage de este navegador.",
+      trustStorageHintServer: "Se guarda vía /api/admin/trust-claims en el adaptador de datos activo."
     }
   },
   login: {
@@ -399,11 +432,15 @@ const es = {
     h3: "Diseño de agencia",
     h3body: "Oro · carbón · crema, Playfair/Inter, claro/oscuro, paleta ⌘K.",
     authStrong: "Autenticación provisional — no apta para producción.",
+    authStrongCredentials: "Modo de credenciales — profiles.role.",
     authBody:
       "Solo cookie de contraseña compartida. Reemplácela antes de manejar datos reales de clientes.",
+    authBodyCredentials:
+      "Correo y contraseña contra perfiles del personal. El rol se carga desde la base de datos en cada solicitud.",
     brandShort: "Kaba Fence",
     signInTitle: "Acceso de administrador",
     signInMobileSub: "Base de cotizaciones, facturas y pagos.",
+    emailLabel: "Correo electrónico",
     signInDesktopSub: "Ingrese la contraseña provisional compartida para continuar.",
     backSite: "← Volver al sitio público",
     passwordLabel: "Contraseña de administrador",
@@ -413,9 +450,14 @@ const es = {
     signingIn: "Iniciando sesión…",
     stubNote:
       "Solo autenticación provisional — la sesión por cookie dura ~12 horas. No es adecuada como única protección de datos personales en producción.",
+    credentialsNote:
+      "Sesión de credenciales (~12 horas). Owner de demostración: owner@kabafence.example / change-me-owner. Rótelos antes de producción.",
     notConfiguredTitle: "Contraseña de administrador no configurada",
     notConfiguredBody:
       "Configure {passwordEnv} en {envFile} (o en el entorno del alojamiento) y reinicie el servidor. Esta puerta es temporal: reemplácela con autenticación real antes de cualquier uso en producción.",
+    notConfiguredCredentialsTitle: "Modo de credenciales no listo",
+    notConfiguredCredentialsBody:
+      "Defina {secretEnv} en {envFile} (o en el entorno del alojamiento) y reinicie. Siembre un perfil owner (npm run db:seed) o use el owner de demostración en memoria.",
     loginFailed: "No se pudo iniciar sesión.",
     networkError: "Error de red. Inténtelo de nuevo."
   },

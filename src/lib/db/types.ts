@@ -102,6 +102,20 @@ export type TrustClaimsRecord = {
   updatedAt: string | null;
 };
 
+/** Staff profile — role is authoritative (credentials / future Auth.js). */
+export type ProfileRecord = {
+  id: string;
+  email: string;
+  fullName: string;
+  role: "owner" | "editor" | "viewer";
+  isActive: boolean;
+  /** scrypt encoding; empty string = cannot sign in via credentials. */
+  passwordHash: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+
 export type NewQuoteInput = Omit<
   QuoteRecord,
   | "id"

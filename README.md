@@ -52,7 +52,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 
 | Route | Purpose |
 | ----- | ------- |
-| `/admin/login` | Password stub (`ADMIN_PASSWORD`) |
+| `/admin/login` | Stub (`ADMIN_PASSWORD`) or credentials (`AUTH_SECRET` + profiles) |
 | `/admin` | Dashboard — quote / invoice / payment stats |
 | `/admin/quotes` | Search, status filters, inline status changes |
 | `/admin/quotes/[id]` | Detail, notes, status UX, create-invoice stub |
@@ -60,7 +60,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 | `/admin/invoices/[id]` | Detail, line items, balance, status |
 | `/admin/payments` | List + record-payment stub (no Stripe) |
 | `/admin/customers` | Derived from quote contacts |
-| `/admin/settings` | Auth / env / Stripe docs — honest, not fake security |
+| `/admin/settings` | Live auth mode, trust claims (server save), Stripe docs |
 
 ### How data flows today
 
@@ -69,15 +69,24 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-Schema: `db/migrations/0001_ops_foundation.sql`. Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v3.md`. **Stripe is not connected** — see `/admin/settings`.
+Schema: `db/migrations/0001_ops_foundation.sql`. Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v4.md`. **Stripe is not connected** — see `/admin/settings`.
 
-### Auth warning
+### Auth (dual mode)
 
-`ADMIN_PASSWORD` + httpOnly cookie is a **documented stub**. It is **not** real multi-user auth, MFA, CSRF hardening, or audit logging. Replace with Auth.js/Clerk (or similar) + roles before handling live customer PII. If `ADMIN_PASSWORD` is unset, login is disabled and shows a setup notice.
+| Mode | Env | Sign-in |
+|------|-----|---------|
+| **stub** (default) | `ADMIN_PASSWORD` | Shared password cookie |
+| **credentials** | `AUTH_SECRET` set | Email/password vs `profiles.role` |
+
+Stub is **not** production auth. Credentials mode loads role from `profiles` on every request (HMAC session). See `preview/REUSE_PORT_v4.md`.
 
 ```bash
-# .env.local
+# .env.local — stub (default)
 ADMIN_PASSWORD=choose-a-long-secret
+
+# Optional — credentials mode (demo owner after seed / memory):
+# AUTH_SECRET=$(openssl rand -base64 32)
+# owner@kabafence.example / change-me-owner
 ```
 
 `robots.txt` disallows `/admin` and `/api/`. Admin metadata is `noindex`.

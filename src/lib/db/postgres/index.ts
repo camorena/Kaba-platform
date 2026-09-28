@@ -5,6 +5,7 @@ import { createPostgresInvoicesRepo } from "@/lib/db/postgres/invoices";
 import { createPostgresPaymentsRepo } from "@/lib/db/postgres/payments";
 import { createPostgresQuotesRepo } from "@/lib/db/postgres/quotes";
 import { createPostgresTrustClaimsRepo } from "@/lib/db/postgres/trust-claims";
+import { createPostgresProfilesRepo } from "@/lib/db/postgres/profiles";
 import type { DataRepos } from "@/lib/db/repos/types";
 
 /**
@@ -22,6 +23,7 @@ export function createPostgresRepos(): DataRepos {
     payments: createPostgresPaymentsRepo(),
     customers: createPostgresCustomersRepo(),
     trustClaims: createPostgresTrustClaimsRepo(),
+    profiles: createPostgresProfilesRepo(),
   };
 }
 

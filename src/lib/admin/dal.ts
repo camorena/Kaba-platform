@@ -1,52 +1,39 @@
 /**
- * Data Access Layer — authorization pattern toward requireRole.
+ * Data Access Layer — authorization toward requireRole + profiles.role.
  *
- * Next.js DAL guidance: server-only checks, minimal DTOs, every Server Action
- * starts with a role gate. Prior Kaba Fence (camorena/kaba-fence) used
- * getUser()+profiles.role; this module documents the same shape without ripping
- * out the ADMIN_PASSWORD cookie stub.
+ * Dual-mode sessions (see auth.ts):
+ *   stub         — ADMIN_PASSWORD cookie → synthetic owner (stub: true)
+ *   credentials  — AUTH_SECRET signed cookie → load profiles row (stub: false)
  *
- * Session contract (stub):
- *   - Cookie `kaba_admin_session=stub-ok` after ADMIN_PASSWORD verify (auth.ts).
- *   - getCurrentAdmin() → SessionAdmin | null (no tokens, no raw cookie).
- *   - SessionAdmin.stub === true while the password gate is the only auth.
- *   - Effective role is always "owner" (single shared gate).
- *   - requireAdminSession() redirects unauthenticated page renders.
- *   - requireRole() throws Forbidden (action-safe); requirePageRole() redirects.
+ * Role is never trusted from a client-forged claim alone: credentials mode
+ * re-reads profiles.role (and is_active) on every getCurrentAdmin().
  *
- * Roles roadmap (owner > editor > viewer) — documented in Settings → Security.
- * Optional env ADMIN_ROLES_DOC may hold a short ops note (shown in Settings only).
- * No fake multi-user accounts yet.
- *
- * Later (when replacing the stub):
- *   - Resolve user via real auth (Auth.js / Clerk / Supabase getUser — not
- *     getSession).
- *   - Load role from DB profiles (never a forged JWT claim alone).
- *   - Keep RANK + requireRole / requirePageRole split (throw vs redirect).
- *
- * Do not treat a successful stub login as production security.
+ * Auth.js is optional later (OAuth); this DAL shape stays the same.
  */
 
 import { redirect } from "next/navigation";
 import {
   getAdminPassword,
-  isAdminAuthenticated,
+  getAuthMode,
+  isAuthConfigured,
+  isCredentialsMode,
+  readSessionCookie,
+  type AuthMode,
 } from "@/lib/admin/auth";
+import { getRepos } from "@/lib/db/adapter";
 
 export type AppRole = "owner" | "editor" | "viewer";
 
-/** Minimal DTO a page may see — no tokens, no raw cookie values. */
+/** Minimal DTO a page may see — no tokens, no raw cookie values, no passwordHash. */
 export type SessionAdmin = {
   readonly id: string;
   readonly email: string;
   readonly fullName: string;
   readonly role: AppRole;
-  /**
-   * True while ADMIN_PASSWORD cookie stub is the only gate.
-   * When real auth lands, drop `stub` or set stub: false and widen the union.
-   */
-  readonly stub: true;
-  /** ISO time the stub session was resolved (request-scoped, not cookie expiry). */
+  /** True while ADMIN_PASSWORD stub is the active session. */
+  readonly stub: boolean;
+  readonly authMode: AuthMode;
+  /** ISO time the session was resolved (request-scoped). */
   readonly resolvedAt: string;
 };
 
@@ -57,7 +44,6 @@ const RANK: Readonly<Record<AppRole, number>> = {
   owner: 2,
 };
 
-/** Human labels for Settings / docs (not i18n — UI uses dictionary keys). */
 export const APP_ROLE_DESCRIPTIONS: Readonly<
   Record<AppRole, { en: string; es: string }>
 > = {
@@ -84,20 +70,54 @@ export function getAdminRolesDoc(): string | null {
   return raw ? raw : null;
 }
 
+function isAppRole(value: string): value is AppRole {
+  return value === "owner" || value === "editor" || value === "viewer";
+}
+
 /**
  * Resolve the current admin, or null.
- * Stub: authenticated cookie ⇒ synthetic owner; else null.
+ * Stub mode: stub cookie ⇒ synthetic owner.
+ * Credentials mode: signed cookie ⇒ active profile with role from DB.
  */
 export async function getCurrentAdmin(): Promise<SessionAdmin | null> {
-  if (!(await isAdminAuthenticated())) return null;
-  return {
-    id: "stub-admin",
-    email: "ops@kabafence.example",
-    fullName: "Ops Lead",
-    role: "owner",
-    stub: true,
-    resolvedAt: new Date().toISOString(),
-  };
+  const mode = getAuthMode();
+  const session = await readSessionCookie();
+  const resolvedAt = new Date().toISOString();
+
+  if (mode === "stub") {
+    if (!getAdminPassword()) return null;
+    if (session.kind !== "stub") return null;
+    return {
+      id: "stub-admin",
+      email: "ops@kabafence.example",
+      fullName: "Ops Lead",
+      role: "owner",
+      stub: true,
+      authMode: "stub",
+      resolvedAt,
+    };
+  }
+
+  // credentials mode — ignore stub-ok cookie
+  if (session.kind !== "credentials" || !session.credentials) return null;
+
+  try {
+    const profile = await getRepos().profiles.getById(session.credentials.sub);
+    if (!profile || !profile.isActive) return null;
+    if (!isAppRole(profile.role)) return null;
+    return {
+      id: profile.id,
+      email: profile.email,
+      fullName: profile.fullName || profile.email,
+      role: profile.role,
+      stub: false,
+      authMode: "credentials",
+      resolvedAt,
+    };
+  } catch (err) {
+    console.error("[dal] failed to load profile for session:", err);
+    return null;
+  }
 }
 
 /** Require a signed-in admin for page renders. Redirects to login if not. */
@@ -112,7 +132,10 @@ export async function requireAdminSession(): Promise<SessionAdmin> {
  * Throws rather than redirects so a direct POST fails closed.
  */
 export async function requireRole(minimum: AppRole): Promise<SessionAdmin> {
-  const user = await requireAdminSession();
+  const user = await getCurrentAdmin();
+  if (user === null) {
+    throw new Error("Unauthorized: admin session required.");
+  }
   if (RANK[user.role] < RANK[minimum]) {
     throw new Error(`Forbidden: this action requires the ${minimum} role.`);
   }
@@ -136,13 +159,29 @@ export async function canView(): Promise<boolean> {
   return user !== null && RANK[user.role] >= RANK.viewer;
 }
 
-/** Password env configured? Useful for launch-blocker honesty. */
+/** Active mode has its required env? Useful for launch-blocker honesty. */
 export function isStubAuthConfigured(): boolean {
-  return Boolean(getAdminPassword());
+  return isAuthConfigured();
 }
 
 export function roleAtLeast(role: AppRole, minimum: AppRole): boolean {
   return RANK[role] >= RANK[minimum];
+}
+
+/** Live auth posture for Settings → Security. */
+export function getAuthPosture(): {
+  mode: AuthMode;
+  configured: boolean;
+  credentialsEnabled: boolean;
+  stubPasswordConfigured: boolean;
+} {
+  const mode = getAuthMode();
+  return {
+    mode,
+    configured: isAuthConfigured(),
+    credentialsEnabled: isCredentialsMode(),
+    stubPasswordConfigured: Boolean(getAdminPassword()),
+  };
 }
 
 export { RANK as APP_ROLE_RANK };

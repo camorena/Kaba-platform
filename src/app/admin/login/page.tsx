@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
 import LoginPageClient from "@/components/admin/LoginPageClient";
-import { getAdminPassword, isAdminAuthenticated } from "@/lib/admin/auth";
+import {
+  getAuthMode,
+  isAdminAuthenticated,
+  isAuthConfigured,
+} from "@/lib/admin/auth";
 
 export const metadata = {
   title: "Admin login",
@@ -11,5 +15,12 @@ export default async function AdminLoginPage() {
     redirect("/admin");
   }
 
-  return <LoginPageClient configured={Boolean(getAdminPassword())} />;
+  const authMode = getAuthMode();
+
+  return (
+    <LoginPageClient
+      configured={isAuthConfigured()}
+      authMode={authMode}
+    />
+  );
 }

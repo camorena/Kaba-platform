@@ -48,12 +48,22 @@ function withCode(text: string, tokens: string[]): ReactNode {
 
 export default function SettingsClient({
   configured,
+  authMode = "stub",
+  stubPasswordConfigured = false,
+  credentialsEnabled = false,
+  sessionRole = null,
+  sessionStub = true,
   rolesDoc = null,
   dataAdapter = "memory",
   databaseUrlConfigured = false,
   roles = ["owner", "editor", "viewer"],
 }: {
   configured: boolean;
+  authMode?: "stub" | "credentials";
+  stubPasswordConfigured?: boolean;
+  credentialsEnabled?: boolean;
+  sessionRole?: string | null;
+  sessionStub?: boolean;
   rolesDoc?: string | null;
   dataAdapter?: string;
   databaseUrlConfigured?: boolean;
@@ -131,8 +141,16 @@ export default function SettingsClient({
               <p className="admin-section-label">
                 {t("pages.settings.navSecurity")}
               </p>
-              <span className="admin-badge admin-badge-amber rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
-                {t("pages.settings.securityBadge")}
+              <span
+                className={`admin-badge rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em] ${
+                  authMode === "credentials"
+                    ? "admin-badge-emerald"
+                    : "admin-badge-amber"
+                }`}
+              >
+                {authMode === "credentials"
+                  ? t("pages.settings.securityBadgeCredentials")
+                  : t("pages.settings.securityBadge")}
               </span>
             </div>
             <h2 id="settings-security-title" className="admin-card-title mt-1">
@@ -142,16 +160,38 @@ export default function SettingsClient({
               {t("pages.settings.authTitle")}
             </p>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
-              {withCode(
-                t("pages.settings.authBody", {
-                  passwordEnv: "ADMIN_PASSWORD",
-                  cookie: "kaba_admin_session",
-                }),
-                ["ADMIN_PASSWORD", "kaba_admin_session"],
-              )}
+              {authMode === "credentials"
+                ? withCode(
+                    t("pages.settings.authBodyCredentials", {
+                      secretEnv: "AUTH_SECRET",
+                      cookie: "kaba_admin_session",
+                      profiles: "profiles",
+                    }),
+                    ["AUTH_SECRET", "kaba_admin_session", "profiles"],
+                  )
+                : withCode(
+                    t("pages.settings.authBody", {
+                      passwordEnv: "ADMIN_PASSWORD",
+                      cookie: "kaba_admin_session",
+                    }),
+                    ["ADMIN_PASSWORD", "kaba_admin_session"],
+                  )}
             </p>
 
             <dl className="admin-settings-dl mt-4">
+              <div className="admin-settings-dl-row">
+                <dt>{t("pages.settings.authModeLabel")}</dt>
+                <dd>
+                  <span className="font-mono text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-bronze">
+                    {authMode}
+                  </span>
+                  <span className="mt-1 block text-xs text-muted">
+                    {authMode === "credentials"
+                      ? t("pages.settings.authModeCredentialsHint")
+                      : t("pages.settings.authModeStubHint")}
+                  </span>
+                </dd>
+              </div>
               <div className="admin-settings-dl-row">
                 <dt>{t("pages.settings.authStatus")}</dt>
                 <dd>
@@ -169,27 +209,66 @@ export default function SettingsClient({
                       aria-hidden
                     />
                     {configured
-                      ? t("pages.settings.passwordConfigured")
-                      : t("pages.settings.passwordMissing")}
+                      ? authMode === "credentials"
+                        ? t("pages.settings.credentialsConfigured")
+                        : t("pages.settings.passwordConfigured")
+                      : authMode === "credentials"
+                        ? t("pages.settings.credentialsMissing")
+                        : t("pages.settings.passwordMissing")}
                   </span>
                 </dd>
               </div>
+              {sessionRole ? (
+                <div className="admin-settings-dl-row">
+                  <dt>{t("pages.settings.authSessionLabel")}</dt>
+                  <dd>
+                    {t("pages.settings.authSessionValue", {
+                      role: sessionRole,
+                      stub: sessionStub
+                        ? t("pages.settings.authSessionStub")
+                        : t("pages.settings.authSessionLive"),
+                    })}
+                  </dd>
+                </div>
+              ) : null}
               <div className="admin-settings-dl-row">
                 <dt>{t("pages.settings.authLocalLabel")}</dt>
                 <dd>
-                  {withCode(t("pages.settings.authLocal", { envFile: ".env.local" }), [
-                    ".env.local",
-                  ])}
+                  {authMode === "credentials"
+                    ? withCode(
+                        t("pages.settings.authLocalCredentials", {
+                          envFile: ".env.local",
+                          secretEnv: "AUTH_SECRET",
+                        }),
+                        [".env.local", "AUTH_SECRET"],
+                      )
+                    : withCode(t("pages.settings.authLocal", { envFile: ".env.local" }), [
+                        ".env.local",
+                      ])}
                 </dd>
               </div>
               <div className="admin-settings-dl-row">
                 <dt>{t("pages.settings.authProdLabel")}</dt>
-                <dd>{t("pages.settings.authProd")}</dd>
+                <dd>
+                  {authMode === "credentials"
+                    ? t("pages.settings.authProdCredentials")
+                    : t("pages.settings.authProd")}
+                </dd>
               </div>
               <div className="admin-settings-dl-row">
                 <dt>{t("pages.settings.authRoadmapLabel")}</dt>
-                <dd>{t("pages.settings.authReplace")}</dd>
+                <dd>
+                  {authMode === "credentials"
+                    ? t("pages.settings.authReplaceCredentials")
+                    : t("pages.settings.authReplace")}
+                </dd>
               </div>
+              {credentialsEnabled && stubPasswordConfigured ? (
+                <div className="admin-settings-dl-row">
+                  <dt>{t("pages.settings.authFallbackLabel")}</dt>
+                  <dd>{t("pages.settings.authFallbackNote")}</dd>
+                </div>
+              ) : null}
             </dl>
 
             <aside className="admin-settings-callout mt-4" role="note">
@@ -197,7 +276,9 @@ export default function SettingsClient({
                 {t("pages.settings.securityBadge")}
               </p>
               <p className="mt-1 text-xs leading-relaxed text-amber-950/90 dark:text-amber-100/90">
-                {t("pages.settings.authRotate")}
+                {authMode === "credentials"
+                  ? t("pages.settings.authRotateCredentials")
+                  : t("pages.settings.authRotate")}
               </p>
             </aside>
 
@@ -207,7 +288,12 @@ export default function SettingsClient({
               </p>
               <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
                 {withCode(
-                  t("pages.settings.rolesBody", { dal: "src/lib/admin/dal.ts" }),
+                  t(
+                    authMode === "credentials"
+                      ? "pages.settings.rolesBodyCredentials"
+                      : "pages.settings.rolesBody",
+                    { dal: "src/lib/admin/dal.ts" },
+                  ),
                   ["src/lib/admin/dal.ts"],
                 )}
               </p>
@@ -227,7 +313,9 @@ export default function SettingsClient({
                 ))}
               </ul>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                {t("pages.settings.rolesStubNote")}
+                {authMode === "credentials"
+                  ? t("pages.settings.rolesCredentialsNote")
+                  : t("pages.settings.rolesStubNote")}
               </p>
               {rolesDoc ? (
                 <aside className="mt-3 rounded-lg border border-dashed border-bronze/40 bg-bronze/5 px-3 py-2" role="note">

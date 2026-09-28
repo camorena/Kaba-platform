@@ -12,6 +12,7 @@ import {
   DEFAULT_TRUST_CLAIMS,
   memoryTrustClaimsRepo,
 } from "@/lib/db/memory/trust-claims";
+import { memoryProfilesRepo } from "@/lib/db/memory/profiles";
 
 export function createMemoryRepos(): DataRepos {
   return {
@@ -21,6 +22,7 @@ export function createMemoryRepos(): DataRepos {
     payments: memoryPaymentsRepo,
     customers: memoryCustomersRepo,
     trustClaims: memoryTrustClaimsRepo,
+    profiles: memoryProfilesRepo,
   };
 }
 
@@ -30,6 +32,7 @@ export {
   memoryPaymentsRepo,
   memoryQuotesRepo,
   memoryTrustClaimsRepo,
+  memoryProfilesRepo,
   QUIET_DAYS_THRESHOLD,
   QUIET_QUOTE_STATUSES,
   isQuietQuote,

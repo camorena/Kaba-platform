@@ -10,6 +10,8 @@ import {
 } from "@/lib/admin/trust-claims";
 import { useEffect, useState } from "react";
 
+type StorageKind = "server" | "local" | "unknown";
+
 export default function SettingsTrustClaims() {
   const toast = useToast();
   const { t } = useAdminI18n();
@@ -17,29 +19,111 @@ export default function SettingsTrustClaims() {
   const [hydrated, setHydrated] = useState(false);
   const [busy, setBusy] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [storage, setStorage] = useState<StorageKind>("unknown");
+  const [adapter, setAdapter] = useState<string | null>(null);
 
   useEffect(() => {
-    setClaims(readTrustClaimsClient());
-    setHydrated(true);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/trust-claims", {
+          method: "GET",
+          credentials: "same-origin",
+        });
+        if (res.ok) {
+          const data = (await res.json()) as {
+            claims?: TrustClaims;
+            adapter?: string;
+            storage?: string;
+          };
+          if (!cancelled && data.claims) {
+            setClaims(data.claims);
+            setSavedAt(data.claims.updatedAt);
+            setStorage("server");
+            setAdapter(data.adapter ?? null);
+            setHydrated(true);
+            return;
+          }
+        }
+      } catch {
+        /* fall through to localStorage */
+      }
+      if (!cancelled) {
+        const local = readTrustClaimsClient();
+        setClaims(local);
+        setSavedAt(local.updatedAt);
+        setStorage("local");
+        setHydrated(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    await new Promise((r) => setTimeout(r, 200));
-    const next = writeTrustClaimsClient({
+    const patch = {
       claimFreeEstimates: claims.claimFreeEstimates,
       claimLocallyOwned: claims.claimLocallyOwned,
-    });
+    };
+
+    try {
+      const res = await fetch("/api/admin/trust-claims", {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          claims?: TrustClaims;
+          adapter?: string;
+        };
+        const next = data.claims ?? {
+          ...patch,
+          updatedAt: new Date().toISOString(),
+        };
+        setClaims(next);
+        setSavedAt(next.updatedAt);
+        setStorage("server");
+        setAdapter(data.adapter ?? null);
+        // Keep local mirror in sync for offline fallback
+        writeTrustClaimsClient(patch);
+        setBusy(false);
+        toast.push({
+          title: t("pages.settings.trustSavedTitle"),
+          description: t("pages.settings.trustSavedDescServer", {
+            adapter: data.adapter ?? "server",
+          }),
+          tone: "success",
+        });
+        return;
+      }
+    } catch {
+      /* fall through */
+    }
+
+    // Fallback: localStorage when server save fails
+    const next = writeTrustClaimsClient(patch);
     setClaims(next);
     setSavedAt(next.updatedAt);
+    setStorage("local");
     setBusy(false);
     toast.push({
       title: t("pages.settings.trustSavedTitle"),
-      description: t("pages.settings.trustSavedDesc"),
-      tone: "success",
+      description: t("pages.settings.trustSavedDescLocal"),
+      tone: "info",
     });
   }
+
+  const badgeKey =
+    storage === "server"
+      ? "pages.settings.trustBadgeServer"
+      : storage === "local"
+        ? "pages.settings.trustBadge"
+        : "pages.settings.trustBadge";
 
   return (
     <form
@@ -52,8 +136,13 @@ export default function SettingsTrustClaims() {
       <div className="flex flex-wrap items-center gap-2">
         <p className="admin-section-label">{t("pages.settings.navTrust")}</p>
         <span className="admin-badge admin-badge-amber rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
-          {t("pages.settings.trustBadge")}
+          {t(badgeKey)}
         </span>
+        {adapter ? (
+          <span className="admin-badge admin-badge-violet rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+            {adapter}
+          </span>
+        ) : null}
       </div>
       <h2 id="settings-trust-title" className="admin-card-title mt-1">
         {t("pages.settings.trustTitle")}
@@ -124,11 +213,15 @@ export default function SettingsTrustClaims() {
         {savedAt || claims.updatedAt ? (
           <p className="admin-settings-saved" role="status">
             <span className="admin-settings-saved-dot" aria-hidden />
-            {t("pages.settings.trustSavedInline")}
+            {storage === "server"
+              ? t("pages.settings.trustSavedInlineServer")
+              : t("pages.settings.trustSavedInline")}
           </p>
         ) : (
           <p className="text-[0.6875rem] leading-relaxed text-muted">
-            {t("pages.settings.trustStorageHint")}
+            {storage === "server"
+              ? t("pages.settings.trustStorageHintServer")
+              : t("pages.settings.trustStorageHint")}
           </p>
         )}
       </div>

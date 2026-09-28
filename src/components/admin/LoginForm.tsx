@@ -4,13 +4,21 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
-export default function LoginForm({ configured }: { configured: boolean }) {
+export default function LoginForm({
+  configured,
+  authMode = "stub",
+}: {
+  configured: boolean;
+  authMode?: "stub" | "credentials";
+}) {
   const router = useRouter();
   const { t } = useAdminI18n();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const credentials = authMode === "credentials";
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -20,7 +28,9 @@ export default function LoginForm({ configured }: { configured: boolean }) {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify(
+          credentials ? { email, password } : { password },
+        ),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
@@ -37,30 +47,40 @@ export default function LoginForm({ configured }: { configured: boolean }) {
   }
 
   if (!configured) {
-    const body = t("login.notConfiguredBody", {
-      passwordEnv: "ADMIN_PASSWORD",
-      envFile: ".env.local",
-    });
+    const body = credentials
+      ? t("login.notConfiguredCredentialsBody", {
+          secretEnv: "AUTH_SECRET",
+          envFile: ".env.local",
+        })
+      : t("login.notConfiguredBody", {
+          passwordEnv: "ADMIN_PASSWORD",
+          envFile: ".env.local",
+        });
+    const codeToken = credentials ? "AUTH_SECRET" : "ADMIN_PASSWORD";
     return (
       <div className="rounded-xl border border-amber-700/25 bg-amber-50 p-5 text-sm text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
-        <p className="font-semibold">{t("login.notConfiguredTitle")}</p>
+        <p className="font-semibold">
+          {credentials
+            ? t("login.notConfiguredCredentialsTitle")
+            : t("login.notConfiguredTitle")}
+        </p>
         <p className="mt-2 leading-relaxed">
-          {body.includes("ADMIN_PASSWORD") ? (
+          {body.includes(codeToken) ? (
             <>
-              {body.split("ADMIN_PASSWORD")[0]}
+              {body.split(codeToken)[0]}
               <code className="rounded bg-black/5 px-1 dark:bg-white/10">
-                ADMIN_PASSWORD
+                {codeToken}
               </code>
-              {body.split("ADMIN_PASSWORD")[1]?.includes(".env.local") ? (
+              {body.split(codeToken)[1]?.includes(".env.local") ? (
                 <>
-                  {body.split("ADMIN_PASSWORD")[1].split(".env.local")[0]}
+                  {body.split(codeToken)[1].split(".env.local")[0]}
                   <code className="rounded bg-black/5 px-1 dark:bg-white/10">
                     .env.local
                   </code>
-                  {body.split("ADMIN_PASSWORD")[1].split(".env.local")[1]}
+                  {body.split(codeToken)[1].split(".env.local")[1]}
                 </>
               ) : (
-                body.split("ADMIN_PASSWORD")[1]
+                body.split(codeToken)[1]
               )}
             </>
           ) : (
@@ -71,8 +91,30 @@ export default function LoginForm({ configured }: { configured: boolean }) {
     );
   }
 
+  const canSubmit = credentials
+    ? Boolean(email.trim() && password)
+    : Boolean(password);
+
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      {credentials ? (
+        <div>
+          <label htmlFor="admin-email" className="block text-sm font-medium text-ink">
+            {t("login.emailLabel")}
+          </label>
+          <input
+            id="admin-email"
+            name="email"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="field-input mt-1.5"
+            required
+            autoFocus
+          />
+        </div>
+      ) : null}
       <div>
         <label htmlFor="admin-password" className="block text-sm font-medium text-ink">
           {t("login.passwordLabel")}
@@ -87,7 +129,7 @@ export default function LoginForm({ configured }: { configured: boolean }) {
             onChange={(e) => setPassword(e.target.value)}
             className="field-input !mt-0 pr-16"
             required
-            autoFocus
+            autoFocus={!credentials}
           />
           <button
             type="button"
@@ -109,7 +151,7 @@ export default function LoginForm({ configured }: { configured: boolean }) {
       )}
       <button
         type="submit"
-        disabled={pending || !password}
+        disabled={pending || !canSubmit}
         className="btn-primary admin-login-submit w-full disabled:opacity-60"
       >
         {pending ? (
@@ -122,7 +164,7 @@ export default function LoginForm({ configured }: { configured: boolean }) {
         )}
       </button>
       <p className="rounded-lg border border-ink/8 bg-ivory-muted/50 px-3 py-2 text-xs leading-relaxed text-muted dark:bg-ivory-muted/25">
-        {t("login.stubNote")}
+        {credentials ? t("login.credentialsNote") : t("login.stubNote")}
       </p>
     </form>
   );

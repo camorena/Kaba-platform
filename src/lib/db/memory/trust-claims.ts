@@ -1,7 +1,6 @@
 /**
  * Server-side trust claims memory store.
- * Settings UI may still write via localStorage until a save API exists;
- * getTrustClaimsForPublic() reads this adapter (defaults until DB/API).
+ * Written by PUT /api/admin/trust-claims; read by getTrustClaimsForPublic().
  */
 
 import type { TrustClaimsRepo } from "@/lib/db/repos/types";

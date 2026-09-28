@@ -9,8 +9,10 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 export default function LoginPageClient({
   configured,
+  authMode = "stub",
 }: {
   configured: boolean;
+  authMode?: "stub" | "credentials";
 }) {
   const { t } = useAdminI18n();
 
@@ -73,8 +75,14 @@ export default function LoginPageClient({
             role="status"
             className="mb-5 rounded-lg border border-amber-700/30 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-950 dark:border-amber-400/25 dark:bg-amber-950/40 dark:text-amber-100"
           >
-            <strong className="font-semibold">{t("login.authStrong")}</strong>{" "}
-            {t("login.authBody")}
+            <strong className="font-semibold">
+              {authMode === "credentials"
+                ? t("login.authStrongCredentials")
+                : t("login.authStrong")}
+            </strong>{" "}
+            {authMode === "credentials"
+              ? t("login.authBodyCredentials")
+              : t("login.authBody")}
           </div>
 
           <div className="mb-6 text-center lg:hidden">
@@ -102,7 +110,7 @@ export default function LoginPageClient({
           </div>
 
           <div className="admin-glass-panel admin-login-card p-5 sm:p-6">
-            <LoginForm configured={configured} />
+            <LoginForm configured={configured} authMode={authMode} />
           </div>
 
           <p className="mt-6 text-center text-xs text-muted">
