@@ -191,10 +191,10 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
       {quietQuotes.length > 0 && (
         <section
           id="gone-quiet"
-          className="overflow-hidden rounded-xl border border-amber-500/30 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]"
+          className="overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]"
           aria-labelledby="quotes-gone-quiet-heading"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/8 bg-gradient-to-r from-amber-500/15 to-transparent px-3 py-2 sm:px-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/8 px-3 py-2 sm:px-4">
             <div className="min-w-0">
               <h2 id="quotes-gone-quiet-heading" className="admin-section-label">
                 {t("quotes.goneQuiet")}
@@ -203,7 +203,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                 {t("quotes.goneQuietIntro", { days: QUIET_DAYS_THRESHOLD })}
               </p>
             </div>
-            <span className="rounded-full border border-amber-500/35 bg-amber-500/10 px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
+            <span className="admin-settings-chip admin-settings-chip-warn">
               {t(
                 quietQuotes.length === 1
                   ? "quotes.goneQuietCount"
@@ -222,7 +222,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                   <div className="min-w-0">
                     <span className="font-semibold text-ink">{q.name}</span>
                     <span className="text-muted"> · {q.serviceType}</span>
-                    <div className="text-[0.6875rem] text-amber-800 dark:text-amber-200/90">
+                    <div className="text-[0.6875rem] text-muted">
                       {t("quotes.quietForDays", { count: daysSince(q.updatedAt) })}
                       {" · "}
                       {q.address}
@@ -253,12 +253,12 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
             className="field-input admin-touch !mt-0 py-2.5 text-sm"
           />
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1">
           <button
             type="button"
             onClick={exportCsv}
             disabled={filtered.length === 0}
-            className="admin-chip admin-touch disabled:opacity-40"
+            className="admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium text-muted transition hover:bg-[var(--admin-panel)] hover:text-ink disabled:opacity-40"
             title={t("quotes.exportTitle")}
           >
             {t("common.exportCsv")}
@@ -266,7 +266,11 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
-            className={`admin-chip admin-touch ${statusFilter === "all" ? "admin-chip-active" : ""}`}
+            className={`admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
+              statusFilter === "all"
+                ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
+                : "text-muted hover:bg-[var(--admin-panel)] hover:text-ink"
+            }`}
           >
             {t("quotes.allCount", { count: quotes.length })}
           </button>
@@ -277,7 +281,11 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                 key={s}
                 type="button"
                 onClick={() => setStatusFilter(s)}
-                className={`admin-chip admin-touch ${statusFilter === s ? "admin-chip-active" : ""}`}
+                className={`admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
+                  statusFilter === s
+                    ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
+                    : "text-muted hover:bg-[var(--admin-panel)] hover:text-ink"
+                }`}
               >
                 {quoteStatusLabel(locale, s)} ({count})
               </button>
@@ -415,7 +423,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
           </ul>
 
           {/* Desktop table */}
-          <div className="admin-table-wrap admin-gold-rail hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] md:block">
+          <div className="admin-table-wrap hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] md:block">
             <div className="overflow-x-auto">
               <table className="admin-table min-w-full text-left text-sm">
                 <thead>

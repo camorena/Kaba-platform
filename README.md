@@ -73,7 +73,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-Schema: `db/migrations/0001_ops_foundation.sql` (+ `0003_stripe`, `0004_pay_token`). Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v6.md`. Stripe is optional — without keys the UI says **not connected**; with test keys admin or the customer pay link can open Checkout for a deposit; webhook records the payment.
+Schema: `db/migrations/0001_ops_foundation.sql` (+ `0003_stripe`, `0004_pay_token`). Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v6.md` and production flip `preview/REUSE_PORT_v17.md`. Stripe is optional — without keys the UI says **not connected**; with test keys admin or the customer pay link can open Checkout for a deposit; webhook records the payment.
 
 ### Auth (dual mode)
 
@@ -114,7 +114,7 @@ Business details live in `src/lib/site.ts`:
 | `STRIPE_WEBHOOK_SECRET` | No | Verify `POST /api/stripe/webhook` |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No | Documented for future Elements |
 
-Without keys the build and Payments UI stay honest (“not connected”); `/pay/[token]` shows an offline message instead of a fake card form. No live charges unless you set live keys. See `preview/REUSE_PORT_v6.md`.
+Without keys the build and Payments UI stay honest (“not connected”); `/pay/[token]` shows an offline message instead of a fake card form. No live charges unless you set live keys. See `preview/REUSE_PORT_v6.md` and production flip `preview/REUSE_PORT_v17.md`.
 
 ## Analytics (optional)
 

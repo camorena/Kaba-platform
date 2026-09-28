@@ -182,13 +182,13 @@ export default function QuoteDetailClient({
       </div>
 
       {!relatedInvoiceId && (
-        <div className="admin-flow-hint rounded-xl border border-bronze/20 bg-bronze/5 px-3 py-2.5 text-xs leading-relaxed text-muted print:hidden sm:px-4">
+        <div className="admin-flow-hint px-0.5 text-xs leading-relaxed text-muted print:hidden">
           <strong className="font-semibold text-ink">{t("detail.nextStepTitle")}</strong>{" "}
           {t("detail.nextStepBody")}
         </div>
       )}
 
-      <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5 print:hidden">
+      <section className="admin-glass-panel px-4 py-3 sm:px-5 print:hidden">
         <h2 className="admin-card-title mb-3">{t("detail.progress")}</h2>
         <QuoteStatusTimeline status={status} />
       </section>

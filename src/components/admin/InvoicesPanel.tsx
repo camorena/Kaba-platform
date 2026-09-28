@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
-import { invoiceStatusLabel, quoteStatusLabel } from "@/lib/admin/i18n";
+import { invoiceStatusLabel } from "@/lib/admin/i18n";
 
 export default function InvoicesPanel({
   invoices,
@@ -109,16 +109,15 @@ export default function InvoicesPanel({
 
   return (
     <div className="space-y-4">
-      <div className="admin-card">
-        <h2 className="admin-card-title">Create from quote (demo)</h2>
-        <p className="mt-1 text-xs text-muted">
-          Generates a draft invoice with a <strong>synthetic demo amount</strong>.
-          Not a real bid. No PDF/email yet.
+      <div className="admin-glass-panel p-4 sm:p-5">
+        <h2 className="admin-card-title">{t("invoices.createFrom")}</h2>
+        <p className="mt-1.5 text-xs leading-relaxed text-muted">
+          {t("invoices.createFromHint")}
         </p>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="min-w-0 flex-1">
             <label htmlFor="from-quote" className="text-xs font-semibold text-muted">
-              Quote
+              {t("invoices.quoteLabel")}
             </label>
             <select
               id="from-quote"
@@ -153,7 +152,7 @@ export default function InvoicesPanel({
       <div className="admin-toolbar flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative min-w-0 flex-1 sm:max-w-xs">
           <label htmlFor="inv-search" className="sr-only">
-            Search invoices
+            {t("invoices.searchLabel")}
           </label>
           <input
             id="inv-search"
@@ -164,12 +163,12 @@ export default function InvoicesPanel({
             className="field-input !mt-0 py-2 text-sm"
           />
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1">
           <button
             type="button"
             onClick={exportCsv}
             disabled={filtered.length === 0}
-            className="admin-chip disabled:opacity-40"
+            className="admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium text-muted transition hover:bg-[var(--admin-panel)] hover:text-ink disabled:opacity-40"
             title={t("invoices.exportTitle")}
           >
             {t("common.exportCsv")}
@@ -177,9 +176,13 @@ export default function InvoicesPanel({
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
-            className={`admin-chip ${statusFilter === "all" ? "admin-chip-active" : ""}`}
+            className={`admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
+              statusFilter === "all"
+                ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
+                : "text-muted hover:bg-[var(--admin-panel)] hover:text-ink"
+            }`}
           >
-            All ({invoices.length})
+            {t("invoices.allCount", { count: invoices.length })}
           </button>
           {INVOICE_STATUSES.map((s) => {
             const count = invoices.filter((i) => i.status === s).length;
@@ -188,9 +191,13 @@ export default function InvoicesPanel({
                 key={s}
                 type="button"
                 onClick={() => setStatusFilter(s)}
-                className={`admin-chip capitalize ${statusFilter === s ? "admin-chip-active" : ""}`}
+                className={`admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
+                  statusFilter === s
+                    ? "bg-bronze/12 text-bronze-dark dark:text-bronze-light"
+                    : "text-muted hover:bg-[var(--admin-panel)] hover:text-ink"
+                }`}
               >
-                {s} ({count})
+                {invoiceStatusLabel(locale, s)} ({count})
               </button>
             );
           })}
@@ -229,7 +236,7 @@ export default function InvoicesPanel({
                       </Link>
                       <p className="mt-0.5 text-xs text-muted">
                         {formatShortDate(inv.createdAt)}
-                        {inv.demo && " · Demo"}
+                        {inv.demo && ` · ${t("common.demoData")}`}
                       </p>
                     </div>
                     <StatusBadge
@@ -242,13 +249,13 @@ export default function InvoicesPanel({
                   </p>
                   <p className="text-xs text-muted">{inv.address}</p>
                   <div className="mt-2.5 flex justify-between text-sm">
-                    <span className="text-muted">Total</span>
+                    <span className="text-muted">{t("invoices.colTotal")}</span>
                     <span className="font-semibold tabular-nums text-ink">
                       {formatMoney(total)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted">Balance</span>
+                    <span className="text-muted">{t("invoices.colBalance")}</span>
                     <span className="tabular-nums text-muted">
                       {formatMoney(balance)}
                     </span>
@@ -263,13 +270,13 @@ export default function InvoicesPanel({
               <table className="admin-table min-w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-[color:var(--admin-border)]">
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">Invoice</th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">Customer</th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">Total</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("invoices.colNumber")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("invoices.colCustomer")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("invoices.colTotal")}</th>
                     <th className="hidden px-3 py-2.5 font-semibold sm:table-cell sm:px-4">
-                      Balance
+                      {t("invoices.colBalance")}
                     </th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">Status</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("invoices.colStatus")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,8 +302,8 @@ export default function InvoicesPanel({
                           <div className="mt-0.5 text-xs text-muted">
                             {formatShortDate(inv.createdAt)}
                             {inv.demo && (
-                              <span className="ml-1.5 rounded bg-amber-500/15 px-1 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
-                                Demo
+                              <span className="ml-1.5 admin-settings-chip admin-settings-chip-warn">
+                                {t("common.demoData")}
                               </span>
                             )}
                           </div>

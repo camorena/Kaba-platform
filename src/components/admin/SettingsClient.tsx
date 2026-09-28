@@ -294,11 +294,40 @@ export default function SettingsClient({
             </dl>
 
             <aside className="admin-settings-callout mt-4" role="note">
-              <p>{t("pages.settings.securityBadge")}</p>
+              <p>
+                {authMode === "credentials"
+                  ? t("pages.settings.securityBadgeCredentials")
+                  : t("pages.settings.securityBadge")}
+              </p>
               <p className="mt-1 text-xs leading-relaxed">
                 {authMode === "credentials"
                   ? t("pages.settings.authRotateCredentials")
                   : t("pages.settings.authRotate")}
+              </p>
+            </aside>
+
+            <aside className="mt-4 px-0.5" role="note">
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted">
+                {t("pages.settings.authDemoPasswordTitle")}
+              </p>
+              <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted">
+                {withCode(
+                  t("pages.settings.authDemoPasswordBody"),
+                  [
+                    "owner@kabafence.example",
+                    "change-me-owner",
+                    "password_hash",
+                    "profiles",
+                    "src/lib/admin/password.ts",
+                    "hashPassword",
+                  ],
+                )}
+              </p>
+              <p className="mt-2 max-w-3xl text-xs leading-relaxed text-muted">
+                {withCode(
+                  t("pages.settings.authDemoPasswordHint"),
+                  ["AUTH_SECRET", "ADMIN_PASSWORD", "openssl rand -base64 32"],
+                )}
               </p>
             </aside>
 
@@ -443,6 +472,20 @@ export default function SettingsClient({
                 <p className="mt-3 text-sm font-medium text-ink">
                   {t("pages.settings.dataNext")}
                 </p>
+                <div className="mt-3 rounded-lg bg-[color-mix(in_srgb,var(--ink)_3%,transparent)] px-3 py-2.5">
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted">
+                    {t("pages.settings.dataProdChecklistTitle")}
+                  </p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted">
+                    {withCode(
+                      t("pages.settings.dataProdChecklist"),
+                      [
+                        "DATABASE_URL",
+                        "KABA_DATA_ADAPTER=postgres",
+                      ],
+                    )}
+                  </p>
+                </div>
                 <p className="mt-2 text-xs leading-relaxed text-muted">
                   {withCode(
                     t("pages.settings.dataNotify", {

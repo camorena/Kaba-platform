@@ -92,8 +92,8 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
               key={col.status}
               className={`admin-pipeline-col snap-start flex w-[12.5rem] shrink-0 flex-col rounded-xl border bg-[var(--admin-panel)] transition ${
                 isOver
-                  ? "border-bronze/50 shadow-[0_0_0_1px_color-mix(in_srgb,var(--bronze)_35%,transparent)]"
-                  : "border-ink/10"
+                  ? "border-bronze/40 shadow-[0_0_0_1px_color-mix(in_srgb,var(--bronze)_28%,transparent)]"
+                  : "border-[color:var(--admin-border)]"
               }`}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -122,7 +122,7 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
               </header>
               <ul className="flex flex-1 flex-col gap-1.5 p-2 min-h-[8rem]">
                 {items.length === 0 ? (
-                  <li className="rounded-lg border border-dashed border-ink/10 px-2 py-6 text-center text-[0.6875rem] text-muted">
+                  <li className="rounded-lg px-2 py-6 text-center text-[0.6875rem] text-muted/80">
                     {t("pipeline.dropHere")}
                   </li>
                 ) : (
@@ -139,7 +139,7 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
                           setDragging(null);
                           setOverCol(null);
                         }}
-                        className={`admin-pipeline-card group rounded-lg border border-ink/8 bg-[var(--admin-bg)] p-2.5 shadow-[var(--shadow-xs)] transition hover:border-bronze/35 hover:shadow-[var(--shadow-sm)] ${
+                        className={`admin-pipeline-card group rounded-lg border border-[color:var(--admin-border)] bg-[var(--admin-bg)] p-2.5 transition hover:border-bronze/30 ${
                           dragging === q.id ? "opacity-50" : ""
                         } ${busyId === q.id ? "pointer-events-none opacity-60" : "cursor-grab active:cursor-grabbing"}`}
                       >
@@ -179,7 +179,7 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
           );
         })}
       </div>
-      <p className="mt-2 px-1 text-[0.6875rem] text-muted">
+      <p className="mt-3 px-1 text-[0.6875rem] leading-relaxed text-muted">
         {t("pipeline.footer")}
       </p>
     </div>

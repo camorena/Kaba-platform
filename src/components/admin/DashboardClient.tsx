@@ -4,7 +4,7 @@ import Link from "next/link";
 import EmptyState from "@/components/admin/EmptyState";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import { Sparkline } from "@/components/admin/MiniCharts";
-import PageHeader from "@/components/admin/PageHeader";
+import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { formatMoney, formatShortDate } from "@/lib/admin/format";
 import {
@@ -158,10 +158,10 @@ export default function DashboardClient({
 
   return (
     <>
-      <PageHeader
-        title={t("pages.dashboard.title")}
-        crumbs={[{ label: t("pages.dashboard.title") }]}
-        description={t("pages.dashboard.description")}
+      <AdminPageChrome
+        page="dashboard"
+        includeAdminCrumb={false}
+        showDictMeta
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href="/admin/pipeline" className="btn-primary admin-btn-sm">
@@ -174,10 +174,14 @@ export default function DashboardClient({
         }
       />
 
-      <div className="mb-3.5 flex flex-wrap items-center gap-1.5">
+      <div className="mb-3.5 flex flex-wrap items-center gap-1">
         {chips.map((x) => (
-          <Link key={x.href} href={x.href} className="admin-chip hover:border-bronze/40">
-            {x.label} →
+          <Link
+            key={x.href}
+            href={x.href}
+            className="admin-touch rounded-md px-2.5 py-1.5 text-xs font-medium text-muted transition hover:bg-[var(--admin-panel)] hover:text-ink"
+          >
+            {x.label}
           </Link>
         ))}
       </div>
@@ -185,14 +189,14 @@ export default function DashboardClient({
       {quietQuotes.length > 0 && (
         <section
           id="gone-quiet"
-          className="admin-attention mb-4 overflow-hidden rounded-xl border border-amber-500/30 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]"
+          className="admin-attention mb-4 overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]"
           aria-labelledby="gone-quiet-heading"
         >
-          <div className="flex items-center justify-between gap-2 border-b border-ink/8 bg-gradient-to-r from-amber-500/15 to-transparent px-3 py-2 sm:px-4">
+          <div className="flex items-center justify-between gap-2 border-b border-ink/8 px-3 py-2 sm:px-4">
             <h2 id="gone-quiet-heading" className="admin-section-label">
               {t("pages.dashboard.goneQuiet")}
             </h2>
-            <span className="text-[0.625rem] tabular-nums text-muted">
+            <span className="admin-settings-chip admin-settings-chip-warn">
               {t(
                 quietQuotes.length === 1 ? "common.items" : "common.items_plural",
                 { count: quietQuotes.length },
@@ -214,7 +218,7 @@ export default function DashboardClient({
                     <span className="ml-2 text-xs text-muted">
                       {quoteStatusLabel(locale, q.status)} · {q.serviceType}
                     </span>
-                    <div className="text-[0.6875rem] text-amber-800 dark:text-amber-200/90">
+                    <div className="text-[0.6875rem] text-muted">
                       {t("pages.dashboard.quietForDays", { count: q.quietDays })}
                     </div>
                   </div>
@@ -235,8 +239,8 @@ export default function DashboardClient({
       )}
 
       {needsAction.length > 0 && (
-        <section className="admin-attention mb-4 overflow-hidden rounded-xl border border-bronze/25 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
-          <div className="flex items-center justify-between gap-2 border-b border-ink/8 bg-gradient-to-r from-bronze/12 to-transparent px-3 py-2 sm:px-4">
+        <section className="admin-attention mb-4 overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]">
+          <div className="flex items-center justify-between gap-2 border-b border-ink/8 px-3 py-2 sm:px-4">
             <h2 className="admin-section-label">
               {t("pages.dashboard.needsAttention")}
             </h2>
@@ -285,7 +289,7 @@ export default function DashboardClient({
             <Link
               href={c.href}
               className={`admin-stat admin-stat-lift admin-stat-dense block transition hover:border-bronze/35 ${
-                c.attention ? "border-amber-500/35" : ""
+                c.attention ? "border-amber-500/25" : ""
               }`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -306,7 +310,7 @@ export default function DashboardClient({
       </ul>
 
       <section
-        className="admin-glass-panel admin-gold-rail mt-4 p-3.5 sm:p-4"
+        className="admin-glass-panel mt-4 p-3.5 sm:p-4"
         aria-labelledby="before-launch-heading"
       >
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -314,13 +318,13 @@ export default function DashboardClient({
             {t("pages.dashboard.beforeLaunch")}
           </h2>
           {outstandingBlockers > 0 ? (
-            <span className="rounded-full border border-amber-500/35 bg-amber-500/10 px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
+            <span className="admin-settings-chip admin-settings-chip-warn">
               {t("pages.dashboard.outstandingCount", {
                 count: outstandingBlockers,
               })}
             </span>
           ) : (
-            <span className="rounded-full border border-emerald-500/35 bg-emerald-500/10 px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-emerald-900 dark:text-emerald-100">
+            <span className="admin-settings-chip admin-settings-chip-ok">
               {t("pages.dashboard.blockersClear")}
             </span>
           )}
@@ -329,10 +333,10 @@ export default function DashboardClient({
           {launchBlockers.map((b) => (
             <li
               key={b.id}
-              className={`flex gap-3 rounded-lg border px-3 py-2.5 ${
+              className={`flex gap-3 rounded-lg px-3 py-2.5 ${
                 b.clear
-                  ? "border-[var(--admin-border)] bg-[var(--admin-row-hover)]/30"
-                  : "border-amber-500/25 bg-amber-500/5"
+                  ? "bg-[var(--admin-row-hover)]/40"
+                  : "bg-[color-mix(in_srgb,var(--ink)_3.5%,transparent)]"
               }`}
             >
               <span
@@ -364,7 +368,7 @@ export default function DashboardClient({
         </ul>
       </section>
 
-      <section className="admin-glass-panel admin-gold-rail mt-4 p-3.5 sm:p-4">
+      <section className="admin-glass-panel mt-4 p-3.5 sm:p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
           <h2 className="admin-section-label">
             {t("pages.dashboard.pipelineFunnel")}

@@ -71,19 +71,19 @@ export default function LoginPageClient({
         </aside>
 
         <div className="mx-auto w-full max-w-md">
-          <div
+          <p
             role="status"
-            className="mb-5 rounded-lg border border-amber-700/30 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-950 dark:border-amber-400/25 dark:bg-amber-950/40 dark:text-amber-100"
+            className="mb-5 text-xs leading-relaxed text-muted"
           >
-            <strong className="font-semibold">
+            <span className="font-semibold text-ink/80">
               {authMode === "credentials"
                 ? t("login.authStrongCredentials")
                 : t("login.authStrong")}
-            </strong>{" "}
+            </span>{" "}
             {authMode === "credentials"
               ? t("login.authBodyCredentials")
               : t("login.authBody")}
-          </div>
+          </p>
 
           <div className="mb-6 text-center lg:hidden">
             <Image
@@ -106,7 +106,11 @@ export default function LoginPageClient({
             <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
               {t("login.signInTitle")}
             </h2>
-            <p className="mt-1 text-sm text-muted">{t("login.signInDesktopSub")}</p>
+            <p className="mt-1 text-sm text-muted">
+              {authMode === "credentials"
+                ? t("login.signInDesktopSubCredentials")
+                : t("login.signInDesktopSub")}
+            </p>
           </div>
 
           <div className="admin-glass-panel admin-login-card p-5 sm:p-6">

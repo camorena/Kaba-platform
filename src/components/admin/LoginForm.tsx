@@ -58,7 +58,7 @@ export default function LoginForm({
         });
     const codeToken = credentials ? "AUTH_SECRET" : "ADMIN_PASSWORD";
     return (
-      <div className="rounded-xl border border-amber-700/25 bg-amber-50 p-5 text-sm text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
+      <div className="rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] p-5 text-sm text-ink">
         <p className="font-semibold">
           {credentials
             ? t("login.notConfiguredCredentialsTitle")
@@ -107,6 +107,8 @@ export default function LoginForm({
             name="email"
             type="email"
             autoComplete="username"
+            inputMode="email"
+            placeholder={t("login.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="field-input mt-1.5"
@@ -117,7 +119,9 @@ export default function LoginForm({
       ) : null}
       <div>
         <label htmlFor="admin-password" className="block text-sm font-medium text-ink">
-          {t("login.passwordLabel")}
+          {credentials
+            ? t("login.passwordLabelCredentials")
+            : t("login.passwordLabel")}
         </label>
         <div className="relative mt-1.5">
           <input
@@ -163,7 +167,7 @@ export default function LoginForm({
           t("login.signIn")
         )}
       </button>
-      <p className="rounded-lg border border-ink/8 bg-ivory-muted/50 px-3 py-2 text-xs leading-relaxed text-muted dark:bg-ivory-muted/25">
+      <p className="px-0.5 text-xs leading-relaxed text-muted">
         {credentials ? t("login.credentialsNote") : t("login.stubNote")}
       </p>
     </form>

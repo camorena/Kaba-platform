@@ -130,7 +130,8 @@ const en = {
   pages: {
     dashboard: {
       title: "Dashboard",
-      description: "Ops brief — attention items, pipeline funnel, and recent movement. Demo amounts; auth remains a stub.",
+      meta: "Ops brief",
+      description: "Attention items, funnel, and recent movement. Demo amounts until Postgres + credentials are on.",
       needsAttention: "Needs attention",
       newQuotes: "New quotes",
       openInvoices: "Open invoices",
@@ -194,15 +195,18 @@ const en = {
     },
     quotes: {
       title: "Quotes",
-      description: "Public form submissions plus seed demo rows. In-memory store — resets on serverless cold starts until a DB is wired."
+      meta: "Leads",
+      description: "Public form submissions and seed rows. Memory resets on cold starts until Postgres is wired."
     },
     pipeline: {
       title: "Pipeline",
-      description: "Kanban view of quote stages — drag cards or use quick advances. Same in-memory store as Quotes."
+      meta: "Kanban",
+      description: "Drag cards or quick-advance status. Same store as Quotes."
     },
     invoices: {
       title: "Invoices",
-      description: "Demo invoices with synthetic amounts. Create drafts from quotes; PDF/email and real pricing come later."
+      meta: "Billing",
+      description: "Demo drafts from quotes with synthetic amounts. PDF/email and real pricing later."
     },
     payments: {
       title: "Payments",
@@ -379,6 +383,11 @@ const en = {
         "Password is never shown here. Rotate in the host env, then redeploy.",
       authRotateCredentials:
         "Rotate AUTH_SECRET and profile passwords in host / DB — not here. Redeploy invalidates sessions.",
+      authDemoPasswordTitle: "Change the demo owner password",
+      authDemoPasswordBody:
+        "Seed ships owner@kabafence.example / change-me-owner. Before production: update password_hash in profiles (scrypt via src/lib/admin/password.ts hashPassword), or insert your own owner row. Never ship the demo password live.",
+      authDemoPasswordHint:
+        "Memory adapter uses the same demo owner without Postgres. Flip: set AUTH_SECRET (openssl rand -base64 32); leave unset to keep the ADMIN_PASSWORD stub.",
       rolesTitle: "Roles",
       rolesBody:
         "Ranks (owner › editor › viewer) in {dal}. Actions: requireRole; pages: requirePageRole. Stub always resolves as owner.",
@@ -410,7 +419,10 @@ const en = {
       dataPostgresMissingUrl:
         "Postgres selected but DATABASE_URL is empty — set it or switch to memory.",
       dataNext:
-        "Optional: docker compose up -d → npm run db:migrate → db:seed → KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory stays the default.",
+        "Local: docker compose up -d → npm run db:migrate → db:seed → KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory stays the default (no URL needed to build).",
+      dataProdChecklistTitle: "Production checklist (Vercel)",
+      dataProdChecklist:
+        "1) Provision Postgres and copy DATABASE_URL. 2) Set KABA_DATA_ADAPTER=postgres. 3) Run migrate + seed against that URL (CI or one-shot). 4) Redeploy. Do not invent a cloud DB — supply your own URL.",
       dataNotify:
         "Persist-then-notify: save first; {notify} via Resend/SMTP when set, else no-op.",
       dataFilesLabel: "Schema, seeds & repos",
@@ -511,9 +523,12 @@ const en = {
     signInTitle: "Admin sign-in",
     signInMobileSub: "Quotes, invoices, and payments foundation.",
     signInDesktopSub: "Enter the shared stub password to continue.",
+    signInDesktopSubCredentials: "Sign in with your staff email and password.",
     emailLabel: "Email",
+    emailPlaceholder: "owner@kabafence.example",
     backSite: "← Back to public site",
     passwordLabel: "Admin password",
+    passwordLabelCredentials: "Password",
     show: "Show",
     hide: "Hide",
     signIn: "Sign in",
@@ -530,7 +545,7 @@ const en = {
   quotes: {
     goneQuiet: "Gone quiet",
     goneQuietIntro:
-      "No movement for {days}+ days while still new, contacted, or scheduled.",
+      "Still new, contacted, or scheduled — no status or notes update for {days}+ days.",
     goneQuietCount: "{count} quiet quote",
     goneQuietCount_plural: "{count} quiet quotes",
     quietForDays: "Quiet for {count} day",
@@ -569,16 +584,20 @@ const en = {
     movedArrow: "Moved → {status}",
     emptyTitle: "Pipeline is empty",
     emptyDesc: "When quotes arrive from the public form, drag cards across stages — or advance status from the quote detail.",
-    footer: "Drag cards between columns, or use the quick → buttons. Changes save to the in-memory store."
+    footer: "Drag between columns or use quick →. Saves to the active data adapter."
   },
   invoices: {
     createFrom: "Create draft from quote",
+    createFromHint: "Draft with a synthetic demo amount — not a real bid. No PDF/email yet.",
+    quoteLabel: "Quote",
     pickQuote: "Pick a quote…",
     pickQuoteFirst: "Pick a quote first.",
     createDraft: "Create draft",
     createFailed: "Create failed.",
+    searchLabel: "Search invoices",
     searchPlaceholder: "Search #, customer…",
     exportTitle: "Download filtered invoices as CSV",
+    allCount: "All ({count})",
     emptyTitle: "No invoices yet",
     emptyDesc: "Create a draft from a quote above. Amounts are synthetic demo data until estimating is wired.",
     colNumber: "Number",

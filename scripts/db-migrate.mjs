@@ -4,6 +4,9 @@
  * Requires DATABASE_URL. Does not open a pool in the Next.js app.
  *
  *   DATABASE_URL=postgres://kaba:kaba@127.0.0.1:5432/kaba_fence npm run db:migrate
+ *
+ * Vercel / Neon / Supabase: paste the host DATABASE_URL (often needs ?sslmode=require).
+ * Memory adapter needs no migrate — default build stays URL-free.
  */
 
 import fs from "node:fs";
@@ -19,21 +22,42 @@ const url = process.env.DATABASE_URL?.trim();
 if (!url) {
   console.error(
     "DATABASE_URL is required.\n" +
-      "Example: DATABASE_URL=postgres://kaba:kaba@127.0.0.1:5432/kaba_fence npm run db:migrate",
+      "Local:  DATABASE_URL=postgres://kaba:kaba@127.0.0.1:5432/kaba_fence npm run db:migrate\n" +
+      "Cloud:  paste your provider URL (often ?sslmode=require). Do not invent a DB — supply your own.\n" +
+      "Default app adapter is memory (no DATABASE_URL needed to build).",
   );
   process.exit(1);
 }
 
-const client = new pg.Client({ connectionString: url });
+const client = new pg.Client({
+  connectionString: url,
+  connectionTimeoutMillis: 15_000,
+});
 
 async function main() {
-  await client.connect();
+  try {
+    await client.connect();
+  } catch (err) {
+    console.error(
+      "Could not connect to Postgres. Check DATABASE_URL, network, and that the server is up.\n" +
+        (err?.message || err),
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   await client.query(`
     create table if not exists schema_migrations (
       id text primary key,
       applied_at timestamptz not null default now()
     )
   `);
+
+  if (!fs.existsSync(migrationsDir)) {
+    console.error(`Migrations directory missing: ${migrationsDir}`);
+    process.exitCode = 1;
+    return;
+  }
 
   const files = fs
     .readdirSync(migrationsDir)
@@ -45,6 +69,9 @@ async function main() {
     return;
   }
 
+  let applied = 0;
+  let skipped = 0;
+
   for (const file of files) {
     const { rows } = await client.query(
       `select 1 from schema_migrations where id = $1`,
@@ -52,6 +79,7 @@ async function main() {
     );
     if (rows.length) {
       console.log(`skip  ${file} (already applied)`);
+      skipped += 1;
       continue;
     }
     const sql = fs.readFileSync(path.join(migrationsDir, file), "utf8");
@@ -65,6 +93,7 @@ async function main() {
       );
       await client.query("commit");
       console.log(`ok    ${file}`);
+      applied += 1;
     } catch (err) {
       await client.query("rollback");
       console.error(`FAIL  ${file}:`, err.message);
@@ -72,6 +101,9 @@ async function main() {
       break;
     }
   }
+
+  if (process.exitCode) return;
+  console.log(`done  applied=${applied} skipped=${skipped} total=${files.length}`);
 }
 
 main()
@@ -79,4 +111,4 @@ main()
     console.error(err);
     process.exitCode = 1;
   })
-  .finally(() => client.end());
+  .finally(() => client.end().catch(() => {}));

@@ -13,6 +13,7 @@ export default async function AdminQuotesPage() {
     <>
       <AdminPageChrome
         page="quotes"
+        showDictMeta
         actions={
           <I18nActionLink
             href="/admin/pipeline"

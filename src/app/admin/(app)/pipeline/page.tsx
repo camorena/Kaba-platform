@@ -10,7 +10,7 @@ export default async function AdminPipelinePage() {
 
   return (
     <>
-      <AdminPageChrome page="pipeline" />
+      <AdminPageChrome page="pipeline" showDictMeta />
       <PipelineBoard quotes={quotes} />
     </>
   );

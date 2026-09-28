@@ -131,8 +131,9 @@ const es = {
   pages: {
     dashboard: {
       title: "Panel",
+      meta: "Resumen operativo",
       description:
-        "Resumen operativo: pendientes, pipeline y movimiento reciente. Montos de demostración; la autenticación sigue siendo provisional.",
+        "Pendientes, embudo y movimiento reciente. Montos de demostración hasta activar Postgres y credenciales.",
       needsAttention: "Requiere atención",
       newQuotes: "Cotizaciones nuevas",
       openInvoices: "Facturas abiertas",
@@ -197,18 +198,21 @@ const es = {
     },
     quotes: {
       title: "Cotizaciones",
+      meta: "Leads",
       description:
-        "Solicitudes del formulario público y filas de demostración. Datos en memoria: se reinician en arranques en frío hasta conectar una base de datos."
+        "Solicitudes del formulario público y filas de demostración. La memoria se reinicia en frío hasta conectar Postgres."
     },
     pipeline: {
       title: "Pipeline",
+      meta: "Kanban",
       description:
-        "Vista kanban de las etapas de cotización. Arrastre tarjetas o avance el estado. Mismo almacenamiento en memoria que Cotizaciones."
+        "Arrastre tarjetas o avance el estado. Mismo almacén que Cotizaciones."
     },
     invoices: {
       title: "Facturas",
+      meta: "Facturación",
       description:
-        "Facturas de demostración con montos sintéticos. Cree borradores desde cotizaciones; PDF, correo y precios reales vendrán después."
+        "Borradores de demostración desde cotizaciones con montos sintéticos. PDF, correo y precios reales después."
     },
     payments: {
       title: "Pagos",
@@ -394,6 +398,11 @@ const es = {
         "La contraseña no se muestra aquí. Rótela en el entorno del alojamiento y vuelva a desplegar.",
       authRotateCredentials:
         "Rote AUTH_SECRET y las contraseñas de profiles en el alojamiento / BD — no aquí. Un nuevo despliegue invalida las sesiones.",
+      authDemoPasswordTitle: "Cambie la contraseña del owner de demostración",
+      authDemoPasswordBody:
+        "La semilla incluye owner@kabafence.example / change-me-owner. Antes de producción: actualice password_hash en profiles (scrypt vía hashPassword en src/lib/admin/password.ts) o inserte su propio owner. Nunca publique la contraseña de demostración.",
+      authDemoPasswordHint:
+        "El adaptador memory usa el mismo owner de demostración sin Postgres. Activación: defina AUTH_SECRET (openssl rand -base64 32); déjelo sin definir para conservar el stub ADMIN_PASSWORD.",
       rolesTitle: "Roles",
       rolesBody:
         "Rangos (owner › editor › viewer) en {dal}. Acciones: requireRole; páginas: requirePageRole. El stub siempre se resuelve como owner.",
@@ -425,7 +434,10 @@ const es = {
       dataPostgresMissingUrl:
         "Postgres seleccionado pero DATABASE_URL está vacía — defínala o vuelva a memory.",
       dataNext:
-        "Opcional: docker compose up -d → npm run db:migrate → db:seed → KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory sigue siendo el predeterminado.",
+        "Local: docker compose up -d → npm run db:migrate → db:seed → KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory sigue siendo el predeterminado (sin URL para compilar).",
+      dataProdChecklistTitle: "Lista de producción (Vercel)",
+      dataProdChecklist:
+        "1) Provisione Postgres y copie DATABASE_URL. 2) Defina KABA_DATA_ADAPTER=postgres. 3) Ejecute migrate + seed contra esa URL (CI o una vez). 4) Redesplegar. No invente una base en la nube — usted debe suministrar la URL.",
       dataNotify:
         "Persistir y luego notificar: guardar primero; {notify} vía Resend/SMTP si está configurado; si no, no-op.",
       dataFilesLabel: "Esquema, semillas y repositorios",
@@ -530,8 +542,11 @@ const es = {
     signInMobileSub: "Base de cotizaciones, facturas y pagos.",
     emailLabel: "Correo electrónico",
     signInDesktopSub: "Ingrese la contraseña provisional compartida para continuar.",
+    signInDesktopSubCredentials: "Inicie sesión con el correo y la contraseña del personal.",
+    emailPlaceholder: "owner@kabafence.example",
     backSite: "← Volver al sitio público",
     passwordLabel: "Contraseña de administrador",
+    passwordLabelCredentials: "Contraseña",
     show: "Mostrar",
     hide: "Ocultar",
     signIn: "Iniciar sesión",
@@ -552,7 +567,7 @@ const es = {
   quotes: {
     goneQuiet: "Sin respuesta",
     goneQuietIntro:
-      "Sin movimiento por {days}+ días mientras sigue nueva, contactada o agendada.",
+      "Sigue nueva, contactada o agendada — sin actualización de estado o notas por {days}+ días.",
     goneQuietCount: "{count} cotización en silencio",
     goneQuietCount_plural: "{count} cotizaciones en silencio",
     quietForDays: "En silencio desde hace {count} día",
@@ -596,16 +611,21 @@ const es = {
     emptyDesc:
       "Cuando lleguen cotizaciones del formulario público, arrastre tarjetas entre etapas — o avance el estado desde el detalle.",
     footer:
-      "Arrastre tarjetas entre columnas o use los botones → rápidos. Los cambios se guardan en memoria."
+      "Arrastre entre columnas o use → rápidos. Se guarda en el adaptador de datos activo."
   },
   invoices: {
     createFrom: "Crear borrador desde cotización",
+    createFromHint:
+      "Borrador con monto sintético de demostración — no es una oferta real. Aún no hay PDF ni correo.",
+    quoteLabel: "Cotización",
     pickQuote: "Elija una cotización…",
     pickQuoteFirst: "Primero elija una cotización.",
     createDraft: "Crear borrador",
     createFailed: "No se pudo crear.",
+    searchLabel: "Buscar facturas",
     searchPlaceholder: "Buscar #, cliente…",
     exportTitle: "Descargar facturas filtradas en CSV",
+    allCount: "Todas ({count})",
     emptyTitle: "Aún no hay facturas",
     emptyDesc:
       "Cree un borrador desde una cotización arriba. Los montos son datos sintéticos de demostración hasta conectar el estimado.",
