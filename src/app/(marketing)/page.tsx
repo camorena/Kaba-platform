@@ -170,10 +170,10 @@ export default function HomePage() {
       </section>
 
       {/* Your Needs */}
-      <section className="bg-white section-y">
+      <section className="bg-surface section-y">
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
               Your Needs
             </p>
             <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.5rem]">
@@ -213,7 +213,7 @@ export default function HomePage() {
       <section className="bg-ivory-muted/60 section-y">
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
               Fencing Options
             </p>
             <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.5rem]">
@@ -233,7 +233,7 @@ export default function HomePage() {
                       className="object-cover transition duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <div className="bg-white px-4 py-4 text-center">
+                  <div className="bg-surface px-4 py-4 text-center">
                     <p className="text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-ink">
                       {svc.title}
                     </p>
@@ -297,11 +297,11 @@ export default function HomePage() {
       </section>
 
       {/* Our Work strip */}
-      <section className="bg-white section-y">
+      <section className="bg-surface section-y">
         <div className="container-page">
           <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
                 Our Work
               </p>
               <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">
@@ -336,7 +336,7 @@ export default function HomePage() {
         <div className="container-page">
           <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
                 Reviews
               </p>
               <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">

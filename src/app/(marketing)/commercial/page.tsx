@@ -67,7 +67,7 @@ export default function CommercialPage() {
 
       <section className="container-page section-y">
         <Reveal className="max-w-2xl">
-          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
             Why Kaba
           </p>
           <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">

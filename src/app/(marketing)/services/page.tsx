@@ -42,7 +42,7 @@ export default function ServicesPage() {
               key={service.slug}
               id={service.slug}
               delay={i * 40}
-              className="scroll-mt-[calc(var(--header-offset)+1rem)] grid gap-6 overflow-hidden rounded-2xl border border-ink/[0.07] bg-white shadow-sm lg:grid-cols-2 lg:gap-0"
+              className="scroll-mt-[calc(var(--header-offset)+1rem)] grid gap-6 overflow-hidden rounded-2xl border border-ink/[0.07] bg-surface shadow-sm dark:border-cream/10 lg:grid-cols-2 lg:gap-0"
             >
               <div
                 className={`relative aspect-[16/10] lg:aspect-auto lg:min-h-[18rem] ${
@@ -58,7 +58,7 @@ export default function ServicesPage() {
                 />
               </div>
               <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-                <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
+                <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
                   {service.tagline}
                 </p>
                 <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">

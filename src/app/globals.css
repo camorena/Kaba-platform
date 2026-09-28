@@ -735,6 +735,13 @@ h3 {
   box-shadow: var(--shadow-sm);
 }
 
+/* Light marketing panels: always pair with semantic ink/muted (theme-aware).
+   Never use hardcoded bg-white with text-ink — ink flips to cream in .dark. */
+.panel-light {
+  background: var(--surface);
+  color: var(--ink);
+}
+
 /* Buttons */
 .btn-primary {
   display: inline-flex;

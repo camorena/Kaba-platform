@@ -43,7 +43,7 @@ export default function ResidentialPage() {
 
       <section className="container-page section-y">
         <Reveal>
-          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
             Your Needs
           </p>
           <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">
@@ -63,7 +63,7 @@ export default function ResidentialPage() {
       <section className="section-soft section-y">
         <div className="container-page">
           <Reveal>
-            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
               Options
             </p>
             <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">
