@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import AdminPageTransition from "@/components/admin/AdminPageTransition";
 import LanguageToggle from "@/components/admin/LanguageToggle";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import NotificationCenter from "@/components/admin/NotificationCenter";
@@ -162,22 +161,50 @@ function AdminShellInner({
   const { t } = useAdminI18n();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  /** Mounted while open or closing (exit animation). */
+  const [drawerMounted, setDrawerMounted] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const openCmd = useCallback(() => setCmdOpen(true), []);
   const closeCmd = useCallback(() => setCmdOpen(false), []);
   const openShortcuts = useCallback(() => setShortcutsOpen(true), []);
   const closeShortcuts = useCallback(() => setShortcutsOpen(false), []);
-  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
+  const openDrawer = useCallback(() => {
+    setDrawerMounted(true);
+    // Double rAF so enter CSS can transition from closed styles.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setDrawerOpen(true));
+    });
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    setDrawerOpen(false);
+  }, []);
+
+  // Close drawer smoothly on route change (nav link or command palette).
   useEffect(() => {
     setDrawerOpen(false);
   }, [pathname]);
 
+  // Unmount after exit transition ends.
   useEffect(() => {
-    if (!drawerOpen) return;
+    if (drawerOpen || !drawerMounted) return;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setDrawerMounted(false);
+      return;
+    }
+    const id = window.setTimeout(() => setDrawerMounted(false), 220);
+    return () => window.clearTimeout(id);
+  }, [drawerOpen, drawerMounted]);
+
+  useEffect(() => {
+    if (!drawerMounted) return;
     const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (drawerOpen) document.body.style.overflow = "hidden";
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setDrawerOpen(false);
     }
@@ -186,7 +213,7 @@ function AdminShellInner({
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);
     };
-  }, [drawerOpen]);
+  }, [drawerMounted, drawerOpen]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -231,7 +258,7 @@ function AdminShellInner({
               className="admin-touch -ml-1 rounded-md p-2 text-cream/80 transition hover:bg-white/10 hover:text-cream lg:hidden"
               aria-label={t("shell.openMenu")}
               aria-expanded={drawerOpen}
-              onClick={() => setDrawerOpen(true)}
+              onClick={openDrawer}
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
@@ -314,9 +341,13 @@ function AdminShellInner({
         </div>
       )}
 
-      {/* Mobile drawer */}
-      {drawerOpen && (
-        <div className="admin-drawer-root lg:hidden" role="presentation">
+      {/* Mobile drawer — enter/exit via data-state (CSS), unmount after close */}
+      {drawerMounted && (
+        <div
+          className="admin-drawer-root lg:hidden"
+          role="presentation"
+          data-state={drawerOpen ? "open" : "closed"}
+        >
           <button
             type="button"
             className="admin-drawer-backdrop"
@@ -368,7 +399,7 @@ function AdminShellInner({
         </aside>
 
         <main className="admin-main min-w-0 px-3 py-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-4 lg:px-6 lg:py-5">
-          <AdminPageTransition>{children}</AdminPageTransition>
+          {children}
         </main>
       </div>
 
