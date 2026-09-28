@@ -72,7 +72,8 @@ export async function POST(request: Request) {
       });
       return res;
     } catch (err) {
-      console.error("[login] credentials verify failed:", err);
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("[login] credentials verify failed:", message, err);
       return NextResponse.json(
         {
           error:

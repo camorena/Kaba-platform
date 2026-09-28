@@ -11,6 +11,7 @@
 import "server-only";
 
 import { createMemoryRepos } from "@/lib/db/memory";
+import { createPostgresRepos } from "@/lib/db/postgres";
 import type { DataRepos } from "@/lib/db/repos/types";
 
 export type DataAdapterName = "memory" | "postgres";
@@ -35,10 +36,8 @@ export function getRepos(): DataRepos {
 
   const name = getDataAdapterName();
   if (name === "postgres") {
-    // Lazy require so memory-default builds do not touch the pg pool path
-    // until postgres is explicitly selected.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createPostgresRepos } = require("@/lib/db/postgres") as typeof import("@/lib/db/postgres");
+    // Static import — Turbopack/webpack CJS interop broke the old require()
+    // path ("t is not a function" on login under credentials mode).
     cached = createPostgresRepos();
     return cached;
   }
