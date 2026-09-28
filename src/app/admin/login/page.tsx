@@ -14,7 +14,8 @@ export default async function AdminLoginPage() {
   }
 
   return (
-    <div className="admin-app mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
+    <div className="admin-app relative mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-bronze via-bronze-light to-bronze" aria-hidden />
       <div
         role="status"
         className="mb-6 rounded-lg border border-amber-700/30 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-950 dark:border-amber-400/25 dark:bg-amber-950/40 dark:text-amber-100"
@@ -30,14 +31,17 @@ export default async function AdminLoginPage() {
           height={48}
           className="mx-auto h-12 w-12 object-contain"
         />
-        <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight text-ink">
+        <p className="mt-4 text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+          Kaba Fence
+        </p>
+        <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">
           Admin sign-in
         </h1>
         <p className="mt-2 text-sm text-muted">
           Quotes, invoices, and payments foundation.
         </p>
       </div>
-      <div className="card-static p-5 sm:p-6">
+      <div className="admin-card border-bronze/15 p-5 sm:p-6">
         <LoginForm configured={Boolean(getAdminPassword())} />
       </div>
       <p className="mt-6 text-center text-xs text-muted">

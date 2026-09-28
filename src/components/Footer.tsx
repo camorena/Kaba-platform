@@ -46,7 +46,13 @@ export default function Footer() {
               className="h-[4.25rem] w-auto object-contain"
             />
           </Link>
-          <p className="mt-4 font-script text-xl text-bronze">
+          <p className="mt-4 text-sm font-semibold text-cream/90">
+            Residential & Commercial Fencing
+          </p>
+          <p className="mt-1.5 text-sm text-cream/60">
+            {siteConfig.address.region}
+          </p>
+          <p className="mt-3 font-script text-xl text-bronze">
             {siteConfig.tagline}
           </p>
           <p className="mt-4 text-xs text-cream/45">
@@ -94,24 +100,36 @@ export default function Footer() {
           <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
             Contact
           </p>
-          <ul className="mt-4 space-y-2 text-sm text-cream/80">
+          <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
             <li>
               <a
                 href={siteConfig.phoneHref}
-                className="focus-ring -mx-1 inline-flex min-h-9 items-center rounded px-1 font-medium transition hover:text-cream"
+                className="focus-ring -mx-1 inline-flex min-h-9 items-center gap-2.5 rounded px-1 font-medium transition hover:text-cream"
               >
+                <svg className="h-4 w-4 shrink-0 text-bronze" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
                 {siteConfig.phone}
               </a>
             </li>
             <li>
               <a
                 href={siteConfig.emailHref}
-                className="focus-ring -mx-1 inline-flex min-h-9 items-center break-all rounded px-1 transition hover:text-cream"
+                className="focus-ring -mx-1 inline-flex min-h-9 items-center gap-2.5 break-all rounded px-1 transition hover:text-cream"
               >
+                <svg className="h-4 w-4 shrink-0 text-bronze" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
                 {siteConfig.email}
               </a>
             </li>
-            <li className="pt-1 text-cream/60">{siteConfig.address.region}</li>
+            <li className="inline-flex items-start gap-2.5 pt-0.5 text-cream/60">
+              <svg className="mt-0.5 h-4 w-4 shrink-0 text-bronze" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {siteConfig.address.region}
+            </li>
           </ul>
         </div>
 

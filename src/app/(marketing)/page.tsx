@@ -123,7 +123,7 @@ export default function HomePage() {
 
         <div className="container-page relative z-[2] flex flex-1 flex-col justify-center py-16 sm:py-20 lg:py-28">
           <div className="max-w-2xl">
-            <p className="hero-reveal text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-white/90">
+            <p className="hero-reveal text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
               {siteConfig.heroLabel}
             </p>
             <h1 className="hero-reveal hero-reveal-d1 mt-4 font-display text-[2.15rem] font-semibold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.85rem] lg:text-[3.5rem] lg:leading-[1.08]">
@@ -135,9 +135,9 @@ export default function HomePage() {
             <div className="hero-reveal hero-reveal-d3 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href="/contact"
-                className="focus-ring btn-primary w-full justify-center gap-2 sm:w-auto"
+                className="focus-ring btn-primary w-full justify-center gap-2 uppercase tracking-[0.06em] sm:w-auto"
               >
-                Request Free Estimate
+                Request a Free Estimate
                 <span aria-hidden>→</span>
               </Link>
               <a
@@ -192,11 +192,11 @@ export default function HomePage() {
                     sizes="(min-width: 640px) 33vw, 100vw"
                     className="object-cover"
                   />
-                </div>
-                <div className="relative px-5 pb-6 pt-8 text-center">
-                  <span className="absolute -top-5 left-1/2 inline-flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-bronze text-white shadow-md">
+                  <span className="absolute bottom-3 left-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-bronze text-white shadow-md">
                     <NeedIcon icon={need.icon} />
                   </span>
+                </div>
+                <div className="relative px-5 pb-6 pt-5 text-center sm:text-left">
                   <h3 className="font-display text-lg font-semibold text-ink">
                     {need.title}
                   </h3>
@@ -245,7 +245,7 @@ export default function HomePage() {
             ))}
           </ul>
           <Reveal className="mt-10 flex justify-center">
-            <Link href="/services" className="focus-ring btn-primary gap-2">
+            <Link href="/services" className="focus-ring btn-primary gap-2 uppercase tracking-[0.06em]">
               Explore Fencing Options
               <span aria-hidden>→</span>
             </Link>
@@ -280,7 +280,7 @@ export default function HomePage() {
                 <span className="exp-icon mx-auto">
                   <ExpIcon icon={step.icon} />
                 </span>
-                <h3 className="mt-5 font-display text-lg font-semibold text-white">
+                <h3 className="mt-5 font-display text-lg font-semibold uppercase tracking-[0.06em] text-white">
                   {step.title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-cream/70">
@@ -290,7 +290,7 @@ export default function HomePage() {
             ))}
           </ul>
           <Reveal className="mt-12 text-center">
-            <p className="font-script text-3xl text-bronze sm:text-4xl">
+            <p className="font-script text-3xl text-white sm:text-4xl">
               We Listen. We Guide. We Build. We Care.
             </p>
           </Reveal>
@@ -301,10 +301,15 @@ export default function HomePage() {
       <section className="bg-white section-y">
         <div className="container-page">
           <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <h2 className="font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">
-              See the Kaba Difference.
-            </h2>
-            <Link href="/gallery" className="focus-ring btn-primary gap-2 self-start sm:self-auto">
+            <div>
+              <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+                Our Work
+              </p>
+              <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">
+                See the Kaba Difference.
+              </h2>
+            </div>
+            <Link href="/gallery" className="focus-ring btn-primary gap-2 self-start uppercase tracking-[0.06em] sm:self-auto">
               View Our Work
               <span aria-hidden>→</span>
             </Link>
@@ -340,7 +345,7 @@ export default function HomePage() {
                 Trusted by Homeowners in Our Community.
               </h2>
             </div>
-            <Link href="/reviews" className="focus-ring btn-primary gap-2 self-start sm:self-auto">
+            <Link href="/reviews" className="focus-ring btn-primary gap-2 self-start uppercase tracking-[0.06em] sm:self-auto">
               Read Our Reviews
               <span aria-hidden>→</span>
             </Link>
@@ -385,7 +390,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:items-start lg:items-end">
-            <Link href="/contact" className="focus-ring btn-primary gap-2">
+            <Link href="/contact" className="focus-ring btn-primary gap-2 uppercase tracking-[0.06em]">
               Request a Free Estimate
               <span aria-hidden>→</span>
             </Link>

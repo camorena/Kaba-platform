@@ -136,7 +136,7 @@ export const deckServices = [
 export const yourNeeds = [
   {
     id: "pets",
-    title: "A Safer Yard for Pets",
+    title: "A Safer Yard for Your Pets",
     description: "Secure spaces for more freedom and peace of mind.",
     image: "/gallery/cedar-privacy.jpg",
     icon: "paw" as const,
@@ -160,25 +160,25 @@ export const yourNeeds = [
 export const kabaExperience = [
   {
     id: "listen",
-    title: "We Listen.",
+    title: "We Listen",
     description: "Your needs come first.",
     icon: "listen" as const,
   },
   {
     id: "guide",
-    title: "We Guide.",
+    title: "We Guide",
     description: "Clear options. Honest guidance.",
     icon: "guide" as const,
   },
   {
     id: "build",
-    title: "We Build.",
+    title: "We Build",
     description: "Professional craftsmanship. Attention to detail.",
     icon: "build" as const,
   },
   {
     id: "care",
-    title: "We Care.",
+    title: "We Care",
     description: "Support before, during and after installation.",
     icon: "care" as const,
   },

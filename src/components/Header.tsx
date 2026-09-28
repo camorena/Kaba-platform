@@ -173,11 +173,11 @@ export default function Header() {
         data-mobile-nav-open={open ? "true" : "false"}
       >
         <div
-          className={`container-page flex items-center justify-between gap-3 transition-[height] duration-300 sm:gap-4 ${barHeight}`}
+          className={`container-page grid grid-cols-[1fr_auto] items-center gap-3 transition-[height] duration-300 sm:gap-4 lg:grid-cols-[1fr_auto_1fr] ${barHeight}`}
         >
           <Link
             href="/"
-            className="focus-ring group flex min-w-0 shrink items-center gap-2.5 rounded-md sm:gap-3"
+            className="focus-ring group flex min-w-0 shrink items-center gap-2.5 justify-self-start rounded-md sm:gap-3"
             onClick={() => setOpen(false)}
           >
             <Image
@@ -194,7 +194,7 @@ export default function Header() {
           </Link>
 
           <nav
-            className="hidden items-center gap-0.5 lg:flex"
+            className="hidden items-center justify-center gap-0.5 lg:flex"
             aria-label="Main navigation"
           >
             {navLinks.map((link) => {
@@ -287,10 +287,10 @@ export default function Header() {
             })}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
+          <div className="flex shrink-0 items-center justify-self-end gap-2 sm:gap-2.5">
             <a
               href={siteConfig.phoneHref}
-              className="focus-ring btn-phone hidden 2xl:inline-flex"
+              className="focus-ring btn-phone hidden lg:inline-flex"
             >
               <svg
                 className="h-4 w-4 text-bronze"

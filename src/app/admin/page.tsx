@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-6 grid gap-4 lg:grid-cols-5">
         <section className="lg:col-span-3">
           <div className="mb-2.5 flex items-center justify-between gap-3">
-            <h2 className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
+            <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
               Recent quotes
             </h2>
             <Link
@@ -116,7 +116,7 @@ export default async function AdminDashboardPage() {
         <section className="space-y-4 lg:col-span-2">
           <div>
             <div className="mb-2.5 flex items-center justify-between">
-              <h2 className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
+              <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
                 Invoices
               </h2>
               <Link
@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
           </div>
           <div>
             <div className="mb-2.5 flex items-center justify-between">
-              <h2 className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
+              <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
                 Payments
               </h2>
               <Link

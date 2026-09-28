@@ -74,7 +74,8 @@ export default function AdminShell({
 
   return (
     <div className="admin-app min-h-full text-ink">
-      <header className="admin-topbar sticky top-0 z-40 border-b border-white/10 bg-navy text-cream">
+      <header className="admin-topbar sticky top-0 z-40 border-b border-white/10 bg-[#0a0c10] text-cream shadow-[0_1px_0_0_rgba(192,139,58,0.35)]">
+        <div className="h-0.5 w-full bg-gradient-to-r from-bronze via-bronze-light to-bronze" aria-hidden />
         <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-3 px-3 py-2.5 sm:px-5 lg:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
             <Image
@@ -85,10 +86,10 @@ export default function AdminShell({
               className="h-7 w-7 object-contain"
             />
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold tracking-tight">
+              <p className="truncate font-display text-sm font-semibold tracking-tight">
                 Kaba Fence Admin
               </p>
-              <p className="truncate text-[0.625rem] uppercase tracking-wider text-cream/50">
+              <p className="truncate text-[0.625rem] uppercase tracking-[0.12em] text-bronze-light/80">
                 Quotes · invoices · payments
               </p>
             </div>
@@ -103,7 +104,7 @@ export default function AdminShell({
             <button
               type="button"
               onClick={() => void logout()}
-              className="rounded-md bg-bronze px-2.5 py-1.5 text-xs font-bold text-navy transition hover:brightness-105"
+              className="rounded-md bg-bronze px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.06em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.35)] transition hover:brightness-105"
             >
               Sign out
             </button>
@@ -122,7 +123,7 @@ export default function AdminShell({
       )}
 
       <div className="mx-auto grid max-w-[90rem] gap-0 lg:grid-cols-[13.5rem_minmax(0,1fr)]">
-        <aside className="admin-sidebar border-b border-ink/8 lg:sticky lg:top-[3.25rem] lg:h-[calc(100dvh-3.25rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r lg:border-ink/8">
+        <aside className="admin-sidebar border-b border-ink/8 lg:sticky lg:top-[3.5rem] lg:h-[calc(100dvh-3.5rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r lg:border-ink/8">
           <nav
             aria-label="Admin"
             className="flex gap-0.5 overflow-x-auto px-2 py-2 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:px-3 lg:py-4"
@@ -138,7 +139,7 @@ export default function AdminShell({
                   aria-current={active ? "page" : undefined}
                   className={`admin-nav-link flex items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-[0.8125rem] font-semibold transition ${
                     active
-                      ? "bg-navy text-cream shadow-sm dark:bg-bronze/20 dark:text-bronze-light dark:ring-1 dark:ring-bronze/30"
+                      ? "bg-[#0a0c10] text-cream shadow-sm ring-1 ring-bronze/25 dark:bg-bronze/20 dark:text-bronze-light dark:ring-bronze/30"
                       : "text-muted hover:bg-[var(--admin-row-hover)] hover:text-ink"
                   }`}
                 >
