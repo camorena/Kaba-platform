@@ -1,5 +1,6 @@
 import AdminShell from "@/components/admin/AdminShell";
 import PageHeader from "@/components/admin/PageHeader";
+import SettingsProfile from "@/components/admin/SettingsProfile";
 import { getAdminPassword } from "@/lib/admin/auth";
 import { requireAdmin } from "@/lib/admin/guard";
 
@@ -15,12 +16,20 @@ export default async function AdminSettingsPage() {
       <PageHeader
         title="Settings"
         description="Environment docs and honest limits of this scaffold — not fake security controls."
+        crumbs={[
+          { href: "/admin", label: "Admin" },
+          { label: "Settings" },
+        ]}
         meta={
           <p className="mb-1 text-[0.625rem] font-bold uppercase tracking-[0.14em] text-bronze">
             Ops · transparency
           </p>
         }
       />
+
+      <div className="mb-3">
+        <SettingsProfile />
+      </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
         <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">

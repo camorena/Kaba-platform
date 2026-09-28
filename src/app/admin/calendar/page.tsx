@@ -29,6 +29,10 @@ export default async function AdminCalendarPage() {
     <AdminShell warning={warning}>
       <PageHeader
         title="Schedule"
+        crumbs={[
+          { href: "/admin", label: "Admin" },
+          { label: "Schedule" },
+        ]}
         description="Stub calendar of site visits and installs derived from scheduled / won quotes. Not a booking system yet."
         meta={
           <p className="mb-1 text-[0.625rem] font-bold uppercase tracking-[0.14em] text-bronze">

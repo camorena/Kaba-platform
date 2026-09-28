@@ -206,74 +206,125 @@ export default function InvoicesPanel({
           description="Try a different search or clear filters."
         />
       ) : (
-        <div className="admin-table-wrap overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
-          <div className="overflow-x-auto">
-            <table className="admin-table min-w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-ink/10 bg-[var(--admin-thead)] text-[0.625rem] uppercase tracking-wider text-muted">
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Invoice</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Customer</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Total</th>
-                  <th className="hidden px-3 py-2.5 font-semibold sm:table-cell sm:px-4">
-                    Balance
-                  </th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((inv) => {
-                  const total = inv.lines.reduce(
-                    (s, l) => s + l.quantity * l.unitCents,
-                    0,
-                  );
-                  const paid = paidMap[inv.id] ?? 0;
-                  const balance = Math.max(0, total - paid);
-                  return (
-                    <tr
-                      key={inv.id}
-                      className="border-b border-ink/5 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
-                    >
-                      <td className="px-3 py-3 sm:px-4">
-                        <Link
-                          href={`/admin/invoices/${inv.id}`}
-                          className="font-semibold text-ink hover:text-bronze-dark hover:underline dark:hover:text-bronze-light"
-                        >
-                          {inv.number}
-                        </Link>
-                        <div className="mt-0.5 text-xs text-muted">
-                          {formatShortDate(inv.createdAt)}
-                          {inv.demo && (
-                            <span className="ml-1.5 rounded bg-amber-500/15 px-1 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
-                              Demo
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-3 py-3 sm:px-4">
-                        <div className="font-medium text-ink">
-                          {inv.customerName}
-                        </div>
-                        <div className="text-xs text-muted">{inv.address}</div>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3 font-medium tabular-nums text-ink sm:px-4">
-                        {formatMoney(total)}
-                      </td>
-                      <td className="hidden whitespace-nowrap px-3 py-3 tabular-nums text-muted sm:table-cell sm:px-4">
-                        {formatMoney(balance)}
-                      </td>
-                      <td className="px-3 py-3 sm:px-4">
-                        <StatusBadge
-                          label={inv.status}
-                          tone={invoiceStatusTone[inv.status]}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        <>
+          <ul className="admin-card-list space-y-2.5 md:hidden">
+            {filtered.map((inv) => {
+              const total = inv.lines.reduce(
+                (s, l) => s + l.quantity * l.unitCents,
+                0,
+              );
+              const paid = paidMap[inv.id] ?? 0;
+              const balance = Math.max(0, total - paid);
+              return (
+                <li key={inv.id} className="admin-mobile-card">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <Link
+                        href={`/admin/invoices/${inv.id}`}
+                        className="font-semibold text-ink hover:text-bronze-dark hover:underline dark:hover:text-bronze-light"
+                      >
+                        {inv.number}
+                      </Link>
+                      <p className="mt-0.5 text-xs text-muted">
+                        {formatShortDate(inv.createdAt)}
+                        {inv.demo && " · Demo"}
+                      </p>
+                    </div>
+                    <StatusBadge
+                      label={inv.status}
+                      tone={invoiceStatusTone[inv.status]}
+                    />
+                  </div>
+                  <p className="mt-2 text-sm font-medium text-ink">
+                    {inv.customerName}
+                  </p>
+                  <p className="text-xs text-muted">{inv.address}</p>
+                  <div className="mt-2.5 flex justify-between text-sm">
+                    <span className="text-muted">Total</span>
+                    <span className="font-semibold tabular-nums text-ink">
+                      {formatMoney(total)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted">Balance</span>
+                    <span className="tabular-nums text-muted">
+                      {formatMoney(balance)}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="admin-table-wrap hidden overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)] md:block">
+            <div className="overflow-x-auto">
+              <table className="admin-table min-w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-ink/10 bg-[var(--admin-thead)] text-[0.625rem] uppercase tracking-wider text-muted">
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">Invoice</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">Customer</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">Total</th>
+                    <th className="hidden px-3 py-2.5 font-semibold sm:table-cell sm:px-4">
+                      Balance
+                    </th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((inv) => {
+                    const total = inv.lines.reduce(
+                      (s, l) => s + l.quantity * l.unitCents,
+                      0,
+                    );
+                    const paid = paidMap[inv.id] ?? 0;
+                    const balance = Math.max(0, total - paid);
+                    return (
+                      <tr
+                        key={inv.id}
+                        className="border-b border-ink/5 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
+                      >
+                        <td className="px-3 py-3 sm:px-4">
+                          <Link
+                            href={`/admin/invoices/${inv.id}`}
+                            className="font-semibold text-ink hover:text-bronze-dark hover:underline dark:hover:text-bronze-light"
+                          >
+                            {inv.number}
+                          </Link>
+                          <div className="mt-0.5 text-xs text-muted">
+                            {formatShortDate(inv.createdAt)}
+                            {inv.demo && (
+                              <span className="ml-1.5 rounded bg-amber-500/15 px-1 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
+                                Demo
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-3 py-3 sm:px-4">
+                          <div className="font-medium text-ink">
+                            {inv.customerName}
+                          </div>
+                          <div className="text-xs text-muted">{inv.address}</div>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3 font-medium tabular-nums text-ink sm:px-4">
+                          {formatMoney(total)}
+                        </td>
+                        <td className="hidden whitespace-nowrap px-3 py-3 tabular-nums text-muted sm:table-cell sm:px-4">
+                          {formatMoney(balance)}
+                        </td>
+                        <td className="px-3 py-3 sm:px-4">
+                          <StatusBadge
+                            label={inv.status}
+                            tone={invoiceStatusTone[inv.status]}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

@@ -41,20 +41,34 @@ export default function PaymentsPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{
+    invoiceId?: string;
+    amount?: string;
+  }>({});
+  const [touched, setTouched] = useState<{ invoiceId?: boolean; amount?: boolean }>({});
+
+  function validate(vals = { invoiceId, amount }) {
+    const next: { invoiceId?: string; amount?: string } = {};
+    if (!vals.invoiceId) next.invoiceId = "Select an invoice.";
+    const dollars = Number.parseFloat(vals.amount);
+    if (!Number.isFinite(dollars) || dollars <= 0) {
+      next.amount = "Enter a valid amount greater than zero.";
+    }
+    return next;
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setOk(null);
+    setTouched({ invoiceId: true, amount: true });
+    const next = validate();
+    setFieldErrors(next);
+    if (Object.keys(next).length) {
+      setError("Fix the highlighted fields.");
+      return;
+    }
     const dollars = Number.parseFloat(amount);
-    if (!invoiceId) {
-      setError("Select an invoice.");
-      return;
-    }
-    if (!Number.isFinite(dollars) || dollars <= 0) {
-      setError("Enter a valid amount.");
-      return;
-    }
     setBusy(true);
     try {
       const res = await fetch("/api/payments", {
@@ -104,9 +118,22 @@ export default function PaymentsPanel({
             </label>
             <select
               id="pay-invoice"
-              className="field-input mt-1 text-sm"
+              className={`field-input mt-1 text-sm ${
+                touched.invoiceId && fieldErrors.invoiceId ? "admin-field-invalid" : ""
+              }`}
               value={invoiceId}
-              onChange={(e) => setInvoiceId(e.target.value)}
+              onChange={(e) => {
+                setInvoiceId(e.target.value);
+                setFieldErrors((f) => ({ ...f, invoiceId: undefined }));
+              }}
+              onBlur={() => {
+                setTouched((t) => ({ ...t, invoiceId: true }));
+                setFieldErrors((f) => ({ ...f, ...validate() }));
+              }}
+              aria-invalid={Boolean(touched.invoiceId && fieldErrors.invoiceId)}
+              aria-describedby={
+                touched.invoiceId && fieldErrors.invoiceId ? "pay-invoice-err" : undefined
+              }
             >
               <option value="">Select…</option>
               {(openInvoices.length ? openInvoices : invoices).map((inv) => (
@@ -115,6 +142,11 @@ export default function PaymentsPanel({
                 </option>
               ))}
             </select>
+            {touched.invoiceId && fieldErrors.invoiceId && (
+              <p id="pay-invoice-err" className="admin-field-error">
+                {fieldErrors.invoiceId}
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="pay-amount" className="text-xs font-semibold text-muted">
@@ -126,12 +158,30 @@ export default function PaymentsPanel({
               min="0.01"
               step="0.01"
               inputMode="decimal"
-              className="field-input mt-1 text-sm"
+              className={`field-input mt-1 text-sm ${
+                touched.amount && fieldErrors.amount ? "admin-field-invalid" : ""
+              }`}
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setFieldErrors((f) => ({ ...f, amount: undefined }));
+              }}
+              onBlur={() => {
+                setTouched((t) => ({ ...t, amount: true }));
+                setFieldErrors((f) => ({ ...f, ...validate() }));
+              }}
               placeholder="0.00"
+              aria-invalid={Boolean(touched.amount && fieldErrors.amount)}
+              aria-describedby={
+                touched.amount && fieldErrors.amount ? "pay-amount-err" : undefined
+              }
               required
             />
+            {touched.amount && fieldErrors.amount && (
+              <p id="pay-amount-err" className="admin-field-error">
+                {fieldErrors.amount}
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="pay-method" className="text-xs font-semibold text-muted">

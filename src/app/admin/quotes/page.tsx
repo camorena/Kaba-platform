@@ -17,6 +17,10 @@ export default async function AdminQuotesPage() {
       <PageHeader
         title="Quotes"
         description="Public form submissions plus seed demo rows. In-memory store — resets on serverless cold starts until a DB is wired."
+        crumbs={[
+          { href: "/admin", label: "Admin" },
+          { label: "Quotes" },
+        ]}
         actions={
           <Link href="/admin/pipeline" className="btn-secondary-light text-sm">
             Pipeline board

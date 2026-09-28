@@ -152,6 +152,26 @@ export function updateQuote(
   return q;
 }
 
+export function bulkUpdateQuoteStatus(
+  ids: string[],
+  status: QuoteStatus,
+): { updated: number; missing: string[] } {
+  const missing: string[] = [];
+  let updated = 0;
+  const now = new Date().toISOString();
+  for (const id of ids) {
+    const q = store().find((item) => item.id === id);
+    if (!q) {
+      missing.push(id);
+      continue;
+    }
+    q.status = status;
+    q.updatedAt = now;
+    updated += 1;
+  }
+  return { updated, missing };
+}
+
 /** @deprecated prefer updateQuote */
 export function updateQuoteStatus(
   id: string,

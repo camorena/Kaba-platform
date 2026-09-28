@@ -20,6 +20,10 @@ export default async function AdminPaymentsPage({
     <AdminShell warning={warning}>
       <PageHeader
         title="Payments"
+        crumbs={[
+          { href: "/admin", label: "Admin" },
+          { label: "Payments" },
+        ]}
         description="Stub ledger linked to invoices. No Stripe, ACH, or card capture — recording only for UI foundation."
       />
       <PaymentsPanel

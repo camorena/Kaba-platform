@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import CopyChip from "@/components/admin/CopyChip";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { QuoteStatusTimeline } from "@/components/admin/StatusTimeline";
@@ -28,8 +29,19 @@ export default function QuoteDetailClient({
   const [notes, setNotes] = useState(quote.notes);
   const [busy, setBusy] = useState(false);
   const [creatingInv, setCreatingInv] = useState(false);
+  const [confirmLost, setConfirmLost] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<QuoteStatus | null>(null);
 
   async function save(patch: { status?: QuoteStatus; notes?: string }) {
+    if (patch.status === "lost" && status !== "lost") {
+      setPendingStatus("lost");
+      setConfirmLost(true);
+      return;
+    }
+    await applySave(patch);
+  }
+
+  async function applySave(patch: { status?: QuoteStatus; notes?: string }) {
     setBusy(true);
     try {
       const res = await fetch(`/api/quotes/${quote.id}`, {
@@ -41,6 +53,7 @@ export default function QuoteDetailClient({
         toast.push({ title: "Save failed", tone: "error" });
         return;
       }
+      if (patch.status) setStatus(patch.status);
       toast.push({
         title: patch.status ? `Status → ${patch.status}` : "Notes saved",
         tone: "success",
@@ -48,6 +61,8 @@ export default function QuoteDetailClient({
       router.refresh();
     } finally {
       setBusy(false);
+      setConfirmLost(false);
+      setPendingStatus(null);
     }
   }
 
@@ -280,6 +295,19 @@ export default function QuoteDetailClient({
           </div>
         </section>
       </div>
+      <ConfirmDialog
+        open={confirmLost}
+        title="Mark quote as lost?"
+        description="Lost quotes drop out of active pipeline views. You can reopen them later."
+        confirmLabel="Mark lost"
+        tone="danger"
+        busy={busy}
+        onCancel={() => {
+          setConfirmLost(false);
+          setPendingStatus(null);
+        }}
+        onConfirm={() => void applySave({ status: pendingStatus ?? "lost" })}
+      />
     </div>
   );
 }

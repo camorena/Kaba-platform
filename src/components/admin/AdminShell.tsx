@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import AdminPageTransition from "@/components/admin/AdminPageTransition";
+import NotificationCenter from "@/components/admin/NotificationCenter";
 import { ToastProvider, useToast } from "@/components/admin/Toast";
 import ThemeToggle from "@/components/ThemeToggle";
 import SiteCredit from "@/components/SiteCredit";
@@ -111,6 +112,40 @@ function NavIcon({ name }: { name: string }) {
   }
 }
 
+function NavLinks({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <>
+      {nav.map((item) => {
+        const active = item.exact
+          ? pathname === item.href
+          : pathname === item.href || pathname.startsWith(`${item.href}/`);
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={active ? "page" : undefined}
+            onClick={onNavigate}
+            className={`admin-nav-link admin-touch flex items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-[0.8125rem] font-semibold transition ${
+              active
+                ? "bg-[#0a0c10] text-cream shadow-sm ring-1 ring-bronze/25 dark:bg-bronze/20 dark:text-bronze-light dark:ring-bronze/30"
+                : "text-muted hover:bg-[var(--admin-row-hover)] hover:text-ink"
+            }`}
+          >
+            <NavIcon name={item.icon} />
+            {item.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
 function AdminShellInner({
   children,
   warning,
@@ -123,11 +158,31 @@ function AdminShellInner({
   const toast = useToast();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const openCmd = useCallback(() => setCmdOpen(true), []);
   const closeCmd = useCallback(() => setCmdOpen(false), []);
   const openShortcuts = useCallback(() => setShortcutsOpen(true), []);
   const closeShortcuts = useCallback(() => setShortcutsOpen(false), []);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setDrawerOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [drawerOpen]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -163,10 +218,21 @@ function AdminShellInner({
 
   return (
     <div className="admin-app min-h-full text-ink">
-      <header className="admin-topbar sticky top-0 z-40 border-b border-white/10 bg-[#0a0c10] text-cream shadow-[0_1px_0_0_rgba(192,139,58,0.35)]">
+      <header className="admin-topbar sticky top-0 z-40 border-b border-white/10 bg-[#0a0c10] text-cream shadow-[0_1px_0_0_rgba(192,139,58,0.35)] pt-[env(safe-area-inset-top,0px)]">
         <div className="h-0.5 w-full bg-gradient-to-r from-bronze via-bronze-light to-bronze" aria-hidden />
-        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-3 px-3 py-2.5 sm:px-5 lg:px-6">
-          <div className="flex min-w-0 items-center gap-2.5">
+        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-5 lg:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <button
+              type="button"
+              className="admin-touch -ml-1 rounded-md p-2 text-cream/80 transition hover:bg-white/10 hover:text-cream lg:hidden"
+              aria-label="Open menu"
+              aria-expanded={drawerOpen}
+              onClick={() => setDrawerOpen(true)}
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            </button>
             <Image
               src="/brand/kaba-fence-icon.png"
               alt=""
@@ -178,16 +244,16 @@ function AdminShellInner({
               <p className="truncate font-display text-sm font-semibold tracking-tight">
                 Kaba Fence Admin
               </p>
-              <p className="truncate text-[0.625rem] uppercase tracking-[0.12em] text-bronze-light/80">
+              <p className="hidden truncate text-[0.625rem] uppercase tracking-[0.12em] text-bronze-light/80 xs:block sm:block">
                 Quotes · invoices · field ops
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="flex items-center gap-0.5 sm:gap-1.5">
             <button
               type="button"
               onClick={openCmd}
-              className="admin-search-trigger hidden items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-cream/70 transition hover:border-bronze/40 hover:bg-white/10 hover:text-cream sm:inline-flex"
+              className="admin-search-trigger admin-touch hidden items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-cream/70 transition hover:border-bronze/40 hover:bg-white/10 hover:text-cream sm:inline-flex"
               aria-label="Open command palette"
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -199,32 +265,33 @@ function AdminShellInner({
             <button
               type="button"
               onClick={openCmd}
-              className="rounded-md p-1.5 text-cream/70 transition hover:bg-white/10 hover:text-cream sm:hidden"
+              className="admin-touch rounded-md p-2 text-cream/70 transition hover:bg-white/10 hover:text-cream sm:hidden"
               aria-label="Search"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
               </svg>
             </button>
+            <NotificationCenter />
             <button
               type="button"
               onClick={openShortcuts}
-              className="hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream md:inline"
+              className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream md:inline"
               title="Keyboard shortcuts"
             >
               ?
             </button>
-            <ThemeToggle variant="dark" className="!h-8 !w-8" />
+            <ThemeToggle variant="dark" className="!h-9 !w-9" />
             <Link
               href="/"
-              className="rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream"
+              className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream sm:inline"
             >
               View site
             </Link>
             <button
               type="button"
               onClick={() => void logout()}
-              className="rounded-md bg-bronze px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.06em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.35)] transition hover:brightness-105 active:scale-[0.98]"
+              className="admin-touch rounded-md bg-bronze px-2.5 py-2 text-xs font-bold uppercase tracking-[0.06em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.35)] transition hover:brightness-105 active:scale-[0.98]"
             >
               Sign out
             </button>
@@ -242,44 +309,65 @@ function AdminShellInner({
         </div>
       )}
 
+      {/* Mobile drawer */}
+      {drawerOpen && (
+        <div className="admin-drawer-root lg:hidden" role="presentation">
+          <button
+            type="button"
+            className="admin-drawer-backdrop"
+            aria-label="Close menu"
+            onClick={closeDrawer}
+          />
+          <aside
+            className="admin-drawer-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Admin navigation"
+          >
+            <div className="flex items-center justify-between border-b border-ink/8 px-3 py-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted">
+                Navigate
+              </p>
+              <button
+                type="button"
+                className="admin-touch rounded-md p-2 text-muted hover:bg-[var(--admin-row-hover)] hover:text-ink"
+                aria-label="Close menu"
+                onClick={closeDrawer}
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav aria-label="Admin" className="flex flex-col gap-0.5 overflow-y-auto px-2 py-3">
+              <NavLinks pathname={pathname} onNavigate={closeDrawer} />
+            </nav>
+            <p className="mt-auto border-t border-ink/8 px-4 py-3 text-[0.625rem] leading-relaxed text-muted">
+              Press <kbd className="admin-kbd">⌘K</kbd> to jump anywhere.
+            </p>
+          </aside>
+        </div>
+      )}
+
       <div className="mx-auto grid max-w-[90rem] gap-0 lg:grid-cols-[13.5rem_minmax(0,1fr)]">
-        <aside className="admin-sidebar border-b border-ink/8 lg:sticky lg:top-[3.5rem] lg:h-[calc(100dvh-3.5rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r lg:border-ink/8">
+        <aside className="admin-sidebar hidden border-r border-ink/8 lg:sticky lg:top-[3.5rem] lg:block lg:h-[calc(100dvh-3.5rem)] lg:overflow-y-auto">
           <nav
             aria-label="Admin"
-            className="flex gap-0.5 overflow-x-auto px-2 py-2 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:px-3 lg:py-4"
+            className="flex flex-col gap-0.5 px-3 py-4"
           >
-            {nav.map((item) => {
-              const active = item.exact
-                ? pathname === item.href
-                : pathname === item.href || pathname.startsWith(`${item.href}/`);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={`admin-nav-link flex items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-[0.8125rem] font-semibold transition ${
-                    active
-                      ? "bg-[#0a0c10] text-cream shadow-sm ring-1 ring-bronze/25 dark:bg-bronze/20 dark:text-bronze-light dark:ring-bronze/30"
-                      : "text-muted hover:bg-[var(--admin-row-hover)] hover:text-ink"
-                  }`}
-                >
-                  <NavIcon name={item.icon} />
-                  {item.label}
-                </Link>
-              );
-            })}
+            <NavLinks pathname={pathname} />
           </nav>
-          <p className="hidden px-4 pb-4 text-[0.625rem] leading-relaxed text-muted lg:block">
+          <p className="px-4 pb-4 text-[0.625rem] leading-relaxed text-muted">
             Press <kbd className="admin-kbd">⌘K</kbd> to jump anywhere.
           </p>
         </aside>
 
-        <main className="admin-main min-w-0 px-3 py-3.5 sm:px-5 sm:py-4 lg:px-6 lg:py-5">
+        <main className="admin-main min-w-0 px-3 py-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-4 lg:px-6 lg:py-5">
           <AdminPageTransition>{children}</AdminPageTransition>
         </main>
       </div>
 
-      <footer className="border-t border-ink/8 bg-[var(--admin-panel)]">
+      <footer className="border-t border-ink/8 bg-[var(--admin-panel)] pb-[env(safe-area-inset-bottom,0px)]">
         <div className="mx-auto flex max-w-[90rem] flex-col gap-2 px-3 py-4 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-5 lg:px-6">
           <p>Kaba Fence Admin</p>
           <SiteCredit tone="admin" />

@@ -16,6 +16,10 @@ export default async function AdminPipelinePage() {
     <AdminShell warning={warning}>
       <PageHeader
         title="Pipeline"
+        crumbs={[
+          { href: "/admin", label: "Admin" },
+          { label: "Pipeline" },
+        ]}
         description="Kanban view of quote stages — drag cards or use quick advances. Same in-memory store as Quotes."
         actions={
           <Link href="/admin/quotes" className="btn-secondary-light text-sm">

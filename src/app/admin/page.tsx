@@ -88,6 +88,7 @@ export default async function AdminDashboardPage() {
     <AdminShell warning={warning}>
       <PageHeader
         title="Dashboard"
+        crumbs={[{ label: "Dashboard" }]}
         description="Dense ops brief — attention items, pipeline funnel, and recent movement. Demo amounts; auth remains a stub."
         actions={
           <div className="flex flex-wrap gap-2">

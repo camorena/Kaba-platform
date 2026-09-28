@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import CopyChip from "@/components/admin/CopyChip";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { InvoiceStatusTimeline } from "@/components/admin/StatusTimeline";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/admin/status";
 import type { InvoiceRecord } from "@/lib/admin/invoices-store";
 import type { PaymentRecord } from "@/lib/admin/payments-store";
+import { siteConfig } from "@/lib/site";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,6 +31,7 @@ export default function InvoiceDetailClient({
   const toast = useToast();
   const [status, setStatus] = useState<InvoiceStatus>(invoice.status);
   const [busy, setBusy] = useState(false);
+  const [confirmVoid, setConfirmVoid] = useState(false);
   const total = invoice.lines.reduce(
     (s, l) => s + l.quantity * l.unitCents,
     0,
@@ -36,6 +39,14 @@ export default function InvoiceDetailClient({
   const balance = Math.max(0, total - paidCents);
 
   async function changeStatus(next: InvoiceStatus) {
+    if (next === "void" && status !== "void") {
+      setConfirmVoid(true);
+      return;
+    }
+    await applyStatus(next);
+  }
+
+  async function applyStatus(next: InvoiceStatus) {
     setBusy(true);
     try {
       const res = await fetch(`/api/invoices/${invoice.id}`, {
@@ -52,6 +63,7 @@ export default function InvoiceDetailClient({
       router.refresh();
     } finally {
       setBusy(false);
+      setConfirmVoid(false);
     }
   }
 
@@ -157,6 +169,47 @@ export default function InvoiceDetailClient({
         </div>
       </div>
 
+
+      <section className="invoice-print-letterhead hidden print:block">
+        <div className="flex items-start justify-between gap-4 border-b-2 border-[#c08b3a] pb-4">
+          <div>
+            <p className="font-display text-2xl font-semibold tracking-tight text-[#0b111a]">
+              {siteConfig.name}
+            </p>
+            <p className="mt-1 text-xs text-[#5c6570]">{siteConfig.tagline}</p>
+            <p className="mt-2 text-xs text-[#5c6570]">
+              {siteConfig.address.region} · {siteConfig.phone}
+            </p>
+            <p className="text-xs text-[#5c6570]">{siteConfig.email}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-[#c08b3a]">
+              Invoice
+            </p>
+            <p className="mt-1 font-display text-xl font-semibold text-[#0b111a]">
+              {invoice.number}
+            </p>
+            <p className="mt-1 text-xs text-[#5c6570]">
+              Status: {status}
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-4 text-xs text-[#0b111a]">
+          <div>
+            <p className="font-bold uppercase tracking-wider text-[#5c6570]">Bill to</p>
+            <p className="mt-1 font-semibold">{invoice.customerName}</p>
+            <p>{invoice.address}</p>
+            <p>{invoice.customerEmail}</p>
+            <p>{invoice.customerPhone}</p>
+          </div>
+          <div className="text-right">
+            <p><span className="text-[#5c6570]">Total</span> · {formatMoney(total)}</p>
+            <p><span className="text-[#5c6570]">Paid</span> · {formatMoney(paidCents)}</p>
+            <p className="font-semibold"><span className="text-[#5c6570]">Balance</span> · {formatMoney(balance)}</p>
+          </div>
+        </div>
+      </section>
+
       <div className="grid gap-3 lg:grid-cols-3">
         <section className="admin-card invoice-print-sheet lg:col-span-2">
           <h2 className="admin-card-title">Line items</h2>
@@ -257,6 +310,16 @@ export default function InvoiceDetailClient({
           </div>
         </section>
       </div>
+      <ConfirmDialog
+        open={confirmVoid}
+        title="Void this invoice?"
+        description="Voided invoices stay in the ledger for audit but should not collect payment. You can change status again in this demo."
+        confirmLabel="Void invoice"
+        tone="danger"
+        busy={busy}
+        onCancel={() => setConfirmVoid(false)}
+        onConfirm={() => void applyStatus("void")}
+      />
     </div>
   );
 }

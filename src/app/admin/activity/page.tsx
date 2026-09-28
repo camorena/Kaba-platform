@@ -25,6 +25,10 @@ export default async function AdminActivityPage() {
     <AdminShell warning={warning}>
       <PageHeader
         title="Activity"
+        crumbs={[
+          { href: "/admin", label: "Admin" },
+          { label: "Activity" },
+        ]}
         description="Unified feed of quote updates, invoices, and payments from the in-memory stores."
       />
 

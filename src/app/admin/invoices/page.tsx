@@ -25,6 +25,10 @@ export default async function AdminInvoicesPage() {
     <AdminShell warning={warning}>
       <PageHeader
         title="Invoices"
+        crumbs={[
+          { href: "/admin", label: "Admin" },
+          { label: "Invoices" },
+        ]}
         description="Demo invoices with synthetic amounts. Create drafts from quotes; PDF/email and real pricing come later."
       />
       <InvoicesPanel
