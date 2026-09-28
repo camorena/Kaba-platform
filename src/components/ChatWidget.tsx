@@ -12,6 +12,7 @@ import {
 } from "react";
 import {
   DEFAULT_CHATBOT_CATALOG,
+  DEFAULT_CHATBOT_CONTACT,
   formatLeadConfirmation,
   getBotReply,
   WELCOME_REPLY,
@@ -52,6 +53,7 @@ export default function ChatWidget({
 }: {
   catalog?: ChatbotCatalog;
 }) {
+  const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
   const panelId = useId();
   const titleId = useId();
   const liveId = useId();
@@ -334,9 +336,9 @@ export default function ChatWidget({
                 </p>
               </div>
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring hidden h-9 shrink-0 items-center gap-1.5 rounded-lg bg-white/10 px-2.5 text-[0.6875rem] font-semibold text-cream transition hover:bg-white/15 sm:inline-flex"
-                aria-label={`Call ${siteConfig.phone}`}
+                aria-label={`Call ${contact.phone}`}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <path
@@ -591,7 +593,7 @@ export default function ChatWidget({
             {/* Handoff strip */}
             <div className="chat-handoff flex shrink-0 items-stretch gap-px border-t border-ink/[0.06] bg-ink/[0.04] dark:border-cream/10 dark:bg-cream/[0.04]">
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring flex flex-1 items-center justify-center gap-1.5 px-2 py-2 text-[0.6875rem] font-semibold text-ink transition hover:bg-bronze/10"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -600,7 +602,7 @@ export default function ChatWidget({
                     fill="currentColor"
                   />
                 </svg>
-                Call {siteConfig.phone}
+                Call {contact.phone}
               </a>
               <Link
                 href="/contact"

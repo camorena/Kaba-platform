@@ -7,10 +7,12 @@
  *   getPublishedTestimonials() → /reviews + home
  *   getPublishedProjects() → /gallery + home teaser
  *   getPublishedFenceTypes/Services() → /services, residential/commercial, home
- *   getPublishedAbout* / ServiceTowns / Materials* → /about, /service-area, /materials
+ *   getPublishedAbout* / ServiceTowns / Materials* (+ FAQs) → /about, /service-area, /materials
  *   getPublishedProcessTimeline() → /how-it-works (process.* site-copy)
  *   getPublishedHeroCopy / TrustPoints / YourNeeds / KabaExperience → home (+ residential needs)
- *   Chatbot catalog ← getPublishedFaqs / FenceTypes / Services
+ *   getPublishedNavLinks / FooterLinks / ContactInfo → header/footer/contact (+ chatbot)
+ *   JSON-LD areaServed ← getPublishedServiceTowns()
+ *   Chatbot catalog ← getPublishedFaqs / FenceTypes / Services (+ contact)
  * Do not delete other exports until each type follows the swap path in
  * preview/CMS_PUBLIC_CONTENT_PLAN.md (getPublished* + one page at a time).
  */

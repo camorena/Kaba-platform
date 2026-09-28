@@ -16,10 +16,13 @@ import {
   faqs,
   fencingServices,
   fenceMaterials,
+  footerLinks,
   galleryProjects,
   howItWorks,
   kabaExperience,
+  materialFaqs,
   materialGuidance,
+  navLinks,
   processTimeline,
   serviceTowns,
   siteConfig,
@@ -237,6 +240,72 @@ function seed(): Map<string, ContentDocument[]> {
         value: need.icon,
       },
     ]),
+    ...navLinks.map((link) => {
+      const slug = link.href.replace(/^\//, "").replace(/\//g, "-") || "home";
+      return {
+        key: `nav.${slug}.label`,
+        group: "nav",
+        label: `Nav ${slug}`,
+        value: link.label,
+      };
+    }),
+    ...footerLinks.map((link) => {
+      const slug = link.href.replace(/^\//, "").replace(/\//g, "-") || "home";
+      return {
+        key: `footer.${slug}.label`,
+        group: "nav",
+        label: `Footer ${slug}`,
+        value: link.label,
+      };
+    }),
+    {
+      key: "contact.phone",
+      group: "contact",
+      label: "Phone",
+      value: siteConfig.phone,
+    },
+    {
+      key: "contact.phoneHref",
+      group: "contact",
+      label: "Phone href",
+      value: siteConfig.phoneHref,
+    },
+    {
+      key: "contact.email",
+      group: "contact",
+      label: "Email",
+      value: siteConfig.email,
+    },
+    {
+      key: "contact.emailHref",
+      group: "contact",
+      label: "Email href",
+      value: siteConfig.emailHref,
+    },
+    {
+      key: "contact.hours.weekdays",
+      group: "contact",
+      label: "Hours weekdays",
+      value: siteConfig.hours.weekdays,
+    },
+    {
+      key: "contact.hours.saturday",
+      group: "contact",
+      label: "Hours Saturday",
+      value: siteConfig.hours.saturday,
+    },
+    {
+      key: "contact.hours.sunday",
+      group: "contact",
+      label: "Hours Sunday",
+      value: siteConfig.hours.sunday,
+    },
+    {
+      key: "contact.serviceArea",
+      group: "contact",
+      label: "Service area blurb",
+      value: siteConfig.serviceArea,
+    },
   ];
 
   map.set(
@@ -408,6 +477,31 @@ function seed(): Map<string, ContentDocument[]> {
         cons: "",
         tip: g.body,
         sortOrder: 200 + i + 1,
+      },
+    })),
+    ...materialFaqs.map((f, i) => ({
+      id: `mat_faq_${i + 1}`,
+      type: "materials",
+      status: "published" as const,
+      sortOrder: 300 + i + 1,
+      updatedAt: nowIso(),
+      fields: {
+        kind: "faq",
+        name: f.question,
+        slug: `mat-faq-${i + 1}`,
+        tagline: "",
+        bestFor: "",
+        lifespan: "",
+        maintenance: "",
+        privacy: "",
+        upkeep: "",
+        costTier: "",
+        image: "",
+        servicesHref: "",
+        pros: "",
+        cons: "",
+        tip: f.answer,
+        sortOrder: 300 + i + 1,
       },
     })),
   ];

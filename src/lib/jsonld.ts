@@ -1,8 +1,58 @@
+import type { PublishedContactInfo, PublishedServiceTown } from "@/lib/cms/types";
 import { absoluteUrl, faqs as siteFaqs, siteConfig, siteUrl } from "@/lib/site";
 
 type JsonLd = Record<string, unknown>;
 
-export function localBusinessJsonLd(): JsonLd {
+export type LocalBusinessJsonLdOptions = {
+  towns?: readonly PublishedServiceTown[];
+  contact?: PublishedContactInfo;
+};
+
+/**
+ * LocalBusiness JSON-LD. When published service-area towns are provided,
+ * areaServed is built from those town names (+ GeoCircle blurb). Otherwise
+ * falls back to the historic hardcoded Triangle list.
+ */
+export function localBusinessJsonLd(
+  options: LocalBusinessJsonLdOptions = {},
+): JsonLd {
+  const contact = options.contact;
+  const phone = contact?.phone ?? siteConfig.phone;
+  const email = contact?.email ?? siteConfig.email;
+  const serviceArea = contact?.serviceArea ?? siteConfig.serviceArea;
+
+  const towns = options.towns?.filter((t) => t.name.trim().length > 0) ?? [];
+  const areaServed: Record<string, unknown>[] =
+    towns.length > 0
+      ? [
+          ...towns.map((t) => ({ "@type": "City", name: t.name })),
+          ...Array.from(
+            new Set(
+              towns
+                .map((t) => t.region.trim())
+                .filter((r) => r.length > 0),
+            ),
+          ).map((region) => ({
+            "@type": "AdministrativeArea",
+            name: region,
+          })),
+          {
+            "@type": "GeoCircle",
+            description: serviceArea,
+          },
+        ]
+      : [
+          { "@type": "City", name: "Raleigh" },
+          { "@type": "City", name: "Apex" },
+          { "@type": "City", name: "Holly Springs" },
+          { "@type": "City", name: "Cary" },
+          { "@type": "AdministrativeArea", name: "Wake County" },
+          {
+            "@type": "GeoCircle",
+            description: serviceArea,
+          },
+        ];
+
   return {
     "@context": "https://schema.org",
     "@type": ["HomeAndConstructionBusiness", "LocalBusiness"],
@@ -10,8 +60,8 @@ export function localBusinessJsonLd(): JsonLd {
     name: siteConfig.name,
     description: siteConfig.description,
     url: siteUrl,
-    telephone: siteConfig.phone,
-    email: siteConfig.email,
+    telephone: phone,
+    email,
     image: absoluteUrl("/brand/kaba-fence-logo.png"),
     logo: absoluteUrl("/brand/kaba-fence-logo.png"),
     priceRange: "$$",
@@ -22,17 +72,7 @@ export function localBusinessJsonLd(): JsonLd {
       postalCode: siteConfig.address.zip,
       addressCountry: "US",
     },
-    areaServed: [
-      { "@type": "City", name: "Raleigh" },
-      { "@type": "City", name: "Apex" },
-      { "@type": "City", name: "Holly Springs" },
-      { "@type": "City", name: "Cary" },
-      { "@type": "AdministrativeArea", name: "Wake County" },
-      {
-        "@type": "GeoCircle",
-        description: siteConfig.serviceArea,
-      },
-    ],
+    areaServed,
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",

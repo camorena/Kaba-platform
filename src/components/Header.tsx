@@ -7,11 +7,32 @@ import { useEffect, useId, useRef, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   fencingOptionsNav,
-  navLinks,
+  navLinks as siteNavLinks,
   siteConfig,
 } from "@/lib/site";
 
-export default function Header() {
+export type HeaderNavLink = {
+  href: string;
+  label: string;
+  hasDropdown?: boolean;
+};
+
+export type HeaderContact = {
+  phone: string;
+  phoneHref: string;
+};
+
+export default function Header({
+  navLinks = siteNavLinks.map((l) => {
+    const out: HeaderNavLink = { href: l.href, label: l.label };
+    if ("hasDropdown" in l && l.hasDropdown) out.hasDropdown = true;
+    return out;
+  }),
+  contact = { phone: siteConfig.phone, phoneHref: siteConfig.phoneHref },
+}: {
+  navLinks?: HeaderNavLink[];
+  contact?: HeaderContact;
+} = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -299,9 +320,9 @@ export default function Header() {
 
           <div className="flex shrink-0 items-center justify-self-end gap-1.5 sm:gap-2">
             <a
-              href={siteConfig.phoneHref}
+              href={contact.phoneHref}
               className="focus-ring btn-phone header-phone hidden whitespace-nowrap xl:inline-flex"
-              aria-label={`Call ${siteConfig.phone}`}
+              aria-label={`Call ${contact.phone}`}
             >
               <svg
                 className="h-4 w-4 shrink-0 text-bronze"
@@ -317,7 +338,7 @@ export default function Header() {
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                 />
               </svg>
-              <span className="tabular-nums tracking-tight">{siteConfig.phone}</span>
+              <span className="tabular-nums tracking-tight">{contact.phone}</span>
             </a>
             <ThemeToggle className="hidden h-10 w-10 shrink-0 sm:inline-flex" />
             <Link
@@ -471,7 +492,7 @@ export default function Header() {
                 Request a Free Estimate
               </Link>
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring btn-phone mt-1 w-full py-3.5 text-center text-base"
               >
                 <svg
@@ -488,7 +509,7 @@ export default function Header() {
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                   />
                 </svg>
-                Call {siteConfig.phone}
+                Call {contact.phone}
               </a>
               <div className="mt-3 flex items-center justify-between rounded-lg border border-ink/[0.08] bg-ivory-muted/50 px-3 py-2 sm:hidden">
                 <span className="text-sm font-medium text-muted">Appearance</span>

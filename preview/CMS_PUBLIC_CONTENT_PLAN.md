@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-28 (America/Chicago)  
 **Code:** `src/lib/cms/` · registry `content-types.ts` · roadmap `roadmap.ts` · public readers `public.ts`  
-**Companion:** `preview/REUSE_PORT_v12.md`
+**Companion:** `preview/REUSE_PORT_v13.md`
 
 Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (images, text, services, gallery/projects, about, FAQs, etc.) without ripping `src/lib/site.ts` until each type is ready.
 
@@ -23,7 +23,7 @@ Goal: give Kaba Fence **admin pages to manage the PUBLIC marketing site** (image
 | Phase | Types | Admin | Public swap |
 |-------|--------|-------|-------------|
 | **A (v7)** | `fence-types`, `services`, `projects`, `faqs` | Hub + list + edit | **faqs → `/faq` (v8) + chatbot (v12)**; **projects → `/gallery` + home (v9)**; **fence-types + services → `/services`, residential/commercial, home (v10) + chatbot (v12)** |
-| **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | **testimonials → `/reviews` + home (v9)**; **about / materials / service-area + process.* (v11)**; **hero/trust/experience/needs site-copy → home (+ residential needs) (v12)** |
+| **B (v8)** | `site-copy`, `about`, `testimonials`, `service-area`, `materials` | Same registry CRUD | **testimonials → `/reviews` + home (v9)**; **about / materials / service-area + process.* (v11)**; **hero/trust/experience/needs site-copy → home (+ residential needs) (v12)**; **nav/footer/contact + materials FAQ + JSON-LD towns (v13)** |
 | **C (v8)** | `media` | Media library scaffold | Projects still path strings (+ beforeImage in CMS) |
 | **D** | `i18n-public` | Locale fields on documents | Optional `/es` marketing |
 
@@ -52,13 +52,13 @@ Machine-readable inventory: `CMS_PUBLIC_ROADMAP` in `src/lib/cms/roadmap.ts`. Hu
 
 | Key | Replaces in site.ts | Notes |
 |-----|---------------------|--------|
-| `site-copy` | `siteConfig` hero/tagline, `howItWorks`, `processTimeline`, `kabaExperience`, `trustPoints`, `yourNeeds` | **Cut over (v12):** hero/trust/experience/needs → home (+ residential needs); `process.*` → `/how-it-works`. `howItWorks.*` unused on public |
+| `site-copy` | `siteConfig` hero/tagline/contact, `howItWorks`, `processTimeline`, `kabaExperience`, `trustPoints`, `yourNeeds`, `navLinks`, `footerLinks` | **Cut over (v12):** hero/trust/experience/needs → home; `process.*` → `/how-it-works`. **(v13):** nav/footer labels + contact phone/email/hours. `howItWorks.*` unused on public |
 | `about` | `aboutLocalTrust`, `aboutStats`, `companyValues` | **Cut over (v11):** `/about`. Trust-claims Settings stay separate |
 | `testimonials` | `testimonials` | **Cut over (v9):** name + town + quote; no fake ratings |
-| `service-area` | `serviceTowns` | **Cut over (v11):** `/service-area` + about teaser. JSON-LD still hardcoded |
-| `materials` | `fenceMaterials`, `materialGuidance`, `deckMaterials` | **Cut over (v11):** `/materials`. Guidance only; no dollar prices |
+| `service-area` | `serviceTowns` | **Cut over (v11):** `/service-area` + about teaser. **(v13):** JSON-LD `areaServed` from published towns |
+| `materials` | `fenceMaterials`, `materialGuidance`, `deckMaterials`, `materialFaqs` | **Cut over (v11):** `/materials` cards/guidance. **(v13):** FAQ accordion (`kind=faq`). No dollar prices |
 
-Admin list/edit seeded from `site.ts`. Public cutovers through v12: faqs (+ chatbot), testimonials, projects, fence-types (+ chatbot), services (+ chatbot), about, materials, service-area, site-copy (hero/trust/experience/needs/process).
+Admin list/edit seeded from `site.ts`. Public cutovers through v13: faqs (+ chatbot), testimonials, projects, fence-types (+ chatbot), services (+ chatbot), about, materials (+ FAQ), service-area (+ JSON-LD), site-copy (hero/trust/experience/needs/process/nav/footer/contact).
 
 ---
 
@@ -87,7 +87,7 @@ Admin list/edit seeded from `site.ts`. Public cutovers through v12: faqs (+ chat
 3. **published** → for cut-over types, public `getPublished(type)` reads CMS; `revalidatePath` / tag when leaving memory.  
 4. **rollback** — keep previous published JSON snapshot when editors are non-technical.
 
-v12: publishing **FAQs**, **testimonials**, **projects**, **fence-types**, **services**, **about**, **materials**, **service-area**, or **site-copy** (hero/trust/experience/needs/process) changes their cutover surfaces (including chatbot catalogs for FAQs / fence-types / services). Other types/keys stay admin-only.
+v13: publishing **FAQs**, **testimonials**, **projects**, **fence-types**, **services**, **about**, **materials** (incl. FAQ kind), **service-area**, or **site-copy** (hero/trust/experience/needs/process/nav/footer/contact) changes their cutover surfaces (including chatbot catalogs + JSON-LD towns). Other types/keys stay admin-only.
 
 ---
 
@@ -105,13 +105,14 @@ v12: publishing **FAQs**, **testimonials**, **projects**, **fence-types**, **ser
 **Done (v9):** `testimonials` → `/reviews` + home; `projects` → `/gallery` + home teaser.  
 **Done (v10):** `fence-types` → `/services` + residential/commercial + home cards; `services` → `/services` deck section + residential/commercial.  
 **Done (v11):** `about` → `/about`; `materials` → `/materials`; `service-area` → `/service-area` + about teaser; `site-copy` `process.*` → `/how-it-works`.
-**Done (v12):** `site-copy` hero/tagline/trust/experience/needs → home (+ residential needs); chatbot ← published FAQs + fence-types + services.
+**Done (v12):** `site-copy` hero/tagline/trust/experience/needs → home (+ residential needs); chatbot ← published FAQs + fence-types + services.  
+**Done (v13):** nav/footer labels + contact phone/email/hours; materials FAQ accordion; JSON-LD `areaServed` ← published towns; chatbot contact.
 
 Document each cutover in a new `REUSE_PORT_vN.md` note.
 
 ---
 
-## Live vs site.ts (v12 snapshot)
+## Live vs site.ts (v13 snapshot)
 
 | Surface | Source |
 |---------|--------|
@@ -125,12 +126,15 @@ Document each cutover in a new `REUSE_PORT_vN.md` note.
 | `/about` stats + local trust + values | CMS published about (`getPublishedAbout*`) |
 | `/about` coverage teaser | CMS published service towns |
 | `/service-area` town cards | CMS published service-area (`getPublishedServiceTowns`) |
-| `/materials` fence/deck/guidance + compare | CMS published materials (`getPublished*Materials*`) |
+| `/materials` fence/deck/guidance + compare + FAQ | CMS published materials (`getPublished*Materials*` / `MaterialFaqs`) |
 | `/how-it-works` process timeline | CMS published site-copy `process.*` (`getPublishedProcessTimeline`) |
 | Home hero / tagline / trust bar / needs / experience | CMS published site-copy (`getPublishedHeroCopy` / `TrustPoints` / `YourNeeds` / `KabaExperience`) |
 | `/residential` needs cards | `getPublishedYourNeeds()` |
-| Chatbot FAQ / fencing / deck lists | Same `getPublishedFaqs` / `FenceTypes` / `Services` via layout catalog |
-| Nav/footer, materialFaqs, JSON-LD areaServed, contact phone/hours | `site.ts` |
+| Header / Footer nav + footer labels | CMS site-copy nav/footer (`getPublishedNavLinks` / `FooterLinks`) |
+| Header / Footer / `/contact` phone/email (+ hours keys) | CMS site-copy contact (`getPublishedContactInfo`) |
+| JSON-LD LocalBusiness `areaServed` + phone/email | CMS towns + contact |
+| Chatbot FAQ / fencing / deck lists + contact | Same helpers via layout catalog |
+| `fencingOptionsNav`, legal links, address/social, QuoteForm phone | `site.ts` |
 | Trust-claims (Settings) | Separate memory store — not About CMS / not home trust bar |
 | Admin Content hub list/edit (all Phase A–C types) | CMS memory (seeded from `site.ts`) |
 
@@ -142,5 +146,4 @@ Document each cutover in a new `REUSE_PORT_vN.md` note.
 - Live media binary upload without alt/provenance  
 - Public Spanish site without explicit product ask  
 - Full draft→review→rollback before an editor owns content daily  
-- Auto-updating JSON-LD areaServed from CMS towns without claim review  
 - Merging About CMS with Settings trust-claims  

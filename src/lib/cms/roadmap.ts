@@ -3,11 +3,11 @@
  * and how they replace `src/lib/site.ts` over time.
  *
  * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects,
- * fence-types, services, about, materials, service-area, site-copy
- * (hero/trust/experience/needs/process), and chatbot catalogs via getPublished*
- * (CMS published → site.ts fallback).
+ * fence-types, services, about, materials (+ FAQs), service-area (+ JSON-LD),
+ * site-copy (hero/trust/experience/needs/process/nav/footer/contact),
+ * and chatbot catalogs via getPublished* (CMS published → site.ts fallback).
  *
- * See preview/REUSE_PORT_v12.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v13.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -84,17 +84,19 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "Site copy & CTAs",
     pluralEs: "Textos y CTAs del sitio",
     siteSources: [
-      "siteConfig (tagline, hero*, description)",
+      "siteConfig (tagline, hero*, description, phone/email/hours)",
       "howItWorks",
       "processTimeline",
       "kabaExperience",
       "trustPoints",
       "yourNeeds",
+      "navLinks",
+      "footerLinks",
     ],
-    publicPaths: ["/", "/how-it-works", "/residential"],
+    publicPaths: ["/", "/how-it-works", "/residential", "nav", "footer", "contact", "chatbot"],
     shipped: true,
     publicCutover: true,
-    notes: "v12: hero/tagline/trust/experience/needs → home (+ residential needs); process.* → /how-it-works. howItWorks.* unused on public.",
+    notes: "v12: hero/trust/experience/needs/process. v13: nav/footer labels + contact phone/email/hours (+ chatbot contact). howItWorks.* unused on public.",
   },
   {
     key: "about",
@@ -124,21 +126,21 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "Service area towns",
     pluralEs: "Ciudades de servicio",
     siteSources: ["serviceTowns", "siteConfig.serviceArea"],
-    publicPaths: ["/service-area", "/about"],
+    publicPaths: ["/service-area", "/about", "JSON-LD"],
     shipped: true,
     publicCutover: true,
-    notes: "v11: /service-area + about coverage teaser. Keep towns honest. JSON-LD areaServed still hardcoded.",
+    notes: "v11: /service-area + about coverage teaser. v13: JSON-LD areaServed from published towns. Keep towns honest.",
   },
   {
     key: "materials",
     phase: "B",
     plural: "Materials guide",
     pluralEs: "Guía de materiales",
-    siteSources: ["fenceMaterials", "materialGuidance", "deckMaterials"],
+    siteSources: ["fenceMaterials", "materialGuidance", "deckMaterials", "materialFaqs"],
     publicPaths: ["/materials"],
     shipped: true,
     publicCutover: true,
-    notes: "v11: /materials reads getPublishedFence/DeckMaterials + guidance. No dollar prices. materialFaqs still site.ts.",
+    notes: "v11: fence/deck/guidance. v13: materials FAQ accordion (kind=faq). No dollar prices.",
   },
   {
     key: "media",

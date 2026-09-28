@@ -4,8 +4,12 @@ import ChatWidget from "@/components/ChatWidget";
 import JsonLd from "@/components/JsonLd";
 import PageTransition from "@/components/PageTransition";
 import {
+  getPublishedContactInfo,
   getPublishedFaqs,
   getPublishedFenceTypes,
+  getPublishedFooterLinks,
+  getPublishedNavLinks,
+  getPublishedServiceTowns,
   getPublishedServices,
 } from "@/lib/cms/public";
 import { localBusinessJsonLd, websiteJsonLd } from "@/lib/jsonld";
@@ -17,6 +21,11 @@ export default function MarketingLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const contact = getPublishedContactInfo();
+  const navLinks = getPublishedNavLinks();
+  const footerLinks = getPublishedFooterLinks();
+  const towns = getPublishedServiceTowns();
+
   const chatCatalog = {
     faqs: getPublishedFaqs(),
     fencingServices: getPublishedFenceTypes().map((f) => ({
@@ -29,22 +38,41 @@ export default function MarketingLayout({
       title: s.title,
       details: s.details,
     })),
+    contact: {
+      phone: contact.phone,
+      phoneHref: contact.phoneHref,
+      email: contact.email,
+      serviceArea: contact.serviceArea,
+      hoursLine: `${contact.hours.weekdays}; ${contact.hours.saturday}; ${contact.hours.sunday}`,
+    },
   };
 
   return (
     <>
-      <JsonLd data={[localBusinessJsonLd(), websiteJsonLd()]} />
+      <JsonLd
+        data={[
+          localBusinessJsonLd({
+            towns,
+            contact,
+          }),
+          websiteJsonLd(),
+        ]}
+      />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-bronze focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-navy focus:shadow-lg"
       >
         Skip to content
       </a>
-      <Header />
+      <Header navLinks={navLinks} contact={contact} />
       <main id="main" className="flex-1" tabIndex={-1}>
         <PageTransition>{children}</PageTransition>
       </main>
-      <Footer />
+      <Footer
+        navLinks={navLinks}
+        footerLinks={footerLinks}
+        contact={contact}
+      />
       <ChatWidget catalog={chatCatalog} />
     </>
   );

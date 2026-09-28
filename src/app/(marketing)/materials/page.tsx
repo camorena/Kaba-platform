@@ -9,11 +9,11 @@ import {
   getPublishedDeckMaterials,
   getPublishedFenceMaterials,
   getPublishedMaterialComparison,
+  getPublishedMaterialFaqs,
   getPublishedMaterialGuidance,
 } from "@/lib/cms/public";
 import {
   defaultOgImage,
-  materialFaqs,
   siteConfig,
 } from "@/lib/site";
 
@@ -45,6 +45,7 @@ export default function MaterialsPage() {
   const deckMaterials = getPublishedDeckMaterials();
   const materialGuidance = getPublishedMaterialGuidance();
   const materialComparison = getPublishedMaterialComparison();
+  const materialFaqs = getPublishedMaterialFaqs();
 
   return (
     <>
@@ -390,7 +391,7 @@ export default function MaterialsPage() {
               Common materials questions
             </h2>
             <div className="mt-8">
-              <FaqAccordion items={[...materialFaqs]} />
+              <FaqAccordion items={materialFaqs} />
             </div>
           </Reveal>
         </div>

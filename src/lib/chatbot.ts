@@ -21,10 +21,26 @@ export type ChatReply = {
 /** CMS-backed (or site.ts fallback) lists for FAQ + service matching. */
 export type ChatbotFaq = { question: string; answer: string };
 export type ChatbotService = { slug: string; title: string; details: string };
+export type ChatbotContact = {
+  phone: string;
+  phoneHref: string;
+  email: string;
+  serviceArea: string;
+  hoursLine: string;
+};
 export type ChatbotCatalog = {
   faqs: ChatbotFaq[];
   fencingServices: ChatbotService[];
   deckServices: ChatbotService[];
+  contact?: ChatbotContact;
+};
+
+export const DEFAULT_CHATBOT_CONTACT: ChatbotContact = {
+  phone: siteConfig.phone,
+  phoneHref: siteConfig.phoneHref,
+  email: siteConfig.email,
+  serviceArea: siteConfig.serviceArea,
+  hoursLine: `${siteConfig.hours.weekdays}; ${siteConfig.hours.saturday}; ${siteConfig.hours.sunday}`,
 };
 
 export const DEFAULT_CHATBOT_CATALOG: ChatbotCatalog = {
@@ -39,12 +55,13 @@ export const DEFAULT_CHATBOT_CATALOG: ChatbotCatalog = {
     title: s.title,
     details: s.details,
   })),
+  contact: DEFAULT_CHATBOT_CONTACT,
 };
 
-const area = siteConfig.serviceArea;
-const phone = siteConfig.phone;
-const email = siteConfig.email;
-const hours = `${siteConfig.hours.weekdays}; ${siteConfig.hours.saturday}; ${siteConfig.hours.sunday}`;
+const area = DEFAULT_CHATBOT_CONTACT.serviceArea;
+const phone = DEFAULT_CHATBOT_CONTACT.phone;
+const email = DEFAULT_CHATBOT_CONTACT.email;
+const hours = DEFAULT_CHATBOT_CONTACT.hoursLine;
 
 /** Primary chips — quotes, services, materials, service area (no financing/warranty). */
 export const DEFAULT_SUGGESTIONS = [
@@ -157,6 +174,12 @@ export function getBotReply(
   catalog: ChatbotCatalog = DEFAULT_CHATBOT_CATALOG,
 ): ChatReply {
   const q = normalize(rawInput);
+  const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
+  const phone = contact.phone;
+  const email = contact.email;
+  const hours = contact.hoursLine;
+  const area = contact.serviceArea;
+  const phoneHref = contact.phoneHref;
   const fenceList = catalog.fencingServices.map((s) => s.title).join(", ");
   const deckList = catalog.deckServices.map((s) => s.title).join(", ");
   if (!q) {
@@ -238,7 +261,7 @@ export function getBotReply(
     return {
       text: `Call ${phone} or email ${email}. Hours: ${hours}. Based in ${siteConfig.address.city}, ${siteConfig.address.state}.`,
       suggestions: ["Get a quote", "Service area", "Fence services"],
-      cta: { label: `Call ${phone}`, href: siteConfig.phoneHref },
+      cta: { label: `Call ${phone}`, href: phoneHref },
     };
   }
 
@@ -414,7 +437,7 @@ export function getBotReply(
       text: `Absolutely — leave your name, phone, and a short message below, or call us directly at ${phone}. Someone from ${siteConfig.name} will get back to you.`,
       collectLead: true,
       suggestions: ["Hours & contact", "Get a quote"],
-      cta: { label: `Call ${phone}`, href: siteConfig.phoneHref },
+      cta: { label: `Call ${phone}`, href: phoneHref },
     };
   }
 

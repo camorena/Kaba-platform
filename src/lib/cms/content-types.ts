@@ -7,7 +7,8 @@
  * Phase A–C shipped as admin stubs. Public marketing still reads
  * `src/lib/site.ts` except cutovers via getPublished* (faqs, testimonials,
  * projects, fence-types, services, about, materials, service-area,
- * site-copy hero/trust/experience/needs/process, chatbot catalogs).
+ * site-copy hero/trust/experience/needs/process/nav/footer/contact,
+ * materials FAQs, chatbot catalogs).
  */
 
 export type FieldKind =
@@ -75,6 +76,7 @@ const MATERIAL_KIND_OPTIONS = [
   { value: "fence", label: "Fence material", labelEs: "Material de cerca" },
   { value: "deck", label: "Deck material", labelEs: "Material de terraza" },
   { value: "guidance", label: "Guidance chip", labelEs: "Consejo" },
+  { value: "faq", label: "Materials FAQ", labelEs: "FAQ de materiales" },
 ] as const;
 
 const SITE_COPY_GROUP_OPTIONS = [
@@ -85,6 +87,7 @@ const SITE_COPY_GROUP_OPTIONS = [
   { value: "trust", label: "Trust points", labelEs: "Puntos de confianza" },
   { value: "needs", label: "Your needs (home)", labelEs: "Sus necesidades (inicio)" },
   { value: "nav", label: "Nav / footer labels", labelEs: "Etiquetas de nav / pie" },
+  { value: "contact", label: "Contact phone / email / hours", labelEs: "Contacto teléfono / correo / horario" },
 ] as const;
 
 const PROVENANCE_OPTIONS = [
@@ -250,7 +253,7 @@ export const CONTENT_TYPES: Readonly<Record<string, ContentTypeSpec>> = {
     orderBy: "sortOrder",
     phase: "B",
     publicPath: "/",
-    siteSource: "siteConfig hero/tagline, howItWorks, processTimeline, kabaExperience, trustPoints, yourNeeds",
+    siteSource: "siteConfig hero/tagline/contact, howItWorks, processTimeline, kabaExperience, trustPoints, yourNeeds, navLinks, footerLinks",
     fields: [
       {
         name: "key",
@@ -384,7 +387,7 @@ export const CONTENT_TYPES: Readonly<Record<string, ContentTypeSpec>> = {
     orderBy: "sortOrder",
     phase: "B",
     publicPath: "/materials",
-    siteSource: "fenceMaterials, materialGuidance, deckMaterials",
+    siteSource: "fenceMaterials, materialGuidance, deckMaterials, materialFaqs",
     fields: [
       {
         name: "kind",

@@ -13,14 +13,18 @@ import type {
   PublishedAboutStat,
   PublishedAudience,
   PublishedCompanyValue,
+  PublishedContactInfo,
   PublishedDeckMaterial,
   PublishedExperienceStep,
   PublishedFaq,
   PublishedFenceMaterial,
   PublishedFenceType,
+  PublishedFooterLink,
   PublishedHeroCopy,
   PublishedMaterialComparison,
+  PublishedMaterialFaq,
   PublishedMaterialGuidance,
+  PublishedNavLink,
   PublishedNeed,
   PublishedProcessStep,
   PublishedProject,
@@ -38,9 +42,12 @@ import {
   faqs as siteFaqs,
   fenceMaterials as siteFenceMaterials,
   fencingServices as siteFenceTypes,
+  footerLinks as siteFooterLinks,
   galleryProjects as siteProjects,
   kabaExperience as siteKabaExperience,
+  materialFaqs as siteMaterialFaqs,
   materialGuidance as siteMaterialGuidance,
+  navLinks as siteNavLinks,
   processTimeline as siteProcessTimeline,
   serviceTowns as siteServiceTowns,
   siteConfig as siteSiteConfig,
@@ -54,14 +61,18 @@ export type {
   PublishedAboutStat,
   PublishedAudience,
   PublishedCompanyValue,
+  PublishedContactInfo,
   PublishedDeckMaterial,
   PublishedExperienceStep,
   PublishedFaq,
   PublishedFenceMaterial,
   PublishedFenceType,
+  PublishedFooterLink,
   PublishedHeroCopy,
   PublishedMaterialComparison,
+  PublishedMaterialFaq,
   PublishedMaterialGuidance,
+  PublishedNavLink,
   PublishedNeed,
   PublishedProcessStep,
   PublishedProject,
@@ -378,7 +389,7 @@ export function aboutSourceIsCms(): boolean {
 
 /**
  * Service towns for /service-area (+ about coverage teaser).
- * Geographic claim — keep honest. JSON-LD areaServed stays hardcoded in jsonld.ts.
+ * Geographic claim — keep honest. JSON-LD areaServed uses these towns when published.
  */
 export function getPublishedServiceTowns(): PublishedServiceTown[] {
   const docs = listContent("service-area").filter(
@@ -726,14 +737,153 @@ export function kabaExperienceSourceIsCms(): boolean {
   );
 }
 
-/** True when any home-facing site-copy group (hero/trust/needs/experience/process) is live. */
+function hrefToCopySlug(href: string): string {
+  return href.replace(/^\//, "").replace(/\//g, "-") || "home";
+}
+
+/**
+ * Primary nav labels for Header + Footer quick links.
+ * Per-link: published site-copy nav.{slug}.label → else site.ts label. Hrefs stay from site.ts.
+ */
+export function getPublishedNavLinks(): PublishedNavLink[] {
+  const byKey = siteCopyValueMap("nav");
+  return siteNavLinks.map((link) => {
+    const slug = hrefToCopySlug(link.href);
+    const label = byKey.get(`nav.${slug}.label`) ?? link.label;
+    const out: PublishedNavLink = { href: link.href, label };
+    if ("hasDropdown" in link && link.hasDropdown) out.hasDropdown = true;
+    return out;
+  });
+}
+
+export function navLinksSourceIsCms(): boolean {
+  const byKey = siteCopyValueMap("nav");
+  return siteNavLinks.some((link) =>
+    byKey.has(`nav.${hrefToCopySlug(link.href)}.label`),
+  );
+}
+
+/**
+ * Footer explore-link labels. Per-link CMS override; hrefs from site.ts.
+ */
+export function getPublishedFooterLinks(): PublishedFooterLink[] {
+  const byKey = siteCopyValueMap("nav");
+  return siteFooterLinks.map((link) => {
+    const slug = hrefToCopySlug(link.href);
+    const label =
+      byKey.get(`footer.${slug}.label`) ??
+      byKey.get(`nav.footer.${slug}.label`) ??
+      link.label;
+    return { href: link.href, label };
+  });
+}
+
+export function footerLinksSourceIsCms(): boolean {
+  const byKey = siteCopyValueMap("nav");
+  return siteFooterLinks.some((link) => {
+    const slug = hrefToCopySlug(link.href);
+    return (
+      byKey.has(`footer.${slug}.label`) ||
+      byKey.has(`nav.footer.${slug}.label`)
+    );
+  });
+}
+
+/**
+ * Contact phone / email / hours / service-area blurb.
+ * Per-key published site-copy (group contact or hero.serviceArea) → else site.ts.
+ */
+export function getPublishedContactInfo(): PublishedContactInfo {
+  const contact = siteCopyValueMap("contact");
+  const hero = siteCopyValueMap("hero");
+  const phone = contact.get("contact.phone") ?? siteSiteConfig.phone;
+  const email = contact.get("contact.email") ?? siteSiteConfig.email;
+  const phoneHref =
+    contact.get("contact.phoneHref") ??
+    (phone === siteSiteConfig.phone
+      ? siteSiteConfig.phoneHref
+      : `tel:+${phone.replace(/\D/g, "")}`);
+  const emailHref =
+    contact.get("contact.emailHref") ??
+    (email === siteSiteConfig.email
+      ? siteSiteConfig.emailHref
+      : `mailto:${email}`);
+  return {
+    phone,
+    phoneHref,
+    email,
+    emailHref,
+    serviceArea:
+      contact.get("contact.serviceArea") ??
+      hero.get("site.serviceArea") ??
+      siteSiteConfig.serviceArea,
+    hours: {
+      weekdays:
+        contact.get("contact.hours.weekdays") ?? siteSiteConfig.hours.weekdays,
+      saturday:
+        contact.get("contact.hours.saturday") ?? siteSiteConfig.hours.saturday,
+      sunday:
+        contact.get("contact.hours.sunday") ?? siteSiteConfig.hours.sunday,
+    },
+  };
+}
+
+export function contactInfoSourceIsCms(): boolean {
+  const contact = siteCopyValueMap("contact");
+  const hero = siteCopyValueMap("hero");
+  const keys = [
+    "contact.phone",
+    "contact.phoneHref",
+    "contact.email",
+    "contact.emailHref",
+    "contact.hours.weekdays",
+    "contact.hours.saturday",
+    "contact.hours.sunday",
+    "contact.serviceArea",
+  ];
+  return keys.some((k) => contact.has(k)) || hero.has("site.serviceArea");
+}
+
+/**
+ * Materials page FAQ accordion.
+ * Published materials kind=faq → else site.ts materialFaqs.
+ */
+export function getPublishedMaterialFaqs(): PublishedMaterialFaq[] {
+  const docs = listContent("materials").filter(
+    (d) => d.status === "published" && String(d.fields.kind ?? "") === "faq",
+  );
+  const fromCms = docs
+    .map((d) => ({
+      question: String(d.fields.name ?? "").trim(),
+      answer: String(d.fields.tip ?? "").trim(),
+    }))
+    .filter((f) => f.question.length > 0 && f.answer.length > 0);
+
+  if (fromCms.length > 0) return fromCms;
+
+  return siteMaterialFaqs.map((f) => ({
+    question: f.question,
+    answer: f.answer,
+  }));
+}
+
+export function materialFaqsSourceIsCms(): boolean {
+  return listContent("materials").some(
+    (d) => d.status === "published" && String(d.fields.kind ?? "") === "faq",
+  );
+}
+
+/** True when any home-facing site-copy group (hero/trust/needs/experience/process/nav/contact) is live. */
 export function siteCopyHomeSourceIsCms(): boolean {
   return (
     heroCopySourceIsCms() ||
     trustPointsSourceIsCms() ||
     yourNeedsSourceIsCms() ||
     kabaExperienceSourceIsCms() ||
-    processTimelineSourceIsCms()
+    processTimelineSourceIsCms() ||
+    navLinksSourceIsCms() ||
+    footerLinksSourceIsCms() ||
+    contactInfoSourceIsCms()
   );
 }
 

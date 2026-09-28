@@ -4,11 +4,20 @@ import Link from "next/link";
 import SiteCredit from "@/components/SiteCredit";
 import {
   fencingOptionsNav,
-  footerLinks,
+  footerLinks as siteFooterLinks,
   legalLinks,
-  navLinks,
+  navLinks as siteNavLinks,
   siteConfig,
 } from "@/lib/site";
+
+export type FooterNavLink = { href: string; label: string };
+export type FooterContact = {
+  phone: string;
+  phoneHref: string;
+  email: string;
+  emailHref: string;
+  serviceArea: string;
+};
 
 function SocialIcon({
   label,
@@ -32,7 +41,21 @@ function SocialIcon({
   );
 }
 
-export default function Footer() {
+export default function Footer({
+  navLinks = siteNavLinks.map((l) => ({ href: l.href, label: l.label })),
+  footerLinks = siteFooterLinks.map((l) => ({ href: l.href, label: l.label })),
+  contact = {
+    phone: siteConfig.phone,
+    phoneHref: siteConfig.phoneHref,
+    email: siteConfig.email,
+    emailHref: siteConfig.emailHref,
+    serviceArea: siteConfig.serviceArea,
+  },
+}: {
+  navLinks?: FooterNavLink[];
+  footerLinks?: FooterNavLink[];
+  contact?: FooterContact;
+} = {}) {
   const year = new Date().getFullYear();
 
   return (
@@ -120,24 +143,24 @@ export default function Footer() {
           <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
             <li>
               <a
-                href={siteConfig.phoneHref}
+                href={contact.phoneHref}
                 className="focus-ring -mx-1 inline-flex min-h-9 items-center gap-2.5 rounded px-1 font-medium transition hover:text-cream"
               >
                 <svg className="h-4 w-4 shrink-0 text-bronze" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                {siteConfig.phone}
+                {contact.phone}
               </a>
             </li>
             <li>
               <a
-                href={siteConfig.emailHref}
+                href={contact.emailHref}
                 className="focus-ring -mx-1 inline-flex min-h-9 items-center gap-2.5 break-all rounded px-1 transition hover:text-cream"
               >
                 <svg className="h-4 w-4 shrink-0 text-bronze" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                {siteConfig.email}
+                {contact.email}
               </a>
             </li>
             <li className="inline-flex items-start gap-2.5 pt-0.5 text-cream/60">
@@ -177,7 +200,7 @@ export default function Footer() {
       <div className="border-t border-white/[0.08]">
         <div className="container-page flex flex-col gap-3 py-5 text-xs text-cream/45 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            {siteConfig.name} — Professional fencing in {siteConfig.serviceArea}
+            {siteConfig.name} — Professional fencing in {contact.serviceArea}
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             {legalLinks.map((link, i) => (

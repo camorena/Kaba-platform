@@ -1,21 +1,29 @@
 import type { Metadata } from "next";
 import QuoteForm from "@/components/QuoteForm";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Request a Free Estimate";
-const description = `Contact ${siteConfig.name} for a free fence estimate in Raleigh, NC & surrounding areas. Call ${siteConfig.phone} or request online.`;
 
-export const metadata: Metadata = {
-  title,
-  description,
-  openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+export async function generateMetadata(): Promise<Metadata> {
+  const contact = getPublishedContactInfo();
+  const description = `Contact ${siteConfig.name} for a free fence estimate in Raleigh, NC & surrounding areas. Call ${contact.phone} or request online.`;
+  return {
+    title,
     description,
-    images: [defaultOgImage],
-  },
-};
+    openGraph: {
+      title: `${title} | ${siteConfig.name}`,
+      description,
+      images: [defaultOgImage],
+    },
+  };
+}
+
+export const dynamic = "force-dynamic";
 
 export default function ContactPage() {
+  const contact = getPublishedContactInfo();
+
   return (
     <>
       <section className="page-hero">
@@ -26,19 +34,19 @@ export default function ContactPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
             Tell us about your project and we&apos;ll schedule a free on-site
-            estimate. We serve {siteConfig.serviceArea}. Prefer to talk? Call{" "}
+            estimate. We serve {contact.serviceArea}. Prefer to talk? Call{" "}
             <a
-              href={siteConfig.phoneHref}
+              href={contact.phoneHref}
               className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
             >
-              {siteConfig.phone}
+              {contact.phone}
             </a>{" "}
             or email{" "}
             <a
-              href={siteConfig.emailHref}
+              href={contact.emailHref}
               className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
             >
-              {siteConfig.email}
+              {contact.email}
             </a>
             .
           </p>
