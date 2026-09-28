@@ -107,6 +107,30 @@ export default async function AdminSettingsPage() {
         </section>
 
         <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+          <h2 className="admin-card-title">Low-cost ops tools</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            Added without Stripe, databases, or paid APIs:
+          </p>
+          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
+            <li>
+              <strong className="text-ink">Pipeline</strong> — drag-and-drop
+              kanban over quote statuses
+            </li>
+            <li>
+              <strong className="text-ink">Price book</strong> — localStorage
+              rates + quick estimate totals
+            </li>
+            <li>
+              <strong className="text-ink">Templates</strong> — SMS/email/note
+              merge fields, copy to clipboard
+            </li>
+            <li>
+              Quote/invoice detail quick actions (call, email, copy, print)
+            </li>
+          </ul>
+        </section>
+
+        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
           <h2 className="admin-card-title">Crawlers, craft & shortcuts</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             <code className="rounded bg-ink/5 px-1 text-xs dark:bg-white/10">

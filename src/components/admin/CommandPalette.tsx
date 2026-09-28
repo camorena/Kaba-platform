@@ -14,11 +14,14 @@ type NavItem = { href: string; label: string; group: string; keywords?: string }
 
 const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", group: "Navigate", keywords: "home overview" },
-  { href: "/admin/quotes", label: "Quotes", group: "Navigate", keywords: "leads pipeline" },
+  { href: "/admin/quotes", label: "Quotes", group: "Navigate", keywords: "leads table" },
+  { href: "/admin/pipeline", label: "Pipeline", group: "Navigate", keywords: "kanban board stages drag" },
   { href: "/admin/invoices", label: "Invoices", group: "Navigate", keywords: "billing" },
   { href: "/admin/payments", label: "Payments", group: "Navigate", keywords: "money ledger" },
   { href: "/admin/customers", label: "Customers", group: "Navigate", keywords: "contacts crm" },
   { href: "/admin/calendar", label: "Schedule", group: "Navigate", keywords: "calendar jobs visits" },
+  { href: "/admin/pricebook", label: "Price book", group: "Navigate", keywords: "rates estimate calculator materials" },
+  { href: "/admin/templates", label: "Templates", group: "Navigate", keywords: "sms email follow-up copy" },
   { href: "/admin/activity", label: "Activity", group: "Navigate", keywords: "feed timeline log" },
   { href: "/admin/reports", label: "Reports", group: "Navigate", keywords: "charts analytics" },
   { href: "/admin/settings", label: "Settings", group: "Navigate", keywords: "auth env" },

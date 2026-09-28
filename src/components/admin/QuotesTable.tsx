@@ -136,6 +136,11 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
         <EmptyState
           title="No quotes yet"
           description="Submissions from /quote will appear here. This demo uses an in-memory store—it resets on cold starts until a database is wired."
+          action={
+            <Link href="/quote" className="btn-primary text-sm">
+              Open public quote form
+            </Link>
+          }
         />
       ) : filtered.length === 0 ? (
         <EmptyState

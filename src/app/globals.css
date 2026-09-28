@@ -2120,6 +2120,105 @@ a.btn-ghost {
 
 
 
+
+/* —— Admin craft elevation (v5): login, funnel, pipeline, density —— */
+.admin-login-root {
+  background: var(--admin-bg);
+}
+.admin-login-mesh {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, color-mix(in srgb, var(--bronze) 22%, transparent), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, color-mix(in srgb, var(--bronze) 12%, transparent), transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 100%, color-mix(in srgb, var(--ink) 6%, transparent), transparent 60%);
+  opacity: 0.9;
+}
+.dark .admin-login-mesh {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, color-mix(in srgb, var(--bronze) 28%, transparent), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 20%, color-mix(in srgb, var(--bronze) 14%, transparent), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 70% 100%, color-mix(in srgb, #1a2433 80%, transparent), transparent 60%);
+}
+.admin-login-card {
+  animation: admin-page-enter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.admin-login-highlight {
+  animation: admin-page-enter 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.admin-login-highlight:nth-child(2) { animation-delay: 60ms; }
+.admin-login-highlight:nth-child(3) { animation-delay: 120ms; }
+.admin-login-error {
+  animation: admin-page-enter 180ms ease-out;
+}
+.admin-spinner {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid color-mix(in srgb, #fff 35%, transparent);
+  border-top-color: #fff;
+  border-radius: 999px;
+  animation: admin-spin 0.7s linear infinite;
+}
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
+}
+.admin-stat-dense {
+  padding: 0.75rem 0.9rem;
+}
+.admin-stat-dense .admin-stat-value {
+  font-size: 1.35rem;
+}
+.admin-funnel-step {
+  text-decoration: none;
+}
+.admin-funnel-bar {
+  min-height: 12px;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent);
+}
+.admin-pipeline-card {
+  touch-action: none;
+}
+.admin-pipeline-col {
+  box-shadow: var(--shadow-xs);
+}
+.admin-flow-hint {
+  animation: admin-page-enter 280ms ease-out;
+}
+.admin-attention {
+  animation: admin-page-enter 260ms ease-out;
+}
+.admin-template-preview {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+.admin-login-submit:active:not(:disabled) {
+  transform: scale(0.985);
+}
+.btn-primary,
+.btn-secondary,
+.btn-secondary-light {
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled),
+.btn-secondary-light:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-login-card,
+  .admin-login-highlight,
+  .admin-login-error,
+  .admin-spinner,
+  .admin-flow-hint,
+  .admin-attention {
+    animation: none !important;
+  }
+}
+
 /* —— Print: admin invoice —— */
 @media print {
   .admin-topbar,

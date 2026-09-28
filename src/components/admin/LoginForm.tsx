@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 export default function LoginForm({ configured }: { configured: boolean }) {
   const router = useRouter();
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -53,28 +54,49 @@ export default function LoginForm({ configured }: { configured: boolean }) {
         <label htmlFor="admin-password" className="block text-sm font-medium text-ink">
           Admin password
         </label>
-        <input
-          id="admin-password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="field-input"
-          required
-        />
+        <div className="relative mt-1.5">
+          <input
+            id="admin-password"
+            name="password"
+            type={show ? "text" : "password"}
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="field-input !mt-0 pr-16"
+            required
+            autoFocus
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 px-3 text-xs font-semibold text-muted hover:text-ink"
+            onClick={() => setShow((v) => !v)}
+            tabIndex={-1}
+          >
+            {show ? "Hide" : "Show"}
+          </button>
+        </div>
       </div>
       {error && (
-        <p role="alert" className="text-sm font-medium text-danger">
+        <p
+          role="alert"
+          className="admin-login-error rounded-lg border border-danger/25 bg-danger/5 px-3 py-2 text-sm font-medium text-danger"
+        >
           {error}
         </p>
       )}
       <button
         type="submit"
-        disabled={pending}
-        className="btn-primary w-full disabled:opacity-60"
+        disabled={pending || !password}
+        className="btn-primary admin-login-submit w-full disabled:opacity-60"
       >
-        {pending ? "Signing in…" : "Sign in"}
+        {pending ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="admin-spinner" aria-hidden />
+            Signing in…
+          </span>
+        ) : (
+          "Sign in"
+        )}
       </button>
       <p className="rounded-lg border border-ink/8 bg-ivory-muted/50 px-3 py-2 text-xs leading-relaxed text-muted dark:bg-ivory-muted/25">
         Stub auth only — cookie session lasts ~12 hours. Not suitable as sole

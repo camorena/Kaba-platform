@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import EmptyState from "@/components/admin/EmptyState";
+import { Sparkline } from "@/components/admin/MiniCharts";
 import PageHeader from "@/components/admin/PageHeader";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { requireAdmin } from "@/lib/admin/guard";
@@ -8,20 +9,49 @@ import { formatMoney, formatShortDate } from "@/lib/admin/format";
 import { invoiceStats, listInvoices } from "@/lib/admin/invoices-store";
 import { listPayments, paidCentsMap, paymentStats } from "@/lib/admin/payments-store";
 import { listQuotes, quoteStats } from "@/lib/admin/quotes-store";
-import { quoteStatusTone } from "@/lib/admin/status";
+import { QUOTE_STATUSES, quoteStatusTone } from "@/lib/admin/status";
 
 export const metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const { warning } = await requireAdmin();
+  const quotes = listQuotes();
   const qStats = quoteStats();
   const paidMap = paidCentsMap();
   const iStats = invoiceStats(paidMap);
   const pStats = paymentStats();
-  const recent = listQuotes().slice(0, 6);
+  const recent = quotes.slice(0, 5);
   const recentInvoices = listInvoices().slice(0, 4);
-  const recentPayments = listPayments().slice(0, 4);
+  const recentPayments = listPayments().slice(0, 3);
+
+  const needsAction = [
+    ...quotes
+      .filter((q) => q.status === "new")
+      .map((q) => ({
+        id: q.id,
+        href: `/admin/quotes/${q.id}`,
+        label: q.name,
+        meta: `New quote · ${q.serviceType}`,
+        tone: "sky" as const,
+      })),
+    ...listInvoices()
+      .filter((i) => i.status === "sent" || i.status === "partial" || i.status === "draft")
+      .slice(0, 3)
+      .map((i) => ({
+        id: i.id,
+        href: `/admin/invoices/${i.id}`,
+        label: i.number,
+        meta: `${i.status} · ${i.customerName}`,
+        tone: "amber" as const,
+      })),
+  ].slice(0, 5);
+
+  const funnel = QUOTE_STATUSES.filter((s) => s !== "lost").map((s) => ({
+    status: s,
+    count: quotes.filter((q) => q.status === s).length,
+  }));
+  const funnelMax = Math.max(1, ...funnel.map((f) => f.count));
 
   const cards = [
     {
@@ -29,24 +59,28 @@ export default async function AdminDashboardPage() {
       value: String(qStats.new),
       href: "/admin/quotes",
       hint: `${qStats.total} total`,
+      spark: [1, 1, 2, 2, 3, qStats.new || 1],
     },
     {
       label: "Open invoices",
       value: String(iStats.open),
       href: "/admin/invoices",
-      hint: formatMoney(iStats.totalOpenCents) + " due (demo)",
+      hint: formatMoney(iStats.totalOpenCents) + " due",
+      spark: [2, 2, 3, 2, 3, iStats.open || 1],
     },
     {
-      label: "Payments recorded",
-      value: String(pStats.total),
+      label: "Collected",
+      value: formatMoney(pStats.recordedCents),
       href: "/admin/payments",
-      hint: formatMoney(pStats.recordedCents) + " stub",
+      hint: `${pStats.total} stub payments`,
+      spark: [1, 2, 2, 3, 4, Math.max(1, pStats.total)],
     },
     {
-      label: "Won quotes",
+      label: "Won",
       value: String(qStats.won),
-      href: "/admin/quotes",
+      href: "/admin/pipeline",
       hint: `${qStats.scheduled} scheduled`,
+      spark: [0, 1, 1, 1, 2, qStats.won || 1],
     },
   ];
 
@@ -54,43 +88,125 @@ export default async function AdminDashboardPage() {
     <AdminShell warning={warning}>
       <PageHeader
         title="Dashboard"
-        description="Quote → invoice → payment foundation. Amounts marked demo are synthetic; auth remains a stub."
+        description="Dense ops brief — attention items, pipeline funnel, and recent movement. Demo amounts; auth remains a stub."
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Link href="/admin/pipeline" className="btn-primary text-sm">
+              Pipeline
+            </Link>
+            <Link href="/admin/pricebook" className="btn-secondary-light text-sm">
+              Price book
+            </Link>
+          </div>
+        }
       />
 
-
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div className="mb-3.5 flex flex-wrap items-center gap-1.5">
         {[
           { href: "/admin/quotes", label: "Quotes" },
+          { href: "/admin/pipeline", label: "Pipeline" },
           { href: "/admin/invoices", label: "Invoices" },
+          { href: "/admin/templates", label: "Templates" },
           { href: "/admin/calendar", label: "Schedule" },
-          { href: "/admin/activity", label: "Activity" },
           { href: "/admin/reports", label: "Reports" },
         ].map((x) => (
-          <Link
-            key={x.href}
-            href={x.href}
-            className="admin-chip hover:border-bronze/40"
-          >
+          <Link key={x.href} href={x.href} className="admin-chip hover:border-bronze/40">
             {x.label} →
           </Link>
         ))}
       </div>
 
+      {needsAction.length > 0 && (
+        <section className="admin-attention mb-4 overflow-hidden rounded-xl border border-bronze/25 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
+          <div className="flex items-center justify-between gap-2 border-b border-ink/8 bg-gradient-to-r from-bronze/12 to-transparent px-3 py-2 sm:px-4">
+            <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark dark:text-bronze-light">
+              Needs attention
+            </h2>
+            <span className="text-[0.625rem] tabular-nums text-muted">
+              {needsAction.length} item{needsAction.length === 1 ? "" : "s"}
+            </span>
+          </div>
+          <ul className="divide-y divide-ink/6">
+            {needsAction.map((item) => (
+              <li key={item.id}>
+                <Link
+                  href={item.href}
+                  className="flex items-center justify-between gap-3 px-3 py-2 text-sm transition hover:bg-[var(--admin-row-hover)] sm:px-4"
+                >
+                  <div className="min-w-0">
+                    <span className="font-semibold text-ink">{item.label}</span>
+                    <span className="ml-2 text-xs text-muted">{item.meta}</span>
+                  </div>
+                  <span className="shrink-0 text-bronze" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c) => (
           <li key={c.label}>
-            <Link href={c.href} className="admin-stat admin-stat-lift block transition hover:border-bronze/35">
-              <p className="admin-stat-label">{c.label}</p>
-              <p className="admin-stat-value mt-1">{c.value}</p>
-              <p className="mt-1 text-[0.6875rem] text-muted">{c.hint}</p>
+            <Link
+              href={c.href}
+              className="admin-stat admin-stat-lift admin-stat-dense block transition hover:border-bronze/35"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="admin-stat-label">{c.label}</p>
+                <Sparkline values={c.spark} width={64} height={22} />
+              </div>
+              <p className="admin-stat-value mt-0.5">{c.value}</p>
+              <p className="mt-0.5 text-[0.6875rem] text-muted">{c.hint}</p>
             </Link>
           </li>
         ))}
       </ul>
 
-      <div className="mt-5 grid gap-3.5 lg:grid-cols-5">
+      <section className="admin-glass-panel admin-gold-rail mt-4 p-3.5 sm:p-4">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
+            Pipeline funnel
+          </h2>
+          <Link
+            href="/admin/pipeline"
+            className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+          >
+            Board
+          </Link>
+        </div>
+        <div className="admin-funnel flex flex-wrap items-end gap-1.5 sm:gap-2">
+          {funnel.map((f) => (
+            <Link
+              key={f.status}
+              href="/admin/pipeline"
+              className="admin-funnel-step group min-w-0 flex-1"
+              title={`${f.status}: ${f.count}`}
+            >
+              <div
+                className="admin-funnel-bar mx-auto rounded-t-md bg-gradient-to-t from-bronze-dark to-bronze-light transition group-hover:brightness-110"
+                style={{
+                  height: `${Math.max(12, Math.round((f.count / funnelMax) * 56))}px`,
+                  width: "100%",
+                  maxWidth: "4.5rem",
+                }}
+              />
+              <p className="mt-1.5 text-center text-[0.625rem] font-bold uppercase tracking-wide text-muted capitalize">
+                {f.status}
+              </p>
+              <p className="text-center text-xs font-semibold tabular-nums text-ink">
+                {f.count}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <div className="mt-4 grid gap-3 lg:grid-cols-5">
         <section className="lg:col-span-3">
-          <div className="mb-2.5 flex items-center justify-between gap-3">
+          <div className="mb-2 flex items-center justify-between gap-3">
             <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
               Recent quotes
             </h2>
@@ -105,6 +221,11 @@ export default async function AdminDashboardPage() {
             <EmptyState
               title="Pipeline is empty"
               description="When homeowners submit the public quote form, recent entries will show here."
+              action={
+                <Link href="/quote" className="btn-primary text-sm">
+                  Open quote form
+                </Link>
+              }
             />
           ) : (
             <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
@@ -112,7 +233,7 @@ export default async function AdminDashboardPage() {
                 <li key={q.id}>
                   <Link
                     href={`/admin/quotes/${q.id}`}
-                    className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-sm transition hover:bg-[var(--admin-row-hover)] sm:px-4"
+                    className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm transition hover:bg-[var(--admin-row-hover)] sm:px-3.5"
                   >
                     <div className="min-w-0">
                       <span className="font-semibold text-ink">{q.name}</span>
@@ -132,9 +253,9 @@ export default async function AdminDashboardPage() {
           )}
         </section>
 
-        <section className="space-y-4 lg:col-span-2">
+        <section className="space-y-3 lg:col-span-2">
           <div>
-            <div className="mb-2.5 flex items-center justify-between">
+            <div className="mb-2 flex items-center justify-between">
               <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
                 Invoices
               </h2>
@@ -150,7 +271,7 @@ export default async function AdminDashboardPage() {
                 <li key={inv.id}>
                   <Link
                     href={`/admin/invoices/${inv.id}`}
-                    className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm hover:bg-[var(--admin-row-hover)]"
+                    className="flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-[var(--admin-row-hover)]"
                   >
                     <span className="font-semibold text-ink">{inv.number}</span>
                     <span className="text-xs capitalize text-muted">
@@ -162,7 +283,7 @@ export default async function AdminDashboardPage() {
             </ul>
           </div>
           <div>
-            <div className="mb-2.5 flex items-center justify-between">
+            <div className="mb-2 flex items-center justify-between">
               <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
                 Payments
               </h2>
@@ -177,7 +298,7 @@ export default async function AdminDashboardPage() {
               {recentPayments.map((p) => (
                 <li
                   key={p.id}
-                  className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm"
+                  className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
                 >
                   <span className="text-ink">{p.invoiceNumber}</span>
                   <span className="font-medium tabular-nums text-ink">
@@ -186,6 +307,26 @@ export default async function AdminDashboardPage() {
                 </li>
               ))}
             </ul>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Link
+              href="/admin/templates"
+              className="admin-card admin-card-interactive !p-3 text-center"
+            >
+              <p className="text-[0.625rem] font-bold uppercase tracking-wider text-bronze">
+                Templates
+              </p>
+              <p className="mt-1 text-xs text-muted">Copy follow-ups</p>
+            </Link>
+            <Link
+              href="/admin/pricebook"
+              className="admin-card admin-card-interactive !p-3 text-center"
+            >
+              <p className="text-[0.625rem] font-bold uppercase tracking-wider text-bronze">
+                Price book
+              </p>
+              <p className="mt-1 text-xs text-muted">Ballpark rates</p>
+            </Link>
           </div>
         </section>
       </div>

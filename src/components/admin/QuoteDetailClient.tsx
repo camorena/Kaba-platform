@@ -1,5 +1,6 @@
 "use client";
 
+import CopyChip from "@/components/admin/CopyChip";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { QuoteStatusTimeline } from "@/components/admin/StatusTimeline";
 import { useToast } from "@/components/admin/Toast";
@@ -78,11 +79,19 @@ export default function QuoteDetailClient({
     }
   }
 
+  function printQuote() {
+    window.print();
+  }
+
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+    <div className="quote-print-root space-y-4">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-muted print:hidden">
         <Link href="/admin/quotes" className="font-semibold hover:underline">
           ← Quotes
+        </Link>
+        <span aria-hidden>·</span>
+        <Link href="/admin/pipeline" className="hover:underline">
+          Pipeline
         </Link>
         <span aria-hidden>·</span>
         <span className="font-mono text-[0.6875rem]">{quote.id}</span>
@@ -100,7 +109,23 @@ export default function QuoteDetailClient({
             {quote.serviceType} · {quote.address}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 print:hidden">
+          <a href={`tel:${quote.phone}`} className="btn-secondary-light text-sm">
+            Call
+          </a>
+          <a
+            href={`mailto:${quote.email}?subject=${encodeURIComponent(`Kaba Fence — ${quote.serviceType}`)}`}
+            className="btn-secondary-light text-sm"
+          >
+            Email
+          </a>
+          <button
+            type="button"
+            onClick={printQuote}
+            className="btn-secondary-light text-sm"
+          >
+            Print
+          </button>
           {relatedInvoiceId ? (
             <Link
               href={`/admin/invoices/${relatedInvoiceId}`}
@@ -115,19 +140,43 @@ export default function QuoteDetailClient({
               onClick={() => void createInvoice()}
               className="btn-primary text-sm disabled:opacity-60"
             >
-              {creatingInv ? "Creating…" : "Create invoice (demo)"}
+              {creatingInv ? "Creating…" : "Create invoice"}
             </button>
           )}
         </div>
       </div>
 
-      <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5">
+      <div className="flex flex-wrap gap-1.5 print:hidden">
+        <CopyChip value={quote.phone} label="Copy phone" />
+        <CopyChip value={quote.email} label="Copy email" />
+        <CopyChip
+          value={`${quote.name} · ${quote.serviceType} · ${quote.address}`}
+          label="Copy summary"
+        />
+        <Link href="/admin/templates" className="admin-chip">
+          Follow-up templates →
+        </Link>
+        <Link href="/admin/pricebook" className="admin-chip">
+          Price book →
+        </Link>
+      </div>
+
+      {!relatedInvoiceId && (
+        <div className="admin-flow-hint rounded-xl border border-bronze/20 bg-bronze/5 px-3 py-2.5 text-xs leading-relaxed text-muted print:hidden sm:px-4">
+          <strong className="font-semibold text-ink">Next step:</strong> after
+          the site visit, create a demo invoice from this quote, then record
+          payments on the invoice detail. Amounts stay synthetic until Stripe +
+          DB are wired.
+        </div>
+      )}
+
+      <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5 print:hidden">
         <h2 className="admin-card-title mb-3">Progress</h2>
         <QuoteStatusTimeline status={status} />
       </section>
 
       <div className="grid gap-3 lg:grid-cols-3">
-        <section className="admin-card lg:col-span-2">
+        <section className="admin-card quote-print-sheet lg:col-span-2">
           <h2 className="admin-card-title">Request</h2>
           <dl className="admin-dl mt-3">
             <div>
@@ -168,7 +217,7 @@ export default function QuoteDetailClient({
           </div>
         </section>
 
-        <section className="admin-card space-y-4">
+        <section className="admin-card space-y-4 print:hidden">
           <div>
             <h2 className="admin-card-title">Status</h2>
             <label htmlFor="detail-status" className="sr-only">
@@ -191,6 +240,22 @@ export default function QuoteDetailClient({
                 </option>
               ))}
             </select>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {QUOTE_STATUSES.filter((s) => s !== status).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  disabled={busy}
+                  className="admin-chip capitalize disabled:opacity-50"
+                  onClick={() => {
+                    setStatus(s);
+                    void save({ status: s });
+                  }}
+                >
+                  → {s}
+                </button>
+              ))}
+            </div>
           </div>
           <div>
             <label htmlFor="quote-notes" className="admin-card-title block">

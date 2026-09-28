@@ -1,5 +1,6 @@
 "use client";
 
+import CopyChip from "@/components/admin/CopyChip";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { InvoiceStatusTimeline } from "@/components/admin/StatusTimeline";
 import { useToast } from "@/components/admin/Toast";
@@ -58,9 +59,11 @@ export default function InvoiceDetailClient({
     window.print();
   }
 
+  const summary = `${invoice.number} · ${invoice.customerName} · Total ${formatMoney(total)} · Paid ${formatMoney(paidCents)} · Balance ${formatMoney(balance)}`;
+
   return (
     <div className="invoice-print-root space-y-4">
-      <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-muted print:hidden">
         <Link href="/admin/invoices" className="font-semibold hover:underline">
           ← Invoices
         </Link>
@@ -110,21 +113,45 @@ export default function InvoiceDetailClient({
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-1.5 print:hidden">
+        <CopyChip value={summary} label="Copy summary" />
+        <CopyChip value={invoice.customerEmail} label="Copy email" />
+        <CopyChip value={invoice.customerPhone} label="Copy phone" />
+        {balance > 0 && status !== "paid" && status !== "void" && (
+          <button
+            type="button"
+            disabled={busy}
+            className="admin-chip"
+            onClick={() => void changeStatus("sent")}
+          >
+            Mark sent
+          </button>
+        )}
+      </div>
+
+      {balance > 0 && (
+        <div className="admin-flow-hint rounded-xl border border-bronze/20 bg-bronze/5 px-3 py-2.5 text-xs leading-relaxed text-muted print:hidden sm:px-4">
+          <strong className="font-semibold text-ink">Balance due:</strong>{" "}
+          {formatMoney(balance)}. Record a stub payment or adjust status — Stripe
+          Checkout is not connected yet.
+        </div>
+      )}
+
       <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5 print:hidden">
         <h2 className="admin-card-title mb-3">Progress</h2>
         <InvoiceStatusTimeline status={status} />
       </section>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="admin-stat">
+      <div className="grid gap-2 sm:grid-cols-3">
+        <div className="admin-stat admin-stat-dense">
           <p className="admin-stat-label">Total</p>
           <p className="admin-stat-value">{formatMoney(total)}</p>
         </div>
-        <div className="admin-stat">
+        <div className="admin-stat admin-stat-dense">
           <p className="admin-stat-label">Paid</p>
           <p className="admin-stat-value">{formatMoney(paidCents)}</p>
         </div>
-        <div className="admin-stat">
+        <div className="admin-stat admin-stat-dense">
           <p className="admin-stat-label">Balance</p>
           <p className="admin-stat-value">{formatMoney(balance)}</p>
         </div>
@@ -168,7 +195,7 @@ export default function InvoiceDetailClient({
           )}
         </section>
 
-        <section className="admin-card space-y-4">
+        <section className="admin-card space-y-4 print:hidden">
           <div>
             <h2 className="admin-card-title">Status</h2>
             <select
@@ -203,7 +230,15 @@ export default function InvoiceDetailClient({
           <div>
             <h2 className="admin-card-title">Payments</h2>
             {payments.length === 0 ? (
-              <p className="mt-2 text-xs text-muted">None recorded yet.</p>
+              <div className="mt-2 rounded-lg border border-dashed border-ink/12 px-3 py-4 text-center">
+                <p className="text-xs text-muted">None recorded yet.</p>
+                <Link
+                  href={`/admin/payments?invoice=${invoice.id}`}
+                  className="mt-2 inline-block text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+                >
+                  Record first payment →
+                </Link>
+              </div>
             ) : (
               <ul className="mt-2 divide-y divide-ink/8">
                 {payments.map((p) => (

@@ -7,8 +7,8 @@ const ROWS: { keys: string[]; action: string }[] = [
   { keys: ["Ctrl", "K"], action: "Open command palette (Windows/Linux)" },
   { keys: ["?"], action: "Show this shortcuts sheet" },
   { keys: ["Esc"], action: "Close palette / sheet" },
-  { keys: ["G", "D"], action: "Go to Dashboard (after palette)" },
-  { keys: ["G", "Q"], action: "Go to Quotes (after palette)" },
+  { keys: ["↑", "↓"], action: "Move selection in palette" },
+  { keys: ["↵"], action: "Open selected palette item" },
 ];
 
 export default function ShortcutsSheet({

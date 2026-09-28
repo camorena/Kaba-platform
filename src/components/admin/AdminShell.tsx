@@ -20,10 +20,13 @@ const ShortcutsSheet = dynamic(() => import("@/components/admin/ShortcutsSheet")
 const nav = [
   { href: "/admin", label: "Dashboard", exact: true, icon: "grid" },
   { href: "/admin/quotes", label: "Quotes", icon: "quotes" },
+  { href: "/admin/pipeline", label: "Pipeline", icon: "kanban" },
   { href: "/admin/invoices", label: "Invoices", icon: "invoice" },
   { href: "/admin/payments", label: "Payments", icon: "pay" },
   { href: "/admin/customers", label: "Customers", icon: "people" },
   { href: "/admin/calendar", label: "Schedule", icon: "cal" },
+  { href: "/admin/pricebook", label: "Price book", icon: "book" },
+  { href: "/admin/templates", label: "Templates", icon: "templates" },
   { href: "/admin/activity", label: "Activity", icon: "pulse" },
   { href: "/admin/reports", label: "Reports", icon: "chart" },
   { href: "/admin/settings", label: "Settings", icon: "gear" },
@@ -42,6 +45,24 @@ function NavIcon({ name }: { name: string }) {
       return (
         <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z" />
+        </svg>
+      );
+    case "kanban":
+      return (
+        <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 5h4v14H4V5zm6 0h4v9h-4V5zm6 0h4v11h-4V5z" />
+        </svg>
+      );
+    case "book":
+      return (
+        <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 5a2 2 0 012-2h10a2 2 0 012 2v14l-6-3-6 3V5z" />
+        </svg>
+      );
+    case "templates":
+      return (
+        <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
         </svg>
       );
     case "invoice":
