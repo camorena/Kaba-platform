@@ -103,7 +103,7 @@ See **`preview/CMS_PUBLIC_CONTENT_PLAN.md`**. Short version:
 
 | Item | Why |
 |------|-----|
-| **Responsive admin agency pass (v7b)** | Mobile/tablet/desktop polish across admin |
+| **Responsive admin agency pass (v7b)** | **Shipped** in `f1cde2f` — `preview/ADMIN_RESPONSIVE_AGENCY_REVIEW.md` + `admin15-responsive-*` |
 | **Phase B content types** | site-copy, about, testimonials, service-area, materials |
 | **Phase C media upload** | Alt + provenance before gallery is CMS-owned |
 | **Postgres CMS adapter** | When leaving memory for content docs |
