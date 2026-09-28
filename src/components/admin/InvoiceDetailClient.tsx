@@ -80,13 +80,13 @@ export default function InvoiceDetailClient({
     <div className="invoice-print-root space-y-4">
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted print:hidden">
         <Link href="/admin/invoices" className="font-semibold hover:underline">
-          ← Invoices
+          ← {t("detail.backInvoices")}
         </Link>
         <span aria-hidden>·</span>
         <span className="font-mono text-[0.6875rem]">{invoice.id}</span>
         {invoice.demo && (
           <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
-            Demo data
+            {t("common.demoData")}
           </span>
         )}
       </div>
@@ -97,7 +97,7 @@ export default function InvoiceDetailClient({
             <h1 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
               {invoice.number}
             </h1>
-            <StatusBadge label={status} tone={invoiceStatusTone[status]} />
+            <StatusBadge label={invoiceStatusLabel(locale, status)} tone={invoiceStatusTone[status]} />
           </div>
           <p className="mt-1 text-sm text-muted">
             {invoice.customerName} · {invoice.address}
@@ -109,21 +109,21 @@ export default function InvoiceDetailClient({
             onClick={printInvoice}
             className="btn-secondary-light text-sm"
           >
-            Print invoice
+            {t("detail.printInvoice")}
           </button>
           {invoice.quoteId && (
             <Link
               href={`/admin/quotes/${invoice.quoteId}`}
               className="btn-secondary-light text-sm"
             >
-              Source quote
+              {t("detail.sourceQuote")}
             </Link>
           )}
           <Link
             href={`/admin/payments?invoice=${invoice.id}`}
             className="btn-primary text-sm"
           >
-            Record payment
+            {t("payments.recordPayment")}
           </Link>
         </div>
       </div>
@@ -139,35 +139,34 @@ export default function InvoiceDetailClient({
             className="admin-chip"
             onClick={() => void changeStatus("sent")}
           >
-            Mark sent
+            {t("detail.sendInvoice")}
           </button>
         )}
       </div>
 
       {balance > 0 && (
         <div className="admin-flow-hint rounded-xl border border-bronze/20 bg-bronze/5 px-3 py-2.5 text-xs leading-relaxed text-muted print:hidden sm:px-4">
-          <strong className="font-semibold text-ink">Balance due:</strong>{" "}
-          {formatMoney(balance)}. Record a stub payment or adjust status — Stripe
-          Checkout is not connected yet.
+          <strong className="font-semibold text-ink">{t("detail.balanceDueTitle")}</strong>{" "}
+          {formatMoney(balance)}. {t("detail.balanceDueBody")}
         </div>
       )}
 
       <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5 print:hidden">
-        <h2 className="admin-card-title mb-3">Progress</h2>
+        <h2 className="admin-card-title mb-3">{t("detail.progress")}</h2>
         <InvoiceStatusTimeline status={status} />
       </section>
 
       <div className="grid gap-2 sm:grid-cols-3">
         <div className="admin-stat admin-stat-dense">
-          <p className="admin-stat-label">Total</p>
+          <p className="admin-stat-label">{t("detail.total")}</p>
           <p className="admin-stat-value">{formatMoney(total)}</p>
         </div>
         <div className="admin-stat admin-stat-dense">
-          <p className="admin-stat-label">Paid</p>
+          <p className="admin-stat-label">{t("detail.paid")}</p>
           <p className="admin-stat-value">{formatMoney(paidCents)}</p>
         </div>
         <div className="admin-stat admin-stat-dense">
-          <p className="admin-stat-label">Balance</p>
+          <p className="admin-stat-label">{t("detail.balance")}</p>
           <p className="admin-stat-value">{formatMoney(balance)}</p>
         </div>
       </div>
@@ -187,43 +186,43 @@ export default function InvoiceDetailClient({
           </div>
           <div className="text-right">
             <p className="text-[0.625rem] font-bold uppercase tracking-[0.14em] text-[#c08b3a]">
-              Invoice
+              {t("pages.invoices.title")}
             </p>
             <p className="mt-1 font-display text-xl font-semibold text-[#0b111a]">
               {invoice.number}
             </p>
             <p className="mt-1 text-xs text-[#5c6570]">
-              Status: {status}
+              {t("detail.status")}: {invoiceStatusLabel(locale, status)}
             </p>
           </div>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-4 text-xs text-[#0b111a]">
           <div>
-            <p className="font-bold uppercase tracking-wider text-[#5c6570]">Bill to</p>
+            <p className="font-bold uppercase tracking-wider text-[#5c6570]">{t("detail.billTo")}</p>
             <p className="mt-1 font-semibold">{invoice.customerName}</p>
             <p>{invoice.address}</p>
             <p>{invoice.customerEmail}</p>
             <p>{invoice.customerPhone}</p>
           </div>
           <div className="text-right">
-            <p><span className="text-[#5c6570]">Total</span> · {formatMoney(total)}</p>
-            <p><span className="text-[#5c6570]">Paid</span> · {formatMoney(paidCents)}</p>
-            <p className="font-semibold"><span className="text-[#5c6570]">Balance</span> · {formatMoney(balance)}</p>
+            <p><span className="text-[#5c6570]">{t("detail.total")}</span> · {formatMoney(total)}</p>
+            <p><span className="text-[#5c6570]">{t("detail.paid")}</span> · {formatMoney(paidCents)}</p>
+            <p className="font-semibold"><span className="text-[#5c6570]">{t("detail.balance")}</span> · {formatMoney(balance)}</p>
           </div>
         </div>
       </section>
 
       <div className="grid gap-3 lg:grid-cols-3">
         <section className="admin-card invoice-print-sheet lg:col-span-2">
-          <h2 className="admin-card-title">Line items</h2>
+          <h2 className="admin-card-title">{t("detail.lineItems")}</h2>
           <div className="mt-3 overflow-x-auto">
             <table className="admin-table min-w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-ink/10 text-[0.625rem] uppercase tracking-wider text-muted">
-                  <th className="py-2 pr-3 font-semibold">Description</th>
-                  <th className="py-2 pr-3 font-semibold">Qty</th>
-                  <th className="py-2 pr-3 font-semibold">Unit</th>
-                  <th className="py-2 font-semibold">Amount</th>
+                  <th className="py-2 pr-3 font-semibold">{t("detail.descriptionCol")}</th>
+                  <th className="py-2 pr-3 font-semibold">{t("detail.qty")}</th>
+                  <th className="py-2 pr-3 font-semibold">{t("detail.unitPrice")}</th>
+                  <th className="py-2 font-semibold">{t("detail.amount")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -253,7 +252,7 @@ export default function InvoiceDetailClient({
 
         <section className="admin-card space-y-4 print:hidden">
           <div>
-            <h2 className="admin-card-title">Status</h2>
+            <h2 className="admin-card-title">{t("detail.status")}</h2>
             <select
               className="field-input mt-2 text-sm"
               value={status}
@@ -264,35 +263,35 @@ export default function InvoiceDetailClient({
             >
               {INVOICE_STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {invoiceStatusLabel(locale, s)}
                 </option>
               ))}
             </select>
           </div>
           <dl className="admin-dl">
             <div>
-              <dt>Email</dt>
+              <dt>{t("detail.email")}</dt>
               <dd>{invoice.customerEmail}</dd>
             </div>
             <div>
-              <dt>Phone</dt>
+              <dt>{t("detail.phone")}</dt>
               <dd>{invoice.customerPhone}</dd>
             </div>
             <div>
-              <dt>Created</dt>
+              <dt>{t("detail.created")}</dt>
               <dd>{formatDateTime(invoice.createdAt)}</dd>
             </div>
           </dl>
           <div>
-            <h2 className="admin-card-title">Payments</h2>
+            <h2 className="admin-card-title">{t("detail.payments")}</h2>
             {payments.length === 0 ? (
               <div className="mt-2 rounded-lg border border-dashed border-ink/12 px-3 py-4 text-center">
-                <p className="text-xs text-muted">None recorded yet.</p>
+                <p className="text-xs text-muted">{t("detail.noneRecorded")}</p>
                 <Link
                   href={`/admin/payments?invoice=${invoice.id}`}
                   className="mt-2 inline-block text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
                 >
-                  Record first payment →
+                  {t("detail.recordFirstPayment")}
                 </Link>
               </div>
             ) : (

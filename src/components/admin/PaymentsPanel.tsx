@@ -138,7 +138,7 @@ export default function PaymentsPanel({
                 touched.invoiceId && fieldErrors.invoiceId ? "pay-invoice-err" : undefined
               }
             >
-              <option value="">Select…</option>
+              <option value="">{t("common.selectEllipsis")}</option>
               {(openInvoices.length ? openInvoices : invoices).map((inv) => (
                 <option key={inv.id} value={inv.id}>
                   {inv.number} — {inv.customerName} ({inv.status})

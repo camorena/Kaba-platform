@@ -53,12 +53,14 @@ export default function QuoteDetailClient({
         body: JSON.stringify(patch),
       });
       if (!res.ok) {
-        toast.push({ title: "Save failed", tone: "error" });
+        toast.push({ title: t("detail.saveFailed"), tone: "error" });
         return;
       }
       if (patch.status) setStatus(patch.status);
       toast.push({
-        title: patch.status ? `Status → ${patch.status}` : "Notes saved",
+        title: patch.status
+          ? t("common.statusArrow", { status: quoteStatusLabel(locale, patch.status) })
+          : t("detail.notesSaved"),
         tone: "success",
       });
       router.refresh();
@@ -83,13 +85,13 @@ export default function QuoteDetailClient({
       };
       if (!res.ok || !data.invoice) {
         toast.push({
-          title: "Could not create invoice",
+          title: t("detail.createInvoiceFailed"),
           description: data.error,
           tone: "error",
         });
         return;
       }
-      toast.push({ title: "Invoice created", tone: "success" });
+      toast.push({ title: t("detail.invoiceCreated"), tone: "success" });
       router.push(`/admin/invoices/${data.invoice.id}`);
       router.refresh();
     } finally {
@@ -105,11 +107,11 @@ export default function QuoteDetailClient({
     <div className="quote-print-root space-y-4">
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted print:hidden">
         <Link href="/admin/quotes" className="font-semibold hover:underline">
-          ← Quotes
+          ← {t("detail.backQuotes")}
         </Link>
         <span aria-hidden>·</span>
         <Link href="/admin/pipeline" className="hover:underline">
-          Pipeline
+          {t("nav.pipeline")}
         </Link>
         <span aria-hidden>·</span>
         <span className="font-mono text-[0.6875rem]">{quote.id}</span>
@@ -121,7 +123,7 @@ export default function QuoteDetailClient({
             <h1 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
               {quote.name}
             </h1>
-            <StatusBadge label={status} tone={quoteStatusTone[status]} />
+            <StatusBadge label={quoteStatusLabel(locale, status)} tone={quoteStatusTone[status]} />
           </div>
           <p className="mt-1 text-sm text-muted">
             {quote.serviceType} · {quote.address}
@@ -129,27 +131,27 @@ export default function QuoteDetailClient({
         </div>
         <div className="flex flex-wrap gap-2 print:hidden">
           <a href={`tel:${quote.phone}`} className="btn-secondary-light text-sm">
-            Call
+            {t("detail.call")}
           </a>
           <a
             href={`mailto:${quote.email}?subject=${encodeURIComponent(`Kaba Fence — ${quote.serviceType}`)}`}
             className="btn-secondary-light text-sm"
           >
-            Email
+            {t("detail.email")}
           </a>
           <button
             type="button"
             onClick={printQuote}
             className="btn-secondary-light text-sm"
           >
-            Print
+            {t("detail.print")}
           </button>
           {relatedInvoiceId ? (
             <Link
               href={`/admin/invoices/${relatedInvoiceId}`}
               className="btn-secondary text-sm"
             >
-              View invoice
+              {t("detail.viewInvoice")}
             </Link>
           ) : (
             <button
@@ -158,7 +160,7 @@ export default function QuoteDetailClient({
               onClick={() => void createInvoice()}
               className="btn-primary text-sm disabled:opacity-60"
             >
-              {creatingInv ? "Creating…" : "Create invoice"}
+              {creatingInv ? t("common.creating") : t("detail.createInvoice")}
             </button>
           )}
         </div>
@@ -172,33 +174,31 @@ export default function QuoteDetailClient({
           label={t("common.copySummary")}
         />
         <Link href="/admin/templates" className="admin-chip">
-          Follow-up templates →
+          {t("detail.followUpTemplates")}
         </Link>
         <Link href="/admin/pricebook" className="admin-chip">
-          Price book →
+          {t("detail.pricebookLink")}
         </Link>
       </div>
 
       {!relatedInvoiceId && (
         <div className="admin-flow-hint rounded-xl border border-bronze/20 bg-bronze/5 px-3 py-2.5 text-xs leading-relaxed text-muted print:hidden sm:px-4">
-          <strong className="font-semibold text-ink">Next step:</strong> after
-          the site visit, create a demo invoice from this quote, then record
-          payments on the invoice detail. Amounts stay synthetic until Stripe +
-          DB are wired.
+          <strong className="font-semibold text-ink">{t("detail.nextStepTitle")}</strong>{" "}
+          {t("detail.nextStepBody")}
         </div>
       )}
 
       <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5 print:hidden">
-        <h2 className="admin-card-title mb-3">Progress</h2>
+        <h2 className="admin-card-title mb-3">{t("detail.progress")}</h2>
         <QuoteStatusTimeline status={status} />
       </section>
 
       <div className="grid gap-3 lg:grid-cols-3">
         <section className="admin-card quote-print-sheet lg:col-span-2">
-          <h2 className="admin-card-title">Request</h2>
+          <h2 className="admin-card-title">{t("detail.request")}</h2>
           <dl className="admin-dl mt-3">
             <div>
-              <dt>Phone</dt>
+              <dt>{t("detail.phone")}</dt>
               <dd>
                 <a href={`tel:${quote.phone}`} className="hover:underline">
                   {quote.phone}
@@ -206,7 +206,7 @@ export default function QuoteDetailClient({
               </dd>
             </div>
             <div>
-              <dt>Email</dt>
+              <dt>{t("detail.email")}</dt>
               <dd>
                 <a href={`mailto:${quote.email}`} className="hover:underline">
                   {quote.email}
@@ -214,19 +214,19 @@ export default function QuoteDetailClient({
               </dd>
             </div>
             <div>
-              <dt>Prefer</dt>
+              <dt>{t("detail.prefer")}</dt>
               <dd className="capitalize">{quote.preferredContact}</dd>
             </div>
             <div>
-              <dt>Source</dt>
+              <dt>{t("detail.source")}</dt>
               <dd className="capitalize">{quote.source}</dd>
             </div>
             <div>
-              <dt>Received</dt>
+              <dt>{t("detail.received")}</dt>
               <dd>{formatDateTime(quote.createdAt)}</dd>
             </div>
             <div>
-              <dt>Updated</dt>
+              <dt>{t("detail.updated")}</dt>
               <dd>{formatDateTime(quote.updatedAt)}</dd>
             </div>
           </dl>
@@ -237,9 +237,9 @@ export default function QuoteDetailClient({
 
         <section className="admin-card space-y-4 print:hidden">
           <div>
-            <h2 className="admin-card-title">Status</h2>
+            <h2 className="admin-card-title">{t("detail.status")}</h2>
             <label htmlFor="detail-status" className="sr-only">
-              Quote status
+              {t("detail.quoteStatus")}
             </label>
             <select
               id="detail-status"
@@ -254,7 +254,7 @@ export default function QuoteDetailClient({
             >
               {QUOTE_STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {quoteStatusLabel(locale, s)}
                 </option>
               ))}
             </select>
@@ -270,14 +270,14 @@ export default function QuoteDetailClient({
                     void save({ status: s });
                   }}
                 >
-                  → {s}
+                  → {quoteStatusLabel(locale, s)}
                 </button>
               ))}
             </div>
           </div>
           <div>
             <label htmlFor="quote-notes" className="admin-card-title block">
-              Internal notes
+              {t("detail.internalNotes")}
             </label>
             <textarea
               id="quote-notes"
@@ -285,7 +285,7 @@ export default function QuoteDetailClient({
               className="field-input mt-2 resize-y text-sm"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Call notes, site access, HOA caveats…"
+              placeholder={t("detail.notesPlaceholder")}
             />
             <button
               type="button"
@@ -293,7 +293,7 @@ export default function QuoteDetailClient({
               onClick={() => void save({ notes })}
               className="btn-secondary mt-2 w-full text-sm disabled:opacity-60"
             >
-              {busy ? "Saving…" : "Save notes"}
+              {busy ? t("common.saving") : t("detail.saveNotes")}
             </button>
           </div>
         </section>

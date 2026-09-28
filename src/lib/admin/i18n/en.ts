@@ -20,7 +20,7 @@ const en = {
   },
   shell: {
     brand: "Kaba Fence Admin",
-    tagline: "Quotes · invoices · field ops",
+    tagline: "Quotes · invoices · operations",
     search: "Search",
     openMenu: "Open menu",
     closeMenu: "Close menu",
@@ -30,7 +30,7 @@ const en = {
     signOut: "Sign out",
     signedOut: "Signed out",
     authStubStrong: "Auth stub — not production-ready.",
-    authWarning: "Password-cookie gate for scaffolding only. Replace with real auth (Auth.js/Clerk + roles) before handling live customer data.",
+    authWarning: "Password-cookie gate for scaffolding only. Replace with real auth (Auth.js/Clerk + roles) before handling live customer data in production.",
     adminNav: "Admin navigation",
     jumpHint: "Press __KBD__ to jump anywhere.",
     creditPrefix: "Website crafted by"
@@ -64,6 +64,7 @@ const en = {
     noMatchesDesc: "Try a different search or clear filters.",
     showingOf: "Showing {filtered} of {total}",
     selected: "{count} selected",
+    selected_plural: "{count} selected",
     items: "{count} item",
     items_plural: "{count} items",
     more: "+{count} more",
@@ -84,7 +85,12 @@ const en = {
     csvExported: "CSV exported · {count} quote",
     csvExported_plural: "CSV exported · {count} quotes",
     csvExportedInvoices: "CSV exported · {count} invoice",
-    csvExportedInvoices_plural: "CSV exported · {count} invoices"
+    csvExportedInvoices_plural: "CSV exported · {count} invoices",
+    phone: "Phone",
+    email: "Email",
+    created: "Created",
+    demoData: "Demo data",
+    selectEllipsis: "Select…"
   },
   status: {
     quote: {
@@ -123,7 +129,7 @@ const en = {
   pages: {
     dashboard: {
       title: "Dashboard",
-      description: "Dense ops brief — attention items, pipeline funnel, and recent movement. Demo amounts; auth remains a stub.",
+      description: "Ops brief — attention items, pipeline funnel, and recent movement. Demo amounts; auth remains a stub.",
       needsAttention: "Needs attention",
       newQuotes: "New quotes",
       openInvoices: "Open invoices",
@@ -132,14 +138,15 @@ const en = {
       totalHint: "{count} total",
       stubPayments: "{count} stub payments",
       scheduledHint: "{count} scheduled",
+      scheduledHint_plural: "{count} scheduled",
       pipelineFunnel: "Pipeline funnel",
       recentQuotes: "Recent quotes",
       invoices: "Invoices",
       payments: "Payments",
       emptyTitle: "Pipeline is empty",
-      emptyDesc: "When homeowners submit the public quote form, recent entries will show here.",
+      emptyDesc: "When customers submit the public quote form, recent quotes will show here.",
       templatesHint: "Copy follow-ups",
-      pricebookHint: "Ballpark rates",
+      pricebookHint: "Reference rates",
       newQuoteMeta: "New quote · {service}",
       invoiceMeta: "{status} · {customer}"
     },
@@ -190,7 +197,7 @@ const en = {
     },
     pricebook: {
       title: "Price book",
-      meta: "Estimating · offline",
+      meta: "Estimating · local",
       description: "Field rates for ballpark estimates. Edits stay in your browser (localStorage) — no Stripe, no database."
     },
     templates: {
@@ -248,7 +255,7 @@ const en = {
   login: {
     metaTitle: "Admin login",
     brand: "Kaba Fence Admin",
-    headline: "Field ops, refined.",
+    headline: "Field ops, with polish.",
     subhead: "A polished foundation for quotes, invoices, and payments — elegant enough for agency demos, honest about stub auth.",
     h1: "Quote → invoice → payment",
     h1body: "Pipeline, detail timelines, and stub ledger — ready for a real DB.",
@@ -271,7 +278,7 @@ const en = {
     stubNote: "Stub auth only — cookie session lasts ~12 hours. Not suitable as sole protection for customer PII in production.",
     notConfiguredTitle: "Admin password not configured",
     notConfiguredBody: "Set {passwordEnv} in {envFile} (or your host env) and restart the server. This gate is a temporary stub — replace with real auth before any production use.",
-    loginFailed: "Login failed.",
+    loginFailed: "Could not sign in.",
     networkError: "Network error. Try again."
   },
   quotes: {
@@ -279,7 +286,7 @@ const en = {
     searchPlaceholder: "Search name, phone, service…",
     exportTitle: "Download filtered quotes as CSV",
     allCount: "All ({count})",
-    bulkStatus: "Bulk status",
+    bulkStatus: "Bulk status change",
     applyStatus: "Apply status",
     emptyTitle: "No quotes yet",
     emptyDesc: "Submissions from /quote will appear here. This demo uses an in-memory store—it resets on cold starts until a database is wired.",
@@ -416,7 +423,7 @@ const en = {
     sms: "SMS",
     email: "Email",
     note: "Internal",
-    mergeTitle: "Merge fields",
+    mergeTitle: "Dynamic fields",
     mergeHint: "Fill once — preview updates live. No email/SMS API wired.",
     name: "Name",
     service: "Service",
@@ -431,6 +438,7 @@ const en = {
   },
   pricebook: {
     estimate: "Quick estimate",
+    estimateHint: "Set quantities — totals stay on this device (localStorage).",
     qty: "Qty",
     unit: "Unit",
     lineTotal: "Line",
@@ -441,16 +449,30 @@ const en = {
     unitPh: "Unit (lf, ea…)",
     unitPricePh: "Unit $",
     add: "Add",
+    addToBook: "Add to price book",
     reset: "Reset to seed",
     resetTitle: "Reset price book?",
     resetDesc: "This clears custom rates and restores the demo seed book in this browser.",
     resetConfirm: "Reset",
+    clearQty: "Clear qty",
+    resetDefaults: "Reset defaults",
     saved: "Price book saved locally",
     resetDone: "Price book reset",
     emptyTitle: "No rates",
     emptyDesc: "Add a custom rate below, or reset to the seed price book.",
+    emptyCategory: "No lines in this category",
     remove: "Remove",
-    category: "Category"
+    category: "Category",
+    colItem: "Item",
+    colUnit: "Unit",
+    colRate: "Rate",
+    colQty: "Qty",
+    colLine: "Line",
+    saveLocalFailed: "Could not save locally",
+    namePriceRequired: "Name and unit price required",
+    lineAdded: "Line added",
+    restoredDefaults: "Restored defaults",
+    qtyFor: "Quantity for {name}"
   },
   reports: {
     range: "Date range",
@@ -484,13 +506,38 @@ const en = {
     call: "Call",
     email: "Email",
     print: "Print",
+    printInvoice: "Print invoice",
     status: "Status",
+    progress: "Progress",
+    request: "Request",
+    prefer: "Prefer",
+    phone: "Phone",
+    quoteStatus: "Quote status",
+    internalNotes: "Internal notes",
+    notesPlaceholder: "Call notes, site access, HOA caveats…",
+    notesSaved: "Notes saved",
+    saveFailed: "Save failed",
+    saveNotes: "Save notes",
+    viewInvoice: "View invoice",
+    createInvoice: "Create invoice draft",
+    invoiceCreated: "Invoice created",
+    createInvoiceFailed: "Could not create invoice",
+    followUpTemplates: "Follow-up templates →",
+    pricebookLink: "Price book →",
+    nextStepTitle: "Next step:",
+    nextStepBody:
+      "after the site visit, create a demo invoice from this quote, then record payments on the invoice detail. Amounts stay synthetic until Stripe + DB are wired.",
+    balanceDueTitle: "Balance due:",
+    balanceDueBody:
+      "Record a stub payment or adjust status — Stripe Checkout is not connected yet.",
+    sourceQuote: "Source quote",
     lineItems: "Line items",
     qty: "Qty",
     unitPrice: "Unit",
     amount: "Amount",
     subtotal: "Subtotal",
     tax: "Tax",
+    created: "Created",
     total: "Total",
     balance: "Balance",
     paid: "Paid",
@@ -509,7 +556,10 @@ const en = {
     markPaid: "Mark paid",
     voidAction: "Void",
     relatedQuote: "Related quote",
-    createInvoice: "Create invoice draft"
+    noneRecorded: "None recorded yet.",
+    recordFirstPayment: "Record first payment →",
+    billTo: "Bill to",
+    descriptionCol: "Description"
   }
 } as const satisfies DictNode;
 

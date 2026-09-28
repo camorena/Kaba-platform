@@ -127,7 +127,7 @@ export default function InvoicesPanel({
               value={quoteId}
               onChange={(e) => setQuoteId(e.target.value)}
             >
-              <option value="">Select…</option>
+              <option value="">{t("common.selectEllipsis")}</option>
               {quotesForCreate.map((q) => (
                 <option key={q.id} value={q.id}>
                   {q.name} — {q.serviceType} ({q.status})

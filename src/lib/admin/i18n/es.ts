@@ -1,4 +1,4 @@
-/** Formal Colombian Spanish (usted) — admin UI */
+/** Formal Colombian Spanish (es-CO, usted) — admin UI */
 import type { DictNode } from "./types";
 
 const es = {
@@ -6,7 +6,7 @@ const es = {
     admin: "Admin",
     dashboard: "Panel",
     quotes: "Cotizaciones",
-    pipeline: "Embudo",
+    pipeline: "Pipeline",
     invoices: "Facturas",
     payments: "Pagos",
     customers: "Clientes",
@@ -30,9 +30,10 @@ const es = {
     signOut: "Cerrar sesión",
     signedOut: "Sesión cerrada",
     authStubStrong: "Autenticación provisional — no apta para producción.",
-    authWarning: "Acceso por contraseña y cookie solo para el prototipo. Reemplácela con autenticación real (Auth.js/Clerk + roles) antes de manejar datos de clientes en vivo.",
+    authWarning:
+      "Acceso por contraseña y cookie solo para el prototipo. Reemplácela con autenticación real (Auth.js/Clerk + roles) antes de manejar datos de clientes en producción.",
     adminNav: "Navegación del administrador",
-    jumpHint: "Pulse __KBD__ para ir a cualquier sección.",
+    jumpHint: "Presione __KBD__ para ir a cualquier sección.",
     creditPrefix: "Sitio elaborado por"
   },
   lang: {
@@ -63,7 +64,8 @@ const es = {
     noMatches: "Sin coincidencias",
     noMatchesDesc: "Pruebe otra búsqueda o limpie los filtros.",
     showingOf: "Mostrando {filtered} de {total}",
-    selected: "{count} seleccionada(s)",
+    selected: "{count} seleccionada",
+    selected_plural: "{count} seleccionadas",
     items: "{count} elemento",
     items_plural: "{count} elementos",
     more: "+{count} más",
@@ -76,15 +78,20 @@ const es = {
     latest: "Última {date}",
     openPublicQuote: "Abrir formulario público",
     openQuoteForm: "Abrir formulario de cotización",
-    pipelineBoard: "Tablero del embudo",
+    pipelineBoard: "Tablero del pipeline",
     statusUpdateFailed: "No se pudo actualizar el estado",
-    bulkUpdateFailed: "Falló la actualización masiva",
+    bulkUpdateFailed: "No se pudo actualizar de forma masiva",
     statusArrow: "Estado → {status}",
     updatedArrow: "Actualizadas {count} → {status}",
     csvExported: "CSV exportado · {count} cotización",
     csvExported_plural: "CSV exportado · {count} cotizaciones",
     csvExportedInvoices: "CSV exportado · {count} factura",
-    csvExportedInvoices_plural: "CSV exportado · {count} facturas"
+    csvExportedInvoices_plural: "CSV exportado · {count} facturas",
+    phone: "Teléfono",
+    email: "Correo",
+    created: "Creada",
+    demoData: "Datos de demostración",
+    selectEllipsis: "Seleccione…"
   },
   status: {
     quote: {
@@ -117,13 +124,14 @@ const es = {
   timeline: {
     quoteProgress: "Progreso de la cotización",
     invoiceProgress: "Progreso de la factura",
-    pipelineEnded: "Embudo cerrado",
+    pipelineEnded: "Pipeline cerrado",
     issued: "Emitida"
   },
   pages: {
     dashboard: {
       title: "Panel",
-      description: "Resumen operativo — pendientes, embudo y movimiento reciente. Montos de demostración; la autenticación sigue siendo provisional.",
+      description:
+        "Resumen operativo: pendientes, pipeline y movimiento reciente. Montos de demostración; la autenticación sigue siendo provisional.",
       needsAttention: "Requiere atención",
       newQuotes: "Cotizaciones nuevas",
       openInvoices: "Facturas abiertas",
@@ -131,40 +139,47 @@ const es = {
       won: "Ganadas",
       totalHint: "{count} en total",
       stubPayments: "{count} pagos de prueba",
-      scheduledHint: "{count} agendada(s)",
+      scheduledHint: "{count} agendada",
+      scheduledHint_plural: "{count} agendadas",
       pipelineFunnel: "Embudo de cotizaciones",
       recentQuotes: "Cotizaciones recientes",
       invoices: "Facturas",
       payments: "Pagos",
-      emptyTitle: "El embudo está vacío",
-      emptyDesc: "Cuando los propietarios envíen el formulario público, las entradas recientes aparecerán aquí.",
+      emptyTitle: "El pipeline está vacío",
+      emptyDesc:
+        "Cuando los clientes envíen el formulario público, las cotizaciones recientes aparecerán aquí.",
       templatesHint: "Copiar seguimientos",
-      pricebookHint: "Tarifas estimadas",
+      pricebookHint: "Tarifas de referencia",
       newQuoteMeta: "Cotización nueva · {service}",
       invoiceMeta: "{status} · {customer}"
     },
     quotes: {
       title: "Cotizaciones",
-      description: "Solicitudes del formulario público y filas de demostración. Almacén en memoria — se reinicia en arranques en frío hasta conectar una base de datos."
+      description:
+        "Solicitudes del formulario público y filas de demostración. Datos en memoria: se reinician en arranques en frío hasta conectar una base de datos."
     },
     pipeline: {
-      title: "Embudo",
-      description: "Vista kanban de las etapas de cotización — arrastre tarjetas o avance el estado. Mismo almacén en memoria que Cotizaciones."
+      title: "Pipeline",
+      description:
+        "Vista kanban de las etapas de cotización. Arrastre tarjetas o avance el estado. Mismo almacenamiento en memoria que Cotizaciones."
     },
     invoices: {
       title: "Facturas",
-      description: "Facturas de demostración con montos sintéticos. Cree borradores desde cotizaciones; PDF/correo y precios reales vendrán después."
+      description:
+        "Facturas de demostración con montos sintéticos. Cree borradores desde cotizaciones; PDF, correo y precios reales vendrán después."
     },
     payments: {
       title: "Pagos",
-      description: "Libro provisional vinculado a facturas. Sin Stripe, ACH ni captura de tarjeta — solo registro para la base de la interfaz."
+      description:
+        "Libro provisional vinculado a facturas. Sin Stripe, ACH ni captura de tarjeta: solo registro para la base de la interfaz."
     },
     customers: {
       title: "Clientes",
-      description: "Derivados de contactos de cotización (correo/teléfono). No es un CRM — las claves únicas consolidan envíos duplicados.",
+      description:
+        "Derivados de contactos de cotización (correo/teléfono). No es un CRM: las claves únicas consolidan envíos duplicados.",
       meta: "Relación · provisional",
       emptyTitle: "Aún no hay clientes",
-      emptyDesc: "Los clientes aparecen cuando llegan cotizaciones al almacén.",
+      emptyDesc: "Los clientes aparecen cuando llegan cotizaciones al sistema.",
       directory: "Directorio",
       colCustomer: "Cliente",
       colQuotes: "Cotizaciones",
@@ -173,11 +188,13 @@ const es = {
     },
     schedule: {
       title: "Agenda",
-      description: "Calendario provisional de visitas e instalaciones a partir de cotizaciones agendadas o ganadas. Aún no es un sistema de reservas.",
+      description:
+        "Calendario provisional de visitas e instalaciones a partir de cotizaciones agendadas o ganadas. Aún no es un sistema de reservas.",
       meta: "Operaciones de campo · demo",
       upcoming: "Próximos trabajos",
       emptyTitle: "Sin trabajos agendados",
-      emptyDesc: "Marque una cotización como agendada o ganada para generar trabajos de demostración.",
+      emptyDesc:
+        "Marque una cotización como agendada o ganada para generar trabajos de demostración.",
       dow: {
         sun: "Dom",
         mon: "Lun",
@@ -190,55 +207,67 @@ const es = {
     },
     pricebook: {
       title: "Lista de precios",
-      meta: "Estimación · sin conexión",
-      description: "Tarifas de campo para estimados rápidos. Los cambios permanecen en su navegador (localStorage) — sin Stripe ni base de datos."
+      meta: "Estimación · local",
+      description:
+        "Tarifas de campo para estimados rápidos. Los cambios permanecen en su navegador (localStorage): sin Stripe ni base de datos."
     },
     templates: {
       title: "Plantillas",
-      description: "Mensajes SMS, correo y notas internas con campos combinados. Copie al portapapeles — sin API de mensajería."
+      description:
+        "Mensajes SMS, correo y notas internas con campos dinámicos. Copie al portapapeles: sin API de mensajería."
     },
     activity: {
       title: "Actividad",
-      description: "Feed unificado de actualizaciones de cotizaciones, facturas y pagos desde los almacenes en memoria.",
+      description:
+        "Feed unificado de actualizaciones de cotizaciones, facturas y pagos desde el almacenamiento en memoria.",
       emptyTitle: "Sin actividad por ahora",
-      emptyDesc: "Los eventos del embudo aparecerán aquí a medida que avancen cotizaciones y facturas.",
+      emptyDesc:
+        "Los eventos del pipeline aparecerán aquí a medida que avancen cotizaciones y facturas.",
       kindQuote: "Cotización",
       kindInvoice: "Factura",
       kindPayment: "Pago"
     },
     reports: {
       title: "Informes",
-      description: "Resumen operativo ligero — solo gráficos SVG/CSS. Montos de demostración; sin proveedor de analítica."
+      description:
+        "Resumen operativo ligero: solo gráficos SVG/CSS. Montos de demostración; sin proveedor de analítica."
     },
     settings: {
       title: "Configuración",
-      description: "Documentación del entorno y límites reales de este prototipo — no controles de seguridad fingidos.",
+      description:
+        "Documentación del entorno y límites reales de este prototipo — no controles de seguridad fingidos.",
       meta: "Operaciones · transparencia",
       authTitle: "Autenticación (provisional)",
-      authBody: "El acceso se controla con una contraseña compartida en {passwordEnv}. Un inicio de sesión exitoso establece una cookie httpOnly ({cookie}) por ~12 horas. Esto no es autenticación multiusuario, MFA, endurecimiento CSRF, límite de tasa ni registro de auditoría.",
+      authBody:
+        "El acceso se controla con una contraseña compartida en {passwordEnv}. Un inicio de sesión exitoso establece una cookie httpOnly ({cookie}) por ~12 horas. Esto no es autenticación multiusuario, MFA, endurecimiento CSRF, límite de tasa ni registro de auditoría.",
       authStatus: "Estado:",
       passwordConfigured: "contraseña configurada",
       passwordMissing: "contraseña ausente",
       authLocal: "Local: configúrela en {envFile}",
       authProd: "Producción: configure la misma variable en el proyecto de Vercel",
-      authReplace: "Reemplácela con Auth.js / Clerk (o similar) + roles antes de datos personales en vivo",
-      authRotate: "Intencionalmente no mostramos ni editamos la contraseña aquí. Rótela en el entorno del alojamiento y vuelva a desplegar o reiniciar.",
-      dataTitle: "Almacenes de datos",
-      dataBody: "Cotizaciones, facturas y pagos viven en memoria del proceso con filas de demostración. En Vercel serverless, un arranque en frío reinicia la lista. El {endpoint} público sigue funcionando para el formulario de marketing en la instancia activa que lo recibe.",
+      authReplace:
+        "Reemplácela con Auth.js / Clerk (o similar) + roles antes de datos personales en producción",
+      authRotate:
+        "Intencionalmente no mostramos ni editamos la contraseña aquí. Rótela en el entorno del alojamiento y vuelva a desplegar o reiniciar.",
+      dataTitle: "Almacenamiento de datos",
+      dataBody:
+        "Cotizaciones, facturas y pagos viven en memoria del proceso con filas de demostración. En Vercel serverless, un arranque en frío reinicia la lista. El {endpoint} público sigue funcionando para el formulario de marketing en la instancia activa que lo recibe.",
       dataNext: "Siguiente paso: Postgres / SQLite (Drizzle o Prisma) + migraciones",
       stripeTitle: "Pagos / Stripe",
-      stripeBody: "No integrado. La página de Pagos registra filas provisionales y puede cambiar el estado de la factura a parcial/pagada. No hay Stripe Checkout, Payment Intents, Connect, webhooks ni alcance PCI en esta aplicación aún.",
+      stripeBody:
+        "No integrado. La página de Pagos registra filas provisionales y puede cambiar el estado de la factura a parcial/pagada. No hay Stripe Checkout, Payment Intents, Connect, webhooks ni alcance PCI en esta aplicación aún.",
       stripePlan1: "Planificado: cobro de anticipo y saldo contra facturas",
       stripePlan2: "Planificado: estado por webhooks, recibos y conciliación",
       stripeEnv: "Variables de entorno (sin uso):",
       opsTitle: "Herramientas operativas de bajo costo",
       opsBody: "Agregadas sin Stripe, bases de datos ni APIs de pago:",
-      opsPipeline: "Embudo — kanban arrastrable sobre estados de cotización",
+      opsPipeline: "Pipeline — kanban arrastrable sobre estados de cotización",
       opsPricebook: "Lista de precios — tarifas en localStorage + totales de estimado",
       opsTemplates: "Plantillas — campos SMS/correo/nota, copiar al portapapeles",
       opsQuick: "Acciones rápidas en detalle de cotización/factura (llamar, correo, copiar, imprimir)",
       craftTitle: "Rastreadores, diseño y atajos",
-      craftBody: "{robots} impide {admin} y {api}. El layout del admin también define {noindex}. No enlace el admin desde la interfaz pública.",
+      craftBody:
+        "{robots} impide {admin} y {api}. El layout del admin también define {noindex}. No enlace el admin desde la interfaz pública.",
       craftPalette: "Paleta de comandos:",
       craftShortcuts: "Hoja de atajos:",
       craftCharts: "Los gráficos son SVG/CSS puros — sin Chart.js ni analítica de pago",
@@ -248,16 +277,18 @@ const es = {
   login: {
     metaTitle: "Acceso admin",
     brand: "Kaba Fence Admin",
-    headline: "Operaciones de campo, con refinamiento.",
-    subhead: "Una base pulida para cotizaciones, facturas y pagos — elegante para demos de agencia, honesta sobre la autenticación provisional.",
+    headline: "Operaciones de campo, con elegancia.",
+    subhead:
+      "Una base pulida para cotizaciones, facturas y pagos: lista para demos de agencia y honesta sobre la autenticación provisional.",
     h1: "Cotización → factura → pago",
-    h1body: "Embudo, líneas de tiempo y libro provisional — listo para una base de datos real.",
+    h1body: "Pipeline, líneas de tiempo y libro provisional — listo para una base de datos real.",
     h2: "Herramientas para el campo",
-    h2body: "Embudo kanban, lista de precios local y plantillas de seguimiento — sin APIs de pago.",
+    h2body: "Pipeline kanban, lista de precios local y plantillas de seguimiento — sin APIs de pago.",
     h3: "Diseño de agencia",
     h3body: "Oro · carbón · crema, Playfair/Inter, claro/oscuro, paleta ⌘K.",
     authStrong: "Autenticación provisional — no apta para producción.",
-    authBody: "Solo cookie de contraseña compartida. Reemplácela antes de manejar datos reales de clientes.",
+    authBody:
+      "Solo cookie de contraseña compartida. Reemplácela antes de manejar datos reales de clientes.",
     brandShort: "Kaba Fence",
     signInTitle: "Acceso de administrador",
     signInMobileSub: "Base de cotizaciones, facturas y pagos.",
@@ -268,10 +299,12 @@ const es = {
     hide: "Ocultar",
     signIn: "Iniciar sesión",
     signingIn: "Iniciando sesión…",
-    stubNote: "Solo autenticación provisional — la sesión por cookie dura ~12 horas. No es adecuada como única protección de datos personales en producción.",
+    stubNote:
+      "Solo autenticación provisional — la sesión por cookie dura ~12 horas. No es adecuada como única protección de datos personales en producción.",
     notConfiguredTitle: "Contraseña de administrador no configurada",
-    notConfiguredBody: "Configure {passwordEnv} en {envFile} (o en el entorno del alojamiento) y reinicie el servidor. Esta puerta es temporal — reemplácela con autenticación real antes de cualquier uso en producción.",
-    loginFailed: "Error al iniciar sesión.",
+    notConfiguredBody:
+      "Configure {passwordEnv} en {envFile} (o en el entorno del alojamiento) y reinicie el servidor. Esta puerta es temporal: reemplácela con autenticación real antes de cualquier uso en producción.",
+    loginFailed: "No se pudo iniciar sesión.",
     networkError: "Error de red. Inténtelo de nuevo."
   },
   quotes: {
@@ -279,10 +312,11 @@ const es = {
     searchPlaceholder: "Buscar nombre, teléfono, servicio…",
     exportTitle: "Descargar cotizaciones filtradas en CSV",
     allCount: "Todas ({count})",
-    bulkStatus: "Estado masivo",
+    bulkStatus: "Cambio masivo de estado",
     applyStatus: "Aplicar estado",
     emptyTitle: "Aún no hay cotizaciones",
-    emptyDesc: "Los envíos desde /quote aparecerán aquí. Esta demo usa un almacén en memoria — se reinicia en arranques en frío hasta conectar una base de datos.",
+    emptyDesc:
+      "Los envíos desde /quote aparecerán aquí. Esta demo usa datos en memoria: se reinician en arranques en frío hasta conectar una base de datos.",
     noMatchesDesc: "Pruebe otra búsqueda o limpie el filtro de estado.",
     selectAll: "Seleccionar todas las filtradas",
     selectOne: "Seleccionar {name}",
@@ -293,8 +327,10 @@ const es = {
     colLocation: "Ubicación",
     colStatus: "Estado",
     markLostTitle: "¿Marcar como perdida?",
-    markLostDesc: "Esto marcará {count} cotización como perdida. Puede cambiar el estado después.",
-    markLostDesc_plural: "Esto marcará {count} cotizaciones como perdidas. Puede cambiar el estado después.",
+    markLostDesc:
+      "Esto marcará {count} cotización como perdida. Puede cambiar el estado después.",
+    markLostDesc_plural:
+      "Esto marcará {count} cotizaciones como perdidas. Puede cambiar el estado después.",
     markLostConfirm: "Marcar perdida",
     csvHeaders: "Recibida,Nombre,Teléfono,Correo,Servicio,Dirección,Estado,Origen"
   },
@@ -307,9 +343,11 @@ const es = {
     dropHere: "Suelte aquí",
     moveFailed: "No se pudo mover",
     movedArrow: "Movida → {status}",
-    emptyTitle: "El embudo está vacío",
-    emptyDesc: "Cuando lleguen cotizaciones del formulario público, arrastre tarjetas entre etapas — o avance el estado desde el detalle.",
-    footer: "Arrastre tarjetas entre columnas o use los botones → rápidos. Los cambios se guardan en el almacén en memoria."
+    emptyTitle: "El pipeline está vacío",
+    emptyDesc:
+      "Cuando lleguen cotizaciones del formulario público, arrastre tarjetas entre etapas — o avance el estado desde el detalle.",
+    footer:
+      "Arrastre tarjetas entre columnas o use los botones → rápidos. Los cambios se guardan en memoria."
   },
   invoices: {
     createFrom: "Crear borrador desde cotización",
@@ -320,7 +358,8 @@ const es = {
     searchPlaceholder: "Buscar #, cliente…",
     exportTitle: "Descargar facturas filtradas en CSV",
     emptyTitle: "Aún no hay facturas",
-    emptyDesc: "Cree un borrador desde una cotización arriba. Los montos son datos sintéticos de demostración hasta conectar el estimado.",
+    emptyDesc:
+      "Cree un borrador desde una cotización arriba. Los montos son datos sintéticos de demostración hasta conectar el estimado.",
     colNumber: "Número",
     colCustomer: "Cliente",
     colTotal: "Total",
@@ -345,7 +384,8 @@ const es = {
     recordedOk: "Pago registrado (demo provisional — sin Stripe).",
     recordPayment: "Registrar pago",
     emptyTitle: "No hay pagos registrados",
-    emptyDesc: "Use el formulario provisional arriba para asociar un pago de demostración a una factura.",
+    emptyDesc:
+      "Use el formulario provisional arriba para asociar un pago de demostración a una factura.",
     colInvoice: "Factura",
     colCustomer: "Cliente",
     colAmount: "Monto",
@@ -357,13 +397,15 @@ const es = {
     label: "Notificaciones",
     unread: "Notificaciones, {count} sin leer",
     markAll: "Marcar todas como leídas",
-    stubFooter: "Feed provisional — sin push, correo ni tiempo real aún. Solo para la interfaz.",
+    stubFooter:
+      "Feed provisional — sin push, correo ni tiempo real aún. Solo para la interfaz.",
     n1title: "Cotización nueva · Jordan Miles",
     n1body: "Solicitud de cerca de madera desde Angier — requiere primer contacto.",
     n2title: "Visita al sitio mañana",
     n2body: "Chris Nguyen · privacidad en vinilo · Fuquay-Varina.",
     n3title: "Saldo de factura abierto",
-    n3body: "La cartera demo aún tiene saldo abierto — registre un pago provisional.",
+    n3body:
+      "La cartera demo aún tiene saldo abierto — registre un pago provisional.",
     time26h: "hace 26 h",
     time2d: "hace 2 d",
     time3d: "hace 3 d"
@@ -407,7 +449,8 @@ const es = {
     errRole: "Indique una etiqueta de rol.",
     fixFields: "Corrija los campos resaltados",
     savedTitle: "Perfil guardado (provisional local)",
-    savedDesc: "No se persiste — aún no hay base de datos. Los valores solo duran esta sesión.",
+    savedDesc:
+      "No se persiste — aún no hay base de datos. Los valores solo duran esta sesión.",
     save: "Guardar perfil",
     noPassword: "Aquí no se cambia la contraseña — rote las variables de entorno."
   },
@@ -416,8 +459,9 @@ const es = {
     sms: "SMS",
     email: "Correo",
     note: "Interna",
-    mergeTitle: "Campos combinados",
-    mergeHint: "Complete una vez — la vista previa se actualiza al instante. Sin API de correo/SMS.",
+    mergeTitle: "Campos dinámicos",
+    mergeHint:
+      "Complete una vez — la vista previa se actualiza al instante. Sin API de correo/SMS.",
     name: "Nombre",
     service: "Servicio",
     address: "Dirección",
@@ -431,6 +475,8 @@ const es = {
   },
   pricebook: {
     estimate: "Estimado rápido",
+    estimateHint:
+      "Defina cantidades — los totales permanecen en este dispositivo (localStorage).",
     qty: "Cant.",
     unit: "Unidad",
     lineTotal: "Línea",
@@ -441,16 +487,31 @@ const es = {
     unitPh: "Unidad (ml, und…)",
     unitPricePh: "Precio und. $",
     add: "Agregar",
+    addToBook: "Agregar a la lista",
     reset: "Restablecer semilla",
     resetTitle: "¿Restablecer lista de precios?",
-    resetDesc: "Esto elimina las tarifas personalizadas y restaura el libro de demostración en este navegador.",
+    resetDesc:
+      "Esto elimina las tarifas personalizadas y restaura el libro de demostración en este navegador.",
     resetConfirm: "Restablecer",
+    clearQty: "Limpiar cant.",
+    resetDefaults: "Restablecer valores",
     saved: "Lista de precios guardada localmente",
     resetDone: "Lista de precios restablecida",
     emptyTitle: "Sin tarifas",
     emptyDesc: "Agregue una tarifa personalizada abajo, o restablezca el libro semilla.",
+    emptyCategory: "Sin partidas en esta categoría",
     remove: "Eliminar",
-    category: "Categoría"
+    category: "Categoría",
+    colItem: "Partida",
+    colUnit: "Unidad",
+    colRate: "Tarifa",
+    colQty: "Cant.",
+    colLine: "Línea",
+    saveLocalFailed: "No se pudo guardar localmente",
+    namePriceRequired: "Indique el nombre y el precio unitario",
+    lineAdded: "Partida agregada",
+    restoredDefaults: "Valores restablecidos",
+    qtyFor: "Cantidad de {name}"
   },
   reports: {
     range: "Rango de fechas",
@@ -484,8 +545,32 @@ const es = {
     call: "Llamar",
     email: "Correo",
     print: "Imprimir",
+    printInvoice: "Imprimir factura",
     status: "Estado",
-    lineItems: "Ítems",
+    progress: "Progreso",
+    request: "Solicitud",
+    prefer: "Preferencia",
+    phone: "Teléfono",
+    quoteStatus: "Estado de la cotización",
+    internalNotes: "Notas internas",
+    notesPlaceholder: "Notas de llamada, acceso al sitio, restricciones de HOA…",
+    notesSaved: "Notas guardadas",
+    saveFailed: "No se pudo guardar",
+    saveNotes: "Guardar notas",
+    viewInvoice: "Ver factura",
+    createInvoice: "Crear borrador de factura",
+    invoiceCreated: "Factura creada",
+    createInvoiceFailed: "No se pudo crear la factura",
+    followUpTemplates: "Plantillas de seguimiento →",
+    pricebookLink: "Lista de precios →",
+    nextStepTitle: "Siguiente paso:",
+    nextStepBody:
+      "tras la visita al sitio, cree una factura de demostración desde esta cotización y registre pagos en el detalle de la factura. Los montos siguen siendo sintéticos hasta conectar Stripe y la base de datos.",
+    balanceDueTitle: "Saldo por cobrar:",
+    balanceDueBody:
+      "Registre un pago provisional o ajuste el estado — Stripe Checkout aún no está conectado.",
+    sourceQuote: "Cotización de origen",
+    lineItems: "Partidas",
     qty: "Cant.",
     unitPrice: "Unidad",
     amount: "Monto",
@@ -497,7 +582,8 @@ const es = {
     payments: "Pagos",
     noPayments: "Aún no hay pagos en esta factura.",
     voidTitle: "¿Anular esta factura?",
-    voidDesc: "Las facturas anuladas permanecen en el libro para auditoría, pero no deben cobrar pago. En esta demo puede cambiar el estado de nuevo.",
+    voidDesc:
+      "Las facturas anuladas permanecen en el libro para auditoría, pero no deben cobrar pago. En esta demo puede cambiar el estado de nuevo.",
     voidConfirm: "Anular factura",
     invoiceArrow: "Factura → {status}",
     markContacted: "Marcar contactada",
@@ -509,7 +595,11 @@ const es = {
     markPaid: "Marcar pagada",
     voidAction: "Anular",
     relatedQuote: "Cotización relacionada",
-    createInvoice: "Crear borrador de factura"
+    created: "Creada",
+    noneRecorded: "Aún no hay registros.",
+    recordFirstPayment: "Registrar primer pago →",
+    billTo: "Facturar a",
+    descriptionCol: "Descripción"
   }
 } as const satisfies DictNode;
 

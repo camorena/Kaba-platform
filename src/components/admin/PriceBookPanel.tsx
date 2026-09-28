@@ -45,7 +45,7 @@ export default function PriceBookPanel() {
     try {
       localStorage.setItem(PRICEBOOK_STORAGE_KEY, JSON.stringify(next));
     } catch {
-      toast.push({ title: "Could not save locally", tone: "error" });
+      toast.push({ title: t("pricebook.saveLocalFailed"), tone: "error" });
     }
   }
 
@@ -70,7 +70,7 @@ export default function PriceBookPanel() {
   function addItem() {
     const dollars = Number.parseFloat(draftDollars);
     if (!draftName.trim() || !Number.isFinite(dollars) || dollars < 0) {
-      toast.push({ title: "Name and unit price required", tone: "error" });
+      toast.push({ title: t("pricebook.namePriceRequired"), tone: "error" });
       return;
     }
     const next: PriceBookItem = {
@@ -82,7 +82,7 @@ export default function PriceBookPanel() {
     };
     persist([...items, next]);
     setDraftName("");
-    toast.push({ title: "Line added", tone: "success" });
+    toast.push({ title: t("pricebook.lineAdded"), tone: "success" });
   }
 
   function removeItem(id: string) {
@@ -97,7 +97,7 @@ export default function PriceBookPanel() {
   function resetDefaults() {
     persist(DEFAULT_PRICEBOOK);
     setQtyById({});
-    toast.push({ title: "Restored defaults", tone: "info" });
+    toast.push({ title: t("pricebook.restoredDefaults"), tone: "info" });
   }
 
   if (!ready) {
@@ -112,7 +112,7 @@ export default function PriceBookPanel() {
         <div>
           <p className="admin-card-title">{t("pricebook.estimate")}</p>
           <p className="mt-1 text-xs text-muted">
-            Set quantities — totals stay on this device (localStorage).
+            {t("pricebook.estimateHint")}
           </p>
           <p className="mt-2 font-display text-2xl font-semibold tabular-nums text-ink">
             {formatMoney(estimateCents)}
@@ -124,10 +124,10 @@ export default function PriceBookPanel() {
             className="admin-chip"
             onClick={() => setQtyById({})}
           >
-            Clear qty
+            {t("pricebook.clearQty")}
           </button>
           <button type="button" className="admin-chip" onClick={resetDefaults}>
-            Reset defaults
+            {t("pricebook.resetDefaults")}
           </button>
         </div>
       </div>
@@ -140,14 +140,14 @@ export default function PriceBookPanel() {
             onClick={() => setFilter(c)}
             className={`admin-chip capitalize ${filter === c ? "admin-chip-active" : ""}`}
           >
-            {c}
+            {c === "all" ? t("common.all") : c}
           </button>
         ))}
       </div>
 
       {visible.length === 0 ? (
         <EmptyState
-          title="No lines in this category"
+          title={t("pricebook.emptyCategory")}
           description={t("pricebook.emptyDesc")}
         />
       ) : (
@@ -156,11 +156,11 @@ export default function PriceBookPanel() {
             <table className="admin-table min-w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-[color:var(--admin-border)]">
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Item</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Unit</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Rate</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Qty</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Line</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colItem")}</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colUnit")}</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colRate")}</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colQty")}</th>
+                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colLine")}</th>
                   <th className="px-3 py-2.5 font-semibold sm:px-4">
                     <span className="sr-only">{t("pricebook.remove")}</span>
                   </th>
@@ -203,7 +203,7 @@ export default function PriceBookPanel() {
                             }))
                           }
                           className="field-input !mt-0 w-20 py-1 text-sm"
-                          aria-label={`Quantity for ${item.name}`}
+                          aria-label={t("pricebook.qtyFor", { name: item.name })}
                         />
                       </td>
                       <td className="px-3 py-2.5 font-medium tabular-nums text-ink sm:px-4">
@@ -215,7 +215,7 @@ export default function PriceBookPanel() {
                           className="text-xs font-semibold text-muted hover:text-danger"
                           onClick={() => removeItem(item.id)}
                         >
-                          Remove
+                          {t("pricebook.remove")}
                         </button>
                       </td>
                     </tr>
@@ -263,7 +263,7 @@ export default function PriceBookPanel() {
           onClick={addItem}
           className="btn-primary mt-3 text-sm"
         >
-          Add to price book
+          {t("pricebook.addToBook")}
         </button>
       </section>
     </div>
