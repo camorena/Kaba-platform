@@ -2,6 +2,7 @@
 
 import EmptyState from "@/components/admin/EmptyState";
 import { useToast } from "@/components/admin/Toast";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import { formatMoney } from "@/lib/admin/format";
 import {
   DEFAULT_PRICEBOOK,
@@ -24,6 +25,7 @@ function loadItems(): PriceBookItem[] {
 
 export default function PriceBookPanel() {
   const toast = useToast();
+  const { t } = useAdminI18n();
   const [items, setItems] = useState<PriceBookItem[]>([]);
   const [ready, setReady] = useState(false);
   const [draftName, setDraftName] = useState("");
@@ -108,7 +110,7 @@ export default function PriceBookPanel() {
     <div className="space-y-4">
       <div className="admin-glass-panel admin-gold-rail flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-5">
         <div>
-          <p className="admin-card-title">Quick estimate</p>
+          <p className="admin-card-title">{t("pricebook.estimate")}</p>
           <p className="mt-1 text-xs text-muted">
             Set quantities — totals stay on this device (localStorage).
           </p>
@@ -146,7 +148,7 @@ export default function PriceBookPanel() {
       {visible.length === 0 ? (
         <EmptyState
           title="No lines in this category"
-          description="Add a custom rate below, or reset to the seed price book."
+          description={t("pricebook.emptyDesc")}
         />
       ) : (
         <div className="admin-table-wrap admin-gold-rail overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]">
@@ -160,7 +162,7 @@ export default function PriceBookPanel() {
                   <th className="px-3 py-2.5 font-semibold sm:px-4">Qty</th>
                   <th className="px-3 py-2.5 font-semibold sm:px-4">Line</th>
                   <th className="px-3 py-2.5 font-semibold sm:px-4">
-                    <span className="sr-only">Remove</span>
+                    <span className="sr-only">{t("pricebook.remove")}</span>
                   </th>
                 </tr>
               </thead>
@@ -226,29 +228,29 @@ export default function PriceBookPanel() {
       )}
 
       <section className="admin-card">
-        <h2 className="admin-card-title">Add custom rate</h2>
+        <h2 className="admin-card-title">{t("pricebook.addCustom")}</h2>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
           <input
             className="field-input !mt-0 text-sm lg:col-span-2"
-            placeholder="Name"
+            placeholder={t("pricebook.namePh")}
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
           />
           <input
             className="field-input !mt-0 text-sm"
-            placeholder="Category"
+            placeholder={t("pricebook.categoryPh")}
             value={draftCat}
             onChange={(e) => setDraftCat(e.target.value)}
           />
           <input
             className="field-input !mt-0 text-sm"
-            placeholder="Unit (lf, ea…)"
+            placeholder={t("pricebook.unitPh")}
             value={draftUnit}
             onChange={(e) => setDraftUnit(e.target.value)}
           />
           <input
             className="field-input !mt-0 text-sm"
-            placeholder="Unit $"
+            placeholder={t("pricebook.unitPricePh")}
             type="number"
             min={0}
             step={0.01}

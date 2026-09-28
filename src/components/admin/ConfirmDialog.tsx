@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useId, useRef } from "react";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
 export default function ConfirmDialog({
   open,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   tone = "danger",
   busy = false,
   onConfirm,
@@ -26,6 +27,9 @@ export default function ConfirmDialog({
   const titleId = useId();
   const descId = useId();
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const { t } = useAdminI18n();
+  const confirmText = confirmLabel ?? t("common.confirm");
+  const cancelText = cancelLabel ?? t("common.cancel");
 
   useEffect(() => {
     if (!open) return;
@@ -51,7 +55,7 @@ export default function ConfirmDialog({
       <button
         type="button"
         className="admin-dialog-backdrop"
-        aria-label="Dismiss"
+        aria-label={t("common.dismiss")}
         onClick={onCancel}
       />
       <div
@@ -78,7 +82,7 @@ export default function ConfirmDialog({
               onClick={onCancel}
               disabled={busy}
             >
-              {cancelLabel}
+              {cancelText}
             </button>
             <button
               ref={confirmRef}
@@ -91,7 +95,7 @@ export default function ConfirmDialog({
               onClick={onConfirm}
               disabled={busy}
             >
-              {busy ? "Working…" : confirmLabel}
+              {busy ? t("common.working") : confirmText}
             </button>
           </div>
         </div>

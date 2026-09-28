@@ -15,10 +15,13 @@ import type { QuoteRecord } from "@/lib/admin/quotes-store";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { quoteStatusLabel } from "@/lib/admin/i18n";
 
 export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
   const router = useRouter();
   const toast = useToast();
+  const { t, locale } = useAdminI18n();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
   const [query, setQuery] = useState("");
@@ -81,7 +84,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
 
   function exportCsv() {
     const rows: (string | number)[][] = [
-      ["Received", "Name", "Phone", "Email", "Service", "Address", "Status", "Source"],
+      t("quotes.csvHeaders").split(","),
       ...filtered.map((q) => [
         formatShortDate(q.createdAt),
         q.name,
@@ -95,7 +98,10 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
     ];
     downloadCsv(`kaba-quotes-${new Date().toISOString().slice(0, 10)}.csv`, rows);
     toast.push({
-      title: `CSV exported · ${filtered.length} quote${filtered.length === 1 ? "" : "s"}`,
+      title: t(
+        filtered.length === 1 ? "common.csvExported" : "common.csvExported_plural",
+        { count: filtered.length },
+      ),
       tone: "success",
     });
   }
@@ -132,10 +138,10 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
           body: JSON.stringify({ status }),
         });
         if (!res.ok) {
-          toast.push({ title: "Status update failed", tone: "error" });
+          toast.push({ title: t("common.statusUpdateFailed"), tone: "error" });
           return;
         }
-        toast.push({ title: `Status → ${status}`, tone: "success" });
+        toast.push({ title: t("common.statusArrow", { status: quoteStatusLabel(locale, status) }), tone: "success" });
       } else {
         const res = await fetch("/api/quotes", {
           method: "PATCH",
@@ -145,14 +151,17 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
         const data = (await res.json()) as { updated?: number; error?: string };
         if (!res.ok) {
           toast.push({
-            title: "Bulk update failed",
+            title: t("common.bulkUpdateFailed"),
             description: data.error,
             tone: "error",
           });
           return;
         }
         toast.push({
-          title: `Updated ${data.updated ?? ids.length} → ${status}`,
+          title: t("common.updatedArrow", {
+            count: data.updated ?? ids.length,
+            status: quoteStatusLabel(locale, status),
+          }),
           tone: "success",
         });
         setSelected(new Set());
@@ -170,12 +179,12 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
       <div className="admin-toolbar flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative min-w-0 flex-1 sm:max-w-xs">
           <label htmlFor="quote-search" className="sr-only">
-            Search quotes
+            {t("quotes.searchLabel")}
           </label>
           <input
             id="quote-search"
             type="search"
-            placeholder="Search name, phone, service…"
+            placeholder={t("quotes.searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="field-input admin-touch !mt-0 py-2.5 text-sm"
@@ -187,16 +196,16 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
             onClick={exportCsv}
             disabled={filtered.length === 0}
             className="admin-chip admin-touch disabled:opacity-40"
-            title="Download filtered quotes as CSV"
+            title={t("quotes.exportTitle")}
           >
-            Export CSV
+            {t("common.exportCsv")}
           </button>
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
             className={`admin-chip admin-touch ${statusFilter === "all" ? "admin-chip-active" : ""}`}
           >
-            All ({quotes.length})
+            {t("quotes.allCount", { count: quotes.length })}
           </button>
           {QUOTE_STATUSES.map((s) => {
             const count = quotes.filter((q) => q.status === s).length;
@@ -205,9 +214,9 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                 key={s}
                 type="button"
                 onClick={() => setStatusFilter(s)}
-                className={`admin-chip admin-touch capitalize ${statusFilter === s ? "admin-chip-active" : ""}`}
+                className={`admin-chip admin-touch ${statusFilter === s ? "admin-chip-active" : ""}`}
               >
-                {s} ({count})
+                {quoteStatusLabel(locale, s)} ({count})
               </button>
             );
           })}
@@ -217,11 +226,11 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
       {selected.size > 0 && (
         <div className="admin-bulk-bar flex flex-col gap-2 rounded-xl border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <p className="text-sm font-semibold text-ink">
-            {selected.size} selected
+            {t("common.selected", { count: selected.size })}
           </p>
           <div className="flex flex-wrap items-center gap-2">
             <label htmlFor="bulk-status" className="sr-only">
-              Bulk status
+              {t("quotes.bulkStatus")}
             </label>
             <select
               id="bulk-status"
@@ -231,7 +240,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
             >
               {QUOTE_STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {quoteStatusLabel(locale, s)}
                 </option>
               ))}
             </select>
@@ -241,14 +250,14 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
               disabled={bulkBusy}
               onClick={requestBulk}
             >
-              {bulkBusy ? "Updating…" : "Apply status"}
+              {bulkBusy ? t("common.updating") : t("quotes.applyStatus")}
             </button>
             <button
               type="button"
               className="admin-touch admin-chip text-xs"
               onClick={() => setSelected(new Set())}
             >
-              Clear
+              {t("common.clear")}
             </button>
           </div>
         </div>
@@ -256,18 +265,18 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
 
       {quotes.length === 0 ? (
         <EmptyState
-          title="No quotes yet"
-          description="Submissions from /quote will appear here. This demo uses an in-memory store—it resets on cold starts until a database is wired."
+          title={t("quotes.emptyTitle")}
+          description={t("quotes.emptyDesc")}
           action={
             <Link href="/quote" className="btn-primary text-sm">
-              Open public quote form
+              {t("common.openPublicQuote")}
             </Link>
           }
         />
       ) : filtered.length === 0 ? (
         <EmptyState
-          title="No matches"
-          description="Try a different search or clear the status filter."
+          title={t("common.noMatches")}
+          description={t("quotes.noMatchesDesc")}
           action={
             <button
               type="button"
@@ -277,7 +286,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                 setStatusFilter("all");
               }}
             >
-              Clear filters
+              {t("common.clearFilters")}
             </button>
           }
         />
@@ -289,7 +298,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
               <li key={q.id} className="admin-mobile-card">
                 <div className="flex items-start gap-3">
                   <label className="admin-touch flex shrink-0 pt-0.5">
-                    <span className="sr-only">Select {q.name}</span>
+                    <span className="sr-only">{t("quotes.selectOne", { name: q.name })}</span>
                     <input
                       type="checkbox"
                       className="admin-check"
@@ -306,7 +315,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                         {q.name}
                       </Link>
                       <StatusBadge
-                        label={q.status}
+                        label={quoteStatusLabel(locale, q.status)}
                         tone={quoteStatusTone[q.status]}
                       />
                     </div>
@@ -318,7 +327,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                     <p className="mt-0.5 truncate text-xs text-muted">{q.phone}</p>
                     <div className="mt-2.5">
                       <label className="sr-only" htmlFor={`m-status-${q.id}`}>
-                        Status for {q.name}
+                        {t("quotes.statusFor", { name: q.name })}
                       </label>
                       <select
                         id={`m-status-${q.id}`}
@@ -331,7 +340,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                       >
                         {QUOTE_STATUSES.map((s) => (
                           <option key={s} value={s}>
-                            {s}
+                            {quoteStatusLabel(locale, s)}
                           </option>
                         ))}
                       </select>
@@ -350,7 +359,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                   <tr className="border-b border-[color:var(--admin-border)]">
                     <th className="w-10 px-3 py-2.5 sm:px-4">
                       <label className="admin-touch inline-flex">
-                        <span className="sr-only">Select all filtered</span>
+                        <span className="sr-only">{t("quotes.selectAll")}</span>
                         <input
                           type="checkbox"
                           className="admin-check"
@@ -359,15 +368,15 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                         />
                       </label>
                     </th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">Received</th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">Contact</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("quotes.colReceived")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("quotes.colContact")}</th>
                     <th className="hidden px-3 py-2.5 font-semibold md:table-cell sm:px-4">
-                      Service
+                      {t("quotes.colService")}
                     </th>
                     <th className="hidden px-3 py-2.5 font-semibold lg:table-cell sm:px-4">
-                      Location
+                      {t("quotes.colLocation")}
                     </th>
-                    <th className="px-3 py-2.5 font-semibold sm:px-4">Status</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("quotes.colStatus")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -378,7 +387,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                     >
                       <td className="px-3 py-3 sm:px-4">
                         <label className="admin-touch inline-flex">
-                          <span className="sr-only">Select {q.name}</span>
+                          <span className="sr-only">{t("quotes.selectOne", { name: q.name })}</span>
                           <input
                             type="checkbox"
                             className="admin-check"
@@ -421,11 +430,11 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                       </td>
                       <td className="px-3 py-3 sm:px-4">
                         <label className="sr-only" htmlFor={`status-${q.id}`}>
-                          Status for {q.name}
+                          {t("quotes.statusFor", { name: q.name })}
                         </label>
                         <div className="flex flex-col gap-1.5">
                           <StatusBadge
-                            label={q.status}
+                            label={quoteStatusLabel(locale, q.status)}
                             tone={quoteStatusTone[q.status]}
                           />
                           <select
@@ -439,7 +448,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
                           >
                             {QUOTE_STATUSES.map((s) => (
                               <option key={s} value={s}>
-                                {s}
+                                {quoteStatusLabel(locale, s)}
                               </option>
                             ))}
                           </select>
@@ -451,25 +460,31 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
               </table>
             </div>
             <div className="border-t border-ink/8 px-3 py-2 text-xs text-muted sm:px-4">
-              Showing {filtered.length} of {quotes.length}
+              {t("common.showingOf", { filtered: filtered.length, total: quotes.length })}
             </div>
           </div>
 
           <p className="text-xs text-muted md:hidden">
-            Showing {filtered.length} of {quotes.length}
+            {t("common.showingOf", { filtered: filtered.length, total: quotes.length })}
           </p>
         </>
       )}
 
       <ConfirmDialog
         open={Boolean(confirm)}
-        title="Mark as lost?"
+        title={t("quotes.markLostTitle")}
         description={
           confirm
-            ? `This will set ${confirm.ids.length} quote${confirm.ids.length === 1 ? "" : "s"} to lost. You can change status again later.`
+            ? t(
+                confirm.ids.length === 1
+                  ? "quotes.markLostDesc"
+                  : "quotes.markLostDesc_plural",
+                { count: confirm.ids.length },
+              )
             : undefined
         }
-        confirmLabel="Mark lost"
+        confirmLabel={t("quotes.markLostConfirm")}
+        cancelLabel={t("common.cancel")}
         tone="danger"
         busy={bulkBusy || Boolean(busyId)}
         onCancel={() => setConfirm(null)}

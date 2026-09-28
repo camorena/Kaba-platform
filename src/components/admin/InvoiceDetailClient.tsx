@@ -5,6 +5,8 @@ import CopyChip from "@/components/admin/CopyChip";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { InvoiceStatusTimeline } from "@/components/admin/StatusTimeline";
 import { useToast } from "@/components/admin/Toast";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { invoiceStatusLabel } from "@/lib/admin/i18n";
 import { formatDateTime, formatMoney } from "@/lib/admin/format";
 import {
   INVOICE_STATUSES,
@@ -29,6 +31,7 @@ export default function InvoiceDetailClient({
 }) {
   const router = useRouter();
   const toast = useToast();
+  const { t, locale } = useAdminI18n();
   const [status, setStatus] = useState<InvoiceStatus>(invoice.status);
   const [busy, setBusy] = useState(false);
   const [confirmVoid, setConfirmVoid] = useState(false);
@@ -55,11 +58,11 @@ export default function InvoiceDetailClient({
         body: JSON.stringify({ status: next }),
       });
       if (!res.ok) {
-        toast.push({ title: "Status update failed", tone: "error" });
+        toast.push({ title: t("common.statusUpdateFailed"), tone: "error" });
         return;
       }
       setStatus(next);
-      toast.push({ title: `Invoice → ${next}`, tone: "success" });
+      toast.push({ title: t("detail.invoiceArrow", { status: invoiceStatusLabel(locale, next) }), tone: "success" });
       router.refresh();
     } finally {
       setBusy(false);
@@ -126,9 +129,9 @@ export default function InvoiceDetailClient({
       </div>
 
       <div className="flex flex-wrap gap-1.5 print:hidden">
-        <CopyChip value={summary} label="Copy summary" />
-        <CopyChip value={invoice.customerEmail} label="Copy email" />
-        <CopyChip value={invoice.customerPhone} label="Copy phone" />
+        <CopyChip value={summary} label={t("common.copySummary")} />
+        <CopyChip value={invoice.customerEmail} label={t("common.copyEmail")} />
+        <CopyChip value={invoice.customerPhone} label={t("common.copyPhone")} />
         {balance > 0 && status !== "paid" && status !== "void" && (
           <button
             type="button"
@@ -312,9 +315,9 @@ export default function InvoiceDetailClient({
       </div>
       <ConfirmDialog
         open={confirmVoid}
-        title="Void this invoice?"
-        description="Voided invoices stay in the ledger for audit but should not collect payment. You can change status again in this demo."
-        confirmLabel="Void invoice"
+        title={t("detail.voidTitle")}
+        description={t("detail.voidDesc")}
+        confirmLabel={t("detail.voidConfirm")}
         tone="danger"
         busy={busy}
         onCancel={() => setConfirmVoid(false)}

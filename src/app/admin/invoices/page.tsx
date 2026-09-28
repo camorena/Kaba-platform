@@ -1,6 +1,6 @@
 import AdminShell from "@/components/admin/AdminShell";
+import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import InvoicesPanel from "@/components/admin/InvoicesPanel";
-import PageHeader from "@/components/admin/PageHeader";
 import { requireAdmin } from "@/lib/admin/guard";
 import { listInvoices } from "@/lib/admin/invoices-store";
 import { paidCentsMap } from "@/lib/admin/payments-store";
@@ -23,14 +23,7 @@ export default async function AdminInvoicesPage() {
 
   return (
     <AdminShell warning={warning}>
-      <PageHeader
-        title="Invoices"
-        crumbs={[
-          { href: "/admin", label: "Admin" },
-          { label: "Invoices" },
-        ]}
-        description="Demo invoices with synthetic amounts. Create drafts from quotes; PDF/email and real pricing come later."
-      />
+      <AdminPageChrome page="invoices" />
       <InvoicesPanel
         invoices={invoices}
         paidMap={paidMap}

@@ -1,4 +1,8 @@
+"use client";
+
 import type { InvoiceStatus, QuoteStatus } from "@/lib/admin/status";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { invoiceStatusLabel, quoteStatusLabel } from "@/lib/admin/i18n";
 
 const QUOTE_FLOW: QuoteStatus[] = [
   "new",
@@ -19,16 +23,17 @@ export function QuoteStatusTimeline({
 }: {
   status: QuoteStatus;
 }) {
+  const { t, locale } = useAdminI18n();
   if (status === "lost") {
     return (
       <ol className="admin-timeline">
         <li className="admin-timeline-step is-done">
           <span className="admin-timeline-dot" />
-          <span className="admin-timeline-label">Pipeline ended</span>
+          <span className="admin-timeline-label">{t("timeline.pipelineEnded")}</span>
         </li>
         <li className="admin-timeline-step is-active is-lost">
           <span className="admin-timeline-dot" />
-          <span className="admin-timeline-label">Lost</span>
+          <span className="admin-timeline-label">{quoteStatusLabel(locale, "lost")}</span>
         </li>
       </ol>
     );
@@ -36,14 +41,14 @@ export function QuoteStatusTimeline({
 
   const idx = QUOTE_FLOW.indexOf(status);
   return (
-    <ol className="admin-timeline" aria-label="Quote progress">
+    <ol className="admin-timeline" aria-label={t("timeline.quoteProgress")}>
       {QUOTE_FLOW.map((step, i) => {
         const state =
           i < idx ? "is-done" : i === idx ? "is-active" : "is-todo";
         return (
           <li key={step} className={`admin-timeline-step ${state}`}>
             <span className="admin-timeline-dot" />
-            <span className="admin-timeline-label capitalize">{step}</span>
+            <span className="admin-timeline-label">{quoteStatusLabel(locale, step)}</span>
           </li>
         );
       })}
@@ -56,16 +61,17 @@ export function InvoiceStatusTimeline({
 }: {
   status: InvoiceStatus;
 }) {
+  const { t, locale } = useAdminI18n();
   if (status === "void") {
     return (
       <ol className="admin-timeline">
         <li className="admin-timeline-step is-done">
           <span className="admin-timeline-dot" />
-          <span className="admin-timeline-label">Issued</span>
+          <span className="admin-timeline-label">{t("timeline.issued")}</span>
         </li>
         <li className="admin-timeline-step is-active is-lost">
           <span className="admin-timeline-dot" />
-          <span className="admin-timeline-label">Void</span>
+          <span className="admin-timeline-label">{invoiceStatusLabel(locale, "void")}</span>
         </li>
       </ol>
     );
@@ -73,14 +79,14 @@ export function InvoiceStatusTimeline({
 
   const idx = INVOICE_FLOW.indexOf(status);
   return (
-    <ol className="admin-timeline" aria-label="Invoice progress">
+    <ol className="admin-timeline" aria-label={t("timeline.invoiceProgress")}>
       {INVOICE_FLOW.map((step, i) => {
         const state =
           i < idx ? "is-done" : i === idx ? "is-active" : "is-todo";
         return (
           <li key={step} className={`admin-timeline-step ${state}`}>
             <span className="admin-timeline-dot" />
-            <span className="admin-timeline-label capitalize">{step}</span>
+            <span className="admin-timeline-label">{invoiceStatusLabel(locale, step)}</span>
           </li>
         );
       })}

@@ -1,5 +1,5 @@
 import AdminShell from "@/components/admin/AdminShell";
-import PageHeader from "@/components/admin/PageHeader";
+import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import ReportsPanel from "@/components/admin/ReportsPanel";
 import { requireAdmin } from "@/lib/admin/guard";
 import { listInvoices } from "@/lib/admin/invoices-store";
@@ -27,14 +27,7 @@ export default async function AdminReportsPage() {
 
   return (
     <AdminShell warning={warning}>
-      <PageHeader
-        title="Reports"
-        description="Lightweight ops snapshot — SVG/CSS charts only. Demo amounts; no analytics vendor."
-        crumbs={[
-          { href: "/admin", label: "Admin" },
-          { label: "Reports" },
-        ]}
-      />
+      <AdminPageChrome page="reports" />
       <ReportsPanel
         quotes={quotes}
         invoices={invoices}

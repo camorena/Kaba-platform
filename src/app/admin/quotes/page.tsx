@@ -1,6 +1,6 @@
-import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
-import PageHeader from "@/components/admin/PageHeader";
+import AdminPageChrome from "@/components/admin/AdminPageChrome";
+import { I18nActionLink } from "@/components/admin/I18nLink";
 import QuotesTable from "@/components/admin/QuotesTable";
 import { requireAdmin } from "@/lib/admin/guard";
 import { listQuotes } from "@/lib/admin/quotes-store";
@@ -14,17 +14,14 @@ export default async function AdminQuotesPage() {
 
   return (
     <AdminShell warning={warning}>
-      <PageHeader
-        title="Quotes"
-        description="Public form submissions plus seed demo rows. In-memory store — resets on serverless cold starts until a DB is wired."
-        crumbs={[
-          { href: "/admin", label: "Admin" },
-          { label: "Quotes" },
-        ]}
+      <AdminPageChrome
+        page="quotes"
         actions={
-          <Link href="/admin/pipeline" className="btn-secondary-light text-sm">
-            Pipeline board
-          </Link>
+          <I18nActionLink
+            href="/admin/pipeline"
+            labelKey="common.pipelineBoard"
+            className="btn-secondary-light text-sm"
+          />
         }
       />
       <QuotesTable quotes={quotes} />

@@ -9,22 +9,22 @@ import {
   useRef,
   useState,
 } from "react";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { navLabelKey } from "@/lib/admin/i18n";
 
-type NavItem = { href: string; label: string; group: string; keywords?: string };
-
-const NAV: NavItem[] = [
-  { href: "/admin", label: "Dashboard", group: "Navigate", keywords: "home overview" },
-  { href: "/admin/quotes", label: "Quotes", group: "Navigate", keywords: "leads table" },
-  { href: "/admin/pipeline", label: "Pipeline", group: "Navigate", keywords: "kanban board stages drag" },
-  { href: "/admin/invoices", label: "Invoices", group: "Navigate", keywords: "billing" },
-  { href: "/admin/payments", label: "Payments", group: "Navigate", keywords: "money ledger" },
-  { href: "/admin/customers", label: "Customers", group: "Navigate", keywords: "contacts crm" },
-  { href: "/admin/calendar", label: "Schedule", group: "Navigate", keywords: "calendar jobs visits" },
-  { href: "/admin/pricebook", label: "Price book", group: "Navigate", keywords: "rates estimate calculator materials" },
-  { href: "/admin/templates", label: "Templates", group: "Navigate", keywords: "sms email follow-up copy" },
-  { href: "/admin/activity", label: "Activity", group: "Navigate", keywords: "feed timeline log" },
-  { href: "/admin/reports", label: "Reports", group: "Navigate", keywords: "charts analytics" },
-  { href: "/admin/settings", label: "Settings", group: "Navigate", keywords: "auth env" },
+const NAV_BASE: { href: string; keywords?: string }[] = [
+  { href: "/admin", keywords: "home overview panel dashboard" },
+  { href: "/admin/quotes", keywords: "leads table cotizaciones" },
+  { href: "/admin/pipeline", keywords: "kanban board stages drag embudo" },
+  { href: "/admin/invoices", keywords: "billing facturas" },
+  { href: "/admin/payments", keywords: "money ledger pagos" },
+  { href: "/admin/customers", keywords: "contacts crm clientes" },
+  { href: "/admin/calendar", keywords: "calendar jobs visits agenda" },
+  { href: "/admin/pricebook", keywords: "rates estimate calculator materials precios" },
+  { href: "/admin/templates", keywords: "sms email follow-up copy plantillas" },
+  { href: "/admin/activity", keywords: "feed timeline log actividad" },
+  { href: "/admin/reports", keywords: "charts analytics informes" },
+  { href: "/admin/settings", keywords: "auth env configuración" },
 ];
 
 type QuoteHit = {
@@ -45,6 +45,7 @@ export default function CommandPalette({
   onOpenShortcuts?: () => void;
 }) {
   const router = useRouter();
+  const { t } = useAdminI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
   const [query, setQuery] = useState("");
@@ -83,14 +84,15 @@ export default function CommandPalette({
 
   const items = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const navHits = NAV.filter((n) => {
+    const navHits = NAV_BASE.filter((n) => {
+      const label = t(navLabelKey(n.href));
       if (!q) return true;
-      return `${n.label} ${n.keywords ?? ""}`.toLowerCase().includes(q);
+      return `${label} ${n.keywords ?? ""}`.toLowerCase().includes(q);
     }).map((n) => ({
       key: n.href,
       href: n.href,
-      title: n.label,
-      subtitle: n.group,
+      title: t(navLabelKey(n.href)),
+      subtitle: t("cmd.groupNavigate"),
       kind: "nav" as const,
     }));
 
@@ -123,8 +125,8 @@ export default function CommandPalette({
     if (!q || "shortcuts keyboard help".includes(q)) {
       actions.push({
         key: "shortcuts",
-        title: "Keyboard shortcuts",
-        subtitle: "Cheat sheet",
+        title: t("cmd.shortcuts"),
+        subtitle: t("cmd.cheatSheet"),
         kind: "action",
         run: () => {
           onClose();
@@ -134,7 +136,7 @@ export default function CommandPalette({
     }
 
     return [...navHits, ...quoteHits, ...actions];
-  }, [query, quotes, onClose, onOpenShortcuts]);
+  }, [query, quotes, onClose, onOpenShortcuts, t]);
 
   useEffect(() => {
     setActive(0);
@@ -184,13 +186,13 @@ export default function CommandPalette({
       <button
         type="button"
         className="admin-cmd-backdrop"
-        aria-label="Close command palette"
+        aria-label={t("cmd.close")}
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Command palette"
+        aria-label={t("cmd.label")}
         className="admin-cmd-panel"
       >
         <div className="admin-cmd-rail" aria-hidden />
@@ -213,7 +215,7 @@ export default function CommandPalette({
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Jump to page, quote, or action…"
+            placeholder={t("cmd.placeholder")}
             className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-muted"
             aria-controls={listId}
             aria-autocomplete="list"
@@ -229,7 +231,7 @@ export default function CommandPalette({
         >
           {items.length === 0 ? (
             <li className="px-4 py-8 text-center text-sm text-muted">
-              No matches — try a name, service, or page.
+              {t("cmd.empty")}
             </li>
           ) : (
             items.map((item, i) => (
@@ -250,10 +252,10 @@ export default function CommandPalette({
                   </span>
                   <span className="shrink-0 text-[0.625rem] font-bold uppercase tracking-wider text-bronze/80">
                     {item.kind === "quote"
-                      ? "Quote"
+                      ? t("cmd.quote")
                       : item.kind === "action"
-                        ? "Action"
-                        : "Go"}
+                        ? t("cmd.action")
+                        : t("cmd.go")}
                   </span>
                 </button>
               </li>
@@ -261,8 +263,8 @@ export default function CommandPalette({
           )}
         </ul>
         <div className="flex items-center justify-between border-t border-ink/8 px-3 py-2 text-[0.625rem] text-muted">
-          <span>↑↓ navigate · ↵ open</span>
-          <span>Quotes search as you type</span>
+          <span>{t("cmd.footerNav")}</span>
+          <span>{t("cmd.footerSearch")}</span>
         </div>
       </div>
     </div>

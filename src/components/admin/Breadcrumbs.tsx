@@ -1,11 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
 export type Crumb = { href?: string; label: string };
 
 export default function Breadcrumbs({ items }: { items: Crumb[] }) {
+  const { t } = useAdminI18n();
   if (!items.length) return null;
   return (
-    <nav aria-label="Breadcrumb" className="admin-breadcrumbs mb-1.5">
+    <nav aria-label={t("common.breadcrumb")} className="admin-breadcrumbs mb-1.5">
       <ol className="flex flex-wrap items-center gap-1 text-[0.65625rem] font-medium tracking-wide text-muted">
         {items.map((item, i) => {
           const last = i === items.length - 1;

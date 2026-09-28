@@ -13,18 +13,25 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { quoteStatusLabel } from "@/lib/admin/i18n";
 
-const COLUMNS: { status: QuoteStatus; hint: string }[] = [
-  { status: "new", hint: "Fresh leads" },
-  { status: "contacted", hint: "Outreach started" },
-  { status: "scheduled", hint: "Site visits" },
-  { status: "won", hint: "Closed jobs" },
-  { status: "lost", hint: "Parked" },
-];
+const COLUMN_HINT_KEYS: Record<QuoteStatus, string> = {
+  new: "pipeline.hintNew",
+  contacted: "pipeline.hintContacted",
+  scheduled: "pipeline.hintScheduled",
+  won: "pipeline.hintWon",
+  lost: "pipeline.hintLost",
+};
 
 export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
   const router = useRouter();
   const toast = useToast();
+  const { t, locale } = useAdminI18n();
+  const COLUMNS = QUOTE_STATUSES.map((status) => ({
+    status,
+    hint: t(COLUMN_HINT_KEYS[status]),
+  }));
   const [busyId, setBusyId] = useState<string | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<QuoteStatus | null>(null);
@@ -48,10 +55,10 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
         body: JSON.stringify({ status }),
       });
       if (!res.ok) {
-        toast.push({ title: "Move failed", tone: "error" });
+        toast.push({ title: t("pipeline.moveFailed"), tone: "error" });
         return;
       }
-      toast.push({ title: `Moved → ${status}`, tone: "success" });
+      toast.push({ title: t("pipeline.movedArrow", { status: quoteStatusLabel(locale, status) }), tone: "success" });
       router.refresh();
     } finally {
       setBusyId(null);
@@ -63,11 +70,11 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
   if (quotes.length === 0) {
     return (
       <EmptyState
-        title="Pipeline is empty"
-        description="When quotes arrive from the public form, drag cards across stages — or advance status from the quote detail."
+        title={t("pipeline.emptyTitle")}
+        description={t("pipeline.emptyDesc")}
         action={
           <Link href="/quote" className="btn-primary text-sm">
-            Open public quote form
+            {t("common.openPublicQuote")}
           </Link>
         }
       />
@@ -104,7 +111,7 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
               <header className="flex items-center justify-between gap-2 border-b border-ink/8 px-2.5 py-2">
                 <div className="min-w-0">
                   <StatusBadge
-                    label={col.status}
+                    label={quoteStatusLabel(locale, col.status)}
                     tone={quoteStatusTone[col.status]}
                   />
                   <p className="mt-1 text-[0.625rem] text-muted">{col.hint}</p>
@@ -116,7 +123,7 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
               <ul className="flex flex-1 flex-col gap-1.5 p-2 min-h-[8rem]">
                 {items.length === 0 ? (
                   <li className="rounded-lg border border-dashed border-ink/10 px-2 py-6 text-center text-[0.6875rem] text-muted">
-                    Drop here
+                    {t("pipeline.dropHere")}
                   </li>
                 ) : (
                   items.map((q) => (
@@ -159,7 +166,7 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
                                 className="rounded px-1.5 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-muted hover:bg-bronze/15 hover:text-bronze-dark dark:hover:text-bronze-light"
                                 onClick={() => void setStatus(q.id, s)}
                               >
-                                → {s}
+                                → {quoteStatusLabel(locale, s)}
                               </button>
                             ))}
                         </div>
@@ -173,8 +180,7 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
         })}
       </div>
       <p className="mt-2 px-1 text-[0.6875rem] text-muted">
-        Drag cards between columns, or use the quick → buttons. Changes save to
-        the in-memory store.
+        {t("pipeline.footer")}
       </p>
     </div>
   );

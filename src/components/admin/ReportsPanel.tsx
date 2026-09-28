@@ -4,6 +4,8 @@ import { BarChart, DonutChart, Sparkline } from "@/components/admin/MiniCharts";
 import { formatMoney } from "@/lib/admin/format";
 import { QUOTE_STATUSES, type QuoteStatus } from "@/lib/admin/status";
 import { useMemo, useState } from "react";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { quoteStatusLabel, invoiceStatusLabel } from "@/lib/admin/i18n";
 
 export type ReportQuote = {
   id: string;
@@ -21,11 +23,11 @@ export type ReportInvoice = {
 
 type RangeKey = "7d" | "30d" | "90d" | "all";
 
-const RANGES: { key: RangeKey; label: string; days: number | null }[] = [
-  { key: "7d", label: "7 days", days: 7 },
-  { key: "30d", label: "30 days", days: 30 },
-  { key: "90d", label: "90 days", days: 90 },
-  { key: "all", label: "All time", days: null },
+const RANGE_KEYS: { key: RangeKey; labelKey: string; days: number | null }[] = [
+  { key: "7d", labelKey: "reports.d7", days: 7 },
+  { key: "30d", labelKey: "reports.d30", days: 30 },
+  { key: "90d", labelKey: "reports.d90", days: 90 },
+  { key: "all", labelKey: "reports.allTime", days: null },
 ];
 
 function inRange(iso: string, days: number | null) {
@@ -45,9 +47,10 @@ export default function ReportsPanel({
   paidCents: number;
   paymentCount: number;
 }) {
+  const { t, locale } = useAdminI18n();
   const [range, setRange] = useState<RangeKey>("all");
   const [service, setService] = useState<string>("all");
-  const days = RANGES.find((r) => r.key === range)?.days ?? null;
+  const days = RANGE_KEYS.find((r) => r.key === range)?.days ?? null;
 
   const services = useMemo(() => {
     const set = new Set(quotes.map((q) => q.serviceType));
@@ -87,10 +90,10 @@ export default function ReportsPanel({
   const paidInv = filteredInvoices.filter((i) => i.status === "paid").length;
 
   const invoiceSegs = [
-    { label: "Open", value: openInvoices.length, color: "#c08b3a" },
-    { label: "Paid", value: paidInv, color: "#10b981" },
+    { label: t("reports.open"), value: openInvoices.length, color: "#c08b3a" },
+    { label: t("reports.paid"), value: paidInv, color: "#10b981" },
     {
-      label: "Other",
+      label: t("reports.other"),
       value: Math.max(0, filteredInvoices.length - openInvoices.length - paidInv),
       color: "#64748b",
     },
@@ -107,15 +110,15 @@ export default function ReportsPanel({
   return (
     <div className="space-y-4">
       <div className="admin-toolbar flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Date range">
-          {RANGES.map((r) => (
+        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={t("reports.range")}>
+          {RANGE_KEYS.map((r) => (
             <button
               key={r.key}
               type="button"
               className={`admin-chip admin-touch ${range === r.key ? "admin-chip-active" : ""}`}
               onClick={() => setRange(r.key)}
             >
-              {r.label}
+              {t(r.labelKey)}
             </button>
           ))}
         </div>
@@ -131,7 +134,7 @@ export default function ReportsPanel({
           >
             {services.map((s) => (
               <option key={s} value={s}>
-                {s === "all" ? "All services" : s}
+                {s === "all" ? t("reports.allServices") : s}
               </option>
             ))}
           </select>
@@ -141,12 +144,12 @@ export default function ReportsPanel({
       <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
         {[
           {
-            label: "Quotes",
+            label: t("reports.quotes"),
             value: String(qStats.total),
             hint: `${qStats.new} new in range`,
           },
           {
-            label: "Won rate",
+            label: t("reports.wonRate"),
             value:
               qStats.total === 0
                 ? "—"
@@ -154,12 +157,12 @@ export default function ReportsPanel({
             hint: `${qStats.won} won`,
           },
           {
-            label: "Open AR (demo)",
+            label: t("reports.openAr"),
             value: formatMoney(openCents),
             hint: `${openInvoices.length} open invoices`,
           },
           {
-            label: "Collected (stub)",
+            label: t("reports.collectedStub"),
             value: formatMoney(paidCents),
             hint: `${paymentCount} payments · not range-scoped`,
           },

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AdminLocaleProvider } from "@/components/admin/LocaleProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -14,8 +15,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-full flex-1 bg-background text-foreground">
-      {children}
-    </div>
+    <AdminLocaleProvider>
+      <div className="min-h-full flex-1 bg-background text-foreground">
+        {children}
+      </div>
+    </AdminLocaleProvider>
   );
 }

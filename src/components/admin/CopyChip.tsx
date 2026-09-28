@@ -2,6 +2,7 @@
 
 import { useToast } from "@/components/admin/Toast";
 import { useState } from "react";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
 export default function CopyChip({
   value,
@@ -13,16 +14,17 @@ export default function CopyChip({
   className?: string;
 }) {
   const toast = useToast();
+  const { t } = useAdminI18n();
   const [ok, setOk] = useState(false);
 
   async function copy() {
     try {
       await navigator.clipboard.writeText(value);
       setOk(true);
-      toast.push({ title: "Copied", tone: "success" });
+      toast.push({ title: t("common.copied"), tone: "success" });
       window.setTimeout(() => setOk(false), 1400);
     } catch {
-      toast.push({ title: "Copy failed", tone: "error" });
+      toast.push({ title: t("common.copyFailed"), tone: "error" });
     }
   }
 
@@ -36,7 +38,7 @@ export default function CopyChip({
       <svg className="h-3 w-3 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
       </svg>
-      {ok ? "Copied" : label}
+      {ok ? t("common.copied") : label}
     </button>
   );
 }

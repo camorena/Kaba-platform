@@ -7,15 +7,11 @@ import {
   type MessageTemplate,
 } from "@/lib/admin/templates-data";
 import { useMemo, useState } from "react";
-
-const CHANNEL_LABEL: Record<MessageTemplate["channel"], string> = {
-  sms: "SMS",
-  email: "Email",
-  note: "Internal",
-};
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
 export default function TemplatesPanel() {
   const toast = useToast();
+  const { t: tr } = useAdminI18n();
   const [channel, setChannel] = useState<"all" | MessageTemplate["channel"]>(
     "all",
   );
@@ -54,9 +50,9 @@ export default function TemplatesPanel() {
     if (!filled) return;
     try {
       await navigator.clipboard.writeText(filled);
-      toast.push({ title: "Template copied", tone: "success" });
+      toast.push({ title: tr("templates.copied"), tone: "success" });
     } catch {
-      toast.push({ title: "Copy failed", tone: "error" });
+      toast.push({ title: tr("common.copyFailed"), tone: "error" });
     }
   }
 
@@ -71,7 +67,7 @@ export default function TemplatesPanel() {
               onClick={() => setChannel(c)}
               className={`admin-chip capitalize ${channel === c ? "admin-chip-active" : ""}`}
             >
-              {c === "all" ? "All" : CHANNEL_LABEL[c]}
+              {c === "all" ? tr("templates.all") : tr(`templates.${c}`)}
             </button>
           ))}
         </div>
@@ -88,7 +84,7 @@ export default function TemplatesPanel() {
                 }`}
               >
                 <span className="text-[0.625rem] font-bold uppercase tracking-wider text-bronze">
-                  {CHANNEL_LABEL[t.channel]}
+                  {tr(`templates.${t.channel}`)}
                 </span>
                 <span className="text-sm font-semibold text-ink">{t.title}</span>
               </button>
@@ -99,19 +95,19 @@ export default function TemplatesPanel() {
 
       <div className="space-y-3 lg:col-span-3">
         <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
-          <h2 className="admin-card-title">Merge fields</h2>
+          <h2 className="admin-card-title">{tr("templates.mergeTitle")}</h2>
           <p className="mt-1 text-xs text-muted">
-            Fill once — preview updates live. No email/SMS API wired.
+            {tr("templates.mergeHint")}
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {(
               [
-                ["name", name, setName, "Name"],
-                ["service", service, setService, "Service"],
-                ["address", address, setAddress, "Address"],
-                ["when", when, setWhen, "When"],
-                ["amount", amount, setAmount, "Amount"],
-                ["invoice", invoice, setInvoice, "Invoice #"],
+                ["name", name, setName, tr("templates.name")],
+                ["service", service, setService, tr("templates.service")],
+                ["address", address, setAddress, tr("templates.address")],
+                ["when", when, setWhen, tr("templates.when")],
+                ["amount", amount, setAmount, tr("templates.amount")],
+                ["invoice", invoice, setInvoice, tr("templates.invoice")],
               ] as const
             ).map(([key, val, set, label]) => (
               <label key={key} className="block text-xs font-medium text-muted">
@@ -129,7 +125,7 @@ export default function TemplatesPanel() {
         <section className="admin-card">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="admin-card-title">
-              {active?.title ?? "Preview"}
+              {active?.title ?? tr("templates.preview")}
             </h2>
             <button
               type="button"
@@ -137,11 +133,11 @@ export default function TemplatesPanel() {
               className="btn-primary text-sm"
               disabled={!filled}
             >
-              Copy to clipboard
+              {tr("templates.copy")}
             </button>
           </div>
           <pre className="admin-template-preview mt-3 whitespace-pre-wrap rounded-lg border border-ink/8 bg-[var(--admin-bg)] p-3 text-sm leading-relaxed text-ink">
-            {filled || "Select a template."}
+            {filled || tr("templates.select")}
           </pre>
         </section>
       </div>

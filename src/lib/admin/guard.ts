@@ -6,7 +6,9 @@ export async function requireAdmin() {
   if (!ok) redirect("/admin/login");
   return {
     configured: Boolean(getAdminPassword()),
-    warning:
-      "Password-cookie gate for scaffolding only. Replace with real auth (Auth.js/Clerk + roles) before handling live customer data.",
+    /** When truthy, AdminShell shows the translated auth stub banner. */
+    showAuthWarning: true as const,
+    /** @deprecated alias — prefer showAuthWarning */
+    warning: true as const,
   };
 }

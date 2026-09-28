@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-
-const ROWS: { keys: string[]; action: string }[] = [
-  { keys: ["⌘", "K"], action: "Open command palette" },
-  { keys: ["Ctrl", "K"], action: "Open command palette (Windows/Linux)" },
-  { keys: ["?"], action: "Show this shortcuts sheet" },
-  { keys: ["Esc"], action: "Close palette / sheet" },
-  { keys: ["↑", "↓"], action: "Move selection in palette" },
-  { keys: ["↵"], action: "Open selected palette item" },
-];
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
 export default function ShortcutsSheet({
   open,
@@ -18,6 +10,17 @@ export default function ShortcutsSheet({
   open: boolean;
   onClose: () => void;
 }) {
+  const { t } = useAdminI18n();
+
+  const ROWS: { keys: string[]; actionKey: string }[] = [
+    { keys: ["⌘", "K"], actionKey: "shortcuts.a1" },
+    { keys: ["Ctrl", "K"], actionKey: "shortcuts.a2" },
+    { keys: ["?"], actionKey: "shortcuts.a3" },
+    { keys: ["Esc"], actionKey: "shortcuts.a4" },
+    { keys: ["↑", "↓"], actionKey: "shortcuts.a5" },
+    { keys: ["↵"], actionKey: "shortcuts.a6" },
+  ];
+
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
@@ -37,7 +40,7 @@ export default function ShortcutsSheet({
       <button
         type="button"
         className="admin-cmd-backdrop"
-        aria-label="Close shortcuts"
+        aria-label={t("shortcuts.close")}
         onClick={onClose}
       />
       <div
@@ -52,19 +55,17 @@ export default function ShortcutsSheet({
             id="admin-shortcuts-title"
             className="font-display text-lg font-semibold tracking-tight text-ink"
           >
-            Keyboard shortcuts
+            {t("shortcuts.title")}
           </h2>
-          <p className="mt-0.5 text-xs text-muted">
-            Agency-speed navigation — no extensions required.
-          </p>
+          <p className="mt-0.5 text-xs text-muted">{t("shortcuts.sub")}</p>
         </div>
         <ul className="divide-y divide-ink/6 px-2 py-2">
           {ROWS.map((row) => (
             <li
-              key={row.action}
+              key={row.actionKey}
               className="flex items-center justify-between gap-3 px-2 py-2.5"
             >
-              <span className="text-sm text-ink">{row.action}</span>
+              <span className="text-sm text-ink">{t(row.actionKey)}</span>
               <span className="flex shrink-0 items-center gap-1">
                 {row.keys.map((k) => (
                   <kbd key={k} className="admin-kbd">
@@ -76,7 +77,7 @@ export default function ShortcutsSheet({
           ))}
         </ul>
         <div className="border-t border-ink/8 px-4 py-2.5 text-[0.6875rem] text-muted">
-          Tip: open the palette, then type a customer name to jump into a quote.
+          {t("shortcuts.tip")}
         </div>
       </div>
     </div>

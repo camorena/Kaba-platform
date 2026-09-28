@@ -6,10 +6,12 @@ import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import AdminPageTransition from "@/components/admin/AdminPageTransition";
+import LanguageToggle from "@/components/admin/LanguageToggle";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import NotificationCenter from "@/components/admin/NotificationCenter";
 import { ToastProvider, useToast } from "@/components/admin/Toast";
 import ThemeToggle from "@/components/ThemeToggle";
-import SiteCredit from "@/components/SiteCredit";
+import { navLabelKey } from "@/lib/admin/i18n";
 
 const CommandPalette = dynamic(() => import("@/components/admin/CommandPalette"), {
   ssr: false,
@@ -19,18 +21,18 @@ const ShortcutsSheet = dynamic(() => import("@/components/admin/ShortcutsSheet")
 });
 
 const nav = [
-  { href: "/admin", label: "Dashboard", exact: true, icon: "grid" },
-  { href: "/admin/quotes", label: "Quotes", icon: "quotes" },
-  { href: "/admin/pipeline", label: "Pipeline", icon: "kanban" },
-  { href: "/admin/invoices", label: "Invoices", icon: "invoice" },
-  { href: "/admin/payments", label: "Payments", icon: "pay" },
-  { href: "/admin/customers", label: "Customers", icon: "people" },
-  { href: "/admin/calendar", label: "Schedule", icon: "cal" },
-  { href: "/admin/pricebook", label: "Price book", icon: "book" },
-  { href: "/admin/templates", label: "Templates", icon: "templates" },
-  { href: "/admin/activity", label: "Activity", icon: "pulse" },
-  { href: "/admin/reports", label: "Reports", icon: "chart" },
-  { href: "/admin/settings", label: "Settings", icon: "gear" },
+  { href: "/admin", exact: true, icon: "grid" },
+  { href: "/admin/quotes", icon: "quotes" },
+  { href: "/admin/pipeline", icon: "kanban" },
+  { href: "/admin/invoices", icon: "invoice" },
+  { href: "/admin/payments", icon: "pay" },
+  { href: "/admin/customers", icon: "people" },
+  { href: "/admin/calendar", icon: "cal" },
+  { href: "/admin/pricebook", icon: "book" },
+  { href: "/admin/templates", icon: "templates" },
+  { href: "/admin/activity", icon: "pulse" },
+  { href: "/admin/reports", icon: "chart" },
+  { href: "/admin/settings", icon: "gear" },
 ];
 
 function NavIcon({ name }: { name: string }) {
@@ -119,6 +121,7 @@ function NavLinks({
   pathname: string;
   onNavigate?: () => void;
 }) {
+  const { t } = useAdminI18n();
   return (
     <>
       {nav.map((item) => {
@@ -138,7 +141,7 @@ function NavLinks({
             }`}
           >
             <NavIcon name={item.icon} />
-            {item.label}
+            {t(navLabelKey(item.href))}
           </Link>
         );
       })}
@@ -148,14 +151,15 @@ function NavLinks({
 
 function AdminShellInner({
   children,
-  warning,
+  showAuthWarning,
 }: {
   children: React.ReactNode;
-  warning?: string | null;
+  showAuthWarning?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const toast = useToast();
+  const { t } = useAdminI18n();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -211,7 +215,7 @@ function AdminShellInner({
 
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
-    toast.push({ title: "Signed out", tone: "info" });
+    toast.push({ title: t("shell.signedOut"), tone: "info" });
     router.push("/admin/login");
     router.refresh();
   }
@@ -225,7 +229,7 @@ function AdminShellInner({
             <button
               type="button"
               className="admin-touch -ml-1 rounded-md p-2 text-cream/80 transition hover:bg-white/10 hover:text-cream lg:hidden"
-              aria-label="Open menu"
+              aria-label={t("shell.openMenu")}
               aria-expanded={drawerOpen}
               onClick={() => setDrawerOpen(true)}
             >
@@ -242,10 +246,10 @@ function AdminShellInner({
             />
             <div className="min-w-0">
               <p className="truncate font-display text-sm font-semibold tracking-tight">
-                Kaba Fence Admin
+                {t("shell.brand")}
               </p>
               <p className="hidden truncate text-[0.625rem] uppercase tracking-[0.12em] text-bronze-light/80 xs:block sm:block">
-                Quotes · invoices · field ops
+                {t("shell.tagline")}
               </p>
             </div>
           </div>
@@ -254,19 +258,19 @@ function AdminShellInner({
               type="button"
               onClick={openCmd}
               className="admin-search-trigger admin-touch hidden items-center gap-2 rounded-md border border-white/12 bg-white/[0.06] px-2.5 py-1.5 text-xs text-cream/75 transition hover:border-bronze/45 hover:bg-white/10 hover:text-cream sm:inline-flex"
-              aria-label="Open command palette"
+              aria-label={t("shell.openCommandPalette")}
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
               </svg>
-              <span>Search</span>
+              <span>{t("shell.search")}</span>
               <kbd className="admin-kbd admin-kbd-dark ml-1">⌘K</kbd>
             </button>
             <button
               type="button"
               onClick={openCmd}
               className="admin-touch rounded-md p-2 text-cream/70 transition hover:bg-white/10 hover:text-cream sm:hidden"
-              aria-label="Search"
+              aria-label={t("shell.search")}
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
@@ -277,35 +281,36 @@ function AdminShellInner({
               type="button"
               onClick={openShortcuts}
               className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream md:inline"
-              title="Keyboard shortcuts"
+              title={t("shell.keyboardShortcuts")}
             >
               ?
             </button>
+            <LanguageToggle variant="dark" />
             <ThemeToggle variant="dark" className="!h-9 !w-9" />
             <Link
               href="/"
               className="admin-touch hidden rounded-md px-2 py-1.5 text-xs font-medium text-cream/70 transition hover:bg-white/10 hover:text-cream sm:inline"
             >
-              View site
+              {t("shell.viewSite")}
             </Link>
             <button
               type="button"
               onClick={() => void logout()}
               className="admin-touch rounded-md bg-gradient-to-b from-bronze-light/90 to-bronze-dark px-2.5 py-2 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.32),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:brightness-105 active:scale-[0.98]"
             >
-              Sign out
+              {t("shell.signOut")}
             </button>
           </div>
         </div>
       </header>
 
-      {warning && (
+      {showAuthWarning && (
         <div
           role="status"
           className="admin-auth-banner border-b border-amber-700/30 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-950 sm:px-5 sm:text-sm dark:border-amber-400/25 dark:bg-amber-950/45 dark:text-amber-100"
         >
-          <strong className="font-semibold">Auth stub — not production-ready.</strong>{" "}
-          {warning}
+          <strong className="font-semibold">{t("shell.authStubStrong")}</strong>{" "}
+          {t("shell.authWarning")}
         </div>
       )}
 
@@ -315,23 +320,23 @@ function AdminShellInner({
           <button
             type="button"
             className="admin-drawer-backdrop"
-            aria-label="Close menu"
+            aria-label={t("shell.closeMenu")}
             onClick={closeDrawer}
           />
           <aside
             className="admin-drawer-panel"
             role="dialog"
             aria-modal="true"
-            aria-label="Admin navigation"
+            aria-label={t("shell.adminNav")}
           >
             <div className="flex items-center justify-between border-b border-[color:var(--admin-border)] px-3 py-3">
               <p className="admin-section-label">
-                Navigate
+                {t("nav.navigate")}
               </p>
               <button
                 type="button"
                 className="admin-touch rounded-md p-2 text-muted hover:bg-[var(--admin-row-hover)] hover:text-ink"
-                aria-label="Close menu"
+                aria-label={t("shell.closeMenu")}
                 onClick={closeDrawer}
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -339,11 +344,11 @@ function AdminShellInner({
                 </svg>
               </button>
             </div>
-            <nav aria-label="Admin" className="flex flex-col gap-0.5 overflow-y-auto px-2 py-3">
+            <nav aria-label={t("nav.admin")} className="flex flex-col gap-0.5 overflow-y-auto px-2 py-3">
               <NavLinks pathname={pathname} onNavigate={closeDrawer} />
             </nav>
             <p className="mt-auto border-t border-ink/8 px-4 py-3 text-[0.625rem] leading-relaxed text-muted">
-              Press <kbd className="admin-kbd">⌘K</kbd> to jump anywhere.
+              {t("shell.jumpHint").split("__KBD__")[0]}<kbd className="admin-kbd">⌘K</kbd>{t("shell.jumpHint").split("__KBD__")[1] ?? ""}
             </p>
           </aside>
         </div>
@@ -352,13 +357,13 @@ function AdminShellInner({
       <div className="mx-auto grid max-w-[90rem] gap-0 lg:grid-cols-[14rem_minmax(0,1fr)]">
         <aside className="admin-sidebar hidden border-r border-[color:var(--admin-border)] lg:sticky lg:top-[3.35rem] lg:block lg:h-[calc(100dvh-3.35rem)] lg:overflow-y-auto">
           <nav
-            aria-label="Admin"
+            aria-label={t("nav.admin")}
             className="flex flex-col gap-0.5 px-2.5 py-3.5"
           >
             <NavLinks pathname={pathname} />
           </nav>
           <p className="px-3.5 pb-4 text-[0.625rem] leading-relaxed text-muted">
-            Press <kbd className="admin-kbd">⌘K</kbd> to jump anywhere.
+            {t("shell.jumpHint").split("__KBD__")[0]}<kbd className="admin-kbd">⌘K</kbd>{t("shell.jumpHint").split("__KBD__")[1] ?? ""}
           </p>
         </aside>
 
@@ -369,8 +374,18 @@ function AdminShellInner({
 
       <footer className="admin-footer border-t border-[color:var(--admin-border)] pb-[env(safe-area-inset-bottom,0px)]">
         <div className="mx-auto flex max-w-[90rem] flex-col gap-2 px-3 py-3.5 text-[0.6875rem] text-muted sm:flex-row sm:items-center sm:justify-between sm:px-5 lg:px-6">
-          <p className="font-medium tracking-tight">Kaba Fence Admin</p>
-          <SiteCredit tone="admin" />
+          <p className="font-medium tracking-tight">{t("shell.brand")}</p>
+          <p className="text-xs text-muted">
+            {t("shell.creditPrefix")}{" "}
+            <a
+              href="https://datelica.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-ring rounded font-semibold text-ink/75 transition hover:text-bronze"
+            >
+              Datelica
+            </a>
+          </p>
         </div>
       </footer>
 
@@ -387,13 +402,20 @@ function AdminShellInner({
 export default function AdminShell({
   children,
   warning,
+  showAuthWarning,
 }: {
   children: React.ReactNode;
-  warning?: string | null;
+  /** @deprecated use showAuthWarning */
+  warning?: string | null | boolean;
+  showAuthWarning?: boolean;
 }) {
+  const show =
+    typeof showAuthWarning === "boolean"
+      ? showAuthWarning
+      : Boolean(warning);
   return (
     <ToastProvider>
-      <AdminShellInner warning={warning}>{children}</AdminShellInner>
+      <AdminShellInner showAuthWarning={show}>{children}</AdminShellInner>
     </ToastProvider>
   );
 }

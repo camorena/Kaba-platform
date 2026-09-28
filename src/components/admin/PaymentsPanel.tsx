@@ -12,6 +12,8 @@ import type { InvoiceRecord } from "@/lib/admin/invoices-store";
 import type { PaymentRecord } from "@/lib/admin/payments-store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { invoiceStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/admin/i18n";
 import { useMemo, useState } from "react";
 
 export default function PaymentsPanel({
@@ -24,6 +26,7 @@ export default function PaymentsPanel({
   preselectInvoiceId?: string | null;
 }) {
   const router = useRouter();
+  const { t, locale } = useAdminI18n();
   const openInvoices = useMemo(
     () => invoices.filter((i) => i.status !== "void" && i.status !== "paid"),
     [invoices],
@@ -49,10 +52,10 @@ export default function PaymentsPanel({
 
   function validate(vals = { invoiceId, amount }) {
     const next: { invoiceId?: string; amount?: string } = {};
-    if (!vals.invoiceId) next.invoiceId = "Select an invoice.";
+    if (!vals.invoiceId) next.invoiceId = t("payments.selectInvoice");
     const dollars = Number.parseFloat(vals.amount);
     if (!Number.isFinite(dollars) || dollars <= 0) {
-      next.amount = "Enter a valid amount greater than zero.";
+      next.amount = t("payments.amountInvalid");
     }
     return next;
   }
@@ -65,7 +68,7 @@ export default function PaymentsPanel({
     const next = validate();
     setFieldErrors(next);
     if (Object.keys(next).length) {
-      setError("Fix the highlighted fields.");
+      setError(t("payments.fixFields"));
       return;
     }
     const dollars = Number.parseFloat(amount);
@@ -84,10 +87,10 @@ export default function PaymentsPanel({
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
-        setError(data.error || "Recording failed.");
+        setError(data.error || t("payments.recordFailed"));
         return;
       }
-      setOk("Payment recorded (demo stub — no Stripe).");
+      setOk(t("payments.recordedOk"));
       setAmount("");
       setReference("");
       setNotes("");
@@ -110,7 +113,7 @@ export default function PaymentsPanel({
       </div>
 
       <form onSubmit={submit} className="admin-card space-y-3" noValidate>
-        <h2 className="admin-card-title">Record payment (stub)</h2>
+        <h2 className="admin-card-title">{t("payments.recordTitle")}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label htmlFor="pay-invoice" className="text-xs font-semibold text-muted">
@@ -209,7 +212,7 @@ export default function PaymentsPanel({
               className="field-input mt-1 text-sm"
               value={reference}
               onChange={(e) => setReference(e.target.value)}
-              placeholder="Check # / last4 / memo"
+              placeholder={t("payments.referencePh")}
             />
           </div>
           <div>
@@ -221,7 +224,7 @@ export default function PaymentsPanel({
               className="field-input mt-1 text-sm"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Optional"
+              placeholder={t("payments.notesPh")}
             />
           </div>
         </div>
@@ -240,14 +243,14 @@ export default function PaymentsPanel({
           disabled={busy}
           className="btn-primary text-sm disabled:opacity-60"
         >
-          {busy ? "Saving…" : "Record payment"}
+          {busy ? t("common.saving") : t("payments.recordPayment")}
         </button>
       </form>
 
       {payments.length === 0 ? (
         <EmptyState
-          title="No payments recorded"
-          description="Use the stub form above to attach a demo payment to an invoice."
+          title={t("payments.emptyTitle")}
+          description={t("payments.emptyDesc")}
         />
       ) : (
         <div className="admin-table-wrap overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)]">

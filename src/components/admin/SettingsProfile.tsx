@@ -1,12 +1,14 @@
 "use client";
 
 import { useToast } from "@/components/admin/Toast";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import { useState } from "react";
 
 type FieldErrors = Partial<Record<"name" | "email" | "phone" | "role", string>>;
 
 export default function SettingsProfile() {
   const toast = useToast();
+  const { t } = useAdminI18n();
   const [name, setName] = useState("Ops Lead");
   const [email, setEmail] = useState("ops@kabafence.example");
   const [phone, setPhone] = useState("(919) 292-4777");
@@ -17,14 +19,14 @@ export default function SettingsProfile() {
 
   function validate(): FieldErrors {
     const next: FieldErrors = {};
-    if (!name.trim() || name.trim().length < 2) next.name = "Enter a display name.";
+    if (!name.trim() || name.trim().length < 2) next.name = t("profile.errName");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      next.email = "Enter a valid email.";
+      next.email = t("profile.errEmail");
     }
     if (!phone.trim() || phone.replace(/\D/g, "").length < 10) {
-      next.phone = "Enter a 10-digit phone.";
+      next.phone = t("profile.errPhone");
     }
-    if (!role.trim()) next.role = "Pick a role label.";
+    if (!role.trim()) next.role = t("profile.errRole");
     return next;
   }
 
@@ -37,15 +39,15 @@ export default function SettingsProfile() {
     setSubmitted(true);
     const errs = validate();
     if (Object.keys(errs).length) {
-      toast.push({ title: "Fix the highlighted fields", tone: "error" });
+      toast.push({ title: t("profile.fixFields"), tone: "error" });
       return;
     }
     setBusy(true);
     await new Promise((r) => setTimeout(r, 350));
     setBusy(false);
     toast.push({
-      title: "Profile saved (local stub)",
-      description: "Not persisted — no DB yet. Values stay for this session only.",
+      title: t("profile.savedTitle"),
+      description: t("profile.savedDesc"),
       tone: "success",
     });
   }
@@ -56,16 +58,15 @@ export default function SettingsProfile() {
 
   return (
     <form onSubmit={onSubmit} className="admin-glass-panel admin-gold-rail p-4 sm:p-5" noValidate>
-      <h2 className="admin-card-title">Profile (stub)</h2>
+      <h2 className="admin-card-title">{t("profile.title")}</h2>
       <p className="mt-2 text-sm leading-relaxed text-muted">
-        Display preferences for the signed-in operator. Saved in-memory only —
-        replace with real user records when Auth.js / Clerk lands.
+        {t("profile.body")}
       </p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div>
           <label htmlFor="prof-name" className="text-xs font-semibold text-muted">
-            Display name
+            {t("profile.displayName")}
           </label>
           <input
             id="prof-name"
@@ -85,7 +86,7 @@ export default function SettingsProfile() {
         </div>
         <div>
           <label htmlFor="prof-role" className="text-xs font-semibold text-muted">
-            Role label
+            {t("profile.roleLabel")}
           </label>
           <input
             id="prof-role"
@@ -104,7 +105,7 @@ export default function SettingsProfile() {
         </div>
         <div>
           <label htmlFor="prof-email" className="text-xs font-semibold text-muted">
-            Email
+            {t("profile.email")}
           </label>
           <input
             id="prof-email"
@@ -125,7 +126,7 @@ export default function SettingsProfile() {
         </div>
         <div>
           <label htmlFor="prof-phone" className="text-xs font-semibold text-muted">
-            Phone
+            {t("profile.phone")}
           </label>
           <input
             id="prof-phone"
@@ -148,9 +149,9 @@ export default function SettingsProfile() {
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <button type="submit" className="admin-touch btn-primary text-sm" disabled={busy}>
-          {busy ? "Saving…" : "Save profile"}
+          {busy ? t("common.saving") : t("profile.save")}
         </button>
-        <p className="text-[0.6875rem] text-muted">No password change here — rotate env vars.</p>
+        <p className="text-[0.6875rem] text-muted">{t("profile.noPassword")}</p>
       </div>
     </form>
   );

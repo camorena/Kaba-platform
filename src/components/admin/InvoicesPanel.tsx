@@ -15,6 +15,8 @@ import type { QuoteRecord } from "@/lib/admin/quotes-store";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { invoiceStatusLabel, quoteStatusLabel } from "@/lib/admin/i18n";
 
 export default function InvoicesPanel({
   invoices,
@@ -27,6 +29,7 @@ export default function InvoicesPanel({
 }) {
   const router = useRouter();
   const toast = useToast();
+  const { t, locale } = useAdminI18n();
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | "all">("all");
   const [quoteId, setQuoteId] = useState("");
@@ -53,7 +56,7 @@ export default function InvoicesPanel({
 
   function exportCsv() {
     const rows: (string | number)[][] = [
-      ["Number", "Customer", "Email", "Address", "Total", "Paid", "Balance", "Status", "Created"],
+      t("invoices.csvHeaders").split(","),
       ...filtered.map((inv) => {
         const total = inv.lines.reduce((s, l) => s + l.quantity * l.unitCents, 0);
         const paid = paidMap[inv.id] ?? 0;
@@ -72,14 +75,14 @@ export default function InvoicesPanel({
     ];
     downloadCsv(`kaba-invoices-${new Date().toISOString().slice(0, 10)}.csv`, rows);
     toast.push({
-      title: `CSV exported · ${filtered.length} invoice${filtered.length === 1 ? "" : "s"}`,
+      title: t(filtered.length === 1 ? "common.csvExportedInvoices" : "common.csvExportedInvoices_plural", { count: filtered.length }),
       tone: "success",
     });
   }
 
   async function createFromQuote() {
     if (!quoteId) {
-      setError("Pick a quote first.");
+      setError(t("invoices.pickQuoteFirst"));
       return;
     }
     setCreating(true);
@@ -95,7 +98,7 @@ export default function InvoicesPanel({
         error?: string;
       };
       if (!res.ok || !data.invoice) {
-        setError(data.error || "Create failed.");
+        setError(data.error || t("invoices.createFailed"));
         return;
       }
       router.push(`/admin/invoices/${data.invoice.id}`);
@@ -138,7 +141,7 @@ export default function InvoicesPanel({
             onClick={() => void createFromQuote()}
             className="btn-primary shrink-0 text-sm disabled:opacity-60"
           >
-            {creating ? "Creating…" : "Create draft"}
+            {creating ? t("common.creating") : t("invoices.createDraft")}
           </button>
         </div>
         {error && (
@@ -156,7 +159,7 @@ export default function InvoicesPanel({
           <input
             id="inv-search"
             type="search"
-            placeholder="Search #, customer…"
+            placeholder={t("invoices.searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="field-input !mt-0 py-2 text-sm"
@@ -168,9 +171,9 @@ export default function InvoicesPanel({
             onClick={exportCsv}
             disabled={filtered.length === 0}
             className="admin-chip disabled:opacity-40"
-            title="Download filtered invoices as CSV"
+            title={t("invoices.exportTitle")}
           >
-            Export CSV
+            {t("common.exportCsv")}
           </button>
           <button
             type="button"
@@ -197,13 +200,13 @@ export default function InvoicesPanel({
 
       {invoices.length === 0 ? (
         <EmptyState
-          title="No invoices yet"
-          description="Create a draft from a quote above. Amounts are synthetic demo data until estimating is wired."
+          title={t("invoices.emptyTitle")}
+          description={t("invoices.emptyDesc")}
         />
       ) : filtered.length === 0 ? (
         <EmptyState
-          title="No matches"
-          description="Try a different search or clear filters."
+          title={t("common.noMatches")}
+          description={t("common.noMatchesDesc")}
         />
       ) : (
         <>
@@ -231,7 +234,7 @@ export default function InvoicesPanel({
                       </p>
                     </div>
                     <StatusBadge
-                      label={inv.status}
+                      label={invoiceStatusLabel(locale, inv.status)}
                       tone={invoiceStatusTone[inv.status]}
                     />
                   </div>
@@ -313,7 +316,7 @@ export default function InvoicesPanel({
                         </td>
                         <td className="px-3 py-3 sm:px-4">
                           <StatusBadge
-                            label={inv.status}
+                            label={invoiceStatusLabel(locale, inv.status)}
                             tone={invoiceStatusTone[inv.status]}
                           />
                         </td>

@@ -8,10 +8,16 @@ export type ActivityItem = {
   id: string;
   kind: ActivityKind;
   at: string;
-  title: string;
-  detail: string;
+  /** Customer name or invoice number */
+  subject: string;
+  status: string;
+  /** Remaining detail without status (service · address, customer, method · customer) */
+  extra: string;
   href: string;
   tone: "sky" | "amber" | "emerald" | "violet" | "muted";
+  /** @deprecated English composite — prefer subject/status/extra */
+  title: string;
+  detail: string;
 };
 
 export function listActivity(limit = 40): ActivityItem[] {
@@ -22,9 +28,12 @@ export function listActivity(limit = 40): ActivityItem[] {
       id: `act_q_${q.id}`,
       kind: "quote",
       at: q.updatedAt || q.createdAt,
+      subject: q.name,
+      status: q.status,
+      extra: `${q.serviceType} · ${q.address}`,
+      href: `/admin/quotes/${q.id}`,
       title: `Quote · ${q.name}`,
       detail: `${q.status} · ${q.serviceType} · ${q.address}`,
-      href: `/admin/quotes/${q.id}`,
       tone:
         q.status === "won"
           ? "emerald"
@@ -41,9 +50,12 @@ export function listActivity(limit = 40): ActivityItem[] {
       id: `act_inv_${inv.id}`,
       kind: "invoice",
       at: inv.updatedAt || inv.createdAt,
+      subject: inv.number,
+      status: inv.status,
+      extra: inv.customerName,
+      href: `/admin/invoices/${inv.id}`,
       title: `Invoice · ${inv.number}`,
       detail: `${inv.status} · ${inv.customerName}`,
-      href: `/admin/invoices/${inv.id}`,
       tone:
         inv.status === "paid"
           ? "emerald"
@@ -58,9 +70,12 @@ export function listActivity(limit = 40): ActivityItem[] {
       id: `act_pay_${p.id}`,
       kind: "payment",
       at: p.createdAt,
+      subject: p.invoiceNumber,
+      status: p.status,
+      extra: `${p.method} · ${p.customerName} · ${p.status}`,
+      href: `/admin/payments`,
       title: `Payment · ${p.invoiceNumber}`,
       detail: `${p.method} · ${p.customerName} · ${p.status}`,
-      href: `/admin/payments`,
       tone: p.status === "recorded" ? "emerald" : "amber",
     });
   }

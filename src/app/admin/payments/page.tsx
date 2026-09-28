@@ -1,5 +1,5 @@
 import AdminShell from "@/components/admin/AdminShell";
-import PageHeader from "@/components/admin/PageHeader";
+import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import PaymentsPanel from "@/components/admin/PaymentsPanel";
 import { requireAdmin } from "@/lib/admin/guard";
 import { listInvoices } from "@/lib/admin/invoices-store";
@@ -18,14 +18,7 @@ export default async function AdminPaymentsPage({
 
   return (
     <AdminShell warning={warning}>
-      <PageHeader
-        title="Payments"
-        crumbs={[
-          { href: "/admin", label: "Admin" },
-          { label: "Payments" },
-        ]}
-        description="Stub ledger linked to invoices. No Stripe, ACH, or card capture — recording only for UI foundation."
-      />
+      <AdminPageChrome page="payments" />
       <PaymentsPanel
         payments={listPayments()}
         invoices={listInvoices()}

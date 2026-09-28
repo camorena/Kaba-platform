@@ -2,43 +2,45 @@
 
 import Link from "next/link";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
 type StubNote = {
   id: string;
-  title: string;
-  body: string;
+  titleKey: string;
+  bodyKey: string;
+  timeKey: string;
   href: string;
-  time: string;
   unread?: boolean;
 };
 
 const STUB: StubNote[] = [
   {
     id: "n1",
-    title: "New quote · Jordan Miles",
-    body: "Wood fence request from Angier — needs first contact.",
+    titleKey: "notifications.n1title",
+    bodyKey: "notifications.n1body",
+    timeKey: "notifications.time26h",
     href: "/admin/quotes/q_seed_1",
-    time: "26h ago",
     unread: true,
   },
   {
     id: "n2",
-    title: "Site visit tomorrow",
-    body: "Chris Nguyen · vinyl privacy · Fuquay-Varina.",
+    titleKey: "notifications.n2title",
+    bodyKey: "notifications.n2body",
+    timeKey: "notifications.time2d",
     href: "/admin/calendar",
-    time: "2d ago",
     unread: true,
   },
   {
     id: "n3",
-    title: "Invoice balance open",
-    body: "Demo AR still has an open balance — record a stub payment.",
+    titleKey: "notifications.n3title",
+    bodyKey: "notifications.n3body",
+    timeKey: "notifications.time3d",
     href: "/admin/invoices",
-    time: "3d ago",
   },
 ];
 
 export default function NotificationCenter() {
+  const { t } = useAdminI18n();
   const [open, setOpen] = useState(false);
   const [read, setRead] = useState<Set<string>>(new Set());
   const panelId = useId();
@@ -74,7 +76,11 @@ export default function NotificationCenter() {
       <button
         type="button"
         className="admin-touch relative rounded-md p-2 text-cream/70 transition hover:bg-white/10 hover:text-cream"
-        aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ""}`}
+        aria-label={
+          unreadCount
+            ? t("notifications.unread", { count: unreadCount })
+            : t("notifications.label")
+        }
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
@@ -98,20 +104,20 @@ export default function NotificationCenter() {
         <div
           id={panelId}
           role="dialog"
-          aria-label="Notifications"
+          aria-label={t("notifications.label")}
           className="admin-notify-panel absolute right-0 top-[calc(100%+0.4rem)] z-50 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] text-ink shadow-[var(--shadow-lg)]"
         >
           <div className="admin-cmd-rail" aria-hidden />
           <div className="flex items-center justify-between gap-2 border-b border-ink/8 px-3 py-2.5">
             <p className="text-xs font-bold uppercase tracking-wider text-muted">
-              Notifications
+              {t("notifications.label")}
             </p>
             <button
               type="button"
               className="text-[0.6875rem] font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
               onClick={markAll}
             >
-              Mark all read
+              {t("notifications.markAll")}
             </button>
           </div>
           <ul className="max-h-[min(20rem,50vh)] divide-y divide-ink/6 overflow-y-auto">
@@ -135,11 +141,15 @@ export default function NotificationCenter() {
                         />
                       )}
                       <div className={isUnread ? "" : "pl-3.5"}>
-                        <p className="text-sm font-semibold text-ink">{n.title}</p>
-                        <p className="mt-0.5 text-xs leading-relaxed text-muted">
-                          {n.body}
+                        <p className="text-sm font-semibold text-ink">
+                          {t(n.titleKey)}
                         </p>
-                        <p className="mt-1 text-[0.625rem] text-muted-light">{n.time}</p>
+                        <p className="mt-0.5 text-xs leading-relaxed text-muted">
+                          {t(n.bodyKey)}
+                        </p>
+                        <p className="mt-1 text-[0.625rem] text-muted-light">
+                          {t(n.timeKey)}
+                        </p>
                       </div>
                     </div>
                   </Link>
@@ -148,7 +158,7 @@ export default function NotificationCenter() {
             })}
           </ul>
           <p className="border-t border-ink/8 px-3 py-2 text-[0.625rem] leading-relaxed text-muted">
-            Stub feed — no push, email, or realtime yet. Wired for craft only.
+            {t("notifications.stubFooter")}
           </p>
         </div>
       )}

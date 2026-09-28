@@ -5,6 +5,8 @@ import CopyChip from "@/components/admin/CopyChip";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { QuoteStatusTimeline } from "@/components/admin/StatusTimeline";
 import { useToast } from "@/components/admin/Toast";
+import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { quoteStatusLabel } from "@/lib/admin/i18n";
 import { formatDateTime } from "@/lib/admin/format";
 import {
   QUOTE_STATUSES,
@@ -25,6 +27,7 @@ export default function QuoteDetailClient({
 }) {
   const router = useRouter();
   const toast = useToast();
+  const { t, locale } = useAdminI18n();
   const [status, setStatus] = useState<QuoteStatus>(quote.status);
   const [notes, setNotes] = useState(quote.notes);
   const [busy, setBusy] = useState(false);
@@ -162,11 +165,11 @@ export default function QuoteDetailClient({
       </div>
 
       <div className="flex flex-wrap gap-1.5 print:hidden">
-        <CopyChip value={quote.phone} label="Copy phone" />
-        <CopyChip value={quote.email} label="Copy email" />
+        <CopyChip value={quote.phone} label={t("common.copyPhone")} />
+        <CopyChip value={quote.email} label={t("common.copyEmail")} />
         <CopyChip
           value={`${quote.name} · ${quote.serviceType} · ${quote.address}`}
-          label="Copy summary"
+          label={t("common.copySummary")}
         />
         <Link href="/admin/templates" className="admin-chip">
           Follow-up templates →
@@ -297,9 +300,9 @@ export default function QuoteDetailClient({
       </div>
       <ConfirmDialog
         open={confirmLost}
-        title="Mark quote as lost?"
-        description="Lost quotes drop out of active pipeline views. You can reopen them later."
-        confirmLabel="Mark lost"
+        title={t("quotes.markLostTitle")}
+        description={t("quotes.markLostDesc", { count: 1 })}
+        confirmLabel={t("detail.markLost")}
         tone="danger"
         busy={busy}
         onCancel={() => {
