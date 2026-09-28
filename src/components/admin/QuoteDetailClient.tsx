@@ -1,6 +1,8 @@
 "use client";
 
 import StatusBadge from "@/components/admin/StatusBadge";
+import { QuoteStatusTimeline } from "@/components/admin/StatusTimeline";
+import { useToast } from "@/components/admin/Toast";
 import { formatDateTime } from "@/lib/admin/format";
 import {
   QUOTE_STATUSES,
@@ -20,15 +22,14 @@ export default function QuoteDetailClient({
   relatedInvoiceId?: string | null;
 }) {
   const router = useRouter();
+  const toast = useToast();
   const [status, setStatus] = useState<QuoteStatus>(quote.status);
   const [notes, setNotes] = useState(quote.notes);
   const [busy, setBusy] = useState(false);
   const [creatingInv, setCreatingInv] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
 
   async function save(patch: { status?: QuoteStatus; notes?: string }) {
     setBusy(true);
-    setMsg(null);
     try {
       const res = await fetch(`/api/quotes/${quote.id}`, {
         method: "PATCH",
@@ -36,10 +37,13 @@ export default function QuoteDetailClient({
         body: JSON.stringify(patch),
       });
       if (!res.ok) {
-        setMsg("Save failed.");
+        toast.push({ title: "Save failed", tone: "error" });
         return;
       }
-      setMsg("Saved.");
+      toast.push({
+        title: patch.status ? `Status → ${patch.status}` : "Notes saved",
+        tone: "success",
+      });
       router.refresh();
     } finally {
       setBusy(false);
@@ -48,18 +52,25 @@ export default function QuoteDetailClient({
 
   async function createInvoice() {
     setCreatingInv(true);
-    setMsg(null);
     try {
       const res = await fetch("/api/invoices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quoteId: quote.id }),
       });
-      const data = (await res.json()) as { invoice?: { id: string }; error?: string };
+      const data = (await res.json()) as {
+        invoice?: { id: string };
+        error?: string;
+      };
       if (!res.ok || !data.invoice) {
-        setMsg(data.error || "Could not create invoice.");
+        toast.push({
+          title: "Could not create invoice",
+          description: data.error,
+          tone: "error",
+        });
         return;
       }
+      toast.push({ title: "Invoice created", tone: "success" });
       router.push(`/admin/invoices/${data.invoice.id}`);
       router.refresh();
     } finally {
@@ -109,6 +120,11 @@ export default function QuoteDetailClient({
           )}
         </div>
       </div>
+
+      <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5">
+        <h2 className="admin-card-title mb-3">Progress</h2>
+        <QuoteStatusTimeline status={status} />
+      </section>
 
       <div className="grid gap-3 lg:grid-cols-3">
         <section className="admin-card lg:col-span-2">
@@ -177,10 +193,7 @@ export default function QuoteDetailClient({
             </select>
           </div>
           <div>
-            <label
-              htmlFor="quote-notes"
-              className="admin-card-title block"
-            >
+            <label htmlFor="quote-notes" className="admin-card-title block">
               Internal notes
             </label>
             <textarea
@@ -200,11 +213,6 @@ export default function QuoteDetailClient({
               {busy ? "Saving…" : "Save notes"}
             </button>
           </div>
-          {msg && (
-            <p className="text-xs font-medium text-muted" role="status">
-              {msg}
-            </p>
-          )}
         </section>
       </div>
     </div>

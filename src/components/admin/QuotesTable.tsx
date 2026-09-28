@@ -1,6 +1,7 @@
 "use client";
 
 import EmptyState from "@/components/admin/EmptyState";
+import { useToast } from "@/components/admin/Toast";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { formatShortDate } from "@/lib/admin/format";
 import {
@@ -15,6 +16,7 @@ import { useRouter } from "next/navigation";
 
 export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
   const router = useRouter();
+  const toast = useToast();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<QuoteStatus | "all">("all");
@@ -43,11 +45,16 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
   async function setStatus(id: string, status: QuoteStatus) {
     setBusyId(id);
     try {
-      await fetch(`/api/quotes/${id}`, {
+      const res = await fetch(`/api/quotes/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
+      if (!res.ok) {
+        toast.push({ title: "Status update failed", tone: "error" });
+        return;
+      }
+      toast.push({ title: `Status → ${status}`, tone: "success" });
       router.refresh();
     } finally {
       setBusyId(null);
@@ -117,7 +124,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
           }
         />
       ) : (
-        <div className="admin-table-wrap overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
+        <div className="admin-table-wrap admin-gold-rail overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
           <div className="overflow-x-auto">
             <table className="admin-table min-w-full text-left text-sm">
               <thead>

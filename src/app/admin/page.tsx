@@ -57,10 +57,27 @@ export default async function AdminDashboardPage() {
         description="Quote → invoice → payment foundation. Amounts marked demo are synthetic; auth remains a stub."
       />
 
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {[
+          { href: "/admin/calendar", label: "Schedule" },
+          { href: "/admin/activity", label: "Activity" },
+          { href: "/admin/reports", label: "Reports" },
+        ].map((x) => (
+          <Link
+            key={x.href}
+            href={x.href}
+            className="admin-chip hover:border-bronze/40"
+          >
+            {x.label} →
+          </Link>
+        ))}
+      </div>
+
       <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c) => (
           <li key={c.label}>
-            <Link href={c.href} className="admin-stat block transition hover:border-bronze/35">
+            <Link href={c.href} className="admin-stat admin-stat-lift block transition hover:border-bronze/35">
               <p className="admin-stat-label">{c.label}</p>
               <p className="admin-stat-value mt-1">{c.value}</p>
               <p className="mt-1 text-[0.6875rem] text-muted">{c.hint}</p>

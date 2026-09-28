@@ -1,6 +1,8 @@
 "use client";
 
 import StatusBadge from "@/components/admin/StatusBadge";
+import { InvoiceStatusTimeline } from "@/components/admin/StatusTimeline";
+import { useToast } from "@/components/admin/Toast";
 import { formatDateTime, formatMoney } from "@/lib/admin/format";
 import {
   INVOICE_STATUSES,
@@ -23,6 +25,7 @@ export default function InvoiceDetailClient({
   paidCents: number;
 }) {
   const router = useRouter();
+  const toast = useToast();
   const [status, setStatus] = useState<InvoiceStatus>(invoice.status);
   const [busy, setBusy] = useState(false);
   const total = invoice.lines.reduce(
@@ -34,12 +37,17 @@ export default function InvoiceDetailClient({
   async function changeStatus(next: InvoiceStatus) {
     setBusy(true);
     try {
-      await fetch(`/api/invoices/${invoice.id}`, {
+      const res = await fetch(`/api/invoices/${invoice.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: next }),
       });
+      if (!res.ok) {
+        toast.push({ title: "Status update failed", tone: "error" });
+        return;
+      }
       setStatus(next);
+      toast.push({ title: `Invoice → ${next}`, tone: "success" });
       router.refresh();
     } finally {
       setBusy(false);
@@ -90,6 +98,11 @@ export default function InvoiceDetailClient({
           </Link>
         </div>
       </div>
+
+      <section className="admin-glass-panel admin-gold-rail px-4 py-3 sm:px-5">
+        <h2 className="admin-card-title mb-3">Progress</h2>
+        <InvoiceStatusTimeline status={status} />
+      </section>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="admin-stat">

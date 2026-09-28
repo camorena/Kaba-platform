@@ -15,10 +15,15 @@ export default async function AdminSettingsPage() {
       <PageHeader
         title="Settings"
         description="Environment docs and honest limits of this scaffold — not fake security controls."
+        meta={
+          <p className="mb-1 text-[0.625rem] font-bold uppercase tracking-[0.14em] text-bronze">
+            Ops · transparency
+          </p>
+        }
       />
 
       <div className="grid gap-3 lg:grid-cols-2">
-        <section className="admin-card">
+        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
           <h2 className="admin-card-title">Auth (stub)</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Access is gated by a single shared password in{" "}
@@ -56,7 +61,7 @@ export default async function AdminSettingsPage() {
           </p>
         </section>
 
-        <section className="admin-card">
+        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
           <h2 className="admin-card-title">Data stores</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Quotes, invoices, and payments live in <strong>process memory</strong>{" "}
@@ -82,7 +87,7 @@ export default async function AdminSettingsPage() {
           </ul>
         </section>
 
-        <section className="admin-card">
+        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
           <h2 className="admin-card-title">Payments / Stripe</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             <strong>Not integrated.</strong> The Payments page records stub
@@ -101,8 +106,8 @@ export default async function AdminSettingsPage() {
           </ul>
         </section>
 
-        <section className="admin-card">
-          <h2 className="admin-card-title">Crawlers & SEO</h2>
+        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+          <h2 className="admin-card-title">Crawlers, craft & shortcuts</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             <code className="rounded bg-ink/5 px-1 text-xs dark:bg-white/10">
               robots.txt
@@ -112,6 +117,17 @@ export default async function AdminSettingsPage() {
             <code className="text-xs">noindex, nofollow</code>. Do not link the
             admin from public chrome.
           </p>
+          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
+            <li>
+              Command palette: <kbd className="admin-kbd">⌘K</kbd> /{" "}
+              <kbd className="admin-kbd">Ctrl+K</kbd>
+            </li>
+            <li>
+              Shortcuts cheat sheet: <kbd className="admin-kbd">?</kbd>
+            </li>
+            <li>Charts are pure SVG/CSS — no Chart.js or paid analytics</li>
+            <li>Palette & shortcuts sheets load via dynamic import (lazy)</li>
+          </ul>
         </section>
       </div>
     </AdminShell>

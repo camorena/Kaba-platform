@@ -12,13 +12,21 @@ export default function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="admin-empty flex flex-col items-center rounded-xl border border-dashed border-ink/12 bg-[var(--admin-panel)] px-5 py-12 text-center">
+    <div className="admin-empty admin-gold-rail relative flex flex-col items-center overflow-hidden rounded-xl border border-dashed border-ink/12 bg-[var(--admin-panel)] px-5 py-14 text-center">
       <div
-        className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-bronze/20 to-bronze/5 text-bronze-dark ring-1 ring-bronze/20 dark:text-bronze-light"
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        aria-hidden
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--bronze) 18%, transparent), transparent 55%)",
+        }}
+      />
+      <div
+        className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-bronze/25 to-bronze/5 text-bronze-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] ring-1 ring-bronze/25 dark:text-bronze-light"
         aria-hidden
       >
         {icon ?? (
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -28,13 +36,13 @@ export default function EmptyState({
           </svg>
         )}
       </div>
-      <h2 className="mt-4 font-display text-base font-semibold tracking-tight text-ink sm:text-lg">
+      <h2 className="relative mt-5 font-display text-base font-semibold tracking-tight text-ink sm:text-lg">
         {title}
       </h2>
-      <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-muted">
+      <p className="relative mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-muted">
         {description}
       </p>
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="relative mt-5">{action}</div>}
     </div>
   );
 }
