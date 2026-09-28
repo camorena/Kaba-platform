@@ -256,11 +256,11 @@ export default function InvoicesPanel({
             })}
           </ul>
 
-          <div className="admin-table-wrap hidden overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)] md:block">
+          <div className="admin-table-wrap hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)] md:block">
             <div className="overflow-x-auto">
               <table className="admin-table min-w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-ink/10 bg-[var(--admin-thead)] text-[0.625rem] uppercase tracking-wider text-muted">
+                  <tr className="border-b border-[color:var(--admin-border)]">
                     <th className="px-3 py-2.5 font-semibold sm:px-4">Invoice</th>
                     <th className="px-3 py-2.5 font-semibold sm:px-4">Customer</th>
                     <th className="px-3 py-2.5 font-semibold sm:px-4">Total</th>
@@ -281,7 +281,7 @@ export default function InvoicesPanel({
                     return (
                       <tr
                         key={inv.id}
-                        className="border-b border-ink/5 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
+                        className="border-b border-[color:var(--admin-border)]/60 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
                       >
                         <td className="px-3 py-3 sm:px-4">
                           <Link

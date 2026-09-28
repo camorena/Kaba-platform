@@ -61,12 +61,19 @@
   --shadow-bronze: 0 6px 22px color-mix(in srgb, var(--bronze) 42%, transparent);
   --glow-bronze: 0 0 56px color-mix(in srgb, var(--bronze) 24%, transparent);
   /* Admin shell tokens (light) — cream brand system */
-  --admin-bg: #f7f3ec;
-  --admin-panel: #fffcf7;
-  --admin-thead: #f0ebe3;
-  --admin-row-hover: color-mix(in srgb, #efe8dc 70%, transparent);
-  --admin-chip-bg: color-mix(in srgb, #efe8dc 85%, #fffcf7);
-  --admin-chip-border: color-mix(in srgb, var(--ink) 10%, transparent);
+  --admin-bg: #f4efe6;
+  --admin-panel: #fffcf8;
+  --admin-thead: #ebe4d8;
+  --admin-row-hover: color-mix(in srgb, #e8dfd0 75%, transparent);
+  --admin-chip-bg: color-mix(in srgb, #efe6d8 88%, #fffcf8);
+  --admin-chip-border: color-mix(in srgb, var(--ink) 11%, transparent);
+  --admin-border: color-mix(in srgb, var(--ink) 9%, transparent);
+  --admin-border-strong: color-mix(in srgb, var(--ink) 14%, transparent);
+  --admin-label: #5c5346;
+  --admin-sidebar: color-mix(in srgb, #f4efe6 55%, #fffcf8);
+  --admin-shadow:
+    0 1px 1px color-mix(in srgb, var(--ink) 3%, transparent),
+    0 2px 8px color-mix(in srgb, var(--ink) 4%, transparent);
 }
 
 
@@ -156,12 +163,19 @@
     0 28px 56px color-mix(in srgb, #000 42%, transparent);
   --shadow-bronze: 0 6px 24px color-mix(in srgb, var(--bronze) 32%, transparent);
   --glow-bronze: 0 0 56px color-mix(in srgb, var(--bronze) 18%, transparent);
-  --admin-bg: #0a0f18;
-  --admin-panel: #141c28;
-  --admin-thead: color-mix(in srgb, #1a2433 90%, transparent);
-  --admin-row-hover: color-mix(in srgb, #1a2433 70%, transparent);
-  --admin-chip-bg: color-mix(in srgb, #1a2433 85%, transparent);
-  --admin-chip-border: color-mix(in srgb, var(--cream) 12%, transparent);
+  --admin-bg: #080d15;
+  --admin-panel: #121a26;
+  --admin-thead: #1a2330;
+  --admin-row-hover: color-mix(in srgb, #1c2635 80%, transparent);
+  --admin-chip-bg: color-mix(in srgb, #1c2635 90%, transparent);
+  --admin-chip-border: color-mix(in srgb, var(--cream) 11%, transparent);
+  --admin-border: color-mix(in srgb, var(--cream) 9%, transparent);
+  --admin-border-strong: color-mix(in srgb, var(--cream) 14%, transparent);
+  --admin-label: #b7a994;
+  --admin-sidebar: color-mix(in srgb, #080d15 40%, #121a26);
+  --admin-shadow:
+    0 1px 1px color-mix(in srgb, #000 35%, transparent),
+    0 4px 16px color-mix(in srgb, #000 32%, transparent);
 }
 
 
@@ -1584,49 +1598,50 @@ a.btn-ghost {
 
 .admin-card {
   border-radius: 0.75rem;
-  border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+  border: 1px solid var(--admin-border);
   background: var(--admin-panel);
-  padding: 1rem 1.1rem;
-  box-shadow: var(--shadow-xs);
+  padding: 1rem 1.125rem;
+  box-shadow: var(--admin-shadow);
 }
 
 .admin-card-title {
-  font-size: 0.6875rem;
+  font-size: 0.65625rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--bronze-dark);
+  color: var(--admin-label);
 }
 
 .admin-stat {
   border-radius: 0.75rem;
-  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  border: 1px solid var(--admin-border);
   background: var(--admin-panel);
-  padding: 0.95rem 1.05rem;
-  box-shadow: var(--shadow-xs);
+  padding: 0.9rem 1.05rem;
+  box-shadow: var(--admin-shadow);
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .admin-stat:hover {
-  border-color: color-mix(in srgb, var(--bronze) 40%, transparent);
+  border-color: color-mix(in srgb, var(--bronze) 42%, transparent);
   box-shadow: var(--shadow-sm);
 }
 
 .admin-stat-label {
   font-size: 0.625rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
-  color: var(--bronze-dark);
+  color: var(--admin-label);
 }
 
 .admin-stat-value {
   font-family: var(--font-display), Georgia, serif;
-  font-size: 1.55rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
+  line-height: 1.15;
 }
 
 .admin-dl {
@@ -1667,60 +1682,87 @@ a.btn-ghost {
 }
 
 .admin-chip-active {
-  background: #0a0c10;
-  border-color: #0a0c10;
+  background: var(--navy);
+  border-color: var(--navy);
   color: var(--cream);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bronze) 35%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--bronze) 40%, transparent),
+    0 1px 2px color-mix(in srgb, var(--navy) 20%, transparent);
 }
 
 .dark .admin-chip-active {
-  background: color-mix(in srgb, var(--bronze) 22%, transparent);
-  border-color: color-mix(in srgb, var(--bronze) 40%, transparent);
+  background: color-mix(in srgb, var(--bronze) 24%, transparent);
+  border-color: color-mix(in srgb, var(--bronze) 45%, transparent);
   color: var(--bronze-light);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 8%, transparent);
+}
+
+.admin-badge {
+  border: 1px solid transparent;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent);
+}
+.dark .admin-badge {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 6%, transparent);
 }
 
 .admin-badge-sky {
-  background: color-mix(in srgb, #0ea5e9 16%, transparent);
-  color: #0c4a6e;
+  background: color-mix(in srgb, #0284c7 14%, transparent);
+  border-color: color-mix(in srgb, #0284c7 18%, transparent);
+  color: #075985;
 }
 .dark .admin-badge-sky {
+  background: color-mix(in srgb, #38bdf8 16%, transparent);
+  border-color: color-mix(in srgb, #38bdf8 22%, transparent);
   color: #bae6fd;
 }
 
 .admin-badge-violet {
-  background: color-mix(in srgb, #8b5cf6 16%, transparent);
-  color: #4c1d95;
+  background: color-mix(in srgb, #7c3aed 14%, transparent);
+  border-color: color-mix(in srgb, #7c3aed 18%, transparent);
+  color: #5b21b6;
 }
 .dark .admin-badge-violet {
+  background: color-mix(in srgb, #a78bfa 16%, transparent);
+  border-color: color-mix(in srgb, #a78bfa 22%, transparent);
   color: #ddd6fe;
 }
 
 .admin-badge-amber {
-  background: color-mix(in srgb, #f59e0b 18%, transparent);
-  color: #78350f;
+  background: color-mix(in srgb, #d97706 16%, transparent);
+  border-color: color-mix(in srgb, #d97706 20%, transparent);
+  color: #92400e;
 }
 .dark .admin-badge-amber {
+  background: color-mix(in srgb, #fbbf24 16%, transparent);
+  border-color: color-mix(in srgb, #fbbf24 22%, transparent);
   color: #fde68a;
 }
 
 .admin-badge-emerald {
-  background: color-mix(in srgb, #10b981 16%, transparent);
-  color: #064e3b;
+  background: color-mix(in srgb, #059669 14%, transparent);
+  border-color: color-mix(in srgb, #059669 18%, transparent);
+  color: #065f46;
 }
 .dark .admin-badge-emerald {
+  background: color-mix(in srgb, #34d399 16%, transparent);
+  border-color: color-mix(in srgb, #34d399 22%, transparent);
   color: #a7f3d0;
 }
 
 .admin-badge-rose {
-  background: color-mix(in srgb, #f43f5e 14%, transparent);
+  background: color-mix(in srgb, #e11d48 12%, transparent);
+  border-color: color-mix(in srgb, #e11d48 18%, transparent);
   color: #9f1239;
 }
 .dark .admin-badge-rose {
+  background: color-mix(in srgb, #fb7185 14%, transparent);
+  border-color: color-mix(in srgb, #fb7185 20%, transparent);
   color: #fecdd3;
 }
 
 .admin-badge-muted {
-  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  border-color: color-mix(in srgb, var(--ink) 10%, transparent);
   color: var(--muted);
 }
 
@@ -1734,7 +1776,7 @@ a.btn-ghost {
 
 @media (min-width: 1024px) {
   .admin-sidebar {
-    background: color-mix(in srgb, var(--admin-bg) 70%, var(--admin-panel));
+    background: var(--admin-sidebar);
   }
 }
 
@@ -1746,11 +1788,12 @@ a.btn-ghost {
   content: "";
   position: absolute;
   left: 0;
-  top: 20%;
-  bottom: 20%;
-  width: 3px;
+  top: 18%;
+  bottom: 18%;
+  width: 2.5px;
   border-radius: 2px;
-  background: var(--bronze);
+  background: linear-gradient(180deg, var(--bronze-light), var(--bronze-dark));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--bronze) 45%, transparent);
 }
 
 
@@ -2499,6 +2542,153 @@ a.btn-ghost {
   }
 }
 
+
+
+
+/* —— Admin v7: agency / enterprise polish —— */
+.admin-section-label {
+  font-size: 0.65625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--admin-label);
+}
+
+.dark .admin-section-label {
+  color: var(--admin-label);
+}
+
+.admin-page-header .admin-title-rule {
+  height: 2px;
+  width: 1.75rem;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--bronze), var(--bronze-light));
+}
+
+.admin-topbar {
+  backdrop-filter: saturate(1.1) blur(8px);
+  -webkit-backdrop-filter: saturate(1.1) blur(8px);
+}
+
+.admin-sidebar nav {
+  padding-top: 0.85rem;
+}
+
+.admin-nav-link {
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.admin-nav-link svg {
+  opacity: 0.72;
+  transition: opacity 140ms ease, color 140ms ease;
+}
+
+.admin-nav-link:hover svg,
+.admin-nav-link[aria-current="page"] svg {
+  opacity: 1;
+}
+
+.admin-table thead th {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--admin-label);
+  background: var(--admin-thead);
+}
+
+.admin-table tbody tr:hover {
+  background: var(--admin-row-hover) !important;
+}
+
+.admin-table-wrap {
+  border-color: var(--admin-border) !important;
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-mobile-card {
+  border-color: var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.admin-mobile-card:hover {
+  border-color: color-mix(in srgb, var(--bronze) 32%, transparent);
+}
+
+.admin-bulk-bar {
+  border-color: color-mix(in srgb, var(--bronze) 32%, transparent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--bronze) 10%, transparent),
+      color-mix(in srgb, var(--bronze) 4%, transparent)
+    );
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-glass-panel {
+  border-color: var(--admin-border);
+  box-shadow: var(--admin-shadow), inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+}
+
+.dark .admin-glass-panel {
+  box-shadow: var(--admin-shadow), inset 0 1px 0 color-mix(in srgb, #fff 5%, transparent);
+}
+
+.admin-attention {
+  border-color: color-mix(in srgb, var(--bronze) 28%, transparent) !important;
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-toolbar .field-input,
+.admin-table .field-input,
+.admin-mobile-card .field-input {
+  min-height: 2.35rem;
+  padding-block: 0.45rem;
+  font-size: 0.8125rem;
+  border-radius: 0.5rem;
+}
+
+.admin-btn-sm {
+  min-height: 2.35rem !important;
+  padding: 0.45rem 0.95rem !important;
+  font-size: 0.8125rem !important;
+  border-radius: 0.5625rem !important;
+}
+
+.admin-footer {
+  background: color-mix(in srgb, var(--admin-panel) 88%, var(--admin-bg));
+}
+
+.admin-login-card {
+  border: 1px solid color-mix(in srgb, var(--bronze) 22%, transparent);
+  box-shadow: var(--shadow-md), 0 0 0 1px color-mix(in srgb, var(--bronze) 8%, transparent);
+}
+
+.admin-toast {
+  box-shadow: var(--shadow-md), 0 0 0 1px var(--admin-border);
+}
+
+.admin-kbd {
+  background: color-mix(in srgb, var(--admin-panel) 70%, var(--admin-thead));
+}
+
+.dark .admin-label-link {
+  color: var(--bronze-light);
+}
+
+.admin-label-link {
+  color: var(--bronze-dark);
+  font-weight: 600;
+  font-size: 0.75rem;
+  transition: color 140ms ease;
+}
+
+.admin-label-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
 /* Hide floating chrome while the mobile nav is open so pills don't
    sit above the menu (they use z-55 / z-60; header menu is z-70). */

@@ -99,7 +99,7 @@ export default function NotificationCenter() {
           id={panelId}
           role="dialog"
           aria-label="Notifications"
-          className="admin-notify-panel absolute right-0 top-[calc(100%+0.4rem)] z-50 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] text-ink shadow-[var(--shadow-lg)]"
+          className="admin-notify-panel absolute right-0 top-[calc(100%+0.4rem)] z-50 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] text-ink shadow-[var(--shadow-lg)]"
         >
           <div className="admin-cmd-rail" aria-hidden />
           <div className="flex items-center justify-between gap-2 border-b border-ink/8 px-3 py-2.5">

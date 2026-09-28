@@ -99,7 +99,7 @@ export default async function AdminCustomersPage() {
             })}
           </ul>
 
-          <div className="admin-table-wrap admin-gold-rail hidden overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)] md:block">
+          <div className="admin-table-wrap admin-gold-rail hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)] md:block">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/8 bg-[var(--admin-thead)] px-3 py-2.5 sm:px-4">
               <p className="text-[0.6875rem] font-bold uppercase tracking-wider text-muted">
                 Directory

@@ -215,7 +215,7 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
       </div>
 
       {selected.size > 0 && (
-        <div className="admin-bulk-bar flex flex-col gap-2 rounded-xl border border-bronze/25 bg-bronze/5 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+        <div className="admin-bulk-bar flex flex-col gap-2 rounded-xl border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <p className="text-sm font-semibold text-ink">
             {selected.size} selected
           </p>
@@ -343,11 +343,11 @@ export default function QuotesTable({ quotes }: { quotes: QuoteRecord[] }) {
           </ul>
 
           {/* Desktop table */}
-          <div className="admin-table-wrap admin-gold-rail hidden overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)] md:block">
+          <div className="admin-table-wrap admin-gold-rail hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] md:block">
             <div className="overflow-x-auto">
               <table className="admin-table min-w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-ink/10 bg-[var(--admin-thead)] text-[0.625rem] uppercase tracking-wider text-muted">
+                  <tr className="border-b border-[color:var(--admin-border)]">
                     <th className="w-10 px-3 py-2.5 sm:px-4">
                       <label className="admin-touch inline-flex">
                         <span className="sr-only">Select all filtered</span>

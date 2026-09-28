@@ -149,11 +149,11 @@ export default function PriceBookPanel() {
           description="Add a custom rate below, or reset to the seed price book."
         />
       ) : (
-        <div className="admin-table-wrap admin-gold-rail overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)]">
+        <div className="admin-table-wrap admin-gold-rail overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]">
           <div className="overflow-x-auto">
             <table className="admin-table min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-ink/10 bg-[var(--admin-thead)] text-[0.625rem] uppercase tracking-wider text-muted">
+                <tr className="border-b border-[color:var(--admin-border)]">
                   <th className="px-3 py-2.5 font-semibold sm:px-4">Item</th>
                   <th className="px-3 py-2.5 font-semibold sm:px-4">Unit</th>
                   <th className="px-3 py-2.5 font-semibold sm:px-4">Rate</th>

@@ -75,7 +75,7 @@ export default function TemplatesPanel() {
             </button>
           ))}
         </div>
-        <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)]">
+        <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]">
           {list.map((t) => (
             <li key={t.id}>
               <button

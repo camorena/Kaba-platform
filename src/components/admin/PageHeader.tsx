@@ -15,16 +15,16 @@ export default function PageHeader({
   crumbs?: Crumb[];
 }) {
   return (
-    <header className="admin-page-header mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
+    <header className="admin-page-header mb-4 flex flex-col gap-3 sm:mb-5 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {crumbs && crumbs.length > 0 ? <Breadcrumbs items={crumbs} /> : null}
         {meta}
-        <div className="mb-2 h-0.5 w-8 rounded-full bg-bronze" aria-hidden />
-        <h1 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl lg:text-[1.75rem]">
+        <div className="admin-title-rule mb-2" aria-hidden />
+        <h1 className="font-display text-[1.35rem] font-semibold leading-tight tracking-[-0.02em] text-ink sm:text-[1.65rem] lg:text-[1.75rem]">
           {title}
         </h1>
         {description && (
-          <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted">
+          <p className="mt-1 max-w-2xl text-[0.8125rem] leading-relaxed text-muted sm:text-sm">
             {description}
           </p>
         )}

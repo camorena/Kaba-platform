@@ -50,7 +50,7 @@ export default async function AdminLoginPage() {
             height={56}
             className="h-14 w-14 object-contain"
           />
-          <p className="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+          <p className="mt-6 admin-section-label !tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
             Kaba Fence Admin
           </p>
           <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-ink xl:text-4xl">
@@ -115,7 +115,7 @@ export default async function AdminLoginPage() {
             </p>
           </div>
 
-          <div className="admin-glass-panel admin-login-card border-bronze/20 p-5 shadow-[var(--shadow-md)] sm:p-6">
+          <div className="admin-glass-panel admin-login-card p-5 sm:p-6">
             <LoginForm configured={Boolean(getAdminPassword())} />
           </div>
 

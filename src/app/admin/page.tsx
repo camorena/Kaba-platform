@@ -92,10 +92,10 @@ export default async function AdminDashboardPage() {
         description="Dense ops brief — attention items, pipeline funnel, and recent movement. Demo amounts; auth remains a stub."
         actions={
           <div className="flex flex-wrap gap-2">
-            <Link href="/admin/pipeline" className="btn-primary text-sm">
+            <Link href="/admin/pipeline" className="btn-primary admin-btn-sm">
               Pipeline
             </Link>
-            <Link href="/admin/pricebook" className="btn-secondary-light text-sm">
+            <Link href="/admin/pricebook" className="btn-secondary-light admin-btn-sm">
               Price book
             </Link>
           </div>
@@ -120,7 +120,7 @@ export default async function AdminDashboardPage() {
       {needsAction.length > 0 && (
         <section className="admin-attention mb-4 overflow-hidden rounded-xl border border-bronze/25 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
           <div className="flex items-center justify-between gap-2 border-b border-ink/8 bg-gradient-to-r from-bronze/12 to-transparent px-3 py-2 sm:px-4">
-            <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark dark:text-bronze-light">
+            <h2 className="admin-section-label">
               Needs attention
             </h2>
             <span className="text-[0.625rem] tabular-nums text-muted">
@@ -168,12 +168,12 @@ export default async function AdminDashboardPage() {
 
       <section className="admin-glass-panel admin-gold-rail mt-4 p-3.5 sm:p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
+          <h2 className="admin-section-label">
             Pipeline funnel
           </h2>
           <Link
             href="/admin/pipeline"
-            className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+            className="admin-label-link"
           >
             Board
           </Link>
@@ -208,12 +208,12 @@ export default async function AdminDashboardPage() {
       <div className="mt-4 grid gap-3 lg:grid-cols-5">
         <section className="lg:col-span-3">
           <div className="mb-2 flex items-center justify-between gap-3">
-            <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
+            <h2 className="admin-section-label">
               Recent quotes
             </h2>
             <Link
               href="/admin/quotes"
-              className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+              className="admin-label-link"
             >
               View all
             </Link>
@@ -229,7 +229,7 @@ export default async function AdminDashboardPage() {
               }
             />
           ) : (
-            <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
+            <ul className="divide-y divide-[color:var(--admin-border)] overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)]">
               {recent.map((q) => (
                 <li key={q.id}>
                   <Link
@@ -257,17 +257,17 @@ export default async function AdminDashboardPage() {
         <section className="space-y-3 lg:col-span-2">
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
+              <h2 className="admin-section-label">
                 Invoices
               </h2>
               <Link
                 href="/admin/invoices"
-                className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+                className="admin-label-link"
               >
                 All
               </Link>
             </div>
-            <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)]">
+            <ul className="divide-y divide-[color:var(--admin-border)] overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)]">
               {recentInvoices.map((inv) => (
                 <li key={inv.id}>
                   <Link
@@ -285,17 +285,17 @@ export default async function AdminDashboardPage() {
           </div>
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-bronze-dark">
+              <h2 className="admin-section-label">
                 Payments
               </h2>
               <Link
                 href="/admin/payments"
-                className="text-xs font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+                className="admin-label-link"
               >
                 All
               </Link>
             </div>
-            <ul className="divide-y divide-ink/8 overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)]">
+            <ul className="divide-y divide-[color:var(--admin-border)] overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)]">
               {recentPayments.map((p) => (
                 <li
                   key={p.id}

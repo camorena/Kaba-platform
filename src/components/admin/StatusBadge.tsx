@@ -7,7 +7,7 @@ export default function StatusBadge({
 }) {
   return (
     <span
-      className={`admin-badge inline-flex items-center rounded-full px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide ${tone}`}
+      className={`admin-badge inline-flex items-center rounded-full px-2 py-[0.2rem] text-[0.625rem] font-bold uppercase tracking-[0.06em] ${tone}`}
     >
       {label}
     </span>

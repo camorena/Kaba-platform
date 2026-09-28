@@ -23,7 +23,7 @@ export function SkeletonStatRow({ count = 4 }: { count?: number }) {
 export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
     <div
-      className="overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)]"
+      className="overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]"
       aria-busy="true"
       aria-label="Loading table"
     >

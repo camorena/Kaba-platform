@@ -131,9 +131,9 @@ function NavLinks({
             href={item.href}
             aria-current={active ? "page" : undefined}
             onClick={onNavigate}
-            className={`admin-nav-link admin-touch flex items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-[0.8125rem] font-semibold transition ${
+            className={`admin-nav-link admin-touch flex items-center gap-2.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[0.8125rem] font-semibold transition ${
               active
-                ? "bg-[#0a0c10] text-cream shadow-sm ring-1 ring-bronze/25 dark:bg-bronze/20 dark:text-bronze-light dark:ring-bronze/30"
+                ? "bg-navy text-cream shadow-[0_1px_2px_rgba(11,17,26,0.18)] ring-1 ring-bronze/30 dark:bg-bronze/20 dark:text-bronze-light dark:ring-bronze/35 dark:shadow-none"
                 : "text-muted hover:bg-[var(--admin-row-hover)] hover:text-ink"
             }`}
           >
@@ -218,9 +218,9 @@ function AdminShellInner({
 
   return (
     <div className="admin-app min-h-full text-ink">
-      <header className="admin-topbar sticky top-0 z-40 border-b border-white/10 bg-[#0a0c10] text-cream shadow-[0_1px_0_0_rgba(192,139,58,0.35)] pt-[env(safe-area-inset-top,0px)]">
-        <div className="h-0.5 w-full bg-gradient-to-r from-bronze via-bronze-light to-bronze" aria-hidden />
-        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-5 lg:px-6">
+      <header className="admin-topbar sticky top-0 z-40 border-b border-white/[0.08] bg-[#0a0c10]/95 text-cream shadow-[0_1px_0_0_rgba(192,139,58,0.4)] pt-[env(safe-area-inset-top,0px)]">
+        <div className="h-[2px] w-full bg-gradient-to-r from-bronze-dark via-bronze-light to-bronze-dark" aria-hidden />
+        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-5 lg:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
@@ -253,7 +253,7 @@ function AdminShellInner({
             <button
               type="button"
               onClick={openCmd}
-              className="admin-search-trigger admin-touch hidden items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-cream/70 transition hover:border-bronze/40 hover:bg-white/10 hover:text-cream sm:inline-flex"
+              className="admin-search-trigger admin-touch hidden items-center gap-2 rounded-md border border-white/12 bg-white/[0.06] px-2.5 py-1.5 text-xs text-cream/75 transition hover:border-bronze/45 hover:bg-white/10 hover:text-cream sm:inline-flex"
               aria-label="Open command palette"
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -291,7 +291,7 @@ function AdminShellInner({
             <button
               type="button"
               onClick={() => void logout()}
-              className="admin-touch rounded-md bg-bronze px-2.5 py-2 text-xs font-bold uppercase tracking-[0.06em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.35)] transition hover:brightness-105 active:scale-[0.98]"
+              className="admin-touch rounded-md bg-gradient-to-b from-bronze-light/90 to-bronze-dark px-2.5 py-2 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.32),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:brightness-105 active:scale-[0.98]"
             >
               Sign out
             </button>
@@ -324,8 +324,8 @@ function AdminShellInner({
             aria-modal="true"
             aria-label="Admin navigation"
           >
-            <div className="flex items-center justify-between border-b border-ink/8 px-3 py-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-muted">
+            <div className="flex items-center justify-between border-b border-[color:var(--admin-border)] px-3 py-3">
+              <p className="admin-section-label">
                 Navigate
               </p>
               <button
@@ -349,15 +349,15 @@ function AdminShellInner({
         </div>
       )}
 
-      <div className="mx-auto grid max-w-[90rem] gap-0 lg:grid-cols-[13.5rem_minmax(0,1fr)]">
-        <aside className="admin-sidebar hidden border-r border-ink/8 lg:sticky lg:top-[3.5rem] lg:block lg:h-[calc(100dvh-3.5rem)] lg:overflow-y-auto">
+      <div className="mx-auto grid max-w-[90rem] gap-0 lg:grid-cols-[14rem_minmax(0,1fr)]">
+        <aside className="admin-sidebar hidden border-r border-[color:var(--admin-border)] lg:sticky lg:top-[3.35rem] lg:block lg:h-[calc(100dvh-3.35rem)] lg:overflow-y-auto">
           <nav
             aria-label="Admin"
-            className="flex flex-col gap-0.5 px-3 py-4"
+            className="flex flex-col gap-0.5 px-2.5 py-3.5"
           >
             <NavLinks pathname={pathname} />
           </nav>
-          <p className="px-4 pb-4 text-[0.625rem] leading-relaxed text-muted">
+          <p className="px-3.5 pb-4 text-[0.625rem] leading-relaxed text-muted">
             Press <kbd className="admin-kbd">⌘K</kbd> to jump anywhere.
           </p>
         </aside>
@@ -367,9 +367,9 @@ function AdminShellInner({
         </main>
       </div>
 
-      <footer className="border-t border-ink/8 bg-[var(--admin-panel)] pb-[env(safe-area-inset-bottom,0px)]">
-        <div className="mx-auto flex max-w-[90rem] flex-col gap-2 px-3 py-4 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-5 lg:px-6">
-          <p>Kaba Fence Admin</p>
+      <footer className="admin-footer border-t border-[color:var(--admin-border)] pb-[env(safe-area-inset-bottom,0px)]">
+        <div className="mx-auto flex max-w-[90rem] flex-col gap-2 px-3 py-3.5 text-[0.6875rem] text-muted sm:flex-row sm:items-center sm:justify-between sm:px-5 lg:px-6">
+          <p className="font-medium tracking-tight">Kaba Fence Admin</p>
           <SiteCredit tone="admin" />
         </div>
       </footer>

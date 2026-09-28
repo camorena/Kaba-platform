@@ -250,11 +250,11 @@ export default function PaymentsPanel({
           description="Use the stub form above to attach a demo payment to an invoice."
         />
       ) : (
-        <div className="admin-table-wrap overflow-hidden rounded-xl border border-ink/10 bg-[var(--admin-panel)] shadow-[var(--shadow-xs)]">
+        <div className="admin-table-wrap overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)]">
           <div className="overflow-x-auto">
             <table className="admin-table min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-ink/10 bg-[var(--admin-thead)] text-[0.625rem] uppercase tracking-wider text-muted">
+                <tr className="border-b border-[color:var(--admin-border)]">
                   <th className="px-3 py-2.5 font-semibold sm:px-4">When</th>
                   <th className="px-3 py-2.5 font-semibold sm:px-4">Invoice</th>
                   <th className="px-3 py-2.5 font-semibold sm:px-4">Customer</th>
@@ -269,7 +269,7 @@ export default function PaymentsPanel({
                 {payments.map((p) => (
                   <tr
                     key={p.id}
-                    className="border-b border-ink/5 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
+                    className="border-b border-[color:var(--admin-border)]/60 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
                   >
                     <td className="whitespace-nowrap px-3 py-3 text-muted sm:px-4">
                       {formatShortDate(p.createdAt)}
