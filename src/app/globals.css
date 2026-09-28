@@ -3115,3 +3115,113 @@ html[data-mobile-nav="open"] .chat-widget-root {
 .dark .admin-auth-banner-icon {
   color: #fde68a;
 }
+
+
+/* —— Admin v15: enterprise responsive pass —— */
+.admin-main {
+  padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+  padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 640px) {
+  .admin-main {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-main {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Settings section chips — 44px touch on coarse pointers */
+@media (pointer: coarse) {
+  .admin-settings-nav-link {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    padding-inline: 0.85rem;
+  }
+}
+
+/* Pipeline board: peek next column + snap */
+.admin-pipeline {
+  scroll-padding-inline: 0.75rem;
+  -webkit-overflow-scrolling: touch;
+}
+.admin-pipeline-col.snap-start {
+  scroll-snap-align: start;
+}
+
+/* Dense toolbars wrap without clipping on phones */
+.admin-page-header .flex.flex-wrap,
+.admin-toolbar {
+  row-gap: 0.5rem;
+}
+
+/* Forms: full-bleed primary actions on narrow screens */
+@media (max-width: 639px) {
+  .admin-main form .btn-primary.w-full,
+  .admin-main form .btn-secondary.w-full {
+    justify-content: center;
+  }
+
+  .admin-mobile-card {
+    padding: 1rem;
+  }
+
+  /* Avoid horizontal bleed from wide tables that forgot md:hidden cards */
+  .admin-table-wrap {
+    max-width: 100%;
+  }
+}
+
+/* Invoice / quote detail sticky action row safe area */
+@media (max-width: 639px) {
+  .admin-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: max(0.25rem, env(safe-area-inset-bottom, 0px));
+  }
+  .admin-detail-actions > .btn-primary,
+  .admin-detail-actions > .btn-secondary,
+  .admin-detail-actions > a.btn-primary,
+  .admin-detail-actions > a.btn-secondary {
+    flex: 1 1 auto;
+    min-width: min(100%, 9rem);
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Content CMS list already cards-on-mobile; ensure edit form fields don't overflow */
+.admin-main .field-input,
+.admin-main textarea.field-input,
+.admin-main select.field-input {
+  max-width: 100%;
+}
+
+/* Settings mobile section rail — edge fade hints horizontal scroll */
+@media (max-width: 1023px) {
+  .admin-settings-nav {
+    position: relative;
+  }
+  .admin-settings-nav::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0.15rem;
+    width: 1.75rem;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--admin-bg, var(--cream)) 88%, transparent)
+    );
+  }
+}

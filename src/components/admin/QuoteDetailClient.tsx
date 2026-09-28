@@ -129,7 +129,7 @@ export default function QuoteDetailClient({
             {quote.serviceType} · {quote.address}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 print:hidden">
+        <div className="admin-detail-actions flex flex-wrap gap-2 print:hidden">
           <a href={`tel:${quote.phone}`} className="btn-secondary-light text-sm">
             {t("detail.call")}
           </a>

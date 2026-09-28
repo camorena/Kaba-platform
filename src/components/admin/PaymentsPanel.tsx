@@ -300,11 +300,11 @@ export default function PaymentsPanel({
             {ok}
           </p>
         )}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <button
             type="submit"
             disabled={busy}
-            className="btn-primary text-sm disabled:opacity-60"
+            className="admin-touch btn-primary w-full text-sm disabled:opacity-60 sm:w-auto"
           >
             {busy ? t("common.saving") : t("payments.recordPayment")}
           </button>
@@ -313,7 +313,7 @@ export default function PaymentsPanel({
               type="button"
               disabled={busy}
               onClick={() => void startCheckout()}
-              className="btn-secondary text-sm disabled:opacity-60"
+              className="admin-touch btn-secondary w-full text-sm disabled:opacity-60 sm:w-auto"
             >
               {busy ? t("common.saving") : t("payments.collectDeposit")}
             </button>
@@ -327,69 +327,105 @@ export default function PaymentsPanel({
           description={t("payments.emptyDesc")}
         />
       ) : (
-        <div className="admin-table-wrap overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)]">
-          <div className="overflow-x-auto">
-            <table className="admin-table min-w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-[color:var(--admin-border)]">
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">When</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Invoice</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Customer</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Amount</th>
-                  <th className="hidden px-3 py-2.5 font-semibold sm:table-cell sm:px-4">
-                    Method
-                  </th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payments.map((p) => (
-                  <tr
-                    key={p.id}
-                    className="border-b border-[color:var(--admin-border)]/60 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
-                  >
-                    <td className="whitespace-nowrap px-3 py-3 text-muted sm:px-4">
-                      {formatShortDate(p.createdAt)}
-                      {p.demo && (
-                        <div className="mt-1">
-                          <span className="rounded bg-amber-500/15 px-1 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
-                            Demo
-                          </span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-3 py-3 sm:px-4">
-                      <Link
-                        href={`/admin/invoices/${p.invoiceId}`}
-                        className="font-semibold text-ink hover:underline"
-                      >
-                        {p.invoiceNumber}
-                      </Link>
-                      {p.reference && (
-                        <div className="text-xs text-muted">{p.reference}</div>
-                      )}
-                    </td>
-                    <td className="px-3 py-3 text-ink sm:px-4">
-                      {p.customerName}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-3 font-medium tabular-nums text-ink sm:px-4">
+        <>
+          <ul className="admin-card-list space-y-2.5 md:hidden">
+            {payments.map((p) => (
+              <li key={p.id}>
+                <Link
+                  href={`/admin/invoices/${p.invoiceId}`}
+                  className="admin-mobile-card admin-touch block"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-ink">{p.invoiceNumber}</p>
+                      <p className="truncate text-sm text-muted">{p.customerName}</p>
+                    </div>
+                    <StatusBadge
+                      label={paymentStatusLabel(locale, p.status)}
+                      tone={paymentStatusTone[p.status]}
+                    />
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-sm">
+                    <span className="font-medium tabular-nums text-ink">
                       {formatMoney(p.amountCents)}
-                    </td>
-                    <td className="hidden px-3 py-3 capitalize text-muted sm:table-cell sm:px-4">
-                      {p.method}
-                    </td>
-                    <td className="px-3 py-3 sm:px-4">
-                      <StatusBadge
-                        label={p.status}
-                        tone={paymentStatusTone[p.status]}
-                      />
-                    </td>
+                    </span>
+                    <span className="text-xs text-muted">
+                      {paymentMethodLabel(locale, p.method)} · {formatShortDate(p.createdAt)}
+                    </span>
+                  </div>
+                  {p.demo ? (
+                    <span className="mt-2 inline-block rounded bg-amber-500/15 px-1 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
+                      Demo
+                    </span>
+                  ) : null}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="admin-table-wrap hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] shadow-[var(--admin-shadow)] md:block">
+            <div className="overflow-x-auto">
+              <table className="admin-table min-w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-[color:var(--admin-border)]">
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("payments.colDate")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("payments.colInvoice")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("payments.colCustomer")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("payments.colAmount")}</th>
+                    <th className="hidden px-3 py-2.5 font-semibold lg:table-cell sm:px-4">
+                      {t("payments.colMethod")}
+                    </th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("payments.colStatus")}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {payments.map((p) => (
+                    <tr
+                      key={p.id}
+                      className="border-b border-[color:var(--admin-border)]/60 align-top transition-colors last:border-0 hover:bg-[var(--admin-row-hover)]"
+                    >
+                      <td className="whitespace-nowrap px-3 py-3 text-muted sm:px-4">
+                        {formatShortDate(p.createdAt)}
+                        {p.demo && (
+                          <div className="mt-1">
+                            <span className="rounded bg-amber-500/15 px-1 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-amber-900 dark:text-amber-100">
+                              Demo
+                            </span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-3 py-3 sm:px-4">
+                        <Link
+                          href={`/admin/invoices/${p.invoiceId}`}
+                          className="font-semibold text-ink hover:underline"
+                        >
+                          {p.invoiceNumber}
+                        </Link>
+                        {p.reference && (
+                          <div className="text-xs text-muted">{p.reference}</div>
+                        )}
+                      </td>
+                      <td className="px-3 py-3 text-ink sm:px-4">
+                        {p.customerName}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-3 font-medium tabular-nums text-ink sm:px-4">
+                        {formatMoney(p.amountCents)}
+                      </td>
+                      <td className="hidden px-3 py-3 capitalize text-muted lg:table-cell sm:px-4">
+                        {paymentMethodLabel(locale, p.method)}
+                      </td>
+                      <td className="px-3 py-3 sm:px-4">
+                        <StatusBadge
+                          label={paymentStatusLabel(locale, p.status)}
+                          tone={paymentStatusTone[p.status]}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

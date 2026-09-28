@@ -151,80 +151,137 @@ export default function PriceBookPanel() {
           description={t("pricebook.emptyDesc")}
         />
       ) : (
-        <div className="admin-table-wrap admin-gold-rail overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)]">
-          <div className="overflow-x-auto">
-            <table className="admin-table min-w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-[color:var(--admin-border)]">
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colItem")}</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colUnit")}</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colRate")}</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colQty")}</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colLine")}</th>
-                  <th className="px-3 py-2.5 font-semibold sm:px-4">
-                    <span className="sr-only">{t("pricebook.remove")}</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((item) => {
-                  const qty = qtyById[item.id] ?? 0;
-                  return (
-                    <tr
-                      key={item.id}
-                      className="border-b border-ink/5 last:border-0 hover:bg-[var(--admin-row-hover)]"
+        <>
+          <ul className="admin-card-list space-y-2.5 md:hidden">
+            {visible.map((item) => {
+              const qty = qtyById[item.id] ?? 0;
+              return (
+                <li key={item.id} className="admin-mobile-card">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-ink">{item.name}</p>
+                      <p className="text-[0.625rem] uppercase tracking-wide text-muted">
+                        {item.category}
+                        {item.notes ? ` · ${item.notes}` : ""}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="admin-touch shrink-0 text-xs font-semibold text-muted hover:text-danger"
+                      onClick={() => removeItem(item.id)}
                     >
-                      <td className="px-3 py-2.5 sm:px-4">
-                        <div className="font-semibold text-ink">{item.name}</div>
-                        <div className="text-[0.625rem] uppercase tracking-wide text-muted">
-                          {item.category}
-                          {item.notes ? ` · ${item.notes}` : ""}
-                        </div>
-                      </td>
-                      <td className="px-3 py-2.5 text-muted sm:px-4">
-                        {item.unit}
-                      </td>
-                      <td className="px-3 py-2.5 tabular-nums text-ink sm:px-4">
-                        {formatMoney(item.unitCents)}
-                      </td>
-                      <td className="px-3 py-2.5 sm:px-4">
-                        <input
-                          type="number"
-                          min={0}
-                          step={1}
-                          value={qty}
-                          onChange={(e) =>
-                            setQtyById((m) => ({
-                              ...m,
-                              [item.id]: Math.max(
-                                0,
-                                Number.parseInt(e.target.value || "0", 10) || 0,
-                              ),
-                            }))
-                          }
-                          className="field-input !mt-0 w-20 py-1 text-sm"
-                          aria-label={t("pricebook.qtyFor", { name: item.name })}
-                        />
-                      </td>
-                      <td className="px-3 py-2.5 font-medium tabular-nums text-ink sm:px-4">
+                      {t("pricebook.remove")}
+                    </button>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+                    <div className="text-sm">
+                      <p className="text-muted">
+                        {formatMoney(item.unitCents)} / {item.unit}
+                      </p>
+                      <p className="mt-0.5 font-medium tabular-nums text-ink">
                         {formatMoney(qty * item.unitCents)}
-                      </td>
-                      <td className="px-3 py-2.5 sm:px-4">
-                        <button
-                          type="button"
-                          className="text-xs font-semibold text-muted hover:text-danger"
-                          onClick={() => removeItem(item.id)}
-                        >
-                          {t("pricebook.remove")}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </p>
+                    </div>
+                    <label className="block">
+                      <span className="admin-section-label">{t("pricebook.colQty")}</span>
+                      <input
+                        type="number"
+                        min={0}
+                        step={1}
+                        value={qty}
+                        onChange={(e) =>
+                          setQtyById((m) => ({
+                            ...m,
+                            [item.id]: Math.max(
+                              0,
+                              Number.parseInt(e.target.value || "0", 10) || 0,
+                            ),
+                          }))
+                        }
+                        className="field-input !mt-1 w-24 py-2 text-sm"
+                        aria-label={t("pricebook.qtyFor", { name: item.name })}
+                      />
+                    </label>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="admin-table-wrap admin-gold-rail hidden overflow-hidden rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] md:block">
+            <div className="overflow-x-auto">
+              <table className="admin-table min-w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-[color:var(--admin-border)]">
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colItem")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colUnit")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colRate")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colQty")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">{t("pricebook.colLine")}</th>
+                    <th className="px-3 py-2.5 font-semibold sm:px-4">
+                      <span className="sr-only">{t("pricebook.remove")}</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map((item) => {
+                    const qty = qtyById[item.id] ?? 0;
+                    return (
+                      <tr
+                        key={item.id}
+                        className="border-b border-ink/5 last:border-0 hover:bg-[var(--admin-row-hover)]"
+                      >
+                        <td className="px-3 py-2.5 sm:px-4">
+                          <div className="font-semibold text-ink">{item.name}</div>
+                          <div className="text-[0.625rem] uppercase tracking-wide text-muted">
+                            {item.category}
+                            {item.notes ? ` · ${item.notes}` : ""}
+                          </div>
+                        </td>
+                        <td className="px-3 py-2.5 text-muted sm:px-4">
+                          {item.unit}
+                        </td>
+                        <td className="px-3 py-2.5 tabular-nums text-ink sm:px-4">
+                          {formatMoney(item.unitCents)}
+                        </td>
+                        <td className="px-3 py-2.5 sm:px-4">
+                          <input
+                            type="number"
+                            min={0}
+                            step={1}
+                            value={qty}
+                            onChange={(e) =>
+                              setQtyById((m) => ({
+                                ...m,
+                                [item.id]: Math.max(
+                                  0,
+                                  Number.parseInt(e.target.value || "0", 10) || 0,
+                                ),
+                              }))
+                            }
+                            className="field-input !mt-0 w-20 py-1 text-sm"
+                            aria-label={t("pricebook.qtyFor", { name: item.name })}
+                          />
+                        </td>
+                        <td className="px-3 py-2.5 font-medium tabular-nums text-ink sm:px-4">
+                          {formatMoney(qty * item.unitCents)}
+                        </td>
+                        <td className="px-3 py-2.5 sm:px-4">
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-muted hover:text-danger"
+                            onClick={() => removeItem(item.id)}
+                          >
+                            {t("pricebook.remove")}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       <section className="admin-card">

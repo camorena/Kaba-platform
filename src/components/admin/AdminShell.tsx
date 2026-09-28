@@ -278,11 +278,11 @@ function AdminShellInner({
               height={28}
               className="h-7 w-7 object-contain"
             />
-            <div className="min-w-0">
+            <div className="min-w-0 hidden sm:block">
               <p className="truncate font-display text-sm font-semibold tracking-tight">
                 {t("shell.brand")}
               </p>
-              <p className="hidden truncate text-[0.625rem] uppercase tracking-[0.12em] text-bronze-light/80 xs:block sm:block">
+              <p className="truncate text-[0.625rem] uppercase tracking-[0.12em] text-bronze-light/80">
                 {t("shell.tagline")}
               </p>
             </div>
@@ -330,9 +330,13 @@ function AdminShellInner({
             <button
               type="button"
               onClick={() => void logout()}
-              className="admin-touch rounded-md bg-gradient-to-b from-bronze-light/90 to-bronze-dark px-2.5 py-2 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.32),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:brightness-105 active:scale-[0.98]"
+              aria-label={t("shell.signOut")}
+              className="admin-touch inline-flex items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-bronze-light/90 to-bronze-dark px-2.5 py-2 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-white shadow-[0_4px_14px_rgba(192,139,58,0.32),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:brightness-105 active:scale-[0.98]"
             >
-              {t("shell.signOut")}
+              <svg className="h-4 w-4 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+              </svg>
+              <span className="hidden sm:inline">{t("shell.signOut")}</span>
             </button>
           </div>
         </div>
@@ -423,7 +427,7 @@ function AdminShellInner({
           </p>
         </aside>
 
-        <main className="admin-main min-w-0 px-3 py-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-4 lg:px-6 lg:py-5">
+        <main className="admin-main min-w-0 px-[max(0.75rem,env(safe-area-inset-left))] py-3.5 pr-[max(0.75rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-4 lg:px-6 lg:py-5">
           {children}
         </main>
       </div>

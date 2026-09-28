@@ -82,15 +82,15 @@ export default function PipelineBoard({ quotes }: { quotes: QuoteRecord[] }) {
   }
 
   return (
-    <div className="admin-pipeline -mx-1 overflow-x-auto pb-2">
-      <div className="flex min-w-[56rem] gap-2.5 px-1">
+    <div className="admin-pipeline -mx-1 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-gutter:stable]">
+      <div className="flex min-w-[56rem] gap-2.5 px-1 snap-x snap-mandatory">
         {COLUMNS.map((col) => {
           const items = byStatus[col.status];
           const isOver = overCol === col.status;
           return (
             <section
               key={col.status}
-              className={`admin-pipeline-col flex w-[12.5rem] shrink-0 flex-col rounded-xl border bg-[var(--admin-panel)] transition ${
+              className={`admin-pipeline-col snap-start flex w-[12.5rem] shrink-0 flex-col rounded-xl border bg-[var(--admin-panel)] transition ${
                 isOver
                   ? "border-bronze/50 shadow-[0_0_0_1px_color-mix(in_srgb,var(--bronze)_35%,transparent)]"
                   : "border-ink/10"

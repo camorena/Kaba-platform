@@ -163,7 +163,7 @@ export default function InvoiceDetailClient({
             {invoice.customerName} · {invoice.address}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 print:hidden">
+        <div className="admin-detail-actions flex flex-wrap gap-2 print:hidden">
           <button
             type="button"
             onClick={printInvoice}
