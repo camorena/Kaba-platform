@@ -11,9 +11,11 @@ import {
   useState,
 } from "react";
 import {
+  DEFAULT_CHATBOT_CATALOG,
   formatLeadConfirmation,
   getBotReply,
   WELCOME_REPLY,
+  type ChatbotCatalog,
   type ChatReply,
   type LeadPayload,
 } from "@/lib/chatbot";
@@ -45,7 +47,11 @@ function isExternalHref(href: string) {
   return href.startsWith("tel:") || href.startsWith("mailto:") || href.startsWith("http");
 }
 
-export default function ChatWidget() {
+export default function ChatWidget({
+  catalog = DEFAULT_CHATBOT_CATALOG,
+}: {
+  catalog?: ChatbotCatalog;
+}) {
   const panelId = useId();
   const titleId = useId();
   const liveId = useId();
@@ -188,7 +194,7 @@ export default function ChatWidget() {
     if (replyTimerRef.current) window.clearTimeout(replyTimerRef.current);
     replyTimerRef.current = window.setTimeout(() => {
       setTyping(false);
-      pushBot(getBotReply(trimmed));
+      pushBot(getBotReply(trimmed, catalog));
       replyTimerRef.current = null;
     }, REPLY_DELAY_MS);
   }

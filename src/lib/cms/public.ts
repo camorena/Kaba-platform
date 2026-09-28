@@ -14,16 +14,20 @@ import type {
   PublishedAudience,
   PublishedCompanyValue,
   PublishedDeckMaterial,
+  PublishedExperienceStep,
   PublishedFaq,
   PublishedFenceMaterial,
   PublishedFenceType,
+  PublishedHeroCopy,
   PublishedMaterialComparison,
   PublishedMaterialGuidance,
+  PublishedNeed,
   PublishedProcessStep,
   PublishedProject,
   PublishedService,
   PublishedServiceTown,
   PublishedTestimonial,
+  PublishedTrustPoint,
 } from "@/lib/cms/types";
 import {
   aboutLocalTrust as siteAboutLocalTrust,
@@ -35,10 +39,14 @@ import {
   fenceMaterials as siteFenceMaterials,
   fencingServices as siteFenceTypes,
   galleryProjects as siteProjects,
+  kabaExperience as siteKabaExperience,
   materialGuidance as siteMaterialGuidance,
   processTimeline as siteProcessTimeline,
   serviceTowns as siteServiceTowns,
+  siteConfig as siteSiteConfig,
   testimonials as siteTestimonials,
+  trustPoints as siteTrustPoints,
+  yourNeeds as siteYourNeeds,
 } from "@/lib/site";
 
 export type {
@@ -47,16 +55,20 @@ export type {
   PublishedAudience,
   PublishedCompanyValue,
   PublishedDeckMaterial,
+  PublishedExperienceStep,
   PublishedFaq,
   PublishedFenceMaterial,
   PublishedFenceType,
+  PublishedHeroCopy,
   PublishedMaterialComparison,
   PublishedMaterialGuidance,
+  PublishedNeed,
   PublishedProcessStep,
   PublishedProject,
   PublishedService,
   PublishedServiceTown,
   PublishedTestimonial,
+  PublishedTrustPoint,
 };
 
 function parseAudience(raw: string): PublishedAudience {
@@ -75,7 +87,7 @@ function matchesAudience(
 /**
  * Live FAQ reader for /faq (+ JSON-LD).
  * Uses published CMS faqs when present; otherwise site.ts.
- * Chatbot still imports site.ts directly (no cutover yet).
+ * Also feeds chatbot FAQ matching via marketing layout catalog.
  */
 export function getPublishedFaqs(): PublishedFaq[] {
   const docs = listContent("faqs").filter((d) => d.status === "published");
@@ -185,7 +197,7 @@ export function projectsSourceIsCms(): boolean {
 /**
  * Live fence types for /services, residential/commercial, home cards.
  * Published CMS → else site.ts. Optional audience filter (both always matches).
- * Chatbot still imports site.ts fencingServices.
+ * Also feeds chatbot fencing name/detail lists via layout catalog.
  */
 export function getPublishedFenceTypes(
   audience?: "residential" | "commercial",
@@ -237,7 +249,7 @@ export function fenceTypesSourceIsCms(): boolean {
 /**
  * Live deck/services offerings for /services, residential/commercial.
  * Published CMS → else site.ts. Optional audience filter.
- * Chatbot still imports site.ts deckServices.
+ * Also feeds chatbot deck name/detail lists via layout catalog.
  */
 export function getPublishedServices(
   audience?: "residential" | "commercial",
@@ -569,3 +581,159 @@ export function processTimelineSourceIsCms(): boolean {
       keys.has(`process.${step}.description`),
   );
 }
+
+function siteCopyValueMap(group?: string): Map<string, string> {
+  const docs = listContent("site-copy").filter((d) => d.status === "published");
+  const byKey = new Map<string, string>();
+  for (const d of docs) {
+    if (group && String(d.fields.group ?? "") !== group) continue;
+    const key = String(d.fields.key ?? "").trim();
+    const value = String(d.fields.value ?? "").trim();
+    if (key && value) byKey.set(key, value);
+  }
+  return byKey;
+}
+
+/**
+ * Hero / tagline / description for home (+ metadata).
+ * Per-key: published site-copy value when present, else site.ts.
+ */
+export function getPublishedHeroCopy(): PublishedHeroCopy {
+  const byKey = siteCopyValueMap("hero");
+  return {
+    tagline: byKey.get("site.tagline") ?? siteSiteConfig.tagline,
+    description: byKey.get("site.description") ?? siteSiteConfig.description,
+    heroLabel: byKey.get("hero.label") ?? siteSiteConfig.heroLabel,
+    heroHeadline: byKey.get("hero.headline") ?? siteSiteConfig.heroHeadline,
+    heroSub: byKey.get("hero.sub") ?? siteSiteConfig.heroSub,
+  };
+}
+
+export function heroCopySourceIsCms(): boolean {
+  const keys = ["site.tagline", "site.description", "hero.label", "hero.headline", "hero.sub"];
+  const published = siteCopyValueMap("hero");
+  return keys.some((k) => published.has(k));
+}
+
+/**
+ * Trust bar labels for home. Full published trust.1..N set → else site.ts.
+ * Icons stay aligned with site.ts order (CMS stores labels only).
+ * Trust-claims Settings remain a separate store.
+ */
+export function getPublishedTrustPoints(): PublishedTrustPoint[] {
+  const byKey = siteCopyValueMap("trust");
+  const siteIcons = siteTrustPoints.map((t) => t.icon);
+  const fromCms: PublishedTrustPoint[] = [];
+  for (let i = 0; i < siteTrustPoints.length; i++) {
+    const value = byKey.get(`trust.${i + 1}`) ?? "";
+    if (!value) {
+      fromCms.length = 0;
+      break;
+    }
+    fromCms.push({
+      label: value,
+      icon: siteIcons[i] ?? "home",
+    });
+  }
+  if (fromCms.length === siteTrustPoints.length) return fromCms;
+  return siteTrustPoints.map((t) => ({ label: t.label, icon: t.icon }));
+}
+
+export function trustPointsSourceIsCms(): boolean {
+  const byKey = siteCopyValueMap("trust");
+  return siteTrustPoints.every((_, i) => byKey.has(`trust.${i + 1}`));
+}
+
+const NEED_ICONS = new Set(["paw", "home", "wrench"]);
+
+/**
+ * Your-needs cards for home + residential.
+ * Requires a full published set (title+description per site id); else site.ts.
+ */
+export function getPublishedYourNeeds(): PublishedNeed[] {
+  const byKey = siteCopyValueMap("needs");
+  const fromCms: PublishedNeed[] = [];
+  for (const need of siteYourNeeds) {
+    const title = byKey.get(`need.${need.id}.title`) ?? "";
+    const description = byKey.get(`need.${need.id}.description`) ?? "";
+    if (!title || !description) {
+      fromCms.length = 0;
+      break;
+    }
+    const image = byKey.get(`need.${need.id}.image`) ?? need.image;
+    const iconRaw = byKey.get(`need.${need.id}.icon`) ?? need.icon;
+    const icon = NEED_ICONS.has(iconRaw)
+      ? (iconRaw as PublishedNeed["icon"])
+      : need.icon;
+    fromCms.push({ id: need.id, title, description, image, icon });
+  }
+  if (fromCms.length === siteYourNeeds.length) return fromCms;
+  return siteYourNeeds.map((n) => ({
+    id: n.id,
+    title: n.title,
+    description: n.description,
+    image: n.image,
+    icon: n.icon,
+  }));
+}
+
+export function yourNeedsSourceIsCms(): boolean {
+  const byKey = siteCopyValueMap("needs");
+  return siteYourNeeds.every(
+    (n) =>
+      byKey.has(`need.${n.id}.title`) && byKey.has(`need.${n.id}.description`),
+  );
+}
+
+const EXP_ICONS = new Set(["listen", "guide", "build", "care"]);
+
+/**
+ * Kaba experience steps for home (safe home site-copy keys).
+ * Full published experience.* set → else site.ts. Icons from site by id.
+ */
+export function getPublishedKabaExperience(): PublishedExperienceStep[] {
+  const byKey = siteCopyValueMap("experience");
+  const fromCms: PublishedExperienceStep[] = [];
+  for (const step of siteKabaExperience) {
+    const title = byKey.get(`experience.${step.id}.title`) ?? "";
+    const description = byKey.get(`experience.${step.id}.description`) ?? "";
+    if (!title || !description) {
+      fromCms.length = 0;
+      break;
+    }
+    fromCms.push({
+      id: step.id,
+      title,
+      description,
+      icon: EXP_ICONS.has(step.icon) ? step.icon : "listen",
+    });
+  }
+  if (fromCms.length === siteKabaExperience.length) return fromCms;
+  return siteKabaExperience.map((s) => ({
+    id: s.id,
+    title: s.title,
+    description: s.description,
+    icon: s.icon,
+  }));
+}
+
+export function kabaExperienceSourceIsCms(): boolean {
+  const byKey = siteCopyValueMap("experience");
+  return siteKabaExperience.every(
+    (s) =>
+      byKey.has(`experience.${s.id}.title`) &&
+      byKey.has(`experience.${s.id}.description`),
+  );
+}
+
+/** True when any home-facing site-copy group (hero/trust/needs/experience/process) is live. */
+export function siteCopyHomeSourceIsCms(): boolean {
+  return (
+    heroCopySourceIsCms() ||
+    trustPointsSourceIsCms() ||
+    yourNeedsSourceIsCms() ||
+    kabaExperienceSourceIsCms() ||
+    processTimelineSourceIsCms()
+  );
+}
+

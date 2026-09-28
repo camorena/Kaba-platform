@@ -3,13 +3,34 @@ import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import JsonLd from "@/components/JsonLd";
 import PageTransition from "@/components/PageTransition";
+import {
+  getPublishedFaqs,
+  getPublishedFenceTypes,
+  getPublishedServices,
+} from "@/lib/cms/public";
 import { localBusinessJsonLd, websiteJsonLd } from "@/lib/jsonld";
+
+export const dynamic = "force-dynamic";
 
 export default function MarketingLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const chatCatalog = {
+    faqs: getPublishedFaqs(),
+    fencingServices: getPublishedFenceTypes().map((f) => ({
+      slug: f.slug,
+      title: f.title,
+      details: f.details,
+    })),
+    deckServices: getPublishedServices().map((s) => ({
+      slug: s.slug,
+      title: s.title,
+      details: s.details,
+    })),
+  };
+
   return (
     <>
       <JsonLd data={[localBusinessJsonLd(), websiteJsonLd()]} />
@@ -24,7 +45,7 @@ export default function MarketingLayout({
         <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
-      <ChatWidget />
+      <ChatWidget catalog={chatCatalog} />
     </>
   );
 }

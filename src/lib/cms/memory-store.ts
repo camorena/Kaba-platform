@@ -25,6 +25,7 @@ import {
   siteConfig,
   testimonials,
   trustPoints,
+  yourNeeds,
 } from "@/lib/site";
 
 let store: Map<string, ContentDocument[]> | null = null;
@@ -210,6 +211,32 @@ function seed(): Map<string, ContentDocument[]> {
       label: `Trust point ${i + 1}`,
       value: tp.label,
     })),
+    ...yourNeeds.flatMap((need) => [
+      {
+        key: `need.${need.id}.title`,
+        group: "needs",
+        label: `Need ${need.id} title`,
+        value: need.title,
+      },
+      {
+        key: `need.${need.id}.description`,
+        group: "needs",
+        label: `Need ${need.id} description`,
+        value: need.description,
+      },
+      {
+        key: `need.${need.id}.image`,
+        group: "needs",
+        label: `Need ${need.id} image`,
+        value: need.image,
+      },
+      {
+        key: `need.${need.id}.icon`,
+        group: "needs",
+        label: `Need ${need.id} icon`,
+        value: need.icon,
+      },
+    ]),
   ];
 
   map.set(

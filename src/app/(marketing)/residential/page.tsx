@@ -4,8 +4,9 @@ import Reveal from "@/components/Reveal";
 import {
   getPublishedFenceTypes,
   getPublishedServices,
+  getPublishedYourNeeds,
 } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig, yourNeeds } from "@/lib/site";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
 const title = "Residential Fencing";
 const description = `Residential fence installation and repair for homeowners in Raleigh, NC & surrounding areas from ${siteConfig.name}.`;
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function ResidentialPage() {
+  const yourNeeds = getPublishedYourNeeds();
   const fencingServices = getPublishedFenceTypes("residential");
   const deckServices = getPublishedServices("residential");
 

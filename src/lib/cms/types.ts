@@ -9,7 +9,8 @@ export type ContentDocument = {
    * Draft | published.
    * Publishing affects the live site only for types with a public cutover
    * (faqs, testimonials, projects, fence-types, services, about, materials,
-   * service-area, and process.* site-copy via getPublished*).
+   * service-area, site-copy hero/trust/experience/needs/process via getPublished*,
+   * and chatbot catalogs).
    * Other types stay admin-only until their swap — marketing still uses site.ts.
    */
   status: "draft" | "published";
@@ -131,3 +132,30 @@ export type PublishedProcessStep = {
   description: string;
 };
 
+export type PublishedHeroCopy = {
+  tagline: string;
+  description: string;
+  heroLabel: string;
+  heroHeadline: string;
+  heroSub: string;
+};
+
+export type PublishedTrustPoint = {
+  label: string;
+  icon: "home" | "shield" | "pin";
+};
+
+export type PublishedNeed = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  icon: "paw" | "home" | "wrench";
+};
+
+export type PublishedExperienceStep = {
+  id: string;
+  title: string;
+  description: string;
+  icon: "listen" | "guide" | "build" | "care";
+};

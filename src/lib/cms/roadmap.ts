@@ -3,10 +3,11 @@
  * and how they replace `src/lib/site.ts` over time.
  *
  * Phase A–C admin shipped. Public cutovers: faqs, testimonials, projects,
- * fence-types, services, about, materials, service-area, and process.* site-copy
- * via getPublished* (CMS published → site.ts fallback).
+ * fence-types, services, about, materials, service-area, site-copy
+ * (hero/trust/experience/needs/process), and chatbot catalogs via getPublished*
+ * (CMS published → site.ts fallback).
  *
- * See preview/REUSE_PORT_v11.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
+ * See preview/REUSE_PORT_v12.md and preview/CMS_PUBLIC_CONTENT_PLAN.md.
  */
 
 export type CmsPhase = "A" | "B" | "C" | "D";
@@ -39,21 +40,21 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "Fence types",
     pluralEs: "Tipos de cerca",
     siteSources: ["fencingServices", "fencingOptionsNav"],
-    publicPaths: ["/services", "/residential", "/commercial", "/"],
+    publicPaths: ["/services", "/residential", "/commercial", "/", "chatbot"],
     shipped: true,
     publicCutover: true,
-    notes: "v10: /services + residential/commercial + home cards read getPublishedFenceTypes().",
+    notes: "v10: /services + residential/commercial + home cards. v12: chatbot fencing lists.",
   },
   {
     key: "services",
     phase: "A",
     plural: "Services",
     pluralEs: "Servicios",
-    siteSources: ["deckServices", "yourNeeds (partial)"],
-    publicPaths: ["/services", "/residential", "/commercial"],
+    siteSources: ["deckServices"],
+    publicPaths: ["/services", "/residential", "/commercial", "chatbot"],
     shipped: true,
     publicCutover: true,
-    notes: "v10: /services + residential/commercial read getPublishedServices() (deck offerings).",
+    notes: "v10: /services + residential/commercial (deck). v12: chatbot deck lists.",
   },
   {
     key: "projects",
@@ -72,10 +73,10 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     plural: "FAQs",
     pluralEs: "Preguntas frecuentes",
     siteSources: ["faqs"],
-    publicPaths: ["/faq"],
+    publicPaths: ["/faq", "chatbot"],
     shipped: true,
     publicCutover: true,
-    notes: "v8+: /faq + FAQ JSON-LD read getPublishedFaqs(). Chatbot still site.ts.",
+    notes: "v8+: /faq + FAQ JSON-LD. v12: chatbot FAQ matching also uses getPublishedFaqs().",
   },
   {
     key: "site-copy",
@@ -88,11 +89,12 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
       "processTimeline",
       "kabaExperience",
       "trustPoints",
+      "yourNeeds",
     ],
-    publicPaths: ["/how-it-works"],
+    publicPaths: ["/", "/how-it-works", "/residential"],
     shipped: true,
     publicCutover: true,
-    notes: "v11: process.* keys → /how-it-works only. Hero/trust/experience/howItWorks.* still site.ts.",
+    notes: "v12: hero/tagline/trust/experience/needs → home (+ residential needs); process.* → /how-it-works. howItWorks.* unused on public.",
   },
   {
     key: "about",
@@ -103,7 +105,7 @@ export const CMS_PUBLIC_ROADMAP: readonly PlannedContentType[] = [
     publicPaths: ["/about"],
     shipped: true,
     publicCutover: true,
-    notes: "v11: /about reads getPublishedAbout*. Trust-claims settings stay separate; trustPoints still site.ts.",
+    notes: "v11: /about reads getPublishedAbout*. Trust-claims Settings stay separate from About CMS (home trust bar is site-copy).",
   },
   {
     key: "testimonials",

@@ -6,7 +6,8 @@
  *
  * Phase A–C shipped as admin stubs. Public marketing still reads
  * `src/lib/site.ts` except cutovers via getPublished* (faqs, testimonials,
- * projects, fence-types, services, about, materials, service-area, process site-copy).
+ * projects, fence-types, services, about, materials, service-area,
+ * site-copy hero/trust/experience/needs/process, chatbot catalogs).
  */
 
 export type FieldKind =
@@ -82,6 +83,7 @@ const SITE_COPY_GROUP_OPTIONS = [
   { value: "process", label: "Process timeline", labelEs: "Línea de proceso" },
   { value: "experience", label: "Kaba experience", labelEs: "Experiencia Kaba" },
   { value: "trust", label: "Trust points", labelEs: "Puntos de confianza" },
+  { value: "needs", label: "Your needs (home)", labelEs: "Sus necesidades (inicio)" },
   { value: "nav", label: "Nav / footer labels", labelEs: "Etiquetas de nav / pie" },
 ] as const;
 
@@ -248,7 +250,7 @@ export const CONTENT_TYPES: Readonly<Record<string, ContentTypeSpec>> = {
     orderBy: "sortOrder",
     phase: "B",
     publicPath: "/",
-    siteSource: "siteConfig, howItWorks, processTimeline, kabaExperience, trustPoints",
+    siteSource: "siteConfig hero/tagline, howItWorks, processTimeline, kabaExperience, trustPoints, yourNeeds",
     fields: [
       {
         name: "key",

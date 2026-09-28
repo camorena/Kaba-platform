@@ -1,7 +1,7 @@
 import {
-  deckServices,
-  fencingServices,
-  faqs,
+  deckServices as siteDeckServices,
+  fencingServices as siteFenceTypes,
+  faqs as siteFaqs,
   siteConfig,
   trustPoints,
 } from "@/lib/site";
@@ -18,8 +18,29 @@ export type ChatReply = {
   cta?: { label: string; href: string };
 };
 
-const fenceList = fencingServices.map((s) => s.title).join(", ");
-const deckList = deckServices.map((s) => s.title).join(", ");
+/** CMS-backed (or site.ts fallback) lists for FAQ + service matching. */
+export type ChatbotFaq = { question: string; answer: string };
+export type ChatbotService = { slug: string; title: string; details: string };
+export type ChatbotCatalog = {
+  faqs: ChatbotFaq[];
+  fencingServices: ChatbotService[];
+  deckServices: ChatbotService[];
+};
+
+export const DEFAULT_CHATBOT_CATALOG: ChatbotCatalog = {
+  faqs: siteFaqs.map((f) => ({ question: f.question, answer: f.answer })),
+  fencingServices: siteFenceTypes.map((s) => ({
+    slug: s.slug,
+    title: s.title,
+    details: s.details,
+  })),
+  deckServices: siteDeckServices.map((s) => ({
+    slug: s.slug,
+    title: s.title,
+    details: s.details,
+  })),
+};
+
 const area = siteConfig.serviceArea;
 const phone = siteConfig.phone;
 const email = siteConfig.email;
@@ -52,7 +73,7 @@ function includesAny(haystack: string, needles: string[]): boolean {
   return needles.some((n) => haystack.includes(n));
 }
 
-function matchFaq(q: string): string | null {
+function matchFaq(q: string, faqs: ChatbotFaq[]): string | null {
   for (const faq of faqs) {
     const nq = normalize(faq.question);
     const overlap = nq
@@ -99,7 +120,11 @@ function matchFaq(q: string): string | null {
   return null;
 }
 
-function matchServiceDetail(q: string): string | null {
+function matchServiceDetail(
+  q: string,
+  fencingServices: ChatbotService[],
+  deckServices: ChatbotService[],
+): string | null {
   for (const s of fencingServices) {
     const key = s.slug.replace(/-/g, " ");
     if (
@@ -126,9 +151,14 @@ function matchServiceDetail(q: string): string | null {
   return null;
 }
 
-/** Rule-based assistant replies grounded in site.ts content. */
-export function getBotReply(rawInput: string): ChatReply {
+/** Rule-based assistant replies grounded in CMS catalog (site.ts fallback). */
+export function getBotReply(
+  rawInput: string,
+  catalog: ChatbotCatalog = DEFAULT_CHATBOT_CATALOG,
+): ChatReply {
   const q = normalize(rawInput);
+  const fenceList = catalog.fencingServices.map((s) => s.title).join(", ");
+  const deckList = catalog.deckServices.map((s) => s.title).join(", ");
   if (!q) {
     return {
       text: "Go ahead — ask about fences, decks, materials, where we work, or how to get a free quote.",
@@ -319,7 +349,11 @@ export function getBotReply(rawInput: string): ChatReply {
   }
 
   // Specific service match
-  const detail = matchServiceDetail(q);
+  const detail = matchServiceDetail(
+    q,
+    catalog.fencingServices,
+    catalog.deckServices,
+  );
   if (detail) {
     return {
       text: detail,
@@ -356,7 +390,7 @@ export function getBotReply(rawInput: string): ChatReply {
   }
 
   // FAQ overlap
-  const faqAnswer = matchFaq(q);
+  const faqAnswer = matchFaq(q, catalog.faqs);
   if (faqAnswer) {
     return {
       text: faqAnswer,

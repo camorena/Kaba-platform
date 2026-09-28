@@ -4,15 +4,14 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import {
   getPublishedFenceTypes,
+  getPublishedHeroCopy,
+  getPublishedKabaExperience,
   getPublishedProjects,
   getPublishedTestimonials,
+  getPublishedTrustPoints,
+  getPublishedYourNeeds,
 } from "@/lib/cms/public";
-import {
-  kabaExperience,
-  siteConfig,
-  trustPoints,
-  yourNeeds,
-} from "@/lib/site";
+import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-function NeedIcon({ icon }: { icon: (typeof yourNeeds)[number]["icon"] }) {
+function NeedIcon({ icon }: { icon: "paw" | "home" | "wrench" }) {
   const common = "h-5 w-5";
   if (icon === "paw") {
     return (
@@ -50,7 +49,7 @@ function NeedIcon({ icon }: { icon: (typeof yourNeeds)[number]["icon"] }) {
   );
 }
 
-function ExpIcon({ icon }: { icon: (typeof kabaExperience)[number]["icon"] }) {
+function ExpIcon({ icon }: { icon: "listen" | "guide" | "build" | "care" }) {
   const common = "h-6 w-6";
   if (icon === "listen") {
     return (
@@ -80,7 +79,7 @@ function ExpIcon({ icon }: { icon: (typeof kabaExperience)[number]["icon"] }) {
   );
 }
 
-function TrustIcon({ icon }: { icon: (typeof trustPoints)[number]["icon"] }) {
+function TrustIcon({ icon }: { icon: "home" | "shield" | "pin" }) {
   const common = "h-5 w-5 text-bronze";
   if (icon === "home") {
     return (
@@ -105,6 +104,10 @@ function TrustIcon({ icon }: { icon: (typeof trustPoints)[number]["icon"] }) {
 }
 
 export default function HomePage() {
+  const hero = getPublishedHeroCopy();
+  const trustPoints = getPublishedTrustPoints();
+  const yourNeeds = getPublishedYourNeeds();
+  const kabaExperience = getPublishedKabaExperience();
   const fencingServices = getPublishedFenceTypes();
   const teaser = getPublishedProjects()
     .filter((p) => p.category === "fence")
@@ -130,13 +133,13 @@ export default function HomePage() {
         <div className="container-page relative z-[2] flex flex-1 flex-col justify-center py-16 sm:py-20 lg:py-28">
           <div className="max-w-2xl">
             <p className="hero-reveal text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
-              {siteConfig.heroLabel}
+              {hero.heroLabel}
             </p>
             <h1 className="hero-reveal hero-reveal-d1 mt-4 font-display text-[2.15rem] font-semibold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.85rem] lg:text-[3.5rem] lg:leading-[1.08]">
-              {siteConfig.heroHeadline}
+              {hero.heroHeadline}
             </h1>
             <p className="hero-reveal hero-reveal-d2 mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-              {siteConfig.heroSub}
+              {hero.heroSub}
             </p>
             <div className="hero-reveal hero-reveal-d3 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
@@ -297,7 +300,7 @@ export default function HomePage() {
           </ul>
           <Reveal className="mt-12 text-center">
             <p className="font-script text-3xl text-white sm:text-4xl">
-              We Listen. We Guide. We Build. We Care.
+              {hero.tagline}
             </p>
           </Reveal>
         </div>
