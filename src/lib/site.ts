@@ -17,9 +17,9 @@ export const siteConfig = {
     city: "Raleigh",
     state: "NC",
     zip: "",
-    region: "Raleigh, NC & Surrounding Areas",
+    region: "Angier, Raleigh & Surrounding Areas",
   },
-  heroLabel: "Fence Company in Raleigh, NC & Surrounding Areas",
+  heroLabel: "Fence Company in Angier, Raleigh & Surrounding Areas",
   heroHeadline: "A Better Fence Starts With a Better Experience.",
   heroSub:
     "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
@@ -291,7 +291,37 @@ export const processTimeline = [
 export const trustPoints = [
   { label: "Local & Family-Owned", icon: "home" as const },
   { label: "Licensed & Insured", icon: "shield" as const },
-  { label: "Raleigh, NC & Surrounding Areas", icon: "pin" as const },
+  { label: "Angier, Raleigh & Surrounding Areas", icon: "pin" as const },
+] as const;
+
+export const aboutLocalTrust = [
+  {
+    title: "Local to Angier & Raleigh",
+    description:
+      "Home-based in Angier with regular projects across Raleigh and nearby Wake & Harnett towns—neighbors, not a national call center.",
+  },
+  {
+    title: "Free on-site estimates",
+    description:
+      "We measure carefully, talk materials in plain language, and leave you with a clear written quote—no obligation.",
+  },
+  {
+    title: "Materials that last here",
+    description:
+      "Cedar, vinyl, aluminum, and chain link specified for Carolina heat, humidity, and storms—not generic catalog picks.",
+  },
+  {
+    title: "Clean job sites",
+    description:
+      "Protect landscaping, haul debris, and walk the finished line with you so neighbors notice the fence—not the mess.",
+  },
+] as const;
+
+export const aboutStats = [
+  { value: "Angier", label: "Home base · Harnett County" },
+  { value: "Raleigh+", label: "Triangle-edge coverage" },
+  { value: "Licensed", label: "Insured local crew" },
+  { value: "Free", label: "On-site estimates" },
 ] as const;
 
 export const companyValues = [
