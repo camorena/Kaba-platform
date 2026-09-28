@@ -85,6 +85,10 @@ export type PaymentsRepo = {
   }): Promise<PaymentRecord | null>;
   /** Lookup by Stripe event id (webhook idempotency). */
   getByStripeEventId(eventId: string): Promise<PaymentRecord | undefined>;
+  /** Lookup by Checkout Session id (cs_…) — secondary idempotency. */
+  getByStripeCheckoutSessionId(
+    sessionId: string,
+  ): Promise<PaymentRecord | undefined>;
   stats(): Promise<{ total: number; recordedCents: number }>;
 };
 

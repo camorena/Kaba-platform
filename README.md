@@ -4,9 +4,9 @@ Public marketing website for **Kaba Fence** — fence and deck repair/install se
 
 Built with **Next.js (App Router)** and **Tailwind CSS**.
 
-Live: https://kaba-fence.vercel.app
+Live: https://kaba-platform.vercel.app
 
-Ops / reuse notes: `preview/REUSE_PORT_v12.md` (home site-copy + chatbot CMS cutover), `preview/CMS_PUBLIC_CONTENT_PLAN.md` (public content admin roadmap).
+Ops / reuse notes: `preview/REUSE_PORT_v18.md` (Stripe deposits + webhooks + mail launch), `preview/CMS_PUBLIC_CONTENT_PLAN.md` (public content admin roadmap).
 
 
 ## Getting started
@@ -106,15 +106,31 @@ Business details live in `src/lib/site.ts`:
 - Service and gallery content
 - Canonical `siteUrl` used by metadata, sitemap, and JSON-LD
 
-## Stripe (optional)
+## Stripe (optional — code ready)
 
 | Variable | Required | Purpose |
 | -------- | -------- | ------- |
-| `STRIPE_SECRET_KEY` | No | Create Checkout Sessions (`sk_test_…` for demos) |
-| `STRIPE_WEBHOOK_SECRET` | No | Verify `POST /api/stripe/webhook` |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No | Documented for future Elements |
+| `STRIPE_SECRET_KEY` | For Checkout | Create Checkout Sessions (`sk_test_…` / `sk_live_…`) |
+| `STRIPE_WEBHOOK_SECRET` | For webhook | Verify `POST /api/stripe/webhook` |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Recommended | Documented / future Elements |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Canonical origin for Checkout return URLs (`https://kaba-platform.vercel.app`) |
 
-Without keys the build and Payments UI stay honest (“not connected”); `/pay/[token]` shows an offline message instead of a fake card form. No live charges unless you set live keys. See `preview/REUSE_PORT_v6.md` and production flip `preview/REUSE_PORT_v17.md`.
+Without keys the build and Payments UI stay honest (“not connected”); `/pay/[token]` shows an offline message instead of a fake card form. No live charges unless you set live keys.
+
+**Webhook URL (Stripe Dashboard):** `https://kaba-platform.vercel.app/api/stripe/webhook` (event: `checkout.session.completed`).
+
+**Demo pay link:** `/pay/kf_pay_demo_1002_chris` (seed token). Full launch steps: `preview/REUSE_PORT_v18.md`.
+
+## Mail (optional)
+
+| Variable | Required | Purpose |
+| -------- | -------- | ------- |
+| `MAIL_FROM` | For send | From: address |
+| `RESEND_API_KEY` | Prefer | Resend HTTP API |
+| `MAIL_TO_OWNERS` | Optional | Owner alert recipients (else site email) |
+| `SMTP_HOST` (+ port/user/pass/secure) | Alt | Used when Resend unset |
+
+`notifyQuoteCreated` / `notifyPaymentReceived` are honest no-ops until mail is configured. See `preview/REUSE_PORT_v7.md` / `v18.md`.
 
 ## Analytics (optional)
 
@@ -146,11 +162,11 @@ Before/after JSON lives under `preview/lighthouse/`. Screenshots: `preview/a11y-
 ## Still pending (do not treat as done)
 
 - Real contact / crew photos
-- Quote CRM email notifications
+- Paste Stripe keys + register webhook (code path is ready — see v18)
+- Paste Resend/SMTP + `MAIL_FROM` for receipt/owner email
 - Custom domain
 - Town SEO landing pages
-- Production admin auth + database
-- Production invoices/payments (Stripe) + durable DB
+- Rotate demo owner password before treating credentials auth as production-hardened
 
 ## Notes
 

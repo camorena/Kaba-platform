@@ -89,6 +89,12 @@ export const memoryPaymentsRepo: PaymentsRepo = {
     return store().find((p) => p.stripeEventId === id);
   },
 
+  async getByStripeCheckoutSessionId(sessionId) {
+    const id = sessionId.trim();
+    if (!id) return undefined;
+    return store().find((p) => p.stripeCheckoutSessionId === id);
+  },
+
   async paidCentsForInvoice(invoiceId) {
     return (await memoryPaymentsRepo.listForInvoice(invoiceId))
       .filter((p) => p.status === "recorded")
@@ -115,6 +121,13 @@ export const memoryPaymentsRepo: PaymentsRepo = {
       if (existing) return existing;
     }
 
+    const sessionId = input.stripeCheckoutSessionId?.trim() || null;
+    if (sessionId) {
+      const existingSession =
+        await memoryPaymentsRepo.getByStripeCheckoutSessionId(sessionId);
+      if (existingSession) return existingSession;
+    }
+
     const record: PaymentRecord = {
       id: `pay_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
       createdAt: new Date().toISOString(),
@@ -128,8 +141,7 @@ export const memoryPaymentsRepo: PaymentsRepo = {
       notes: (input.notes ?? "").trim(),
       demo: input.demo ?? true,
       stripeEventId,
-      stripeCheckoutSessionId:
-        input.stripeCheckoutSessionId?.trim() || null,
+      stripeCheckoutSessionId: sessionId,
     };
     store().unshift(record);
     await syncInvoiceStatus(inv.id);

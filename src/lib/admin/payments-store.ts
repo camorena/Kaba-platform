@@ -42,6 +42,12 @@ export async function getPaymentByStripeEventId(
   return getRepos().payments.getByStripeEventId(eventId);
 }
 
+export async function getPaymentByStripeCheckoutSessionId(
+  sessionId: string,
+): Promise<PaymentRecord | undefined> {
+  return getRepos().payments.getByStripeCheckoutSessionId(sessionId);
+}
+
 export async function recordPayment(input: {
   invoiceId: string;
   amountCents: number;

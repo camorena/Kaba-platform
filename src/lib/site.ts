@@ -516,7 +516,10 @@ export const faqs = [
 ] as const;
 
 /** Canonical production origin (metadataBase, sitemap, JSON-LD, analytics). */
-export const siteUrl = "https://kaba-fence.vercel.app";
+export const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "") ||
+  "https://kaba-platform.vercel.app"
+);
 
 /** Absolute URL helper for sitemap / JSON-LD. */
 export function absoluteUrl(path = "/"): string {

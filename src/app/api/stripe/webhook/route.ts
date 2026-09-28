@@ -80,6 +80,18 @@ export async function POST(request: Request) {
 
 async function handleCheckoutCompleted(event: Stripe.Event): Promise<void> {
   const session = event.data.object as Stripe.Checkout.Session;
+
+  // Hosted Checkout can fire completed for unpaid/async cases — only ledger paid.
+  if (session.payment_status && session.payment_status !== "paid") {
+    console.info(
+      "[stripe/webhook] checkout.session.completed ignored (payment_status=",
+      session.payment_status,
+      ")",
+      session.id,
+    );
+    return;
+  }
+
   const invoiceId = String(session.metadata?.invoiceId ?? "").trim();
   if (!invoiceId) {
     console.warn(

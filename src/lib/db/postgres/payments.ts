@@ -69,6 +69,19 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
       return rows[0] ? mapPayment(rows[0]) : undefined;
     },
 
+    async getByStripeCheckoutSessionId(sessionId) {
+      const id = sessionId.trim();
+      if (!id) return undefined;
+      const { rows } = await query<PaymentRow>(
+        `select p.*, i.number as invoice_number, i.customer_name
+         from payments p
+         join invoices i on i.id = p.invoice_id
+         where p.stripe_checkout_session_id = $1`,
+        [id],
+      );
+      return rows[0] ? mapPayment(rows[0]) : undefined;
+    },
+
     async paidCentsForInvoice(invoiceId) {
       const { rows } = await query<{ sum: string | null }>(
         `select coalesce(sum(amount_cents), 0)::text as sum
@@ -106,6 +119,10 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
 
       const demo = input.demo ?? true;
       const sessionId = input.stripeCheckoutSessionId?.trim() || null;
+      if (sessionId) {
+        const existingSession = await repo.getByStripeCheckoutSessionId(sessionId);
+        if (existingSession) return existingSession;
+      }
 
       try {
         const { rows } = await query<PaymentRow>(
@@ -133,9 +150,13 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
         await syncInvoiceStatus(inv.id);
         return payment;
       } catch (err) {
-        // Concurrent webhook retry — unique stripe_event_id
+        // Concurrent webhook retry — unique stripe_event_id / session id
         if (stripeEventId) {
           const existing = await repo.getByStripeEventId(stripeEventId);
+          if (existing) return existing;
+        }
+        if (sessionId) {
+          const existing = await repo.getByStripeCheckoutSessionId(sessionId);
           if (existing) return existing;
         }
         throw err;
