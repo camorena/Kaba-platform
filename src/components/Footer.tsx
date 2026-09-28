@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   fencingOptionsNav,
+  footerLinks,
   legalLinks,
   navLinks,
   siteConfig,
@@ -66,6 +67,21 @@ export default function Footer() {
           </p>
           <ul className="mt-4 space-y-1">
             {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="focus-ring -mx-1 inline-flex min-h-9 items-center rounded px-1 text-sm text-cream/80 transition hover:text-cream"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
+            Explore
+          </p>
+          <ul className="mt-2 space-y-1">
+            {footerLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}

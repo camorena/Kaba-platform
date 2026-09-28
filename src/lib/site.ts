@@ -49,10 +49,11 @@ export const fencingOptionsNav = [
 
 /** Secondary links — footer extras. */
 export const footerLinks = [
-  { href: "/service-area", label: "Service area" },
+  { href: "/materials", label: "Materials guide" },
   { href: "/how-it-works", label: "How it works" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/service-area", label: "Service area" },
   { href: "/reviews", label: "Reviews" },
+  { href: "/faq", label: "FAQ" },
 ] as const;
 
 export const fencingServices = [

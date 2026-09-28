@@ -248,6 +248,15 @@ export default function Header() {
                               All fencing
                             </Link>
                           </li>
+                          <li>
+                            <Link
+                              href="/materials"
+                              className="focus-ring block px-4 py-2.5 text-sm text-muted hover:bg-ivory-muted hover:text-ink"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              Materials guide
+                            </Link>
+                          </li>
                           {fencingOptionsNav.map((item) => (
                             <li key={item.href}>
                               <Link
@@ -415,6 +424,13 @@ export default function Header() {
                             className="focus-ring rounded-md px-3 py-2.5 text-sm font-semibold text-ink"
                           >
                             All fencing
+                          </Link>
+                          <Link
+                            href="/materials"
+                            onClick={closeMenu}
+                            className="focus-ring rounded-md px-3 py-2.5 text-sm text-muted hover:text-ink"
+                          >
+                            Materials guide
                           </Link>
                           {fencingOptionsNav.map((item) => (
                             <Link
