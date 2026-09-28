@@ -11,13 +11,27 @@ import { Pool, type QueryResult, type QueryResultRow } from "pg";
 
 let pool: Pool | null = null;
 
+/**
+ * Neon sometimes appends channel_binding=require, which breaks node-pg on
+ * serverless. Strip it; keep sslmode and other params.
+ */
+export function normalizeDatabaseUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    u.searchParams.delete("channel_binding");
+    return u.toString();
+  } catch {
+    return url.replace(/([?&])channel_binding=[^&]*&?/g, "$1").replace(/[?&]$/, "");
+  }
+}
+
 export function getDatabaseUrl(): string | null {
   const url = process.env.DATABASE_URL?.trim();
-  return url ? url : null;
+  return url ? normalizeDatabaseUrl(url) : null;
 }
 
 export function isDatabaseUrlConfigured(): boolean {
-  return Boolean(getDatabaseUrl());
+  return Boolean(process.env.DATABASE_URL?.trim());
 }
 
 /**
@@ -41,12 +55,24 @@ export function requireDatabaseUrl(): string {
 export function getPool(): Pool {
   if (pool) return pool;
   const connectionString = requireDatabaseUrl();
+  const isNeon = /\.neon\.tech$/i.test(
+    (() => {
+      try {
+        return new URL(connectionString).hostname;
+      } catch {
+        return "";
+      }
+    })(),
+  );
   pool = new Pool({
     connectionString,
-    // Small pool — admin scaffold, not high traffic.
-    max: 5,
-    idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 10_000,
+    // Small pool — admin scaffold, not high traffic. Keep low on serverless.
+    max: 1,
+    idleTimeoutMillis: 10_000,
+    connectionTimeoutMillis: 15_000,
+    // Neon requires TLS; node-pg honors sslmode=require in the URL, but
+    // explicit ssl avoids flaky serverless handshakes.
+    ...(isNeon ? { ssl: { rejectUnauthorized: true } } : {}),
   });
   pool.on("error", (err) => {
     console.error("[kaba-db] unexpected Postgres pool error:", err.message);
