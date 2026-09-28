@@ -4,7 +4,7 @@ import EmptyState from "@/components/admin/EmptyState";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { useToast } from "@/components/admin/Toast";
 import { formatShortDate } from "@/lib/admin/format";
-import type { QuoteRecord } from "@/lib/admin/quotes-store";
+import type { QuoteRecord } from "@/lib/db/types";
 import {
   QUOTE_STATUSES,
   quoteStatusTone,

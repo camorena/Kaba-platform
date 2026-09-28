@@ -2,11 +2,13 @@
  * Data adapter selection.
  *
  *   KABA_DATA_ADAPTER=memory   (default) — in-process stores, seeded demo data
- *   KABA_DATA_ADAPTER=postgres — reserved; throws until Postgres repos land
+ *   KABA_DATA_ADAPTER=postgres — Postgres repos via DATABASE_URL + db/migrations
  *
- * Builds and demos never require DATABASE_URL. Flip later by implementing
- * createPostgresRepos() and setting the env + applying db/migrations.
+ * Builds and demos never require DATABASE_URL. Flip with env + migrate + seed
+ * (see preview/REUSE_PORT_v3.md).
  */
+
+import "server-only";
 
 import { createMemoryRepos } from "@/lib/db/memory";
 import type { DataRepos } from "@/lib/db/repos/types";
@@ -21,6 +23,11 @@ export function getDataAdapterName(): DataAdapterName {
   return "memory";
 }
 
+/** True when DATABASE_URL is non-empty (does not open a connection). */
+export function isDatabaseUrlConfigured(): boolean {
+  return Boolean(process.env.DATABASE_URL?.trim());
+}
+
 let cached: DataRepos | null = null;
 
 export function getRepos(): DataRepos {
@@ -28,12 +35,12 @@ export function getRepos(): DataRepos {
 
   const name = getDataAdapterName();
   if (name === "postgres") {
-    throw new Error(
-      "KABA_DATA_ADAPTER=postgres is not implemented yet. " +
-        "Apply db/migrations/0001_ops_foundation.sql, implement Postgres repos " +
-        "in src/lib/db/, then wire createPostgresRepos(). " +
-        "Until then keep KABA_DATA_ADAPTER=memory (default).",
-    );
+    // Lazy require so memory-default builds do not touch the pg pool path
+    // until postgres is explicitly selected.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { createPostgresRepos } = require("@/lib/db/postgres") as typeof import("@/lib/db/postgres");
+    cached = createPostgresRepos();
+    return cached;
   }
 
   cached = createMemoryRepos();

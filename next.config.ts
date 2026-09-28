@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Keep pg out of the bundler — Node native pool client.
+  serverExternalPackages: ["pg"],
 };
 
 export default nextConfig;

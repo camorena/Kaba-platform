@@ -307,14 +307,20 @@ const en = {
         "How this demo holds quotes, invoices, and payments — and what is intentionally not wired yet.",
       dataTitle: "Data stores",
       dataBadge: "In-memory",
-      dataBadgeDb: "Database",
+      dataBadgeDb: "Postgres",
       dataBody:
-        "Adapter {adapter} (env {adapterEnv}, default memory). Quotes, invoices, and payments use the repo layer under src/lib/db/ with seeded demo rows. On Vercel serverless, a cold start resets the memory list. Public {endpoint} still accepts marketing-form submissions on the warm instance that receives them.",
+        "Active adapter: {adapter} (env {adapterEnv}, default memory). Quotes, invoices, payments, customers, and trust claims use the repo layer under src/lib/db/. Memory ships seeded demo rows and resets on cold start. Postgres uses DATABASE_URL after npm run db:migrate and db:seed. Public {endpoint} still accepts marketing-form submissions.",
+      dataAdapterLabel: "Adapter",
+      dataUrlLabel: "DATABASE_URL",
+      dataUrlSet: "Configured",
+      dataUrlMissing: "Not set",
+      dataPostgresMissingUrl:
+        "Postgres adapter selected but DATABASE_URL is empty — set it or switch back to memory.",
       dataNext:
-        "Next: apply db/migrations/0001_ops_foundation.sql, implement Postgres repos, set KABA_DATA_ADAPTER=postgres + DATABASE_URL.",
+        "Flip: docker compose up -d (optional), npm run db:migrate, npm run db:seed, then KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory remains the default so builds need no live DB.",
       dataNotify:
         "Quote create uses persist-then-notify: the row is saved first; {notify} is a no-op stub until mail is wired.",
-      dataFilesLabel: "Schema & repos",
+      dataFilesLabel: "Schema, seeds & repos",
       stripeTitle: "Payments & Stripe",
       stripeBadge: "Not connected",
       stripeBody:

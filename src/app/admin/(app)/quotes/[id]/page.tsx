@@ -11,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const quote = getQuote(id);
+  const quote = await getQuote(id);
   return { title: quote ? quote.name : "Quote" };
 }
 
@@ -21,10 +21,10 @@ export default async function AdminQuoteDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const quote = getQuote(id);
+  const quote = await getQuote(id);
   if (!quote) notFound();
 
-  const related = listInvoices().find((i) => i.quoteId === quote.id);
+  const related = (await listInvoices()).find((i) => i.quoteId === quote.id);
 
   return (
     <QuoteDetailClient

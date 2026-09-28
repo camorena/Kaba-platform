@@ -13,7 +13,7 @@ import {
   quoteStatusTone,
   type QuoteStatus,
 } from "@/lib/admin/status";
-import type { QuoteRecord } from "@/lib/admin/quotes-store";
+import type { QuoteRecord } from "@/lib/db/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

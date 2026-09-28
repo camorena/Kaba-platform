@@ -14,8 +14,8 @@ import {
 import {
   isQuietQuote,
   QUIET_DAYS_THRESHOLD,
-  type QuoteRecord,
-} from "@/lib/admin/quotes-store";
+} from "@/lib/db/quiet";
+import type { QuoteRecord } from "@/lib/db/types";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";

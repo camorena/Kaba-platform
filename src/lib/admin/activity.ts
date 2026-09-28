@@ -20,10 +20,10 @@ export type ActivityItem = {
   detail: string;
 };
 
-export function listActivity(limit = 40): ActivityItem[] {
+export async function listActivity(limit = 40): Promise<ActivityItem[]> {
   const items: ActivityItem[] = [];
 
-  for (const q of listQuotes()) {
+  for (const q of await listQuotes()) {
     items.push({
       id: `act_q_${q.id}`,
       kind: "quote",
@@ -45,7 +45,7 @@ export function listActivity(limit = 40): ActivityItem[] {
     });
   }
 
-  for (const inv of listInvoices()) {
+  for (const inv of await listInvoices()) {
     items.push({
       id: `act_inv_${inv.id}`,
       kind: "invoice",
@@ -65,7 +65,7 @@ export function listActivity(limit = 40): ActivityItem[] {
     });
   }
 
-  for (const p of listPayments()) {
+  for (const p of await listPayments()) {
     items.push({
       id: `act_pay_${p.id}`,
       kind: "payment",

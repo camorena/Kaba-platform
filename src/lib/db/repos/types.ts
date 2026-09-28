@@ -1,6 +1,6 @@
 /**
- * Repository interfaces — Memory* implements these today;
- * Postgres* (or Drizzle) implements them when KABA_DATA_ADAPTER flips.
+ * Repository interfaces — Memory* and Postgres* implement the same async contract.
+ * Default adapter is memory (no DATABASE_URL required for build/demo).
  */
 
 import type {
@@ -18,74 +18,77 @@ import type {
 } from "@/lib/db/types";
 
 export type QuotesRepo = {
-  list(): QuoteRecord[];
-  get(id: string): QuoteRecord | undefined;
-  add(input: NewQuoteInput): QuoteRecord;
-  update(id: string, patch: QuotePatch): QuoteRecord | undefined;
+  list(): Promise<QuoteRecord[]>;
+  get(id: string): Promise<QuoteRecord | undefined>;
+  add(input: NewQuoteInput): Promise<QuoteRecord>;
+  update(id: string, patch: QuotePatch): Promise<QuoteRecord | undefined>;
   bulkUpdateStatus(
     ids: string[],
     status: QuoteStatus,
-  ): { updated: number; missing: string[] };
-  stats(): {
+  ): Promise<{ updated: number; missing: string[] }>;
+  stats(): Promise<{
     total: number;
     new: number;
     contacted: number;
     scheduled: number;
     won: number;
     lost: number;
-  };
-  listQuiet(thresholdDays?: number): QuoteRecord[];
-  quietCount(thresholdDays?: number): number;
-  listNotes(quoteId: string): QuoteNoteRecord[];
+  }>;
+  listQuiet(thresholdDays?: number): Promise<QuoteRecord[]>;
+  quietCount(thresholdDays?: number): Promise<number>;
+  listNotes(quoteId: string): Promise<QuoteNoteRecord[]>;
   addNote(
     quoteId: string,
     body: string,
     author?: { id?: string | null; label?: string },
-  ): QuoteNoteRecord | null;
+  ): Promise<QuoteNoteRecord | null>;
 };
 
 export type InvoicesRepo = {
-  list(): InvoiceRecord[];
-  get(id: string): InvoiceRecord | undefined;
-  createFromQuote(quoteId: string): InvoiceRecord | null;
-  updateStatus(id: string, status: InvoiceStatus): InvoiceRecord | undefined;
+  list(): Promise<InvoiceRecord[]>;
+  get(id: string): Promise<InvoiceRecord | undefined>;
+  createFromQuote(quoteId: string): Promise<InvoiceRecord | null>;
+  updateStatus(
+    id: string,
+    status: InvoiceStatus,
+  ): Promise<InvoiceRecord | undefined>;
+  /** Pure helper — sync on purpose. */
   subtotalCents(inv: InvoiceRecord): number;
-  stats(paidByInvoiceId?: Map<string, number>): {
+  stats(paidByInvoiceId?: Map<string, number>): Promise<{
     total: number;
     draft: number;
     open: number;
     paid: number;
     totalOpenCents: number;
-  };
+  }>;
 };
 
 export type PaymentsRepo = {
-  list(): PaymentRecord[];
-  listForInvoice(invoiceId: string): PaymentRecord[];
-  get(id: string): PaymentRecord | undefined;
-  paidCentsForInvoice(invoiceId: string): number;
-  paidCentsMap(): Map<string, number>;
+  list(): Promise<PaymentRecord[]>;
+  listForInvoice(invoiceId: string): Promise<PaymentRecord[]>;
+  get(id: string): Promise<PaymentRecord | undefined>;
+  paidCentsForInvoice(invoiceId: string): Promise<number>;
+  paidCentsMap(): Promise<Map<string, number>>;
   record(input: {
     invoiceId: string;
     amountCents: number;
     method: PaymentMethod;
     reference?: string;
     notes?: string;
-  }): PaymentRecord | null;
-  stats(): { total: number; recordedCents: number };
+  }): Promise<PaymentRecord | null>;
+  stats(): Promise<{ total: number; recordedCents: number }>;
 };
 
 export type CustomersRepo = {
-  /** Derived from quotes today; durable table optional later. */
-  list(): CustomerRecord[];
+  /** Derived from quotes (and optional customers table on Postgres). */
+  list(): Promise<CustomerRecord[]>;
 };
 
 export type TrustClaimsRepo = {
-  get(): TrustClaimsRecord;
-  /** Server-side write path (memory/Postgres). Client Settings may still use localStorage until an API exists. */
+  get(): Promise<TrustClaimsRecord>;
   save(
     patch: Pick<TrustClaimsRecord, "claimFreeEstimates" | "claimLocallyOwned">,
-  ): TrustClaimsRecord;
+  ): Promise<TrustClaimsRecord>;
 };
 
 export type DataRepos = {

@@ -1,4 +1,5 @@
-import { listQuotes, type QuoteRecord } from "@/lib/admin/quotes-store";
+import { listQuotes } from "@/lib/admin/quotes-store";
+import type { QuoteRecord } from "@/lib/db/types";
 
 export type ScheduleJob = {
   id: string;
@@ -15,9 +16,9 @@ export type ScheduleJob = {
 };
 
 /** Derive install / site-visit stubs from scheduled + won quotes. */
-export function listScheduleJobs(): ScheduleJob[] {
+export async function listScheduleJobs(): Promise<ScheduleJob[]> {
   const jobs: ScheduleJob[] = [];
-  const quotes = listQuotes().filter(
+  const quotes = (await listQuotes()).filter(
     (q) => q.status === "scheduled" || q.status === "won",
   );
 

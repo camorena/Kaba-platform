@@ -12,7 +12,7 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
-  return NextResponse.json({ invoices: listInvoices() });
+  return NextResponse.json({ invoices: await listInvoices() });
 }
 
 export async function POST(request: Request) {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "quoteId required." }, { status: 400 });
   }
 
-  const invoice = createInvoiceFromQuote(quoteId);
+  const invoice = await createInvoiceFromQuote(quoteId);
   if (!invoice) {
     return NextResponse.json({ error: "Quote not found." }, { status: 404 });
   }

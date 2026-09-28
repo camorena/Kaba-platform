@@ -13,7 +13,7 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
-  return NextResponse.json({ payments: listPayments() });
+  return NextResponse.json({ payments: await listPayments() });
 }
 
 export async function POST(request: Request) {
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid method." }, { status: 400 });
   }
 
-  const payment = recordPayment({
+  const payment = await recordPayment({
     invoiceId,
     amountCents: Math.round(amountCents),
     method,

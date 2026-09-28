@@ -1,0 +1,32 @@
+# Optional local Postgres for KABA_DATA_ADAPTER=postgres.
+# Usage:
+#   docker compose up -d
+#   DATABASE_URL=postgres://kaba:kaba@127.0.0.1:5432/kaba_fence npm run db:migrate
+#   DATABASE_URL=postgres://kaba:kaba@127.0.0.1:5432/kaba_fence npm run db:seed
+# Then set in .env.local:
+#   KABA_DATA_ADAPTER=postgres
+#   DATABASE_URL=postgres://kaba:kaba@127.0.0.1:5432/kaba_fence
+#
+# Default app adapter remains memory (no Docker / DATABASE_URL required to build).
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: kaba-fence-pg
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: kaba
+      POSTGRES_PASSWORD: kaba
+      POSTGRES_DB: kaba_fence
+    volumes:
+      - kaba_fence_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kaba -d kaba_fence"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  kaba_fence_pgdata:

@@ -6,7 +6,7 @@ export const metadata = { title: "Pipeline" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminPipelinePage() {
-  const quotes = listQuotes();
+  const quotes = await listQuotes();
 
   return (
     <>

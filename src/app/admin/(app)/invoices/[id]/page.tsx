@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const inv = getInvoice(id);
+  const inv = await getInvoice(id);
   return { title: inv ? inv.number : "Invoice" };
 }
 
@@ -24,14 +24,17 @@ export default async function AdminInvoiceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const invoice = getInvoice(id);
+  const invoice = await getInvoice(id);
   if (!invoice) notFound();
+
+  const payments = await listPaymentsForInvoice(invoice.id);
+  const paidCents = await paidCentsForInvoice(invoice.id);
 
   return (
     <InvoiceDetailClient
       invoice={invoice}
-      payments={listPaymentsForInvoice(invoice.id)}
-      paidCents={paidCentsForInvoice(invoice.id)}
+      payments={payments}
+      paidCents={paidCents}
     />
   );
 }

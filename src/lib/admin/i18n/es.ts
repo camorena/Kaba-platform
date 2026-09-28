@@ -324,14 +324,20 @@ const es = {
         "Cómo esta demostración conserva cotizaciones, facturas y pagos — y qué permanece intencionalmente sin conectar.",
       dataTitle: "Almacenamiento de datos",
       dataBadge: "En memoria",
-      dataBadgeDb: "Base de datos",
+      dataBadgeDb: "Postgres",
       dataBody:
-        "Adaptador {adapter} (variable {adapterEnv}, predeterminado memory). Cotizaciones, facturas y pagos usan la capa de repositorios en src/lib/db/ con filas de demostración. En Vercel serverless, un arranque en frío reinicia la lista en memoria. El {endpoint} público sigue aceptando envíos del formulario de marketing en la instancia activa que los recibe.",
+        "Adaptador activo: {adapter} (variable {adapterEnv}, predeterminado memory). Cotizaciones, facturas, pagos, clientes y afirmaciones de confianza usan la capa de repositorios en src/lib/db/. Memory trae filas de demostración y se reinicia en arranques en frío. Postgres usa DATABASE_URL tras npm run db:migrate y db:seed. El {endpoint} público sigue aceptando envíos del formulario de marketing.",
+      dataAdapterLabel: "Adaptador",
+      dataUrlLabel: "DATABASE_URL",
+      dataUrlSet: "Configurada",
+      dataUrlMissing: "Sin definir",
+      dataPostgresMissingUrl:
+        "Adaptador Postgres seleccionado pero DATABASE_URL está vacía — defínala o vuelva a memory.",
       dataNext:
-        "Siguiente: aplicar db/migrations/0001_ops_foundation.sql, implementar repositorios Postgres, definir KABA_DATA_ADAPTER=postgres + DATABASE_URL.",
+        "Activar: docker compose up -d (opcional), npm run db:migrate, npm run db:seed, luego KABA_DATA_ADAPTER=postgres + DATABASE_URL. Memory sigue siendo el predeterminado para que el build no necesite una base en vivo.",
       dataNotify:
         "La creación de cotizaciones usa persistir y luego notificar: primero se guarda la fila; {notify} es un stub sin efecto hasta conectar el correo.",
-      dataFilesLabel: "Esquema y repositorios",
+      dataFilesLabel: "Esquema, semillas y repositorios",
       stripeTitle: "Pagos y Stripe",
       stripeBadge: "Sin conexión",
       stripeBody:

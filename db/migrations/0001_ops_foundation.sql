@@ -1,12 +1,14 @@
 -- Kaba Fence ops foundation — quotes → invoices → payments (+ notes, customers, trust).
 --
--- Draft for Postgres (Supabase, Neon, RDS, or local). Not applied automatically.
--- Default runtime remains the in-memory adapter (KABA_DATA_ADAPTER=memory).
+-- Postgres schema for Supabase, Neon, RDS, or local Docker.
+-- Apply with: DATABASE_URL=… npm run db:migrate
+-- Seed demo rows with: DATABASE_URL=… npm run db:seed
 --
--- Flip later:
---   1. Provision Postgres; set DATABASE_URL (and KABA_DATA_ADAPTER=postgres when implemented).
---   2. Apply this file (psql / drizzle-kit / supabase db push).
---   3. Implement Postgres* repos behind the same interfaces in src/lib/db/repos/.
+-- Default runtime remains the in-memory adapter (KABA_DATA_ADAPTER=memory).
+-- Flip:
+--   1. Provision Postgres (docker compose up -d or cloud).
+--   2. Set DATABASE_URL; run npm run db:migrate && npm run db:seed.
+--   3. Set KABA_DATA_ADAPTER=postgres (repos in src/lib/db/postgres/).
 --   4. Keep Memory* as the default so builds and demos need no cloud credentials.
 --
 -- © 2026 Datelica LLC — Kaba Fence.

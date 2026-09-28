@@ -50,11 +50,13 @@ export default function SettingsClient({
   configured,
   rolesDoc = null,
   dataAdapter = "memory",
+  databaseUrlConfigured = false,
   roles = ["owner", "editor", "viewer"],
 }: {
   configured: boolean;
   rolesDoc?: string | null;
   dataAdapter?: string;
+  databaseUrlConfigured?: boolean;
   roles?: string[];
 }) {
   const { t } = useAdminI18n();
@@ -288,14 +290,41 @@ export default function SettingsClient({
                     ["POST /api/quotes", "KABA_DATA_ADAPTER", dataAdapter],
                   )}
                 </p>
+                <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+                  <div className="rounded-lg border border-border/60 bg-surface/40 px-3 py-2">
+                    <dt className="admin-section-label">
+                      {t("pages.settings.dataAdapterLabel")}
+                    </dt>
+                    <dd className="mt-1 font-medium text-ink">
+                      <Code>{dataAdapter}</Code>
+                    </dd>
+                  </div>
+                  <div className="rounded-lg border border-border/60 bg-surface/40 px-3 py-2">
+                    <dt className="admin-section-label">
+                      {t("pages.settings.dataUrlLabel")}
+                    </dt>
+                    <dd className="mt-1 font-medium text-ink">
+                      {databaseUrlConfigured
+                        ? t("pages.settings.dataUrlSet")
+                        : t("pages.settings.dataUrlMissing")}
+                    </dd>
+                  </div>
+                </dl>
+                {dataAdapter === "postgres" && !databaseUrlConfigured ? (
+                  <p className="mt-3 text-sm font-medium text-amber-700 dark:text-amber-400">
+                    {t("pages.settings.dataPostgresMissingUrl")}
+                  </p>
+                ) : null}
                 <p className="admin-section-label mt-4">
                   {t("pages.settings.dataFilesLabel")}
                 </p>
                 <ul className="mt-2 space-y-1.5">
                   {[
                     "src/lib/db/",
+                    "src/lib/db/postgres/",
                     "db/migrations/0001_ops_foundation.sql",
-                    "src/lib/admin/*-store.ts",
+                    "db/seeds/0001_angier_raleigh_demo.sql",
+                    "npm run db:migrate / db:seed",
                   ].map((path) => (
                     <li key={path}>
                       <Code>{path}</Code>

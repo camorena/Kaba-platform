@@ -1,19 +1,16 @@
 /**
  * Quote store facade — delegates to the selected data adapter (memory default).
- * Replace the adapter (KABA_DATA_ADAPTER + Postgres repos) before production.
- *
- * Persistence: memory adapter uses a module/global singleton. On serverless
- * cold starts the list resets; seed data keeps the UI usable. See
- * db/migrations/0001_ops_foundation.sql for the durable schema draft.
+ * Set KABA_DATA_ADAPTER=postgres + DATABASE_URL for durable Postgres.
  */
 
+import "server-only";
+
+import { getRepos } from "@/lib/db/adapter";
 import {
   isQuietQuote,
-  memoryQuotesRepo,
   QUIET_DAYS_THRESHOLD,
   QUIET_QUOTE_STATUSES,
-} from "@/lib/db/memory/quotes";
-import { memoryCustomersRepo } from "@/lib/db/memory/customers";
+} from "@/lib/db/quiet";
 import type {
   NewQuoteInput,
   QuoteNoteRecord,
@@ -24,73 +21,73 @@ import type {
 
 export type { QuoteRecord, QuoteStatus, QuoteNoteRecord };
 
-export {
-  QUIET_DAYS_THRESHOLD,
-  QUIET_QUOTE_STATUSES,
-  isQuietQuote,
-};
+export { QUIET_DAYS_THRESHOLD, QUIET_QUOTE_STATUSES, isQuietQuote };
 
-export function listQuotes(): QuoteRecord[] {
-  return memoryQuotesRepo.list();
+export async function listQuotes(): Promise<QuoteRecord[]> {
+  return getRepos().quotes.list();
 }
 
-export function getQuote(id: string): QuoteRecord | undefined {
-  return memoryQuotesRepo.get(id);
+export async function getQuote(id: string): Promise<QuoteRecord | undefined> {
+  return getRepos().quotes.get(id);
 }
 
-export function addQuote(input: NewQuoteInput): QuoteRecord {
-  return memoryQuotesRepo.add(input);
+export async function addQuote(input: NewQuoteInput): Promise<QuoteRecord> {
+  return getRepos().quotes.add(input);
 }
 
-export function updateQuote(
+export async function updateQuote(
   id: string,
   patch: QuotePatch,
-): QuoteRecord | undefined {
-  return memoryQuotesRepo.update(id, patch);
+): Promise<QuoteRecord | undefined> {
+  return getRepos().quotes.update(id, patch);
 }
 
-export function bulkUpdateQuoteStatus(
+export async function bulkUpdateQuoteStatus(
   ids: string[],
   status: QuoteStatus,
-): { updated: number; missing: string[] } {
-  return memoryQuotesRepo.bulkUpdateStatus(ids, status);
+): Promise<{ updated: number; missing: string[] }> {
+  return getRepos().quotes.bulkUpdateStatus(ids, status);
 }
 
 /** @deprecated prefer updateQuote */
-export function updateQuoteStatus(
+export async function updateQuoteStatus(
   id: string,
   status: QuoteStatus,
-): QuoteRecord | undefined {
+): Promise<QuoteRecord | undefined> {
   return updateQuote(id, { status });
 }
 
-export function quoteStats() {
-  return memoryQuotesRepo.stats();
+export async function quoteStats() {
+  return getRepos().quotes.stats();
 }
 
-/** Unique customers derived from quote contact fields. */
-export function listCustomers() {
-  return memoryCustomersRepo.list();
+/** Unique customers derived from quote contact fields (or customers table). */
+export async function listCustomers() {
+  return getRepos().customers.list();
 }
 
-export function listQuietQuotes(
+export async function listQuietQuotes(
   thresholdDays = QUIET_DAYS_THRESHOLD,
-): QuoteRecord[] {
-  return memoryQuotesRepo.listQuiet(thresholdDays);
+): Promise<QuoteRecord[]> {
+  return getRepos().quotes.listQuiet(thresholdDays);
 }
 
-export function quietQuoteCount(thresholdDays = QUIET_DAYS_THRESHOLD): number {
-  return memoryQuotesRepo.quietCount(thresholdDays);
+export async function quietQuoteCount(
+  thresholdDays = QUIET_DAYS_THRESHOLD,
+): Promise<number> {
+  return getRepos().quotes.quietCount(thresholdDays);
 }
 
-export function listQuoteNotes(quoteId: string): QuoteNoteRecord[] {
-  return memoryQuotesRepo.listNotes(quoteId);
+export async function listQuoteNotes(
+  quoteId: string,
+): Promise<QuoteNoteRecord[]> {
+  return getRepos().quotes.listNotes(quoteId);
 }
 
-export function addQuoteNote(
+export async function addQuoteNote(
   quoteId: string,
   body: string,
   author?: { id?: string | null; label?: string },
-): QuoteNoteRecord | null {
-  return memoryQuotesRepo.addNote(quoteId, body, author);
+): Promise<QuoteNoteRecord | null> {
+  return getRepos().quotes.addNote(quoteId, body, author);
 }

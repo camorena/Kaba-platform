@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin/quotes-store";
 import { QUOTE_STATUSES } from "@/lib/admin/status";
 import { daysSince } from "@/lib/admin/format";
+import type { InvoiceRecord, PaymentRecord, QuoteRecord } from "@/lib/db/types";
 
 export const metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
@@ -27,26 +28,30 @@ export default async function AdminDashboardPage() {
   let iStats: { open: number | null; totalOpenCents: number | null };
   let pStats: { recordedCents: number | null; total: number | null };
   let quietCount: number | null;
-  let quotes = listQuotes();
-  let quiet = listQuietQuotes();
-  let recentInvoices = listInvoices().slice(0, 4);
-  let recentPayments = listPayments().slice(0, 3);
+  let quotes: QuoteRecord[] = [];
+  let quiet: QuoteRecord[] = [];
+  let recentInvoices: InvoiceRecord[] = [];
+  let recentPayments: PaymentRecord[] = [];
   let blockers = getLaunchBlockers();
 
   try {
-    const paidMap = paidCentsMap();
-    const qs = quoteStats();
+    quotes = await listQuotes();
+    quiet = await listQuietQuotes();
+    recentInvoices = (await listInvoices()).slice(0, 4);
+    recentPayments = (await listPayments()).slice(0, 3);
+    const paidMap = await paidCentsMap();
+    const qs = await quoteStats();
     qStats = {
       new: qs.new,
       total: qs.total,
       won: qs.won,
       scheduled: qs.scheduled,
     };
-    const is = invoiceStats(paidMap);
+    const is = await invoiceStats(paidMap);
     iStats = { open: is.open, totalOpenCents: is.totalOpenCents };
-    const ps = paymentStats();
+    const ps = await paymentStats();
     pStats = { recordedCents: ps.recordedCents, total: ps.total };
-    quietCount = quietQuoteCount();
+    quietCount = await quietQuoteCount();
   } catch {
     qStats = { new: null, total: null, won: null, scheduled: null };
     iStats = { open: null, totalOpenCents: null };
@@ -59,6 +64,7 @@ export default async function AdminDashboardPage() {
   }
 
   const recent = quotes.slice(0, 5);
+  const allInvoices = await listInvoices().catch(() => [] as InvoiceRecord[]);
 
   const needsAction = [
     ...quotes
@@ -70,7 +76,7 @@ export default async function AdminDashboardPage() {
         metaKey: "newQuote" as const,
         serviceOrStatus: q.serviceType,
       })),
-    ...listInvoices()
+    ...allInvoices
       .filter((i) => i.status === "sent" || i.status === "partial" || i.status === "draft")
       .slice(0, 3)
       .map((i) => ({

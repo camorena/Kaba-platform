@@ -8,19 +8,19 @@ export const metadata = { title: "Reports" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminReportsPage() {
-  const quotes = listQuotes().map((q) => ({
+  const quotes = (await listQuotes()).map((q) => ({
     id: q.id,
     status: q.status,
     serviceType: q.serviceType,
     createdAt: q.createdAt,
   }));
-  const invoices = listInvoices().map((inv) => ({
+  const invoices = (await listInvoices()).map((inv) => ({
     id: inv.id,
     status: inv.status,
     totalCents: inv.lines.reduce((s, l) => s + l.quantity * l.unitCents, 0),
     createdAt: inv.createdAt,
   }));
-  const pStats = paymentStats();
+  const pStats = await paymentStats();
 
   return (
     <>

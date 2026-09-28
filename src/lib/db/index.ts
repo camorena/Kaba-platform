@@ -1,6 +1,7 @@
 export {
   getRepos,
   getDataAdapterName,
+  isDatabaseUrlConfigured,
   resetReposCache,
   type DataAdapterName,
 } from "@/lib/db/adapter";
@@ -21,3 +22,8 @@ export {
   notifyQuoteCreated,
   type NotifyQuoteResult,
 } from "@/lib/db/notify";
+export {
+  isQuietQuote,
+  QUIET_DAYS_THRESHOLD,
+  QUIET_QUOTE_STATUSES,
+} from "@/lib/db/quiet";

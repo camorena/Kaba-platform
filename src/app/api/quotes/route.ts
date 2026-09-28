@@ -22,7 +22,7 @@ export async function GET() {
       { status: 401 },
     );
   }
-  return NextResponse.json({ quotes: listQuotes() });
+  return NextResponse.json({ quotes: await listQuotes() });
 }
 
 export async function PATCH(request: Request) {
@@ -52,7 +52,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Max 100 ids per bulk update." }, { status: 400 });
   }
 
-  const result = bulkUpdateQuoteStatus(ids, status);
+  const result = await bulkUpdateQuoteStatus(ids, status);
   return NextResponse.json({ ok: true, ...result, status });
 }
 
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
   }
 
   // 1. Persist first.
-  const quote = addQuote({
+  const quote = await addQuote({
     name,
     phone,
     email,
@@ -110,14 +110,14 @@ export async function POST(request: Request) {
     const notifyResult = await notifyQuoteCreated(quote);
     notifyDelivered = notifyResult.delivered;
     notifyReason = notifyResult.reason;
-    updateQuote(
+    await updateQuote(
       quote.id,
       notificationPatchFromResult(quote.notifyAttempts, notifyResult),
     );
   } catch (err) {
     notifyReason =
       err instanceof Error ? err.message : "notifyQuoteCreated threw";
-    updateQuote(quote.id, {
+    await updateQuote(quote.id, {
       notifyAttempts: quote.notifyAttempts + 1,
       notifiedAt: null,
     });

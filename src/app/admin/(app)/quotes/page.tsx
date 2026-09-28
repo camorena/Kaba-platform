@@ -7,7 +7,7 @@ export const metadata = { title: "Quotes" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminQuotesPage() {
-  const quotes = listQuotes();
+  const quotes = await listQuotes();
 
   return (
     <>

@@ -21,14 +21,14 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
   const { id } = await context.params;
-  const invoice = getInvoice(id);
+  const invoice = await getInvoice(id);
   if (!invoice) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
   return NextResponse.json({
     invoice,
-    payments: listPaymentsForInvoice(id),
-    paidCents: paidCentsForInvoice(id),
+    payments: await listPaymentsForInvoice(id),
+    paidCents: await paidCentsForInvoice(id),
   });
 }
 
@@ -41,7 +41,7 @@ export async function PATCH(
   }
 
   const { id } = await context.params;
-  if (!getInvoice(id)) {
+  if (!(await getInvoice(id))) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
@@ -57,6 +57,6 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid status." }, { status: 400 });
   }
 
-  const updated = updateInvoiceStatus(id, status);
+  const updated = await updateInvoiceStatus(id, status);
   return NextResponse.json({ invoice: updated });
 }

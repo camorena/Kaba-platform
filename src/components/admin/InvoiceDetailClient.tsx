@@ -13,8 +13,7 @@ import {
   invoiceStatusTone,
   type InvoiceStatus,
 } from "@/lib/admin/status";
-import type { InvoiceRecord } from "@/lib/admin/invoices-store";
-import type { PaymentRecord } from "@/lib/admin/payments-store";
+import type { InvoiceRecord, PaymentRecord } from "@/lib/db/types";
 import { siteConfig } from "@/lib/site";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

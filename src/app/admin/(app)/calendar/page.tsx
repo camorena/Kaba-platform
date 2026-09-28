@@ -5,7 +5,7 @@ export const metadata = { title: "Schedule" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminCalendarPage() {
-  const jobs = listScheduleJobs();
+  const jobs = await listScheduleJobs();
   const { label, weeks } = monthGrid(new Date());
   const today = new Date();
   const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;

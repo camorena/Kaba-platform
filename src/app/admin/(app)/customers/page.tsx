@@ -6,8 +6,8 @@ export const metadata = { title: "Customers" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminCustomersPage() {
-  const customers = listCustomers();
-  const quotes = listQuotes();
+  const customers = await listCustomers();
+  const quotes = await listQuotes();
 
   const rows = customers.map((c) => {
     const quoteLink = quotes.find(
@@ -27,7 +27,5 @@ export default async function AdminCustomersPage() {
     };
   });
 
-  return (
-    <CustomersClient customers={rows} />
-  );
+  return <CustomersClient customers={rows} />;
 }

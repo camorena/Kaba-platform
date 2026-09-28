@@ -1,17 +1,17 @@
 /**
  * Customers — derived from quotes in the memory adapter.
- * Durable `customers` table exists in the SQL draft for a later Postgres swap.
+ * Durable `customers` table exists in the SQL draft for the Postgres swap.
  */
 
+import { memoryQuotesRepo } from "@/lib/db/memory/quotes";
 import type { CustomersRepo } from "@/lib/db/repos/types";
 import type { CustomerRecord, QuoteStatus } from "@/lib/db/types";
-import { memoryQuotesRepo } from "@/lib/db/memory/quotes";
 
 export const memoryCustomersRepo: CustomersRepo = {
-  list() {
+  async list() {
     const map = new Map<string, CustomerRecord>();
 
-    for (const q of memoryQuotesRepo.list()) {
+    for (const q of await memoryQuotesRepo.list()) {
       const key = q.email.toLowerCase().trim() || q.phone.trim();
       const existing = map.get(key);
       if (!existing) {

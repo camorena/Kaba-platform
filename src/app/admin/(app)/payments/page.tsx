@@ -12,13 +12,15 @@ export default async function AdminPaymentsPage({
   searchParams: Promise<{ invoice?: string }>;
 }) {
   const sp = await searchParams;
+  const payments = await listPayments();
+  const invoices = await listInvoices();
 
   return (
     <>
       <AdminPageChrome page="payments" />
       <PaymentsPanel
-        payments={listPayments()}
-        invoices={listInvoices()}
+        payments={payments}
+        invoices={invoices}
         preselectInvoiceId={sp.invoice ?? null}
       />
     </>

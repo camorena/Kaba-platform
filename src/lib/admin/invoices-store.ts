@@ -3,7 +3,9 @@
  * See db/migrations/0001_ops_foundation.sql + src/lib/db/.
  */
 
-import { memoryInvoicesRepo } from "@/lib/db/memory/invoices";
+import "server-only";
+
+import { getRepos } from "@/lib/db/adapter";
 import type {
   InvoiceLine,
   InvoiceRecord,
@@ -13,28 +15,32 @@ import type {
 export type { InvoiceLine, InvoiceRecord, InvoiceStatus };
 
 export function invoiceSubtotalCents(inv: InvoiceRecord): number {
-  return memoryInvoicesRepo.subtotalCents(inv);
+  return getRepos().invoices.subtotalCents(inv);
 }
 
-export function listInvoices(): InvoiceRecord[] {
-  return memoryInvoicesRepo.list();
+export async function listInvoices(): Promise<InvoiceRecord[]> {
+  return getRepos().invoices.list();
 }
 
-export function getInvoice(id: string): InvoiceRecord | undefined {
-  return memoryInvoicesRepo.get(id);
+export async function getInvoice(
+  id: string,
+): Promise<InvoiceRecord | undefined> {
+  return getRepos().invoices.get(id);
 }
 
-export function createInvoiceFromQuote(quoteId: string): InvoiceRecord | null {
-  return memoryInvoicesRepo.createFromQuote(quoteId);
+export async function createInvoiceFromQuote(
+  quoteId: string,
+): Promise<InvoiceRecord | null> {
+  return getRepos().invoices.createFromQuote(quoteId);
 }
 
-export function updateInvoiceStatus(
+export async function updateInvoiceStatus(
   id: string,
   status: InvoiceStatus,
-): InvoiceRecord | undefined {
-  return memoryInvoicesRepo.updateStatus(id, status);
+): Promise<InvoiceRecord | undefined> {
+  return getRepos().invoices.updateStatus(id, status);
 }
 
-export function invoiceStats(paidByInvoiceId?: Map<string, number>) {
-  return memoryInvoicesRepo.stats(paidByInvoiceId);
+export async function invoiceStats(paidByInvoiceId?: Map<string, number>) {
+  return getRepos().invoices.stats(paidByInvoiceId);
 }

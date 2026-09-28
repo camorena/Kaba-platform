@@ -1,22 +1,14 @@
 /**
  * Owner-asserted trust claims — Settings toggles shaped for a future DB row.
  *
- * Today:
- *   - Browser localStorage stub for Settings UI (client).
- *   - Server memory singleton (memoryTrustClaimsRepo) for getTrustClaimsForPublic().
+ * Client-safe module (localStorage stub). Server public reader lives in
+ * trust-claims-server.ts so this file never pulls pg into the browser bundle.
+ *
  * Public marketing still uses `site.ts` trustPoints until a durable store feeds
  * the public reader; do not wire the public hero bar to localStorage.
- *
- * API shape (stable for DB swap):
- *   TrustClaims { claimFreeEstimates, claimLocallyOwned, updatedAt }
- *   getTrustClaimsForPublic() — server-safe reader
- *   read/writeTrustClaimsClient() — Settings UI only
  */
 
-import {
-  DEFAULT_TRUST_CLAIMS,
-  memoryTrustClaimsRepo,
-} from "@/lib/db/memory/trust-claims";
+import { DEFAULT_TRUST_CLAIMS } from "@/lib/db/memory/trust-claims";
 import type { TrustClaimsRecord } from "@/lib/db/types";
 
 export type TrustClaims = TrustClaimsRecord;
@@ -24,15 +16,6 @@ export type TrustClaims = TrustClaimsRecord;
 export const TRUST_CLAIMS_STORAGE_KEY = "kaba-admin-trust-claims-v1";
 
 export { DEFAULT_TRUST_CLAIMS };
-
-/**
- * Server / public reader.
- * Memory adapter today; when Postgres site_settings lands, point this at
- * getRepos().trustClaims.get() (or keep memoryTrustClaimsRepo as the memory path).
- */
-export function getTrustClaimsForPublic(): TrustClaims {
-  return memoryTrustClaimsRepo.get();
-}
 
 export function readTrustClaimsClient(): TrustClaims {
   if (typeof window === "undefined") return { ...DEFAULT_TRUST_CLAIMS };

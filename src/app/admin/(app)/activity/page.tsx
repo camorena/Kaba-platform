@@ -5,7 +5,7 @@ export const metadata = { title: "Activity" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminActivityPage() {
-  const feed = listActivity(50);
+  const feed = await listActivity(50);
 
   return (
     <ActivityClient

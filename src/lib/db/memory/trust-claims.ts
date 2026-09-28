@@ -26,11 +26,11 @@ function store(): TrustClaimsRecord {
 }
 
 export const memoryTrustClaimsRepo: TrustClaimsRepo = {
-  get() {
+  async get() {
     return { ...store() };
   },
 
-  save(patch) {
+  async save(patch) {
     const next: TrustClaimsRecord = {
       claimFreeEstimates: patch.claimFreeEstimates,
       claimLocallyOwned: patch.claimLocallyOwned,

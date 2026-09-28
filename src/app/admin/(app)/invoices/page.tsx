@@ -8,13 +8,13 @@ export const metadata = { title: "Invoices" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminInvoicesPage() {
-  const invoices = listInvoices();
-  const paid = paidCentsMap();
+  const invoices = await listInvoices();
+  const paid = await paidCentsMap();
   const paidMap: Record<string, number> = {};
   paid.forEach((v, k) => {
     paidMap[k] = v;
   });
-  const quotesForCreate = listQuotes().filter((q) =>
+  const quotesForCreate = (await listQuotes()).filter((q) =>
     ["won", "scheduled", "contacted", "new"].includes(q.status),
   );
 

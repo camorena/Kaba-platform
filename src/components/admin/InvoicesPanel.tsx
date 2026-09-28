@@ -10,8 +10,7 @@ import {
   invoiceStatusTone,
   type InvoiceStatus,
 } from "@/lib/admin/status";
-import type { InvoiceRecord } from "@/lib/admin/invoices-store";
-import type { QuoteRecord } from "@/lib/admin/quotes-store";
+import type { InvoiceRecord, QuoteRecord } from "@/lib/db/types";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";

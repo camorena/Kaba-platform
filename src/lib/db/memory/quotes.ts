@@ -8,8 +8,12 @@ import type {
   QuoteNoteRecord,
   QuotePatch,
   QuoteRecord,
-  QuoteStatus,
 } from "@/lib/db/types";
+import {
+  isQuietQuote,
+  QUIET_DAYS_THRESHOLD,
+  QUIET_QUOTE_STATUSES,
+} from "@/lib/db/quiet";
 
 const seed: QuoteRecord[] = [
   {
@@ -142,36 +146,20 @@ function notesStore(): QuoteNoteRecord[] {
   return globalThis.__kabaQuoteNotes;
 }
 
-export const QUIET_QUOTE_STATUSES: readonly QuoteStatus[] = [
-  "new",
-  "contacted",
-  "scheduled",
-];
-
-export const QUIET_DAYS_THRESHOLD = 3;
-
-export function isQuietQuote(
-  q: QuoteRecord,
-  thresholdDays = QUIET_DAYS_THRESHOLD,
-  now = Date.now(),
-): boolean {
-  if (!QUIET_QUOTE_STATUSES.includes(q.status)) return false;
-  const ageMs = now - new Date(q.updatedAt).getTime();
-  return ageMs >= thresholdDays * 86_400_000;
-}
+export { QUIET_DAYS_THRESHOLD, QUIET_QUOTE_STATUSES, isQuietQuote };
 
 export const memoryQuotesRepo: QuotesRepo = {
-  list() {
+  async list() {
     return [...store()].sort(
       (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
     );
   },
 
-  get(id) {
+  async get(id) {
     return store().find((q) => q.id === id);
   },
 
-  add(input: NewQuoteInput) {
+  async add(input: NewQuoteInput) {
     const now = new Date().toISOString();
     const record: QuoteRecord = {
       id: `q_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
@@ -195,7 +183,7 @@ export const memoryQuotesRepo: QuotesRepo = {
     return record;
   },
 
-  update(id, patch: QuotePatch) {
+  async update(id, patch: QuotePatch) {
     const q = store().find((item) => item.id === id);
     if (!q) return undefined;
     if (patch.status !== undefined) q.status = patch.status;
@@ -208,7 +196,7 @@ export const memoryQuotesRepo: QuotesRepo = {
     return q;
   },
 
-  bulkUpdateStatus(ids, status) {
+  async bulkUpdateStatus(ids, status) {
     const missing: string[] = [];
     let updated = 0;
     const now = new Date().toISOString();
@@ -225,8 +213,8 @@ export const memoryQuotesRepo: QuotesRepo = {
     return { updated, missing };
   },
 
-  stats() {
-    const all = memoryQuotesRepo.list();
+  async stats() {
+    const all = await memoryQuotesRepo.list();
     return {
       total: all.length,
       new: all.filter((q) => q.status === "new").length,
@@ -237,25 +225,25 @@ export const memoryQuotesRepo: QuotesRepo = {
     };
   },
 
-  listQuiet(thresholdDays = QUIET_DAYS_THRESHOLD) {
+  async listQuiet(thresholdDays = QUIET_DAYS_THRESHOLD) {
     const now = Date.now();
-    return memoryQuotesRepo
-      .list()
+    const all = await memoryQuotesRepo.list();
+    return all
       .filter((q) => isQuietQuote(q, thresholdDays, now))
       .sort((a, b) => +new Date(a.updatedAt) - +new Date(b.updatedAt));
   },
 
-  quietCount(thresholdDays = QUIET_DAYS_THRESHOLD) {
-    return memoryQuotesRepo.listQuiet(thresholdDays).length;
+  async quietCount(thresholdDays = QUIET_DAYS_THRESHOLD) {
+    return (await memoryQuotesRepo.listQuiet(thresholdDays)).length;
   },
 
-  listNotes(quoteId) {
+  async listNotes(quoteId) {
     return notesStore()
       .filter((n) => n.quoteId === quoteId)
       .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
   },
 
-  addNote(quoteId, body, author) {
+  async addNote(quoteId, body, author) {
     const quote = store().find((q) => q.id === quoteId);
     if (!quote) return null;
     const trimmed = body.trim();

@@ -2,9 +2,9 @@
  * In-memory PaymentsRepo — stub ledger, no Stripe.
  */
 
+import { memoryInvoicesRepo } from "@/lib/db/memory/invoices";
 import type { PaymentsRepo } from "@/lib/db/repos/types";
 import type { PaymentRecord } from "@/lib/db/types";
-import { memoryInvoicesRepo } from "@/lib/db/memory/invoices";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -51,38 +51,39 @@ function seedPayments(): PaymentRecord[] {
 }
 
 export const memoryPaymentsRepo: PaymentsRepo = {
-  list() {
+  async list() {
     return [...store()].sort(
       (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
     );
   },
 
-  listForInvoice(invoiceId) {
-    return memoryPaymentsRepo.list().filter((p) => p.invoiceId === invoiceId);
+  async listForInvoice(invoiceId) {
+    return (await memoryPaymentsRepo.list()).filter(
+      (p) => p.invoiceId === invoiceId,
+    );
   },
 
-  get(id) {
+  async get(id) {
     return store().find((p) => p.id === id);
   },
 
-  paidCentsForInvoice(invoiceId) {
-    return memoryPaymentsRepo
-      .listForInvoice(invoiceId)
+  async paidCentsForInvoice(invoiceId) {
+    return (await memoryPaymentsRepo.listForInvoice(invoiceId))
       .filter((p) => p.status === "recorded")
       .reduce((sum, p) => sum + p.amountCents, 0);
   },
 
-  paidCentsMap() {
+  async paidCentsMap() {
     const map = new Map<string, number>();
-    for (const p of memoryPaymentsRepo.list()) {
+    for (const p of await memoryPaymentsRepo.list()) {
       if (p.status !== "recorded") continue;
       map.set(p.invoiceId, (map.get(p.invoiceId) ?? 0) + p.amountCents);
     }
     return map;
   },
 
-  record(input) {
-    const inv = memoryInvoicesRepo.get(input.invoiceId);
+  async record(input) {
+    const inv = await memoryInvoicesRepo.get(input.invoiceId);
     if (!inv) return null;
     if (input.amountCents <= 0) return null;
 
@@ -101,19 +102,19 @@ export const memoryPaymentsRepo: PaymentsRepo = {
     };
     store().unshift(record);
 
-    const paid = memoryPaymentsRepo.paidCentsForInvoice(inv.id);
+    const paid = await memoryPaymentsRepo.paidCentsForInvoice(inv.id);
     const total = memoryInvoicesRepo.subtotalCents(inv);
     if (paid >= total && total > 0) {
-      memoryInvoicesRepo.updateStatus(inv.id, "paid");
+      await memoryInvoicesRepo.updateStatus(inv.id, "paid");
     } else if (paid > 0 && inv.status !== "void") {
-      memoryInvoicesRepo.updateStatus(inv.id, "partial");
+      await memoryInvoicesRepo.updateStatus(inv.id, "partial");
     }
 
     return record;
   },
 
-  stats() {
-    const all = memoryPaymentsRepo.list();
+  async stats() {
+    const all = await memoryPaymentsRepo.list();
     const recorded = all.filter((p) => p.status === "recorded");
     return {
       total: all.length,

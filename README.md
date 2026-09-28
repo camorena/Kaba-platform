@@ -19,11 +19,14 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Other scripts
 
-| Command           | Description              |
-| ----------------- | ------------------------ |
-| `npm run build`   | Production build         |
-| `npm run start`   | Serve the production build |
-| `npm run lint`    | Run ESLint               |
+| Command              | Description |
+| -------------------- | ----------- |
+| `npm run build`      | Production build (memory adapter; no DB required) |
+| `npm run start`      | Serve the production build |
+| `npm run lint`       | Run ESLint |
+| `npm run db:migrate` | Apply `db/migrations/*.sql` (needs `DATABASE_URL`) |
+| `npm run db:seed`    | Apply `db/seeds/*.sql` Angier/Raleigh demo |
+| `npm run db:reset`   | Migrate then seed |
 
 ## Pages (public)
 
@@ -66,7 +69,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-Schema draft: `db/migrations/0001_ops_foundation.sql`. Types/repos: `src/lib/db/`. On Vercel cold starts the memory lists reset. Flip to Postgres later without rewriting UI (see `preview/REUSE_PORT_v2.md`). **Stripe is not connected** — see `/admin/settings`.
+Schema: `db/migrations/0001_ops_foundation.sql`. Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v3.md`. **Stripe is not connected** — see `/admin/settings`.
 
 ### Auth warning
 

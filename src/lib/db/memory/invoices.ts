@@ -2,9 +2,10 @@
  * In-memory InvoicesRepo — demo amounts, clearly labeled.
  */
 
+import { demoUnitCentsForService } from "@/lib/db/demo-amounts";
+import { memoryQuotesRepo } from "@/lib/db/memory/quotes";
 import type { InvoicesRepo } from "@/lib/db/repos/types";
 import type { InvoiceRecord, InvoiceStatus } from "@/lib/db/types";
-import { memoryQuotesRepo } from "@/lib/db/memory/quotes";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -15,7 +16,7 @@ declare global {
 
 function store(): InvoiceRecord[] {
   if (!globalThis.__kabaInvoices) {
-    globalThis.__kabaInvoices = seedInvoices();
+    globalThis.__kabaInvoices = seedInvoicesSync();
     globalThis.__kabaInvoiceSeq = 1004;
   }
   return globalThis.__kabaInvoices;
@@ -27,9 +28,7 @@ function nextNumber(): string {
   return `KF-${n}`;
 }
 
-function seedInvoices(): InvoiceRecord[] {
-  const won = memoryQuotesRepo.get("q_seed_4");
-  const scheduled = memoryQuotesRepo.get("q_seed_3");
+function seedInvoicesSync(): InvoiceRecord[] {
   const now = Date.now();
   return [
     {
@@ -37,12 +36,12 @@ function seedInvoices(): InvoiceRecord[] {
       number: "KF-1001",
       createdAt: new Date(now - 1000 * 60 * 60 * 80).toISOString(),
       updatedAt: new Date(now - 1000 * 60 * 60 * 72).toISOString(),
-      quoteId: won?.id ?? null,
+      quoteId: "q_seed_4",
       customerId: null,
-      customerName: won?.name ?? "Alicia Brooks",
-      customerEmail: won?.email ?? "alicia.b@example.com",
-      customerPhone: won?.phone ?? "(919) 555-0199",
-      address: won?.address ?? "Cary, NC",
+      customerName: "Alicia Brooks",
+      customerEmail: "alicia.b@example.com",
+      customerPhone: "(919) 555-0199",
+      address: "Cary, NC",
       status: "partial",
       lines: [
         {
@@ -66,12 +65,12 @@ function seedInvoices(): InvoiceRecord[] {
       number: "KF-1002",
       createdAt: new Date(now - 1000 * 60 * 60 * 48).toISOString(),
       updatedAt: new Date(now - 1000 * 60 * 60 * 48).toISOString(),
-      quoteId: scheduled?.id ?? null,
+      quoteId: "q_seed_3",
       customerId: null,
-      customerName: scheduled?.name ?? "Chris Nguyen",
-      customerEmail: scheduled?.email ?? "chris.n@example.com",
-      customerPhone: scheduled?.phone ?? "(919) 555-0172",
-      address: scheduled?.address ?? "Fuquay-Varina, NC",
+      customerName: "Chris Nguyen",
+      customerEmail: "chris.n@example.com",
+      customerPhone: "(919) 555-0172",
+      address: "Fuquay-Varina, NC",
       status: "draft",
       lines: [
         {
@@ -115,31 +114,21 @@ export const memoryInvoicesRepo: InvoicesRepo = {
     return inv.lines.reduce((sum, l) => sum + l.quantity * l.unitCents, 0);
   },
 
-  list() {
+  async list() {
     return [...store()].sort(
       (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
     );
   },
 
-  get(id) {
+  async get(id) {
     return store().find((i) => i.id === id);
   },
 
-  createFromQuote(quoteId) {
-    const quote = memoryQuotesRepo.get(quoteId);
+  async createFromQuote(quoteId) {
+    const quote = await memoryQuotesRepo.get(quoteId);
     if (!quote) return null;
 
-    const demoAmounts: Record<string, number> = {
-      "Wood Fence": 485000,
-      "Vinyl Fence": 620000,
-      "Aluminum Fence": 840000,
-      "Deck Repair": 245000,
-      "Deck Install": 920000,
-    };
-    const unit =
-      demoAmounts[quote.serviceType] ??
-      350000 + (quote.serviceType.length % 7) * 25000;
-
+    const unit = demoUnitCentsForService(quote.serviceType);
     const now = new Date().toISOString();
     const record: InvoiceRecord = {
       id: `inv_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
@@ -168,7 +157,7 @@ export const memoryInvoicesRepo: InvoicesRepo = {
     return record;
   },
 
-  updateStatus(id, status: InvoiceStatus) {
+  async updateStatus(id, status: InvoiceStatus) {
     const inv = store().find((i) => i.id === id);
     if (!inv) return undefined;
     inv.status = status;
@@ -176,8 +165,8 @@ export const memoryInvoicesRepo: InvoicesRepo = {
     return inv;
   },
 
-  stats(paidByInvoiceId) {
-    const all = memoryInvoicesRepo.list();
+  async stats(paidByInvoiceId) {
+    const all = await memoryInvoicesRepo.list();
     const open = all.filter((i) =>
       ["draft", "sent", "partial"].includes(i.status),
     );

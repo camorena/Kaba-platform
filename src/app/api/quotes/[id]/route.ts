@@ -17,7 +17,7 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
   const { id } = await context.params;
-  const quote = getQuote(id);
+  const quote = await getQuote(id);
   if (!quote) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
@@ -33,7 +33,7 @@ export async function PATCH(
   }
 
   const { id } = await context.params;
-  if (!getQuote(id)) {
+  if (!(await getQuote(id))) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
@@ -68,6 +68,6 @@ export async function PATCH(
     );
   }
 
-  const updated = updateQuote(id, patch);
+  const updated = await updateQuote(id, patch);
   return NextResponse.json({ quote: updated });
 }
