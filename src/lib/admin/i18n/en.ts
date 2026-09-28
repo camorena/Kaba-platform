@@ -248,7 +248,8 @@ const en = {
     },
     templates: {
       title: "Templates",
-      description: "SMS, email, and internal note starters with merge fields. Copy to clipboard — no messaging API."
+      meta: "Follow-ups",
+      description: "SMS, email, and internal note starters. Fill merge fields, preview, copy — no messaging API."
     },
     activity: {
       title: "Activity",
@@ -712,8 +713,14 @@ const en = {
     sms: "SMS",
     email: "Email",
     note: "Internal",
-    mergeTitle: "Dynamic fields",
-    mergeHint: "Fill once — preview updates live. No email/SMS API wired.",
+    searchLabel: "Search templates",
+    searchPlaceholder: "Search by title or body…",
+    countLabel: "{count} templates",
+    countLabel_one: "{count} template",
+    channelCount: "{label} ({count})",
+    listTitle: "Library",
+    mergeTitle: "Merge fields",
+    mergeHint: "Fill once — preview updates live.",
     name: "Name",
     service: "Service",
     address: "Address",
@@ -721,9 +728,30 @@ const en = {
     amount: "Amount",
     invoice: "Invoice #",
     preview: "Preview",
-    copy: "Copy to clipboard",
-    copied: "Template copied",
-    select: "Select a template."
+    copy: "Copy",
+    copyFull: "Copy to clipboard",
+    copied: "Copied",
+    copiedToast: "Template copied",
+    select: "Select a template to preview.",
+    emptyTitle: "No templates match",
+    emptyDesc: "Try another channel or clear the search.",
+    clearFilters: "Clear filters",
+    varsUsed: "Fields in this template",
+    chars: "{count} characters",
+    smsHint: "SMS · keep under ~160 characters when possible",
+    emailHint: "Email · paste into your mail client",
+    noteHint: "Internal note · paste into the quote or job record",
+    footnote: "Clipboard only — no email or SMS API is connected.",
+    items: {
+      ack: "Request received",
+      visit: "Confirm site visit",
+      quoteReady: "Quote ready",
+      thankYou: "Thank you / next steps",
+      proposal: "Proposal cover",
+      invoiceSent: "Invoice sent",
+      hoa: "HOA checklist",
+      won: "Won handoff"
+    }
   },
   pricebook: {
     estimate: "Quick estimate",

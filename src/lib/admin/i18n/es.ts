@@ -259,8 +259,9 @@ const es = {
     },
     templates: {
       title: "Plantillas",
+      meta: "Seguimientos",
       description:
-        "Mensajes SMS, correo y notas internas con campos dinámicos. Copie al portapapeles: sin API de mensajería."
+        "Mensajes SMS, correo y notas internas. Complete los campos, previsualice y copie: sin API de mensajería."
     },
     activity: {
       title: "Actividad",
@@ -744,9 +745,14 @@ const es = {
     sms: "SMS",
     email: "Correo",
     note: "Interna",
+    searchLabel: "Buscar plantillas",
+    searchPlaceholder: "Buscar por título o texto…",
+    countLabel: "{count} plantillas",
+    countLabel_one: "{count} plantilla",
+    channelCount: "{label} ({count})",
+    listTitle: "Biblioteca",
     mergeTitle: "Campos dinámicos",
-    mergeHint:
-      "Complete una vez — la vista previa se actualiza al instante. Sin API de correo/SMS.",
+    mergeHint: "Complete una vez — la vista previa se actualiza al instante.",
     name: "Nombre",
     service: "Servicio",
     address: "Dirección",
@@ -754,9 +760,30 @@ const es = {
     amount: "Monto",
     invoice: "Factura #",
     preview: "Vista previa",
-    copy: "Copiar al portapapeles",
-    copied: "Plantilla copiada",
-    select: "Seleccione una plantilla."
+    copy: "Copiar",
+    copyFull: "Copiar al portapapeles",
+    copied: "Copiado",
+    copiedToast: "Plantilla copiada",
+    select: "Seleccione una plantilla para previsualizar.",
+    emptyTitle: "Ninguna plantilla coincide",
+    emptyDesc: "Pruebe otro canal o limpie la búsqueda.",
+    clearFilters: "Limpiar filtros",
+    varsUsed: "Campos en esta plantilla",
+    chars: "{count} caracteres",
+    smsHint: "SMS · procure no superar ~160 caracteres",
+    emailHint: "Correo · pegue en su cliente de correo",
+    noteHint: "Nota interna · pegue en la cotización o el registro del trabajo",
+    footnote: "Solo portapapeles: no hay API de correo ni SMS conectada.",
+    items: {
+      ack: "Solicitud recibida",
+      visit: "Confirmar visita",
+      quoteReady: "Cotización lista",
+      thankYou: "Agradecimiento / siguientes pasos",
+      proposal: "Portada de propuesta",
+      invoiceSent: "Factura enviada",
+      hoa: "Lista HOA",
+      won: "Traspaso ganado"
+    }
   },
   pricebook: {
     estimate: "Estimado rápido",
