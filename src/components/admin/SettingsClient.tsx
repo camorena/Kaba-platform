@@ -2,188 +2,373 @@
 
 import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import SettingsAppearance from "@/components/admin/SettingsAppearance";
 import SettingsProfile from "@/components/admin/SettingsProfile";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+
+const SECTIONS = [
+  { id: "settings-profile", labelKey: "pages.settings.navProfile" },
+  { id: "settings-appearance", labelKey: "pages.settings.navAppearance" },
+  { id: "settings-security", labelKey: "pages.settings.navSecurity" },
+  { id: "settings-platform", labelKey: "pages.settings.navPlatform" },
+  { id: "settings-about", labelKey: "pages.settings.navAbout" },
+] as const;
+
+function Code({ children }: { children: ReactNode }) {
+  return <code className="admin-inline-code">{children}</code>;
+}
+
+/** Split a translated string on known literal tokens and wrap matches in <Code>. */
+function withCode(text: string, tokens: string[]): ReactNode {
+  if (!tokens.length) return text;
+  type Part = { type: "text" | "code"; value: string };
+  let parts: Part[] = [{ type: "text", value: text }];
+  for (const token of tokens) {
+    const next: Part[] = [];
+    for (const part of parts) {
+      if (part.type === "code") {
+        next.push(part);
+        continue;
+      }
+      const chunks = part.value.split(token);
+      chunks.forEach((chunk, i) => {
+        if (chunk) next.push({ type: "text", value: chunk });
+        if (i < chunks.length - 1) next.push({ type: "code", value: token });
+      });
+    }
+    parts = next;
+  }
+  return parts.map((p, i) =>
+    p.type === "code" ? <Code key={`c-${i}`}>{p.value}</Code> : <span key={`t-${i}`}>{p.value}</span>,
+  );
+}
 
 export default function SettingsClient({ configured }: { configured: boolean }) {
   const { t } = useAdminI18n();
+  const [active, setActive] = useState<string>(SECTIONS[0].id);
+
+  useEffect(() => {
+    const nodes = SECTIONS.map((s) => document.getElementById(s.id)).filter(
+      Boolean,
+    ) as HTMLElement[];
+    if (!nodes.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target?.id) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+    nodes.forEach((n) => observer.observe(n));
+    return () => observer.disconnect();
+  }, []);
+
+  function scrollTo(id: string) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    setActive(id);
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   return (
     <>
       <AdminPageChrome page="settings" showDictMeta />
 
-      <div className="mb-3">
-        <SettingsProfile />
-      </div>
-
-      <div className="grid gap-3 lg:grid-cols-2">
-        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
-          <h2 className="admin-card-title">{t("pages.settings.authTitle")}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            {t("pages.settings.authBody", {
-              passwordEnv: "ADMIN_PASSWORD",
-              cookie: "kaba_admin_session",
-            })
-              .split("ADMIN_PASSWORD")
-              .flatMap((part, i) =>
-                i === 0
-                  ? [part]
-                  : [
-                      <code
-                        key={`pw-${i}`}
-                        className="rounded bg-ink/5 px-1 text-xs dark:bg-white/10"
-                      >
-                        ADMIN_PASSWORD
-                      </code>,
-                      ...part.split("kaba_admin_session").flatMap((p2, j) =>
-                        j === 0
-                          ? [p2]
-                          : [
-                              <code
-                                key={`ck-${j}`}
-                                className="rounded bg-ink/5 px-1 text-xs dark:bg-white/10"
-                              >
-                                kaba_admin_session
-                              </code>,
-                              p2,
-                            ],
-                      ),
-                    ],
-              )}
-          </p>
-          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
-            <li>
-              {t("pages.settings.authStatus")}{" "}
-              <strong className="text-ink">
-                {configured
-                  ? t("pages.settings.passwordConfigured")
-                  : t("pages.settings.passwordMissing")}
-              </strong>
-            </li>
-            <li>
-              {t("pages.settings.authLocal", { envFile: ".env.local" })
-                .split(".env.local")
-                .flatMap((p, i) =>
-                  i === 0
-                    ? [p]
-                    : [
-                        <code
-                          key={i}
-                          className="rounded bg-ink/5 px-1 text-xs dark:bg-white/10"
-                        >
-                          .env.local
-                        </code>,
-                        p,
-                      ],
-                )}
-            </li>
-            <li>{t("pages.settings.authProd")}</li>
-            <li>{t("pages.settings.authReplace")}</li>
-          </ul>
-          <p className="mt-3 rounded-lg border border-amber-700/25 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-950 dark:border-amber-400/25 dark:bg-amber-950/40 dark:text-amber-100">
-            {t("pages.settings.authRotate")}
-          </p>
-        </section>
-
-        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
-          <h2 className="admin-card-title">{t("pages.settings.dataTitle")}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            {t("pages.settings.dataBody", {
-              endpoint: "POST /api/quotes",
-            })
-              .split("POST /api/quotes")
-              .flatMap((p, i) =>
-                i === 0
-                  ? [p]
-                  : [
-                      <code
-                        key={i}
-                        className="rounded bg-ink/5 px-1 text-xs dark:bg-white/10"
-                      >
-                        POST /api/quotes
-                      </code>,
-                      p,
-                    ],
-              )}
-          </p>
-          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
-            <li>
-              <code className="text-xs">src/lib/admin/quotes-store.ts</code>
-            </li>
-            <li>
-              <code className="text-xs">src/lib/admin/invoices-store.ts</code>
-            </li>
-            <li>
-              <code className="text-xs">src/lib/admin/payments-store.ts</code>
-            </li>
-            <li>{t("pages.settings.dataNext")}</li>
-          </ul>
-        </section>
-
-        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
-          <h2 className="admin-card-title">{t("pages.settings.stripeTitle")}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            {t("pages.settings.stripeBody")}
-          </p>
-          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
-            <li>{t("pages.settings.stripePlan1")}</li>
-            <li>{t("pages.settings.stripePlan2")}</li>
-            <li>
-              {t("pages.settings.stripeEnv")}{" "}
-              <code className="text-xs">STRIPE_SECRET_KEY</code>,{" "}
-              <code className="text-xs">STRIPE_WEBHOOK_SECRET</code>
-            </li>
-          </ul>
-        </section>
-
-        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
-          <h2 className="admin-card-title">{t("pages.settings.opsTitle")}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            {t("pages.settings.opsBody")}
-          </p>
-          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
-            <li>
-              <strong className="text-ink">{t("nav.pipeline")}</strong>
-              {" — "}
-              {t("pages.settings.opsPipeline").replace(/^.*?—\s*/, "")}
-            </li>
-            <li>
-              <strong className="text-ink">{t("nav.pricebook")}</strong>
-              {" — "}
-              {t("pages.settings.opsPricebook").replace(/^.*?—\s*/, "")}
-            </li>
-            <li>
-              <strong className="text-ink">{t("nav.templates")}</strong>
-              {" — "}
-              {t("pages.settings.opsTemplates").replace(/^.*?—\s*/, "")}
-            </li>
-            <li>{t("pages.settings.opsQuick")}</li>
-          </ul>
-        </section>
-
-        <section className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
-          <h2 className="admin-card-title">{t("pages.settings.craftTitle")}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            {t("pages.settings.craftBody", {
-              robots: "robots.txt",
-              admin: "/admin",
-              api: "/api/",
-              noindex: "noindex, nofollow",
+      <div className="admin-settings-layout">
+        <nav
+          className="admin-settings-nav"
+          aria-label={t("pages.settings.navAria")}
+        >
+          <ul className="admin-settings-nav-list">
+            {SECTIONS.map((s) => {
+              const isActive = active === s.id;
+              return (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    className={`admin-settings-nav-link ${isActive ? "is-active" : ""}`}
+                    aria-current={isActive ? "true" : undefined}
+                    onClick={() => scrollTo(s.id)}
+                  >
+                    {t(s.labelKey)}
+                  </button>
+                </li>
+              );
             })}
-          </p>
-          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
-            <li>
-              {t("pages.settings.craftPalette")}{" "}
-              <kbd className="admin-kbd">⌘K</kbd> /{" "}
-              <kbd className="admin-kbd">Ctrl+K</kbd>
-            </li>
-            <li>
-              {t("pages.settings.craftShortcuts")}{" "}
-              <kbd className="admin-kbd">?</kbd>
-            </li>
-            <li>{t("pages.settings.craftCharts")}</li>
-            <li>{t("pages.settings.craftLazy")}</li>
           </ul>
-        </section>
+        </nav>
+
+        <div className="admin-settings-panels space-y-4">
+          <SettingsProfile />
+          <SettingsAppearance />
+
+          {/* Security */}
+          <section
+            id="settings-security"
+            className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+            aria-labelledby="settings-security-title"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="admin-section-label">
+                {t("pages.settings.navSecurity")}
+              </p>
+              <span className="admin-badge admin-badge-amber rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                {t("pages.settings.securityBadge")}
+              </span>
+            </div>
+            <h2 id="settings-security-title" className="admin-card-title mt-1">
+              {t("pages.settings.securityTitle")}
+            </h2>
+            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.08em] text-bronze">
+              {t("pages.settings.authTitle")}
+            </p>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+              {withCode(
+                t("pages.settings.authBody", {
+                  passwordEnv: "ADMIN_PASSWORD",
+                  cookie: "kaba_admin_session",
+                }),
+                ["ADMIN_PASSWORD", "kaba_admin_session"],
+              )}
+            </p>
+
+            <dl className="admin-settings-dl mt-4">
+              <div className="admin-settings-dl-row">
+                <dt>{t("pages.settings.authStatus")}</dt>
+                <dd>
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.6875rem] font-bold ${
+                      configured
+                        ? "admin-badge admin-badge-emerald"
+                        : "admin-badge admin-badge-rose"
+                    }`}
+                  >
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        configured ? "bg-emerald-600 dark:bg-emerald-300" : "bg-rose-600 dark:bg-rose-300"
+                      }`}
+                      aria-hidden
+                    />
+                    {configured
+                      ? t("pages.settings.passwordConfigured")
+                      : t("pages.settings.passwordMissing")}
+                  </span>
+                </dd>
+              </div>
+              <div className="admin-settings-dl-row">
+                <dt>{t("pages.settings.authLocalLabel")}</dt>
+                <dd>
+                  {withCode(t("pages.settings.authLocal", { envFile: ".env.local" }), [
+                    ".env.local",
+                  ])}
+                </dd>
+              </div>
+              <div className="admin-settings-dl-row">
+                <dt>{t("pages.settings.authProdLabel")}</dt>
+                <dd>{t("pages.settings.authProd")}</dd>
+              </div>
+              <div className="admin-settings-dl-row">
+                <dt>{t("pages.settings.authRoadmapLabel")}</dt>
+                <dd>{t("pages.settings.authReplace")}</dd>
+              </div>
+            </dl>
+
+            <aside className="admin-settings-callout mt-4" role="note">
+              <p className="text-xs font-bold uppercase tracking-[0.1em] text-amber-950 dark:text-amber-100">
+                {t("pages.settings.securityBadge")}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-amber-950/90 dark:text-amber-100/90">
+                {t("pages.settings.authRotate")}
+              </p>
+            </aside>
+          </section>
+
+          {/* Platform */}
+          <section
+            id="settings-platform"
+            className="scroll-mt-24 space-y-3"
+            aria-labelledby="settings-platform-title"
+          >
+            <div className="px-0.5">
+              <p className="admin-section-label">
+                {t("pages.settings.navPlatform")}
+              </p>
+              <h2
+                id="settings-platform-title"
+                className="font-display text-lg font-semibold tracking-[-0.02em] text-ink"
+              >
+                {t("pages.settings.platformTitle")}
+              </h2>
+              <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted">
+                {t("pages.settings.platformBody")}
+              </p>
+            </div>
+
+            <div className="grid gap-3 lg:grid-cols-2">
+              <article className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="admin-card-title">
+                    {t("pages.settings.dataTitle")}
+                  </h3>
+                  <span className="admin-badge admin-badge-violet rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                    {t("pages.settings.dataBadge")}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {withCode(
+                    t("pages.settings.dataBody", {
+                      endpoint: "POST /api/quotes",
+                    }),
+                    ["POST /api/quotes"],
+                  )}
+                </p>
+                <p className="admin-section-label mt-4">
+                  {t("pages.settings.dataFilesLabel")}
+                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {[
+                    "src/lib/admin/quotes-store.ts",
+                    "src/lib/admin/invoices-store.ts",
+                    "src/lib/admin/payments-store.ts",
+                  ].map((path) => (
+                    <li key={path}>
+                      <Code>{path}</Code>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-sm font-medium text-ink">
+                  {t("pages.settings.dataNext")}
+                </p>
+              </article>
+
+              <article className="admin-glass-panel admin-gold-rail p-4 sm:p-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="admin-card-title">
+                    {t("pages.settings.stripeTitle")}
+                  </h3>
+                  <span className="admin-badge admin-badge-muted rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+                    {t("pages.settings.stripeBadge")}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {t("pages.settings.stripeBody")}
+                </p>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
+                  <li>{t("pages.settings.stripePlan1")}</li>
+                  <li>{t("pages.settings.stripePlan2")}</li>
+                </ul>
+                <p className="admin-section-label mt-4">
+                  {t("pages.settings.stripeEnv")}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Code>STRIPE_SECRET_KEY</Code>
+                  <Code>STRIPE_WEBHOOK_SECRET</Code>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          {/* About */}
+          <section
+            id="settings-about"
+            className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+            aria-labelledby="settings-about-title"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="admin-section-label">
+                  {t("pages.settings.navAbout")}
+                </p>
+                <h2 id="settings-about-title" className="admin-card-title mt-1">
+                  {t("pages.settings.aboutTitle")}
+                </h2>
+                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+                  {t("pages.settings.aboutBody")}
+                </p>
+              </div>
+              <p className="shrink-0 rounded-full border border-[var(--admin-border)] bg-[var(--admin-row-hover)] px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.1em] text-muted">
+                {t("pages.settings.aboutVersion", { version: "0.1.0" })}
+              </p>
+            </div>
+
+            <div className="mt-5 grid gap-5 lg:grid-cols-2">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-ink">
+                  {t("pages.settings.opsTitle")}
+                </h3>
+                <p className="mt-1 text-sm text-muted">
+                  {t("pages.settings.opsBody")}
+                </p>
+                <ul className="mt-3 space-y-2 text-sm text-muted">
+                  <li>
+                    <strong className="text-ink">{t("nav.pipeline")}</strong>
+                    {" — "}
+                    {t("pages.settings.opsPipeline").replace(/^.*?—\s*/, "")}
+                  </li>
+                  <li>
+                    <strong className="text-ink">{t("nav.pricebook")}</strong>
+                    {" — "}
+                    {t("pages.settings.opsPricebook").replace(/^.*?—\s*/, "")}
+                  </li>
+                  <li>
+                    <strong className="text-ink">{t("nav.templates")}</strong>
+                    {" — "}
+                    {t("pages.settings.opsTemplates").replace(/^.*?—\s*/, "")}
+                  </li>
+                  <li>{t("pages.settings.opsQuick")}</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-ink">
+                  {t("pages.settings.craftTitle")}
+                </h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted">
+                  {withCode(
+                    t("pages.settings.craftBody", {
+                      robots: "robots.txt",
+                      admin: "/admin",
+                      api: "/api/",
+                      noindex: "noindex, nofollow",
+                    }),
+                    ["robots.txt", "/admin", "/api/", "noindex, nofollow"],
+                  )}
+                </p>
+                <ul className="mt-3 space-y-2 text-sm text-muted">
+                  <li>
+                    {t("pages.settings.craftPalette")}{" "}
+                    <kbd className="admin-kbd">⌘K</kbd> /{" "}
+                    <kbd className="admin-kbd">Ctrl+K</kbd>
+                  </li>
+                  <li>
+                    {t("pages.settings.craftShortcuts")}{" "}
+                    <kbd className="admin-kbd">?</kbd>
+                  </li>
+                  <li>{t("pages.settings.craftCharts")}</li>
+                  <li>{t("pages.settings.craftLazy")}</li>
+                </ul>
+              </div>
+            </div>
+
+            <footer className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--admin-border)] pt-4">
+              <p className="text-[0.6875rem] text-muted">
+                {t("pages.settings.aboutCredit")}{" "}
+                <a
+                  href="https://datelica.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-bronze underline-offset-2 hover:underline"
+                >
+                  {t("pages.settings.aboutCreditName")}
+                </a>
+              </p>
+            </footer>
+          </section>
+        </div>
       </div>
     </>
   );

@@ -336,8 +336,26 @@ function AdminShellInner({
           role="status"
           className="admin-auth-banner border-b border-amber-700/30 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-950 sm:px-5 sm:text-sm dark:border-amber-400/25 dark:bg-amber-950/45 dark:text-amber-100"
         >
-          <strong className="font-semibold">{t("shell.authStubStrong")}</strong>{" "}
-          {t("shell.authWarning")}
+          <span className="admin-auth-banner-inner">
+            <svg
+              className="admin-auth-banner-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M12 3l8 3v6c0 5-3.5 8.5-8 9.5C7.5 20.5 4 17 4 12V6l8-3z" />
+              <path d="M12 8v5" />
+              <circle cx="12" cy="16" r="0.75" fill="currentColor" stroke="none" />
+            </svg>
+            <span>
+              <strong className="font-semibold">{t("shell.authStubStrong")}</strong>{" "}
+              {t("shell.authWarning")}
+            </span>
+          </span>
         </div>
       )}
 

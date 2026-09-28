@@ -2830,3 +2830,288 @@ html[data-mobile-nav="open"] .chat-widget-root {
     animation-fill-mode: both;
   }
 }
+
+
+/* —— Admin v11: Settings enterprise layout —— */
+.admin-settings-layout {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .admin-settings-layout {
+    grid-template-columns: 10.5rem minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+.admin-settings-nav {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 5;
+}
+
+@media (max-width: 1023px) {
+  .admin-settings-nav {
+    top: 0;
+    margin-inline: -0.15rem;
+    padding-bottom: 0.15rem;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--admin-bg, var(--cream)) 92%, transparent) 70%,
+      transparent
+    );
+  }
+}
+
+.admin-settings-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.admin-settings-nav-list::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .admin-settings-nav-list {
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow: visible;
+  }
+}
+
+.admin-settings-nav-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  transition:
+    color 140ms ease,
+    background 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.admin-settings-nav-link:hover {
+  color: var(--ink);
+  background: var(--admin-row-hover);
+}
+
+.admin-settings-nav-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--bronze) 70%, transparent);
+  outline-offset: 2px;
+}
+
+.admin-settings-nav-link.is-active {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--bronze) 28%, transparent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--bronze) 12%, transparent),
+      transparent 72%
+    ),
+    var(--admin-panel);
+  box-shadow: var(--admin-shadow);
+}
+
+.dark .admin-settings-nav-link.is-active {
+  color: var(--cream);
+  border-color: color-mix(in srgb, var(--bronze) 35%, transparent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--bronze) 18%, transparent),
+      transparent 72%
+    ),
+    var(--admin-panel);
+}
+
+@media (min-width: 1024px) {
+  .admin-settings-nav-link.is-active {
+    box-shadow: inset 2px 0 0 var(--bronze);
+  }
+}
+
+.admin-inline-code {
+  display: inline;
+  border-radius: 0.3rem;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.dark .admin-inline-code {
+  background: color-mix(in srgb, #fff 10%, transparent);
+  color: var(--cream);
+}
+
+.admin-field-hint {
+  margin-top: 0.35rem;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.admin-settings-avatar {
+  display: grid;
+  place-items: center;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--bronze) 35%, transparent);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--bronze-light) 28%, transparent),
+      color-mix(in srgb, var(--bronze-dark) 12%, transparent)
+    );
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--bronze-dark);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 45%, transparent);
+}
+
+.dark .admin-settings-avatar {
+  color: var(--bronze-light);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 8%, transparent);
+}
+
+.admin-settings-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #065f46;
+}
+
+.dark .admin-settings-saved {
+  color: #a7f3d0;
+}
+
+.admin-settings-saved-dot {
+  height: 0.4rem;
+  width: 0.4rem;
+  border-radius: 9999px;
+  background: #059669;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #059669 22%, transparent);
+}
+
+.dark .admin-settings-saved-dot {
+  background: #34d399;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #34d399 22%, transparent);
+}
+
+.admin-settings-dl {
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--admin-border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--admin-row-hover) 55%, transparent);
+}
+
+.admin-settings-dl-row {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.75rem 0.9rem;
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-settings-dl-row:first-child {
+  border-top: 0;
+}
+
+@media (min-width: 640px) {
+  .admin-settings-dl-row {
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    align-items: start;
+    gap: 1rem;
+  }
+}
+
+.admin-settings-dl-row dt {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--admin-label);
+  padding-top: 0.15rem;
+}
+
+.admin-settings-dl-row dd {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.admin-settings-callout {
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, #d97706 28%, transparent);
+  border-left-width: 3px;
+  border-left-color: color-mix(in srgb, #d97706 70%, transparent);
+  background: color-mix(in srgb, #f59e0b 10%, transparent);
+  padding: 0.75rem 0.9rem;
+}
+
+.dark .admin-settings-callout {
+  border-color: color-mix(in srgb, #fbbf24 28%, transparent);
+  border-left-color: color-mix(in srgb, #fbbf24 65%, transparent);
+  background: color-mix(in srgb, #fbbf24 10%, transparent);
+}
+
+.admin-settings-pref {
+  border-radius: 0.75rem;
+  border: 1px solid var(--admin-border);
+  background: color-mix(in srgb, var(--admin-row-hover) 45%, transparent);
+  padding: 0.9rem 1rem;
+}
+
+/* Keep section labels consistent on Settings cards */
+.admin-settings-panels .admin-card-title {
+  letter-spacing: -0.02em;
+}
+
+.admin-auth-banner-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  max-width: 72rem;
+}
+
+.admin-auth-banner-icon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.15rem;
+  opacity: 0.85;
+  color: #92400e;
+}
+
+.dark .admin-auth-banner-icon {
+  color: #fde68a;
+}

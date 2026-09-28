@@ -2,9 +2,17 @@
 
 import { useToast } from "@/components/admin/Toast";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-type FieldErrors = Partial<Record<"name" | "email" | "phone" | "role", string>>;
+type FieldKey = "name" | "email" | "phone" | "role";
+type FieldErrors = Partial<Record<FieldKey, string>>;
+
+function initials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 export default function SettingsProfile() {
   const toast = useToast();
@@ -16,6 +24,7 @@ export default function SettingsProfile() {
   const [touched, setTouched] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
 
   function validate(): FieldErrors {
     const next: FieldErrors = {};
@@ -31,8 +40,10 @@ export default function SettingsProfile() {
   }
 
   const errors = submitted ? validate() : touched;
-  const show = (key: keyof FieldErrors) =>
-    submitted || touched[key] ? errors[key] : undefined;
+  const show = (key: FieldKey) =>
+    submitted || touched[key] !== undefined ? errors[key] : undefined;
+
+  const avatar = useMemo(() => initials(name), [name]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,6 +56,7 @@ export default function SettingsProfile() {
     setBusy(true);
     await new Promise((r) => setTimeout(r, 350));
     setBusy(false);
+    setSavedAt(Date.now());
     toast.push({
       title: t("profile.savedTitle"),
       description: t("profile.savedDesc"),
@@ -52,106 +64,150 @@ export default function SettingsProfile() {
     });
   }
 
-  function mark(key: keyof FieldErrors) {
+  function mark(key: FieldKey) {
     setTouched((prev) => ({ ...prev, [key]: validate()[key] ?? "" }));
   }
 
-  return (
-    <form onSubmit={onSubmit} className="admin-glass-panel admin-gold-rail p-4 sm:p-5" noValidate>
-      <h2 className="admin-card-title">{t("profile.title")}</h2>
-      <p className="mt-2 text-sm leading-relaxed text-muted">
-        {t("profile.body")}
-      </p>
+  const fields: Array<{
+    key: FieldKey;
+    id: string;
+    label: string;
+    help: string;
+    value: string;
+    set: (v: string) => void;
+    type?: string;
+    autoComplete?: string;
+  }> = [
+    {
+      key: "name",
+      id: "prof-name",
+      label: t("profile.displayName"),
+      help: t("profile.displayNameHelp"),
+      value: name,
+      set: setName,
+      autoComplete: "name",
+    },
+    {
+      key: "role",
+      id: "prof-role",
+      label: t("profile.roleLabel"),
+      help: t("profile.roleHelp"),
+      value: role,
+      set: setRole,
+    },
+    {
+      key: "email",
+      id: "prof-email",
+      label: t("profile.email"),
+      help: t("profile.emailHelp"),
+      value: email,
+      set: setEmail,
+      type: "email",
+      autoComplete: "email",
+    },
+    {
+      key: "phone",
+      id: "prof-phone",
+      label: t("profile.phone"),
+      help: t("profile.phoneHelp"),
+      value: phone,
+      set: setPhone,
+      type: "tel",
+      autoComplete: "tel",
+    },
+  ];
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div>
-          <label htmlFor="prof-name" className="text-xs font-semibold text-muted">
-            {t("profile.displayName")}
-          </label>
-          <input
-            id="prof-name"
-            className={`field-input mt-1 text-sm ${show("name") ? "admin-field-invalid" : ""}`}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onBlur={() => mark("name")}
-            aria-invalid={Boolean(show("name"))}
-            aria-describedby={show("name") ? "prof-name-err" : undefined}
-            autoComplete="name"
-          />
-          {show("name") && (
-            <p id="prof-name-err" className="admin-field-error">
-              {show("name")}
-            </p>
-          )}
+  return (
+    <form
+      id="settings-profile"
+      onSubmit={onSubmit}
+      className="admin-glass-panel admin-gold-rail scroll-mt-24 p-4 sm:p-5"
+      noValidate
+      aria-labelledby="settings-profile-title"
+    >
+      <div className="flex flex-wrap items-start gap-3 sm:gap-4">
+        <div
+          className="admin-settings-avatar"
+          aria-hidden
+          title={t("profile.avatarLabel")}
+        >
+          {avatar}
         </div>
-        <div>
-          <label htmlFor="prof-role" className="text-xs font-semibold text-muted">
-            {t("profile.roleLabel")}
-          </label>
-          <input
-            id="prof-role"
-            className={`field-input mt-1 text-sm ${show("role") ? "admin-field-invalid" : ""}`}
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            onBlur={() => mark("role")}
-            aria-invalid={Boolean(show("role"))}
-            aria-describedby={show("role") ? "prof-role-err" : undefined}
-          />
-          {show("role") && (
-            <p id="prof-role-err" className="admin-field-error">
-              {show("role")}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor="prof-email" className="text-xs font-semibold text-muted">
-            {t("profile.email")}
-          </label>
-          <input
-            id="prof-email"
-            type="email"
-            className={`field-input mt-1 text-sm ${show("email") ? "admin-field-invalid" : ""}`}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={() => mark("email")}
-            aria-invalid={Boolean(show("email"))}
-            aria-describedby={show("email") ? "prof-email-err" : undefined}
-            autoComplete="email"
-          />
-          {show("email") && (
-            <p id="prof-email-err" className="admin-field-error">
-              {show("email")}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor="prof-phone" className="text-xs font-semibold text-muted">
-            {t("profile.phone")}
-          </label>
-          <input
-            id="prof-phone"
-            type="tel"
-            className={`field-input mt-1 text-sm ${show("phone") ? "admin-field-invalid" : ""}`}
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            onBlur={() => mark("phone")}
-            aria-invalid={Boolean(show("phone"))}
-            aria-describedby={show("phone") ? "prof-phone-err" : undefined}
-            autoComplete="tel"
-          />
-          {show("phone") && (
-            <p id="prof-phone-err" className="admin-field-error">
-              {show("phone")}
-            </p>
-          )}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="admin-section-label">{t("pages.settings.navProfile")}</p>
+            <span className="admin-badge admin-badge-amber rounded-full px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-[0.1em]">
+              {t("profile.badge")}
+            </span>
+          </div>
+          <h2 id="settings-profile-title" className="admin-card-title mt-1">
+            {t("profile.title")}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+            {t("profile.body")}
+          </p>
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <button type="submit" className="admin-touch btn-primary text-sm" disabled={busy}>
-          {busy ? t("common.saving") : t("profile.save")}
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        {fields.map((f) => {
+          const err = show(f.key);
+          const helpId = `${f.id}-help`;
+          const errId = `${f.id}-err`;
+          return (
+            <div key={f.key} className="min-w-0">
+              <label htmlFor={f.id} className="text-xs font-semibold text-ink">
+                {f.label}
+                <span className="ml-0.5 text-bronze" aria-hidden>
+                  *
+                </span>
+              </label>
+              <input
+                id={f.id}
+                type={f.type ?? "text"}
+                className={`field-input mt-1.5 text-sm ${err ? "admin-field-invalid" : ""}`}
+                value={f.value}
+                onChange={(e) => {
+                  f.set(e.target.value);
+                  if (savedAt) setSavedAt(null);
+                }}
+                onBlur={() => mark(f.key)}
+                aria-invalid={Boolean(err)}
+                aria-describedby={err ? `${helpId} ${errId}` : helpId}
+                autoComplete={f.autoComplete}
+                required
+              />
+              <p id={helpId} className="admin-field-hint">
+                {f.help}
+              </p>
+              {err ? (
+                <p id={errId} className="admin-field-error" role="alert">
+                  {err}
+                </p>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[var(--admin-border)] pt-4">
+        <button
+          type="submit"
+          className="admin-touch btn-primary text-sm"
+          disabled={busy}
+        >
+          {busy ? t("profile.saving") : t("profile.save")}
         </button>
-        <p className="text-[0.6875rem] text-muted">{t("profile.noPassword")}</p>
+        {savedAt ? (
+          <p className="admin-settings-saved" role="status">
+            <span className="admin-settings-saved-dot" aria-hidden />
+            {t("profile.savedInline")}
+          </p>
+        ) : (
+          <p className="text-[0.6875rem] leading-relaxed text-muted">
+            {t("profile.noPassword")}
+          </p>
+        )}
       </div>
     </form>
   );
