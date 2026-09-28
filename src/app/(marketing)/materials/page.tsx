@@ -12,36 +12,38 @@ import {
   getPublishedMaterialComparison,
   getPublishedMaterialFaqs,
   getPublishedMaterialGuidance,
+  getPublishedHeroCopy,
 } from "@/lib/cms/public";
-import {
-  defaultOgImage,
-  siteConfig,
-} from "@/lib/site";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Fence & Deck Materials Guide";
-const description = `Compare wood, vinyl, aluminum, and chain-link fencing with ${siteConfig.name}—built for Raleigh-area weather, privacy goals, and upkeep.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Compare wood, vinyl, aluminum, and chain-link fencing with ${brand.name}—built for Raleigh-area weather, privacy goals, and upkeep.`;
+  return {
   title,
   description,
   alternates: { canonical: "/materials" },
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     url: "/materials",
     images: [defaultOgImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     images: [defaultOgImage.url],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 
 export default function MaterialsPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   const fenceMaterials = getPublishedFenceMaterials();
   const deckMaterials = getPublishedDeckMaterials();
@@ -133,7 +135,7 @@ export default function MaterialsPage() {
               <div className="relative aspect-[16/10] overflow-hidden bg-ivory-muted">
                 <Image
                   src={m.image}
-                  alt={`${m.name} fencing by ${siteConfig.name}`}
+                  alt={`${m.name} fencing by ${brand.name}`}
                   fill
                   sizes="(min-width: 1024px) 34vw, (min-width: 640px) 50vw, 100vw"
                   className="object-cover transition duration-500 group-hover:scale-[1.03]"
@@ -409,7 +411,7 @@ export default function MaterialsPage() {
             </h2>
             <p className="mx-auto mt-3 max-w-xl leading-relaxed text-cream/80">
               We’ll bring samples, talk HOA rules, and price both paths clearly on
-              your free estimate across {siteConfig.serviceArea}.
+              your free estimate across {contact.serviceArea}.
             </p>
             <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
               <Link

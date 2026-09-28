@@ -9,6 +9,10 @@ export type QuoteFormContact = {
   email: string;
 };
 
+export type QuoteFormBrand = {
+  name: string;
+};
+
 type FormState = {
   name: string;
   phone: string;
@@ -79,8 +83,10 @@ export default function QuoteForm({
     phoneHref: siteConfig.phoneHref,
     email: siteConfig.email,
   },
+  brand = { name: siteConfig.name },
 }: {
   contact?: QuoteFormContact;
+  brand?: QuoteFormBrand;
 } = {}) {
   const [form, setForm] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
@@ -261,7 +267,7 @@ export default function QuoteForm({
         <div className="quote-confirm-sheet mt-6 rounded-xl border border-ink/[0.08] bg-ivory-muted/60 px-4 py-4 text-left dark:border-cream/10 sm:px-5">
           <div className="hidden print:block">
             <p className="font-display text-xl font-semibold text-ink">
-              {siteConfig.name} — Quote request summary
+              {brand.name} — Quote request summary
             </p>
             <p className="mt-1 text-sm text-muted">
               {contact.phone} · {contact.email}
@@ -302,7 +308,7 @@ export default function QuoteForm({
           </dl>
           <p className="mt-3 border-t border-ink/[0.06] pt-3 text-xs leading-relaxed text-muted dark:border-cream/10">
             This is a request confirmation—not a binding estimate.{" "}
-            {siteConfig.name} will follow up to schedule a free on-site visit.
+            {brand.name} will follow up to schedule a free on-site visit.
           </p>
         </div>
 

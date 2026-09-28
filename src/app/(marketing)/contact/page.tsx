@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import QuoteForm from "@/components/QuoteForm";
-import { getPublishedContactInfo } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { getPublishedContactInfo, getPublishedHeroCopy } from "@/lib/cms/public";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Request a Free Estimate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = getPublishedContactInfo();
-  const description = `Contact ${siteConfig.name} for a free fence estimate in Raleigh, NC & surrounding areas. Call ${contact.phone} or request online.`;
+  const brand = getPublishedHeroCopy();
+  const description = `Contact ${brand.name} for a free fence estimate in Raleigh, NC & surrounding areas. Call ${contact.phone} or request online.`;
   return {
     title,
     description,
     openGraph: {
-      title: `${title} | ${siteConfig.name}`,
+      title: `${title} | ${brand.name}`,
       description,
       images: [defaultOgImage],
     },
@@ -23,6 +24,7 @@ export const dynamic = "force-dynamic";
 
 export default function ContactPage() {
   const contact = getPublishedContactInfo();
+  const brand = getPublishedHeroCopy();
 
   return (
     <>
@@ -55,7 +57,7 @@ export default function ContactPage() {
 
       <section className="section-y">
         <div className="container-page max-w-3xl">
-          <QuoteForm contact={contact} />
+          <QuoteForm contact={contact} brand={{ name: brand.name }} />
         </div>
       </section>
     </>

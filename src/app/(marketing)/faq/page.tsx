@@ -6,29 +6,33 @@ import Reveal from "@/components/Reveal";
 import {
   getPublishedContactInfo,
   getPublishedFaqs,
+  getPublishedHeroCopy,
 } from "@/lib/cms/public";
 import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/jsonld";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Frequently Asked Questions";
-const description = `Answers about fence timelines, permits, materials, deck repairs, and service area from ${siteConfig.name} in Angier and Raleigh NC.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Answers about fence timelines, permits, materials, deck repairs, and service area from ${brand.name} in Angier and Raleigh NC.`;
+  return {
   title,
   description,
   alternates: { canonical: "/faq" },
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     url: "/faq",
     images: [defaultOgImage],
   },
   twitter: {
     card: "summary",
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 

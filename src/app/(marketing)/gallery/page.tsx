@@ -2,29 +2,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import GalleryGrid from "@/components/GalleryGrid";
 import Reveal from "@/components/Reveal";
-import { getPublishedProjects } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { getPublishedProjects,
+  getPublishedHeroCopy,
+} from "@/lib/cms/public";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Project Gallery";
-const description = `Browse fence and deck projects by ${siteConfig.name}—including before/after pairs—serving Angier, Raleigh NC, and surrounding areas.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Browse fence and deck projects by ${brand.name}—including before/after pairs—serving Angier, Raleigh NC, and surrounding areas.`;
+  return {
   title,
   description,
   alternates: { canonical: "/gallery" },
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     url: "/gallery",
     images: [defaultOgImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     images: [defaultOgImage.url],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 

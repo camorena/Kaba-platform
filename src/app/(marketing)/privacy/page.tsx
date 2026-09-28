@@ -3,32 +3,38 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
-import { defaultOgImage, siteConfig } from "@/lib/site";
-import { getPublishedContactInfo } from "@/lib/cms/public";
+import { defaultOgImage } from "@/lib/site";
+import { getPublishedContactInfo,
+  getPublishedHeroCopy,
+} from "@/lib/cms/public";
 
 const title = "Privacy Policy";
-const description = `How ${siteConfig.name} handles information you share through our website, quote form, and phone or email contact. Serving Angier and Raleigh NC.`;
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/privacy" },
-  openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `How ${brand.name} handles information you share through our website, quote form, and phone or email contact. Serving Angier and Raleigh NC.`;
+  return {
+    title,
     description,
-    url: "/privacy",
-    images: [defaultOgImage],
-  },
-  twitter: {
-    card: "summary",
-    title: `${title} | ${siteConfig.name}`,
-    description,
-  },
-};
+    alternates: { canonical: "/privacy" },
+    openGraph: {
+      title: `${title} | ${brand.name}`,
+      description,
+      url: "/privacy",
+      images: [defaultOgImage],
+    },
+    twitter: {
+      card: "summary",
+      title: `${title} | ${brand.name}`,
+      description,
+    },
+  };
+}
 
 export default function PrivacyPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   return (
     <>
@@ -46,7 +52,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            This policy explains what information {siteConfig.name} collects when
+            This policy explains what information {brand.name} collects when
             you use our website or contact us for fence and deck work in Angier,
             Raleigh, and nearby communities—and how we use it.
           </p>
@@ -63,8 +69,8 @@ export default function PrivacyPage() {
               Who we are
             </h2>
             <p className="mt-3">
-              {siteConfig.name} is a local fence and deck contractor based in{" "}
-              {siteConfig.address.city}, {siteConfig.address.state}. Contact us at{" "}
+              {brand.name} is a local fence and deck contractor based in{" "}
+              {contact.address.city}, {contact.address.state}. Contact us at{" "}
               <a
                 href={contact.emailHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
@@ -180,7 +186,7 @@ export default function PrivacyPage() {
               Contact
             </h2>
             <p className="mt-3">
-              Questions about privacy? Reach {siteConfig.name} at{" "}
+              Questions about privacy? Reach {brand.name} at{" "}
               <a
                 href={contact.emailHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"

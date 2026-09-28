@@ -40,10 +40,12 @@ export default function Header({
     slug: l.slug,
   })),
   contact = { phone: siteConfig.phone, phoneHref: siteConfig.phoneHref },
+  brandName = siteConfig.name,
 }: {
   navLinks?: HeaderNavLink[];
   fencingOptionsNav?: HeaderFencingNavLink[];
   contact?: HeaderContact;
+  brandName?: string;
 } = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -223,7 +225,7 @@ export default function Header({
               priority
             />
             <span className="font-display text-[1.05rem] font-semibold tracking-tight text-ink whitespace-nowrap sm:text-lg">
-              {siteConfig.name}
+              {brandName}
             </span>
           </Link>
 

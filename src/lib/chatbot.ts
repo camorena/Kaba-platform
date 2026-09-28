@@ -27,12 +27,20 @@ export type ChatbotContact = {
   email: string;
   serviceArea: string;
   hoursLine: string;
+  addressCity?: string;
+  addressState?: string;
+};
+export type ChatbotBrand = {
+  name: string;
+  tagline: string;
+  description: string;
 };
 export type ChatbotCatalog = {
   faqs: ChatbotFaq[];
   fencingServices: ChatbotService[];
   deckServices: ChatbotService[];
   contact?: ChatbotContact;
+  brand?: ChatbotBrand;
 };
 
 export const DEFAULT_CHATBOT_CONTACT: ChatbotContact = {
@@ -41,6 +49,14 @@ export const DEFAULT_CHATBOT_CONTACT: ChatbotContact = {
   email: siteConfig.email,
   serviceArea: siteConfig.serviceArea,
   hoursLine: `${siteConfig.hours.weekdays}; ${siteConfig.hours.saturday}; ${siteConfig.hours.sunday}`,
+  addressCity: siteConfig.address.city,
+  addressState: siteConfig.address.state,
+};
+
+export const DEFAULT_CHATBOT_BRAND: ChatbotBrand = {
+  name: siteConfig.name,
+  tagline: siteConfig.tagline,
+  description: siteConfig.description,
 };
 
 export const DEFAULT_CHATBOT_CATALOG: ChatbotCatalog = {
@@ -56,12 +72,8 @@ export const DEFAULT_CHATBOT_CATALOG: ChatbotCatalog = {
     details: s.details,
   })),
   contact: DEFAULT_CHATBOT_CONTACT,
+  brand: DEFAULT_CHATBOT_BRAND,
 };
-
-const area = DEFAULT_CHATBOT_CONTACT.serviceArea;
-const phone = DEFAULT_CHATBOT_CONTACT.phone;
-const email = DEFAULT_CHATBOT_CONTACT.email;
-const hours = DEFAULT_CHATBOT_CONTACT.hoursLine;
 
 /** Primary chips — quotes, services, materials, service area (no financing/warranty). */
 export const DEFAULT_SUGGESTIONS = [
@@ -72,10 +84,19 @@ export const DEFAULT_SUGGESTIONS = [
   "Hours & contact",
 ] as const;
 
-export const WELCOME_REPLY: ChatReply = {
-  text: `Hi — I'm the ${siteConfig.name} helper. Ask about fencing, materials, where we serve, or free estimates. Prefer a person? Call ${phone} or leave your number below.`,
-  suggestions: [...DEFAULT_SUGGESTIONS],
-};
+export function getWelcomeReply(
+  catalog: ChatbotCatalog = DEFAULT_CHATBOT_CATALOG,
+): ChatReply {
+  const brand = catalog.brand ?? DEFAULT_CHATBOT_BRAND;
+  const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
+  return {
+    text: `Hi — I'm the ${brand.name} helper. Ask about fencing, materials, where we serve, or free estimates. Prefer a person? Call ${contact.phone} or leave your number below.`,
+    suggestions: [...DEFAULT_SUGGESTIONS],
+  };
+}
+
+/** @deprecated Prefer getWelcomeReply(catalog) — kept for static import callers. */
+export const WELCOME_REPLY: ChatReply = getWelcomeReply();
 
 function normalize(input: string): string {
   return input
@@ -175,11 +196,14 @@ export function getBotReply(
 ): ChatReply {
   const q = normalize(rawInput);
   const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
+  const brand = catalog.brand ?? DEFAULT_CHATBOT_BRAND;
   const phone = contact.phone;
   const email = contact.email;
   const hours = contact.hoursLine;
   const area = contact.serviceArea;
   const phoneHref = contact.phoneHref;
+  const addressCity = contact.addressCity ?? siteConfig.address.city;
+  const addressState = contact.addressState ?? siteConfig.address.state;
   const fenceList = catalog.fencingServices.map((s) => s.title).join(", ");
   const deckList = catalog.deckServices.map((s) => s.title).join(", ");
   if (!q) {
@@ -202,7 +226,7 @@ export function getBotReply(
     q === "hi"
   ) {
     return {
-      text: `Hello! Thanks for reaching out to ${siteConfig.name}. What can I help with today?`,
+      text: `Hello! Thanks for reaching out to ${brand.name}. What can I help with today?`,
       suggestions: [...DEFAULT_SUGGESTIONS],
     };
   }
@@ -259,7 +283,7 @@ export function getBotReply(
     ])
   ) {
     return {
-      text: `Call ${phone} or email ${email}. Hours: ${hours}. Based in ${siteConfig.address.city}, ${siteConfig.address.state}.`,
+      text: `Call ${phone} or email ${email}. Hours: ${hours}. Based in ${addressCity}, ${addressState}.`,
       suggestions: ["Get a quote", "Service area", "Fence services"],
       cta: { label: `Call ${phone}`, href: phoneHref },
     };
@@ -288,7 +312,7 @@ export function getBotReply(
     ])
   ) {
     return {
-      text: `${siteConfig.name} serves ${area}. Nearby and unsure? Leave your city with a quote request and we'll confirm.`,
+      text: `${brand.name} serves ${area}. Nearby and unsure? Leave your city with a quote request and we'll confirm.`,
       suggestions: ["Get a quote", "Hours & contact", "Fence services"],
       cta: { label: "Request a free estimate", href: "/contact" },
     };
@@ -347,7 +371,7 @@ export function getBotReply(
   if (includesAny(q, ["about", "why", "trust", "local", "who are"])) {
     const points = trustPoints.map((t) => t.label).join(" · ");
     return {
-      text: `${siteConfig.name} — ${siteConfig.tagline}. ${siteConfig.description} What homeowners value: ${points}.`,
+      text: `${brand.name} — ${brand.tagline}. ${brand.description} What homeowners value: ${points}.`,
       suggestions: ["Get a quote", "Fence services", "Deck services"],
       cta: { label: "About our crew", href: "/about" },
     };
@@ -434,7 +458,7 @@ export function getBotReply(
     ])
   ) {
     return {
-      text: `Absolutely — leave your name, phone, and a short message below, or call us directly at ${phone}. Someone from ${siteConfig.name} will get back to you.`,
+      text: `Absolutely — leave your name, phone, and a short message below, or call us directly at ${phone}. Someone from ${brand.name} will get back to you.`,
       collectLead: true,
       suggestions: ["Hours & contact", "Get a quote"],
       cta: { label: `Call ${phone}`, href: phoneHref },
@@ -456,8 +480,13 @@ export type LeadPayload = {
   message: string;
 };
 
-export function formatLeadConfirmation(lead: LeadPayload): string {
+export function formatLeadConfirmation(
+  lead: LeadPayload,
+  catalog: ChatbotCatalog = DEFAULT_CHATBOT_CATALOG,
+): string {
+  const brand = catalog.brand ?? DEFAULT_CHATBOT_BRAND;
+  const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
   return `Thanks, ${lead.name.trim()}! We've noted your info (${lead.phone.trim()}${
     lead.email.trim() ? `, ${lead.email.trim()}` : ""
-  }). A ${siteConfig.name} team member will follow up soon. For the fastest response, call ${phone} or finish details on our quote page.`;
+  }). A ${brand.name} team member will follow up soon. For the fastest response, call ${contact.phone} or finish details on our quote page.`;
 }

@@ -60,6 +60,13 @@ export default function MarketingLayout({
       email: contact.email,
       serviceArea: contact.serviceArea,
       hoursLine: `${contact.hours.weekdays}; ${contact.hours.saturday}; ${contact.hours.sunday}`,
+      addressCity: contact.address.city,
+      addressState: contact.address.state,
+    },
+    brand: {
+      name: brand.name,
+      tagline: brand.tagline,
+      description: brand.description,
     },
   };
 
@@ -85,6 +92,7 @@ export default function MarketingLayout({
         navLinks={navLinks}
         fencingOptionsNav={fencingOptionsNav}
         contact={contact}
+        brandName={brand.name}
       />
       <main id="main" className="flex-1" tabIndex={-1}>
         <PageTransition>{children}</PageTransition>

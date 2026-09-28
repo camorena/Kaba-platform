@@ -6,25 +6,30 @@ import {
   getPublishedContactInfo,
   getPublishedFenceTypes,
   getPublishedServices,
+  getPublishedHeroCopy,
 } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Fencing Options";
-const description = `Wood, vinyl, aluminum, and chain link fencing from ${siteConfig.name} in Raleigh, NC & surrounding areas.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Wood, vinyl, aluminum, and chain link fencing from ${brand.name} in Raleigh, NC & surrounding areas.`;
+  return {
   title,
   description,
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     images: [defaultOgImage],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 
 export default function ServicesPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   const fencingServices = getPublishedFenceTypes();
   const deckServices = getPublishedServices();
@@ -38,7 +43,7 @@ export default function ServicesPage() {
             Find the right fence for your property
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            Wood, vinyl, aluminum, or chain link—{siteConfig.name} helps you
+            Wood, vinyl, aluminum, or chain link—{brand.name} helps you
             choose materials that fit your goals, budget, and Raleigh-area home
             or commercial property.
           </p>
@@ -100,7 +105,7 @@ export default function ServicesPage() {
                 Repair, rebuild, and new deck builds
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-                Beyond fencing, {siteConfig.name} helps keep decks safe and
+                Beyond fencing, {brand.name} helps keep decks safe and
                 useful—repairs, rebuilds, new builds, and railing upgrades.
               </p>
             </Reveal>

@@ -3225,3 +3225,34 @@ html[data-mobile-nav="open"] .chat-widget-root {
     );
   }
 }
+
+/* —— Content CMS agency craft (admin16) —— */
+.admin-content-sticky {
+  margin-inline: -0.15rem;
+}
+.admin-content-card {
+  min-height: 100%;
+}
+.admin-content-card .admin-card-title {
+  letter-spacing: -0.02em;
+}
+.admin-content-phase-head {
+  position: sticky;
+  top: 5.5rem;
+  z-index: 15;
+  padding-block: 0.35rem;
+  background: color-mix(in srgb, var(--admin-bg, var(--cream)) 88%, transparent);
+  backdrop-filter: blur(8px);
+}
+@media (max-width: 639px) {
+  .admin-content-phase-head {
+    top: 4.25rem;
+  }
+  .admin-content-savebar {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  }
+}
+.dark .admin-content-phase-head,
+.dark .admin-content-sticky {
+  background: color-mix(in srgb, var(--admin-bg, #1a1c1f) 90%, transparent);
+}

@@ -6,25 +6,30 @@ import {
   getPublishedFenceTypes,
   getPublishedServices,
   getPublishedYourNeeds,
+  getPublishedHeroCopy,
 } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Residential Fencing";
-const description = `Residential fence installation and repair for homeowners in Raleigh, NC & surrounding areas from ${siteConfig.name}.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Residential fence installation and repair for homeowners in Raleigh, NC & surrounding areas from ${brand.name}.`;
+  return {
   title,
   description,
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     images: [defaultOgImage],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 
 export default function ResidentialPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   const yourNeeds = getPublishedYourNeeds();
   const fencingServices = getPublishedFenceTypes("residential");
@@ -40,7 +45,7 @@ export default function ResidentialPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
             Privacy for family gatherings, safer yards for pets, or repairs that
-            restore what you already have—{siteConfig.name} guides Raleigh-area
+            restore what you already have—{brand.name} guides Raleigh-area
             homeowners from first conversation to finished fence.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -130,7 +135,7 @@ export default function ResidentialPage() {
             Ready for a better fence experience?
           </h2>
           <p className="mt-3 text-cream/75">
-            Free on-site estimates across {siteConfig.serviceArea}.
+            Free on-site estimates across {contact.serviceArea}.
           </p>
           <Link href="/contact" className="focus-ring btn-primary mt-8 inline-flex gap-2">
             Request a Free Estimate →

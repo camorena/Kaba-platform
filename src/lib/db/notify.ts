@@ -17,8 +17,8 @@ import {
   resolveOwnerEmails,
   sendMail,
 } from "@/lib/mail";
-import { getPublishedContactInfo } from "@/lib/cms/public";
-import { siteConfig } from "@/lib/site";
+import { getPublishedContactInfo, getPublishedHeroCopy } from "@/lib/cms/public";
+
 import { buildPaymentReceiptStub } from "@/lib/pay/receipt";
 
 export type NotifyQuoteResult = {
@@ -66,7 +66,8 @@ export async function notifyQuoteCreated(
     };
   }
 
-  const subject = `[${siteConfig.name}] New quote · ${quote.name}`;
+  const brandName = getPublishedHeroCopy().name;
+  const subject = `[${brandName}] New quote · ${quote.name}`;
   const lines = [
     `New quote request saved (${quote.id}).`,
     "",
@@ -138,7 +139,8 @@ export async function notifyPaymentReceived(input: {
     };
   }
 
-  const subject = `[${siteConfig.name}] Payment received · ${invoice.number} · ${amountLabel}`;
+  const brandName = getPublishedHeroCopy().name;
+  const subject = `[${brandName}] Payment received · ${invoice.number} · ${amountLabel}`;
   const lines = [
     `Payment recorded for invoice ${invoice.number}.`,
     "",

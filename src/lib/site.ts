@@ -13,9 +13,10 @@
  *   getPublishedNavLinks / FooterLinks / FencingOptionsNav / LegalLinks / ContactInfo
  *     → header/footer chrome (+ legal) + contact CTAs across marketing/pay/404/mail
  *   getPublishedHeroCopy (name/tagline/description) + ContactInfo address/social
- *     → metadata/OG, footer brand/region/social, pay chrome, JSON-LD, invoice letterhead
+ *     → metadata/OG, footer brand/region/social, pay chrome, JSON-LD, invoice letterhead,
+ *       header logo label, page metadata/body copy, chatbot/ChatWidget, QuoteForm, notify subjects
  *   JSON-LD areaServed ← getPublishedServiceTowns()
- *   Chatbot catalog ← getPublishedFaqs / FenceTypes / Services (+ contact)
+ *   Chatbot catalog ← getPublishedFaqs / FenceTypes / Services (+ contact + brand)
  * Do not delete other exports until each type follows the swap path in
  * preview/CMS_PUBLIC_CONTENT_PLAN.md (getPublished* + one page at a time).
  */

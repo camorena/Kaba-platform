@@ -4,13 +4,16 @@ import Reveal from "@/components/Reveal";
 import {
   getPublishedContactInfo,
   getPublishedServiceTowns,
+  getPublishedHeroCopy,
 } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Service Area";
-const description = `Fence and deck installation & repair serving Angier, Raleigh, Fuquay-Varina, Holly Springs, Clayton, and surrounding NC communities from ${siteConfig.name}.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Fence and deck installation & repair serving Angier, Raleigh, Fuquay-Varina, Holly Springs, Clayton, and surrounding NC communities from ${brand.name}.`;
+  return {
   title,
   description,
   keywords: [
@@ -23,15 +26,17 @@ export const metadata: Metadata = {
     "Harnett County deck builder",
   ],
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     images: [defaultOgImage],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 
 export default function ServiceAreaPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   const serviceTowns = getPublishedServiceTowns();
 
@@ -44,7 +49,7 @@ export default function ServiceAreaPage() {
             Serving Angier, Raleigh &amp; nearby NC towns
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            Based in Angier, {siteConfig.name} installs and repairs fences and
+            Based in Angier, {brand.name} installs and repairs fences and
             decks across Wake and Harnett counties—and into nearby Johnston
             communities. If your town is on the list below (or close), we’d love
             to take a look.

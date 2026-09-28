@@ -1,21 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { getPublishedTestimonials } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { getPublishedTestimonials,
+  getPublishedHeroCopy,
+} from "@/lib/cms/public";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Customer Reviews";
-const description = `Read what Angier, Raleigh, and nearby NC homeowners say about fence and deck work from ${siteConfig.name}.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Read what Angier, Raleigh, and nearby NC homeowners say about fence and deck work from ${brand.name}.`;
+  return {
   title,
   description,
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     images: [defaultOgImage],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 

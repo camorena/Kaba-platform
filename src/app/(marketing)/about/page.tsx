@@ -10,34 +10,37 @@ import {
   getPublishedCompanyValues,
   getPublishedContactInfo,
   getPublishedServiceTowns,
+  getPublishedHeroCopy,
 } from "@/lib/cms/public";
 import {
   defaultOgImage,
   kabaExperience,
-  siteConfig,
   trustPoints,
 } from "@/lib/site";
 
 const title = "About Our Crew";
-const description = `Meet ${siteConfig.name}—a local & family-owned fence company based in Angier, serving Raleigh, NC & surrounding areas with clear estimates and solid craftsmanship.`;
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/about" },
-  openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Meet ${brand.name}—a local & family-owned fence company based in Angier, serving Raleigh, NC & surrounding areas with clear estimates and solid craftsmanship.`;
+  return {
+    title,
     description,
-    url: "/about",
-    images: [defaultOgImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${title} | ${siteConfig.name}`,
-    description,
+    alternates: { canonical: "/about" },
+    openGraph: {
+      title: `${title} | ${brand.name}`,
+      description,
+      url: "/about",
+      images: [defaultOgImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${brand.name}`,
+      description,
     images: [defaultOgImage.url],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +86,7 @@ const experienceDetail: Record<(typeof kabaExperience)[number]["id"], string> = 
 };
 
 export default function AboutPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   const aboutStats = getPublishedAboutStats();
   const aboutLocalTrust = getPublishedAboutLocalTrust();
@@ -115,7 +119,7 @@ export default function AboutPage() {
             A local crew you can call by name
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            {siteConfig.name} started with a simple idea: fence and deck work
+            {brand.name} started with a simple idea: fence and deck work
             done right for Angier, Raleigh, and surrounding areas—honest
             estimates, materials that survive Carolina weather, and a job site
             left cleaner than we found it.
@@ -205,7 +209,7 @@ export default function AboutPage() {
               <div className="relative aspect-[4/3] sm:aspect-[5/4]">
                 <Image
                   src="/gallery/cedar-privacy.jpg"
-                  alt={`Wood privacy fence installed by ${siteConfig.name}`}
+                  alt={`Wood privacy fence installed by ${brand.name}`}
                   fill
                   sizes="(min-width: 1024px) 40vw, 100vw"
                   className="object-cover"
@@ -365,7 +369,7 @@ export default function AboutPage() {
               How our team works with you
             </h2>
             <p className="mt-3.5 leading-relaxed text-cream/80">
-              {siteConfig.tagline}—the same rhythm on every Angier and Raleigh
+              {brand.tagline}—the same rhythm on every Angier and Raleigh
               project, from first call to final handshake.
             </p>
           </Reveal>

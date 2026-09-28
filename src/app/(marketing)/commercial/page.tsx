@@ -5,21 +5,25 @@ import {
   getPublishedContactInfo,
   getPublishedFenceTypes,
   getPublishedServices,
+  getPublishedHeroCopy,
 } from "@/lib/cms/public";
-import { defaultOgImage, siteConfig } from "@/lib/site";
+import { defaultOgImage } from "@/lib/site";
 
 const title = "Commercial Fencing";
-const description = `Commercial fence installation for businesses and properties in Raleigh, NC & surrounding areas from ${siteConfig.name}.`;
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Commercial fence installation for businesses and properties in Raleigh, NC & surrounding areas from ${brand.name}.`;
+  return {
   title,
   description,
   openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+    title: `${title} | ${brand.name}`,
     description,
     images: [defaultOgImage],
   },
-};
+  };
+}
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +51,7 @@ const commercialPoints = [
 ] as const;
 
 export default function CommercialPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   const fencingServices = getPublishedFenceTypes("commercial");
   const deckServices = getPublishedServices("commercial");
@@ -60,7 +65,7 @@ export default function CommercialPage() {
             Professional fencing for commercial properties
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            From secure perimeters to clean roadside runs, {siteConfig.name}{" "}
+            From secure perimeters to clean roadside runs, {brand.name}{" "}
             delivers commercial fencing with the same care we bring to every
             residential project—clear guidance, solid craftsmanship, and a job
             site left clean.

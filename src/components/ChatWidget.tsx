@@ -11,16 +11,16 @@ import {
   useState,
 } from "react";
 import {
+  DEFAULT_CHATBOT_BRAND,
   DEFAULT_CHATBOT_CATALOG,
   DEFAULT_CHATBOT_CONTACT,
   formatLeadConfirmation,
   getBotReply,
-  WELCOME_REPLY,
+  getWelcomeReply,
   type ChatbotCatalog,
   type ChatReply,
   type LeadPayload,
 } from "@/lib/chatbot";
-import { siteConfig } from "@/lib/site";
 
 type Message = {
   id: string;
@@ -54,6 +54,8 @@ export default function ChatWidget({
   catalog?: ChatbotCatalog;
 }) {
   const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
+  const brand = catalog.brand ?? DEFAULT_CHATBOT_BRAND;
+  const welcome = getWelcomeReply(catalog);
   const panelId = useId();
   const titleId = useId();
   const liveId = useId();
@@ -63,8 +65,8 @@ export default function ChatWidget({
     {
       id: "welcome",
       role: "bot",
-      text: WELCOME_REPLY.text,
-      suggestions: WELCOME_REPLY.suggestions,
+      text: welcome.text,
+      suggestions: welcome.suggestions,
     },
   ]);
   const [input, setInput] = useState("");
@@ -236,7 +238,7 @@ export default function ChatWidget({
       {
         id: uid(),
         role: "bot",
-        text: formatLeadConfirmation(lead),
+        text: formatLeadConfirmation(lead, catalog),
         cta: { label: "Finish on quote page", href: "/quote" },
         suggestions: ["Fence services", "Materials", "Service area", "Hours & contact"],
       },
@@ -260,8 +262,8 @@ export default function ChatWidget({
       {
         id: "welcome",
         role: "bot",
-        text: WELCOME_REPLY.text,
-        suggestions: WELCOME_REPLY.suggestions,
+        text: getWelcomeReply(catalog).text,
+        suggestions: getWelcomeReply(catalog).suggestions,
       },
     ]);
   }
@@ -329,7 +331,7 @@ export default function ChatWidget({
                   id={titleId}
                   className="truncate font-display text-sm font-semibold tracking-tight"
                 >
-                  {siteConfig.name}
+                  {brand.name}
                 </p>
                 <p className="truncate text-[0.6875rem] text-cream/70 sm:text-xs">
                   Online · Fence help

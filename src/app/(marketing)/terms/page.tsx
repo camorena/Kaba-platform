@@ -3,32 +3,38 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
-import { defaultOgImage, siteConfig } from "@/lib/site";
-import { getPublishedContactInfo } from "@/lib/cms/public";
+import { defaultOgImage } from "@/lib/site";
+import { getPublishedContactInfo,
+  getPublishedHeroCopy,
+} from "@/lib/cms/public";
 
 const title = "Terms of Use";
-const description = `Website terms for ${siteConfig.name}—fence and deck contractor serving Angier, Raleigh, and surrounding North Carolina communities.`;
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/terms" },
-  openGraph: {
-    title: `${title} | ${siteConfig.name}`,
+export function generateMetadata(): Metadata {
+  const brand = getPublishedHeroCopy();
+  const description = `Website terms for ${brand.name}—fence and deck contractor serving Angier, Raleigh, and surrounding North Carolina communities.`;
+  return {
+    title,
     description,
-    url: "/terms",
-    images: [defaultOgImage],
-  },
-  twitter: {
-    card: "summary",
-    title: `${title} | ${siteConfig.name}`,
-    description,
-  },
-};
+    alternates: { canonical: "/terms" },
+    openGraph: {
+      title: `${title} | ${brand.name}`,
+      description,
+      url: "/terms",
+      images: [defaultOgImage],
+    },
+    twitter: {
+      card: "summary",
+      title: `${title} | ${brand.name}`,
+      description,
+    },
+  };
+}
 
 export default function TermsPage() {
+  const brand = getPublishedHeroCopy();
   const contact = getPublishedContactInfo();
   return (
     <>
@@ -46,7 +52,7 @@ export default function TermsPage() {
             Terms of Use
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            These terms govern your use of the {siteConfig.name} website. By
+            These terms govern your use of the {brand.name} website. By
             browsing or submitting a quote request, you agree to them.
           </p>
           <p className="mt-3 text-sm text-muted-light">
@@ -63,9 +69,9 @@ export default function TermsPage() {
             </h2>
             <p className="mt-3">
               This website describes fence and deck services offered by{" "}
-              {siteConfig.name} in {siteConfig.address.city},{" "}
-              {siteConfig.address.state}, and surrounding communities (
-              {siteConfig.serviceArea}). Content is for general information and
+              {brand.name} in {contact.address.city},{" "}
+              {contact.address.state}, and surrounding communities (
+              {contact.serviceArea}). Content is for general information and
               marketing. A submitted quote request is not a binding contract until
               we provide a written estimate you accept.
             </p>
@@ -116,7 +122,7 @@ export default function TermsPage() {
             </h2>
             <p className="mt-3">
               Site copy, branding, logos, and photographs are owned by{" "}
-              {siteConfig.name} or used with permission. You may not copy or
+              {brand.name} or used with permission. You may not copy or
               republish them for commercial purposes without our written consent.
             </p>
           </div>
@@ -144,7 +150,7 @@ export default function TermsPage() {
             </h2>
             <p className="mt-3">
               The website is provided “as is.” To the fullest extent allowed by
-              law, {siteConfig.name} disclaims warranties about uninterrupted
+              law, {brand.name} disclaims warranties about uninterrupted
               access or error-free content. Nothing on this site replaces a signed
               contract for construction work.
             </p>
@@ -155,7 +161,7 @@ export default function TermsPage() {
               Limitation of liability
             </h2>
             <p className="mt-3">
-              To the extent permitted by North Carolina law, {siteConfig.name} is
+              To the extent permitted by North Carolina law, {brand.name} is
               not liable for indirect or consequential damages arising from use of
               this website. Liability related to contracted fence or deck work is
               governed by the written agreement for that project.
@@ -179,7 +185,7 @@ export default function TermsPage() {
               Contact
             </h2>
             <p className="mt-3">
-              Questions about these terms? Contact {siteConfig.name} at{" "}
+              Questions about these terms? Contact {brand.name} at{" "}
               <a
                 href={contact.emailHref}
                 className="focus-ring rounded font-medium text-ink underline-offset-2 hover:underline"
