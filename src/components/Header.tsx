@@ -245,7 +245,7 @@ export default function Header() {
                               className="focus-ring block px-4 py-2.5 text-sm font-semibold text-ink hover:bg-ivory-muted"
                               onClick={() => setDropdownOpen(false)}
                             >
-                              All fencing options
+                              All fencing
                             </Link>
                           </li>
                           {fencingOptionsNav.map((item) => (
@@ -414,7 +414,7 @@ export default function Header() {
                             onClick={closeMenu}
                             className="focus-ring rounded-md px-3 py-2.5 text-sm font-semibold text-ink"
                           >
-                            All fencing options
+                            All fencing
                           </Link>
                           {fencingOptionsNav.map((item) => (
                             <Link

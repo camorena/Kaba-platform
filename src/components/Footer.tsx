@@ -80,7 +80,7 @@ export default function Footer() {
 
         <div className="lg:col-span-2 lg:pt-1">
           <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
-            Fencing Options
+            Fencing
           </p>
           <ul className="mt-4 space-y-1">
             {fencingOptionsNav.map((link) => (

@@ -34,8 +34,8 @@ export const siteConfig = {
 export const navLinks = [
   { href: "/residential", label: "Residential" },
   { href: "/commercial", label: "Commercial" },
-  { href: "/services", label: "Fencing Options", hasDropdown: true },
-  { href: "/gallery", label: "Our Work" },
+  { href: "/services", label: "Fencing", hasDropdown: true },
+  { href: "/gallery", label: "Projects" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ] as const;
