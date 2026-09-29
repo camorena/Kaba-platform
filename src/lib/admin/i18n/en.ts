@@ -234,11 +234,22 @@ const en = {
     },
     schedule: {
       title: "Schedule",
-      description: "Site visits and installs from scheduled / won quotes. Demo calendar — not booking yet.",
+      description:
+        "Site visits and install windows from quotes marked scheduled or won. Set the day on the quote detail — this is not a booking engine.",
       meta: "Field ops",
-      upcoming: "Upcoming jobs",
+      upcoming: "Upcoming",
       emptyTitle: "No scheduled work",
-      emptyDesc: "Mark a quote as scheduled or won to seed calendar jobs.",
+      emptyDesc:
+        "Mark a quote as scheduled (site visit) or won (install window), then set the visit day on the quote.",
+      emptyAction: "Open quotes",
+      openQuote: "Open quote →",
+      stubDay: "Suggested day",
+      kindVisit: "Site visit",
+      kindInstall: "Install window",
+      timeVisit: "10:00 AM",
+      timeInstall: "8:00 AM",
+      footnote:
+        "Days come from each quote's visit / install date. Changing the date clears the day-before reminder stamp so a reschedule can remind again.",
       dow: {
         sun: "Sun",
         mon: "Mon",
@@ -876,6 +887,14 @@ const en = {
     notesSaved: "Notes saved",
     saveFailed: "Save failed",
     saveNotes: "Save notes",
+    siteVisitLabel: "Site visit day",
+    installWindowLabel: "Install window",
+    scheduledForHint:
+      "Calendar day in America/Chicago. Shown on Schedule; used for day-before visit reminders.",
+    scheduledForDisabled:
+      "Available when status is Scheduled or Won. Mark the quote scheduled (visit) or won (install) to set a day.",
+    scheduledForSaved: "Visit day saved",
+    viewOnCalendar: "View on Schedule →",
     viewInvoice: "View invoice",
     createInvoice: "Create invoice draft",
     invoiceCreated: "Invoice created",

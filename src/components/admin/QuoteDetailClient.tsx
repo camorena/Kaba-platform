@@ -7,7 +7,7 @@ import { QuoteStatusTimeline } from "@/components/admin/StatusTimeline";
 import { useToast } from "@/components/admin/Toast";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
 import { quoteStatusLabel } from "@/lib/admin/i18n";
-import { formatDateTime } from "@/lib/admin/format";
+import { formatDateTime, formatYmd } from "@/lib/admin/format";
 import {
   QUOTE_STATUSES,
   quoteStatusTone,
@@ -16,7 +16,9 @@ import {
 import type { QuoteRecord } from "@/lib/db/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const VISIT_STATUSES: QuoteStatus[] = ["scheduled", "won"];
 
 export default function QuoteDetailClient({
   quote,
@@ -28,14 +30,28 @@ export default function QuoteDetailClient({
   const router = useRouter();
   const toast = useToast();
   const { t, locale } = useAdminI18n();
+  const dateLocale = locale === "es" ? "es-CO" : "en-US";
   const [status, setStatus] = useState<QuoteStatus>(quote.status);
   const [notes, setNotes] = useState(quote.notes);
+  const [scheduledFor, setScheduledFor] = useState(quote.scheduledFor ?? "");
   const [busy, setBusy] = useState(false);
   const [creatingInv, setCreatingInv] = useState(false);
   const [confirmLost, setConfirmLost] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<QuoteStatus | null>(null);
 
-  async function save(patch: { status?: QuoteStatus; notes?: string }) {
+  useEffect(() => {
+    setStatus(quote.status);
+    setNotes(quote.notes);
+    setScheduledFor(quote.scheduledFor ?? "");
+  }, [quote.id, quote.status, quote.notes, quote.scheduledFor, quote.updatedAt]);
+
+  const visitDayEditable = VISIT_STATUSES.includes(status);
+
+  async function save(patch: {
+    status?: QuoteStatus;
+    notes?: string;
+    scheduledFor?: string | null;
+  }) {
     if (patch.status === "lost" && status !== "lost") {
       setPendingStatus("lost");
       setConfirmLost(true);
@@ -44,7 +60,11 @@ export default function QuoteDetailClient({
     await applySave(patch);
   }
 
-  async function applySave(patch: { status?: QuoteStatus; notes?: string }) {
+  async function applySave(patch: {
+    status?: QuoteStatus;
+    notes?: string;
+    scheduledFor?: string | null;
+  }) {
     setBusy(true);
     try {
       const res = await fetch(`/api/quotes/${quote.id}`, {
@@ -56,11 +76,22 @@ export default function QuoteDetailClient({
         toast.push({ title: t("detail.saveFailed"), tone: "error" });
         return;
       }
+      const data = (await res.json()) as { quote?: QuoteRecord };
       if (patch.status) setStatus(patch.status);
+      if (data.quote?.scheduledFor !== undefined) {
+        setScheduledFor(data.quote.scheduledFor ?? "");
+      } else if (patch.scheduledFor !== undefined) {
+        setScheduledFor(patch.scheduledFor ?? "");
+      }
+      const toastTitle = patch.status
+        ? t("common.statusArrow", {
+            status: quoteStatusLabel(locale, patch.status),
+          })
+        : patch.scheduledFor !== undefined
+          ? t("detail.scheduledForSaved")
+          : t("detail.notesSaved");
       toast.push({
-        title: patch.status
-          ? t("common.statusArrow", { status: quoteStatusLabel(locale, patch.status) })
-          : t("detail.notesSaved"),
+        title: toastTitle,
         tone: "success",
       });
       router.refresh();
@@ -103,6 +134,11 @@ export default function QuoteDetailClient({
     window.print();
   }
 
+  function onScheduledForChange(next: string) {
+    setScheduledFor(next);
+    void save({ scheduledFor: next.trim() ? next.trim() : null });
+  }
+
   return (
     <div className="quote-print-root space-y-4">
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted print:hidden">
@@ -114,6 +150,10 @@ export default function QuoteDetailClient({
           {t("nav.pipeline")}
         </Link>
         <span aria-hidden>·</span>
+        <Link href="/admin/calendar" className="hover:underline">
+          {t("nav.schedule")}
+        </Link>
+        <span aria-hidden>·</span>
         <span className="font-mono text-[0.6875rem]">{quote.id}</span>
       </div>
 
@@ -123,11 +163,30 @@ export default function QuoteDetailClient({
             <h1 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
               {quote.name}
             </h1>
-            <StatusBadge label={quoteStatusLabel(locale, status)} tone={quoteStatusTone[status]} />
+            <StatusBadge
+              label={quoteStatusLabel(locale, status)}
+              tone={quoteStatusTone[status]}
+            />
           </div>
           <p className="mt-1 text-sm text-muted">
             {quote.serviceType} · {quote.address}
           </p>
+          {visitDayEditable && scheduledFor ? (
+            <p className="mt-1 text-xs text-muted">
+              {status === "won"
+                ? t("detail.installWindowLabel")
+                : t("detail.siteVisitLabel")}
+              <span className="text-ink/25"> · </span>
+              <span className="font-medium text-ink">
+                {formatYmd(scheduledFor, dateLocale, {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            </p>
+          ) : null}
         </div>
         <div className="admin-detail-actions flex flex-wrap gap-2 print:hidden">
           <a href={`tel:${quote.phone}`} className="btn-secondary-light text-sm">
@@ -183,7 +242,9 @@ export default function QuoteDetailClient({
 
       {!relatedInvoiceId && (
         <div className="admin-flow-hint px-0.5 text-xs leading-relaxed text-muted print:hidden">
-          <strong className="font-semibold text-ink">{t("detail.nextStepTitle")}</strong>{" "}
+          <strong className="font-semibold text-ink">
+            {t("detail.nextStepTitle")}
+          </strong>{" "}
           {t("detail.nextStepBody")}
         </div>
       )}
@@ -275,6 +336,41 @@ export default function QuoteDetailClient({
               ))}
             </div>
           </div>
+
+          <div>
+            <label
+              htmlFor="quote-scheduled-for"
+              className="admin-card-title block"
+            >
+              {status === "won"
+                ? t("detail.installWindowLabel")
+                : t("detail.siteVisitLabel")}
+            </label>
+            <input
+              id="quote-scheduled-for"
+              type="date"
+              className="field-input mt-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
+              value={scheduledFor}
+              disabled={busy || !visitDayEditable}
+              onChange={(e) => onScheduledForChange(e.target.value)}
+            />
+            <p className="admin-field-hint">
+              {visitDayEditable
+                ? t("detail.scheduledForHint")
+                : t("detail.scheduledForDisabled")}
+            </p>
+            {visitDayEditable && scheduledFor ? (
+              <p className="mt-1.5 text-[0.6875rem] text-muted">
+                <Link
+                  href="/admin/calendar"
+                  className="font-medium text-bronze-dark hover:underline dark:text-bronze-light"
+                >
+                  {t("detail.viewOnCalendar")}
+                </Link>
+              </p>
+            ) : null}
+          </div>
+
           <div>
             <label htmlFor="quote-notes" className="admin-card-title block">
               {t("detail.internalNotes")}

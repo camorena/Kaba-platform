@@ -133,7 +133,7 @@ Without keys the build and Payments UI stay honest (“not connected”); `/pay/
 | `KABA_AUTO_EMAIL_PAY_LINK` | Optional | Auto email pay link when invoice first becomes `sent`. Default **ON** when mail configured; `false` disables; `true` forces on. Idempotent via `pay_link_notified_at`. |
 | `KABA_AUTO_VISIT_REMINDERS` | Optional | Day-before visit reminders for quotes with `scheduled_for` = tomorrow (`scheduled` / `won`). Default **ON** when mail configured; `false` disables; `true` forces on. Idempotent via `visit_reminder_sent_at`. |
 
-`notifyQuoteCreated` (owner HTML alert + customer confirmation) / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link** + auto on first `sent`) / `notifyQuietDigest` (morning cron) / `notifyVisitReminder` (morning cron) are honest no-ops until mail is configured. Cron schedules: quiet digest `0 12 * * *` UTC (~07:00 CDT); visit reminders `15 12 * * *` UTC (~07:15 CDT). See `preview/REUSE_PORT_v7.md` / `v19.md`–`v23.md`.
+`notifyQuoteCreated` (owner HTML alert + customer confirmation) / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link** + auto on first `sent`) / `notifyQuietDigest` (morning cron) / `notifyVisitReminder` (morning cron) are honest no-ops until mail is configured. Cron schedules: quiet digest `0 12 * * *` UTC (~07:00 CDT); visit reminders `15 12 * * *` UTC (~07:15 CDT). See `preview/REUSE_PORT_v7.md` / `v19.md`–`v24.md` (v24 = editable `scheduled_for` + Calendar polish).
 
 ## Analytics (optional)
 
@@ -169,6 +169,7 @@ Before/after JSON lives under `preview/lighthouse/`. Screenshots: `preview/a11y-
 - Paste Resend/SMTP + `MAIL_FROM` (+ `MAIL_TO_OWNERS`) for quote alerts, customer confirmations, pay-link email, receipts, gone-quiet digest, and visit reminders — `preview/REUSE_PORT_v19.md`–`v23.md`
 - Paste `CRON_SECRET` on Vercel so `/api/cron/*` is secured (schedules already in `vercel.json`)
 - Apply `0009_visit_reminders.sql` on Neon (`npm run db:migrate`) so `scheduled_for` / `visit_reminder_sent_at` exist
+- Set visit / install day on quote detail (status Scheduled or Won) — Calendar reads `scheduled_for` (`preview/REUSE_PORT_v24.md`)
 - Custom domain
 - Town SEO landing pages
 - Rotate demo owner password before treating credentials auth as production-hardened

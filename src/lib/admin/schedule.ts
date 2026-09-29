@@ -20,6 +20,8 @@ export type ScheduleJob = {
   day: string;
   timeLabel: string;
   notes: string;
+  /** True when the day comes from quotes.scheduled_for (not a stub fallback). */
+  hasScheduledFor: boolean;
 };
 
 /** Derive install / site-visit jobs from scheduled + won quotes. */
@@ -30,6 +32,7 @@ export async function listScheduleJobs(): Promise<ScheduleJob[]> {
   );
 
   for (const q of quotes) {
+    const hasScheduledFor = Boolean(q.scheduledFor);
     const day =
       q.scheduledFor ||
       defaultScheduledFor(q.status) ||
@@ -46,9 +49,10 @@ export async function listScheduleJobs(): Promise<ScheduleJob[]> {
       timeLabel: visitTimeLabel(q.status),
       notes:
         q.notes ||
-        (q.scheduledFor
+        (hasScheduledFor
           ? "Scheduled visit day on quote."
-          : "Stub schedule — set scheduledFor on the quote for a real day."),
+          : "Stub schedule — set the visit day on the quote detail."),
+      hasScheduledFor,
     });
   }
 
@@ -56,7 +60,11 @@ export async function listScheduleJobs(): Promise<ScheduleJob[]> {
 }
 
 export function monthGrid(anchor = new Date()): {
+  /** Legacy English label — prefer year/month + client locale. */
   label: string;
+  year: number;
+  /** 0-indexed month. */
+  month: number;
   weeks: (string | null)[][];
 } {
   const year = anchor.getFullYear();
@@ -81,5 +89,5 @@ export function monthGrid(anchor = new Date()): {
     year: "numeric",
     timeZone: "America/Chicago",
   });
-  return { label, weeks };
+  return { label, year, month, weeks };
 }

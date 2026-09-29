@@ -243,12 +243,21 @@ const es = {
     schedule: {
       title: "Agenda",
       description:
-        "Visitas e instalaciones a partir de cotizaciones agendadas o ganadas. Calendario demo — aún no es reservas.",
+        "Visitas e instalaciones a partir de cotizaciones agendadas o ganadas. Defina el día en el detalle de la cotización — no es un motor de reservas.",
       meta: "Campo",
-      upcoming: "Próximos trabajos",
+      upcoming: "Próximos",
       emptyTitle: "Sin trabajos agendados",
       emptyDesc:
-        "Marque una cotización como agendada o ganada para generar trabajos en el calendario.",
+        "Marque una cotización como agendada (visita) o ganada (instalación) y luego defina el día en el detalle.",
+      emptyAction: "Abrir cotizaciones",
+      openQuote: "Abrir cotización →",
+      stubDay: "Día sugerido",
+      kindVisit: "Visita al sitio",
+      kindInstall: "Ventana de instalación",
+      timeVisit: "10:00 a. m.",
+      timeInstall: "8:00 a. m.",
+      footnote:
+        "Los días provienen de la fecha de visita o instalación de cada cotización. Al cambiar la fecha se borra el sello del recordatorio del día anterior, para que un reagendamiento pueda recordarse de nuevo.",
       dow: {
         sun: "Dom",
         mon: "Lun",
@@ -907,6 +916,14 @@ const es = {
     notesSaved: "Notas guardadas",
     saveFailed: "No se pudo guardar",
     saveNotes: "Guardar notas",
+    siteVisitLabel: "Día de visita al sitio",
+    installWindowLabel: "Ventana de instalación",
+    scheduledForHint:
+      "Día del calendario en America/Chicago. Aparece en Agenda; se usa para los recordatorios del día anterior.",
+    scheduledForDisabled:
+      "Disponible cuando el estado es Agendada o Ganada. Marque la cotización como agendada (visita) o ganada (instalación) para definir un día.",
+    scheduledForSaved: "Día de visita guardado",
+    viewOnCalendar: "Ver en Agenda →",
     viewInvoice: "Ver factura",
     createInvoice: "Crear borrador de factura",
     invoiceCreated: "Factura creada",

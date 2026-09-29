@@ -41,3 +41,20 @@ export function formatShortDate(iso: string): string {
 export function daysSince(iso: string, now = Date.now()): number {
   return Math.max(0, Math.floor((now - new Date(iso).getTime()) / 86_400_000));
 }
+
+/** Format a YYYY-MM-DD calendar day (no timezone shift). */
+export function formatYmd(
+  ymd: string,
+  locale: string = "en-US",
+  options: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  },
+): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  if (!y || !m || !d) return ymd;
+  const dt = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  return dt.toLocaleDateString(locale, { ...options, timeZone: "UTC" });
+}
+
