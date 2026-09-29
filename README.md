@@ -6,7 +6,7 @@ Built with **Next.js (App Router)** and **Tailwind CSS**.
 
 Live: https://kaba-platform.vercel.app
 
-Ops / reuse notes: `preview/REUSE_PORT_v19.md` (email pay link + receipts), `preview/REUSE_PORT_v18.md` (Stripe deposits + webhooks), `preview/CMS_PUBLIC_CONTENT_PLAN.md` (public content admin roadmap).
+Ops / reuse notes: `preview/REUSE_PORT_v21.md` (gone-quiet digest cron), `preview/REUSE_PORT_v20.md` (quote emails), `preview/REUSE_PORT_v19.md` (pay-link email), `preview/REUSE_PORT_v18.md` (Stripe), `preview/CMS_PUBLIC_CONTENT_PLAN.md`.
 
 
 ## Getting started
@@ -127,10 +127,11 @@ Without keys the build and Payments UI stay honest (“not connected”); `/pay/
 | -------- | -------- | ------- |
 | `MAIL_FROM` | For send | From: address |
 | `RESEND_API_KEY` | Prefer | Resend HTTP API |
-| `MAIL_TO_OWNERS` | Optional | Owner alert recipients (else site email). Quote alerts also BCC `camoren222@gmail.com` in code. |
+| `MAIL_TO_OWNERS` | Optional | Owner alert recipients (else site email). Recommended: `kabafencellc@gmail.com`. Quote alerts + quiet digest also BCC `camoren222@gmail.com` in code. |
 | `SMTP_HOST` (+ port/user/pass/secure) | Alt | Used when Resend unset |
+| `CRON_SECRET` | For digest cron | Bearer token for `/api/cron/quiet-digest` (Vercel Cron sends it automatically when set) |
 
-`notifyQuoteCreated` (owner HTML alert + customer confirmation) / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link**) are honest no-ops until mail is configured. See `preview/REUSE_PORT_v7.md` / `v19.md` / `v20.md`.
+`notifyQuoteCreated` (owner HTML alert + customer confirmation) / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link**) / `notifyQuietDigest` (morning cron) are honest no-ops until mail is configured. Cron schedule: `0 12 * * *` UTC → ~07:00 America/Chicago (CDT). See `preview/REUSE_PORT_v7.md` / `v19.md` / `v20.md` / `v21.md`.
 
 ## Analytics (optional)
 
@@ -163,7 +164,8 @@ Before/after JSON lives under `preview/lighthouse/`. Screenshots: `preview/a11y-
 
 - Real contact / crew photos
 - Paste Stripe keys + register webhook (code path is ready — see v18)
-- Paste Resend/SMTP + `MAIL_FROM` (+ `MAIL_TO_OWNERS`) for quote alerts, customer confirmations, pay-link email, and receipts — `preview/REUSE_PORT_v19.md` / `v20.md`
+- Paste Resend/SMTP + `MAIL_FROM` (+ `MAIL_TO_OWNERS`) for quote alerts, customer confirmations, pay-link email, receipts, and the gone-quiet digest — `preview/REUSE_PORT_v19.md` / `v20.md` / `v21.md`
+- Paste `CRON_SECRET` on Vercel so `/api/cron/quiet-digest` is secured (schedule already in `vercel.json`)
 - Custom domain
 - Town SEO landing pages
 - Rotate demo owner password before treating credentials auth as production-hardened

@@ -20,7 +20,9 @@ export type {
 export {
   notificationPatchFromResult,
   notifyQuoteCreated,
+  notifyQuietDigest,
   type NotifyQuoteResult,
+  type NotifyQuietDigestResult,
 } from "@/lib/db/notify";
 export {
   isQuietQuote,

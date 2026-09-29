@@ -24,6 +24,11 @@ import { invoicePayUrl, publicAppOrigin } from "@/lib/pay/origin";
 import { QUOTE_OWNER_ALWAYS_COPY } from "@/lib/mail/templates/html";
 import { buildQuoteOwnerEmail } from "@/lib/mail/templates/quote-owner";
 import { buildQuoteCustomerEmail } from "@/lib/mail/templates/quote-customer";
+import {
+  buildQuietDigestEmail,
+  toQuietDigestItems,
+} from "@/lib/mail/templates/quiet-digest";
+import { QUIET_DAYS_THRESHOLD } from "@/lib/db/quiet";
 
 export type NotifyQuoteResult = {
   /** True when the owner/admin alert was delivered (drives notifiedAt). */
@@ -179,6 +184,12 @@ export async function notifyQuoteCreated(
 /**
  * Admin action — email the customer their invoice summary + public pay URL.
  * Does not change invoice status; caller may mark "sent" separately.
+ *
+ * NEXT (auto pay-link): After mail is proven in production, optionally call this
+ * automatically when an invoice is first marked "sent" (or created from a won
+ * quote) if customer email + pay token exist. Gate with env e.g.
+ * AUTO_EMAIL_PAY_LINK=true — owners must opt in. Manual admin "Email pay link"
+ * remains the default until then. See preview/REUSE_PORT_v21.md.
  */
 export async function notifyInvoicePayLink(
   invoice: InvoiceRecord,
@@ -388,5 +399,95 @@ export async function notifyPaymentReceived(input: {
     reason: reasons.join(" "),
     ownerDelivered,
     customerDelivered,
+  };
+}
+
+/**
+ * Daily gone-quiet digest for owners — same recipient pattern as quote owner copy:
+ *   To: MAIL_TO_OWNERS (or published site email)
+ *   Bcc: camoren222@gmail.com always (QUOTE_OWNER_ALWAYS_COPY), deduped
+ *
+ * Honest no-op when mail is not configured (caller still returns 200 + reason).
+ */
+export type NotifyQuietDigestResult = {
+  delivered: boolean;
+  reason: string;
+  quietCount: number;
+  emailedCount: number;
+  to?: string[];
+  bcc?: string[];
+};
+
+/** Cap rows in the email body; remainder linked via listUrl. */
+export const QUIET_DIGEST_EMAIL_LIMIT = 40;
+
+export async function notifyQuietDigest(
+  quotes: QuoteRecord[],
+): Promise<NotifyQuietDigestResult> {
+  const quietCount = quotes.length;
+  const status = getMailStatus();
+  if (!status.ready) {
+    return {
+      delivered: false,
+      quietCount,
+      emailedCount: 0,
+      reason:
+        "notifyQuietDigest no-op — configure MAIL_FROM + RESEND_API_KEY or SMTP_HOST (Settings → Platform).",
+    };
+  }
+
+  const owners = dedupeEmails(resolveOwnerEmails());
+  const alwaysCopy = QUOTE_OWNER_ALWAYS_COPY.trim().toLowerCase();
+  const ownerSet = new Set(owners.map((e) => e.toLowerCase()));
+  const bcc =
+    alwaysCopy && !ownerSet.has(alwaysCopy) ? [QUOTE_OWNER_ALWAYS_COPY] : [];
+
+  if (!owners.length && !bcc.length) {
+    return {
+      delivered: false,
+      quietCount,
+      emailedCount: 0,
+      reason: "No owner recipients (set MAIL_TO_OWNERS or site email).",
+    };
+  }
+
+  const to = owners.length ? owners : [QUOTE_OWNER_ALWAYS_COPY];
+  const ownerBcc = owners.length ? bcc : [];
+
+  const brandName = getPublishedHeroCopy().name;
+  const origin = publicAppOrigin();
+  const listUrl = `${origin}/admin/quotes#gone-quiet`;
+  const sorted = [...quotes].sort(
+    (a, b) =>
+      new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+  );
+  const capped = sorted.slice(0, QUIET_DIGEST_EMAIL_LIMIT);
+  const truncatedCount = Math.max(0, sorted.length - capped.length);
+
+  const mail = buildQuietDigestEmail({
+    brandName,
+    thresholdDays: QUIET_DAYS_THRESHOLD,
+    items: toQuietDigestItems(capped, origin),
+    listUrl,
+    truncatedCount,
+  });
+
+  const result = await sendMail({
+    to,
+    bcc: ownerBcc.length ? ownerBcc : undefined,
+    subject: mail.subject,
+    text: mail.text,
+    html: mail.html,
+  });
+
+  return {
+    delivered: result.delivered,
+    quietCount,
+    emailedCount: quietCount,
+    to,
+    bcc: ownerBcc.length ? ownerBcc : undefined,
+    reason: result.delivered
+      ? `Quiet digest delivered (${result.transport}; ${quietCount} lead${quietCount === 1 ? "" : "s"}${ownerBcc.length ? `; bcc ${ownerBcc.join(",")}` : ""}).`
+      : `Quiet digest failed: ${result.reason}`,
   };
 }
