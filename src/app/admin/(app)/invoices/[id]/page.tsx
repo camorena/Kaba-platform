@@ -8,6 +8,7 @@ import {
   getPublishedContactInfo,
   getPublishedHeroCopy,
 } from "@/lib/cms/public";
+import { isMailReady } from "@/lib/mail";
 import { isStripeCheckoutReady } from "@/lib/stripe/config";
 import { notFound } from "next/navigation";
 
@@ -35,6 +36,7 @@ export default async function AdminInvoiceDetailPage({
   const payments = await listPaymentsForInvoice(invoice.id);
   const paidCents = await paidCentsForInvoice(invoice.id);
   const stripeCheckoutReady = isStripeCheckoutReady();
+  const mailReady = isMailReady();
   const contact = getPublishedContactInfo();
   const brand = getPublishedHeroCopy();
 
@@ -44,6 +46,7 @@ export default async function AdminInvoiceDetailPage({
       payments={payments}
       paidCents={paidCents}
       stripeCheckoutReady={stripeCheckoutReady}
+      mailReady={mailReady}
       letterhead={{
         name: brand.name,
         tagline: brand.tagline,

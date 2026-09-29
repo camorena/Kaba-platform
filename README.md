@@ -6,7 +6,7 @@ Built with **Next.js (App Router)** and **Tailwind CSS**.
 
 Live: https://kaba-platform.vercel.app
 
-Ops / reuse notes: `preview/REUSE_PORT_v18.md` (Stripe deposits + webhooks + mail launch), `preview/CMS_PUBLIC_CONTENT_PLAN.md` (public content admin roadmap).
+Ops / reuse notes: `preview/REUSE_PORT_v19.md` (email pay link + receipts), `preview/REUSE_PORT_v18.md` (Stripe deposits + webhooks), `preview/CMS_PUBLIC_CONTENT_PLAN.md` (public content admin roadmap).
 
 
 ## Getting started
@@ -119,7 +119,7 @@ Without keys the build and Payments UI stay honest (“not connected”); `/pay/
 
 **Webhook URL (Stripe Dashboard):** `https://kaba-platform.vercel.app/api/stripe/webhook` (event: `checkout.session.completed`).
 
-**Demo pay link:** `/pay/kf_pay_demo_1002_chris` (seed token). Full launch steps: `preview/REUSE_PORT_v18.md`.
+**Demo pay link:** `/pay/kf_pay_demo_1002_chris` (seed token). Stripe launch: `preview/REUSE_PORT_v18.md`. Mail / Email pay link: `preview/REUSE_PORT_v19.md`.
 
 ## Mail (optional)
 
@@ -130,7 +130,7 @@ Without keys the build and Payments UI stay honest (“not connected”); `/pay/
 | `MAIL_TO_OWNERS` | Optional | Owner alert recipients (else site email) |
 | `SMTP_HOST` (+ port/user/pass/secure) | Alt | Used when Resend unset |
 
-`notifyQuoteCreated` / `notifyPaymentReceived` are honest no-ops until mail is configured. See `preview/REUSE_PORT_v7.md` / `v18.md`.
+`notifyQuoteCreated` / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link**) are honest no-ops until mail is configured. See `preview/REUSE_PORT_v7.md` / `v19.md`.
 
 ## Analytics (optional)
 
@@ -163,7 +163,7 @@ Before/after JSON lives under `preview/lighthouse/`. Screenshots: `preview/a11y-
 
 - Real contact / crew photos
 - Paste Stripe keys + register webhook (code path is ready — see v18)
-- Paste Resend/SMTP + `MAIL_FROM` for receipt/owner email
+- Paste Resend/SMTP + `MAIL_FROM` (+ `MAIL_TO_OWNERS`) for pay-link email, receipts, and owner notices — `preview/REUSE_PORT_v19.md`
 - Custom domain
 - Town SEO landing pages
 - Rotate demo owner password before treating credentials auth as production-hardened

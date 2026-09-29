@@ -56,7 +56,7 @@ vercel env add NEXT_PUBLIC_SITE_URL production --project kaba-platform
 | `MAIL_TO_OWNERS` | Comma-separated owner alert recipients |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_SECURE` | Used when Resend is unset |
 
-Without mail keys, `notifyQuoteCreated` / `notifyPaymentReceived` are honest no-ops (ledger still writes).
+Without mail keys, `notifyQuoteCreated` / `notifyPaymentReceived` / `notifyInvoicePayLink` are honest no-ops (ledger still writes). Admin Email pay link: v19.
 
 ---
 
@@ -88,7 +88,7 @@ After env changes: redeploy (or wait for the next push deploy).
 | URL pattern | `https://kaba-platform.vercel.app/pay/{token}` |
 | Demo tokens (seed) | `kf_pay_demo_1001_alicia`, `kf_pay_demo_1002_chris`, `kf_pay_demo_1003_sam` |
 | Example | https://kaba-platform.vercel.app/pay/kf_pay_demo_1002_chris |
-| Admin | Invoice detail → **Copy pay link** / **Share pay link** |
+| Admin | Invoice detail → **Copy / Share / Email pay link** (email needs mail env — see v19) |
 | Public checkout | Pay page → **Pay deposit** → Stripe Hosted Checkout |
 
 No admin cookie required. Token lives on each invoice (`pay_token` / `payToken`).
@@ -130,7 +130,7 @@ DATABASE_URL=… npm run db:migrate
 3. Confirm `NEXT_PUBLIC_SITE_URL=https://kaba-platform.vercel.app` on Production.
 4. Redeploy; Settings → Platform should show Stripe **Connected** (secret + webhook).
 5. Open a demo pay link, pay with test card `4242…`, confirm payment row + invoice status.
-6. (Optional) Add Resend/SMTP + `MAIL_FROM` for receipt/owner email.
+6. Add Resend/SMTP + `MAIL_FROM` for pay-link email + receipt/owner notices — see `preview/REUSE_PORT_v19.md`.
 
 ---
 

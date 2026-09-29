@@ -626,6 +626,7 @@ export default function SettingsClient({
                 <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted">
                   <li>{t("pages.settings.mailPlan1")}</li>
                   <li>{t("pages.settings.mailPlan2")}</li>
+                  <li>{t("pages.settings.mailPlan3")}</li>
                 </ul>
                 <p className="mt-3 text-xs leading-relaxed text-muted">
                   {withCode(
@@ -633,7 +634,11 @@ export default function SettingsClient({
                       quoteNotify: "notifyQuoteCreated",
                       paymentNotify: "notifyPaymentReceived",
                     }),
-                    ["notifyQuoteCreated", "notifyPaymentReceived"],
+                    [
+                      "notifyQuoteCreated",
+                      "notifyPaymentReceived",
+                      "notifyInvoicePayLink",
+                    ],
                   )}
                 </p>
                 <p className="mt-4 text-[0.6875rem] font-medium text-muted">

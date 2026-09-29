@@ -1,6 +1,6 @@
 /**
- * Payment receipt stub — shape for UI + future email/PDF.
- * No mail transport yet; notifyPaymentReceived stays a no-op until wired.
+ * Payment receipt stub — shape for UI + email bodies.
+ * Delivery happens via notifyPaymentReceived when mail is configured.
  */
 
 import type { InvoiceRecord, PaymentRecord } from "@/lib/db/types";
@@ -34,6 +34,6 @@ export function buildPaymentReceiptStub(
     method: payment.method,
     reference: payment.reference,
     stripeCheckoutSessionId: payment.stripeCheckoutSessionId,
-    note: "Receipt stub — email when mail transport is configured (Settings → Platform).",
+    note: "Receipt email when MAIL_FROM + RESEND_API_KEY or SMTP_HOST are set (Settings → Platform).",
   };
 }

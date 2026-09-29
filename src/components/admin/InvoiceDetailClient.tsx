@@ -32,6 +32,7 @@ export default function InvoiceDetailClient({
   payments,
   paidCents,
   stripeCheckoutReady = false,
+  mailReady = false,
   letterhead = {
     name: siteConfig.name,
     tagline: siteConfig.tagline,
@@ -44,6 +45,8 @@ export default function InvoiceDetailClient({
   payments: PaymentRecord[];
   paidCents: number;
   stripeCheckoutReady?: boolean;
+  /** True when MAIL_FROM + Resend/SMTP are configured (Settings → Platform). */
+  mailReady?: boolean;
   /** Published contact/brand when passed from the server page; site.ts fallback. */
   letterhead?: InvoiceLetterhead;
 }) {
@@ -55,6 +58,7 @@ export default function InvoiceDetailClient({
   const [confirmVoid, setConfirmVoid] = useState(false);
   const [checkoutBusy, setCheckoutBusy] = useState(false);
   const [shareBusy, setShareBusy] = useState(false);
+  const [emailBusy, setEmailBusy] = useState(false);
 
   const payPath = `/pay/${encodeURIComponent(invoice.payToken)}`;
   const total = invoice.lines.reduce(
@@ -151,6 +155,52 @@ export default function InvoiceDetailClient({
     }
   }
 
+  async function emailPayLink() {
+    if (!invoice.payToken) {
+      toast.push({ title: t("detail.emailPayLinkNoToken"), tone: "error" });
+      return;
+    }
+    if (!invoice.customerEmail?.trim()) {
+      toast.push({ title: t("detail.emailPayLinkNoEmail"), tone: "error" });
+      return;
+    }
+    if (!mailReady) {
+      toast.push({ title: t("detail.emailPayLinkMailOff"), tone: "error" });
+      return;
+    }
+    setEmailBusy(true);
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}/email-pay-link`, {
+        method: "POST",
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        delivered?: boolean;
+        to?: string;
+        statusUpdated?: boolean;
+      };
+      if (!res.ok || !data.delivered) {
+        toast.push({
+          title: data.error || t("detail.emailPayLinkFailed"),
+          tone: "error",
+        });
+        return;
+      }
+      if (data.statusUpdated) {
+        setStatus("sent");
+      }
+      toast.push({
+        title: t("detail.emailPayLinkSent", {
+          email: data.to || invoice.customerEmail,
+        }),
+        tone: "success",
+      });
+      router.refresh();
+    } finally {
+      setEmailBusy(false);
+    }
+  }
+
   const summary = `${invoice.number} · ${invoice.customerName} · Total ${formatMoney(total)} · Paid ${formatMoney(paidCents)} · Balance ${formatMoney(balance)}`;
 
   return (
@@ -226,6 +276,21 @@ export default function InvoiceDetailClient({
               onClick={() => void sharePayLink()}
             >
               {t("detail.sharePayLink")}
+            </button>
+            <button
+              type="button"
+              disabled={emailBusy || busy}
+              className="admin-chip"
+              title={
+                mailReady
+                  ? t("detail.emailPayLinkHint")
+                  : t("detail.emailPayLinkMailOff")
+              }
+              onClick={() => void emailPayLink()}
+            >
+              {emailBusy
+                ? t("common.saving")
+                : t("detail.emailPayLink")}
             </button>
           </>
         ) : null}
@@ -392,6 +457,11 @@ export default function InvoiceDetailClient({
                 >
                   {payPath}
                 </a>
+              </p>
+            ) : null}
+            {invoice.payToken && !mailReady ? (
+              <p className="mt-2 text-[0.6875rem] leading-relaxed text-amber-700 dark:text-amber-400">
+                {t("detail.emailPayLinkMailOff")}
               </p>
             ) : null}
             {stripeCheckoutReady && balance > 0 && status !== "void" ? (
