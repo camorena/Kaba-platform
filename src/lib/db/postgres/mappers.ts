@@ -27,6 +27,27 @@ function isoOrNull(value: Date | string | null | undefined): string | null {
   return iso(value);
 }
 
+/** Postgres `date` → YYYY-MM-DD (no TZ shift). */
+function dateOnly(value: Date | string | null | undefined): string | null {
+  if (value == null) return null;
+  if (typeof value === "string") {
+    const m = value.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (m) return m[1];
+    const d = new Date(value);
+    if (!Number.isNaN(d.getTime())) {
+      const y = d.getUTCFullYear();
+      const mo = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const da = String(d.getUTCDate()).padStart(2, "0");
+      return `${y}-${mo}-${da}`;
+    }
+    return null;
+  }
+  const y = value.getUTCFullYear();
+  const mo = String(value.getUTCMonth() + 1).padStart(2, "0");
+  const da = String(value.getUTCDate()).padStart(2, "0");
+  return `${y}-${mo}-${da}`;
+}
+
 export type QuoteRow = {
   id: string;
   customer_id: string | null;
@@ -42,6 +63,8 @@ export type QuoteRow = {
   notes: string;
   notified_at: Date | string | null;
   notify_attempts: number;
+  scheduled_for: Date | string | null;
+  visit_reminder_sent_at: Date | string | null;
   created_at: Date | string;
   updated_at: Date | string;
 };
@@ -62,6 +85,8 @@ export function mapQuote(row: QuoteRow): QuoteRecord {
     notes: row.notes,
     notifiedAt: isoOrNull(row.notified_at),
     notifyAttempts: Number(row.notify_attempts) || 0,
+    scheduledFor: dateOnly(row.scheduled_for),
+    visitReminderSentAt: isoOrNull(row.visit_reminder_sent_at),
     createdAt: iso(row.created_at),
     updatedAt: iso(row.updated_at),
   };

@@ -37,6 +37,13 @@ export type QuotesRepo = {
   }>;
   listQuiet(thresholdDays?: number): Promise<QuoteRecord[]>;
   quietCount(thresholdDays?: number): Promise<number>;
+  /** Quotes due for tomorrow visit reminder (scheduled/won + scheduled_for + email). */
+  listDueVisitReminders(tomorrowYmd: string): Promise<QuoteRecord[]>;
+  /** Stamp visit reminder delivery (idempotency). */
+  markVisitReminderSent(
+    id: string,
+    at?: string | null,
+  ): Promise<QuoteRecord | undefined>;
   listNotes(quoteId: string): Promise<QuoteNoteRecord[]>;
   addNote(
     quoteId: string,

@@ -21,3 +21,13 @@ export {
   isAutoEmailPayLinkEnabled,
 } from "@/lib/mail/auto-pay-link";
 export type { AutoPayLinkEnv, AutoPayLinkPosture } from "@/lib/mail/auto-pay-link";
+
+export {
+  getAutoVisitRemindersEnv,
+  getAutoVisitRemindersPosture,
+  isAutoVisitRemindersEnabled,
+} from "@/lib/mail/auto-visit-reminders";
+export type {
+  AutoVisitRemindersEnv,
+  AutoVisitRemindersPosture,
+} from "@/lib/mail/auto-visit-reminders";

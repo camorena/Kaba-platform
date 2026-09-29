@@ -33,6 +33,13 @@ export type QuoteRecord = {
   notifyAttempts: number;
   /** Optional FK when customers table is populated. */
   customerId: string | null;
+  /**
+   * Visit / install calendar day (YYYY-MM-DD, America/Chicago).
+   * Used by calendar + tomorrow visit reminders. Null = not on calendar.
+   */
+  scheduledFor: string | null;
+  /** Set when day-before visit reminder was delivered (idempotent). */
+  visitReminderSentAt: string | null;
 };
 
 export type QuoteNoteRecord = {
@@ -134,12 +141,23 @@ export type NewQuoteInput = Omit<
   | "notifiedAt"
   | "notifyAttempts"
   | "customerId"
+  | "scheduledFor"
+  | "visitReminderSentAt"
 > & {
   status?: QuoteStatus;
   notes?: string;
   customerId?: string | null;
+  scheduledFor?: string | null;
 };
 
 export type QuotePatch = Partial<
-  Pick<QuoteRecord, "status" | "notes" | "notifiedAt" | "notifyAttempts">
+  Pick<
+    QuoteRecord,
+    | "status"
+    | "notes"
+    | "notifiedAt"
+    | "notifyAttempts"
+    | "scheduledFor"
+    | "visitReminderSentAt"
+  >
 >;

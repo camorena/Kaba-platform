@@ -79,6 +79,12 @@ export default function SettingsClient({
     mailReady: false,
     badge: "off_mail" as const,
   },
+  autoVisitReminders = {
+    enabled: false,
+    env: "unset" as const,
+    mailReady: false,
+    badge: "off_mail" as const,
+  },
   roles = ["owner", "editor", "viewer"],
 }: {
   configured: boolean;
@@ -108,6 +114,12 @@ export default function SettingsClient({
     badge: "not_configured" | "resend" | "smtp";
   };
   autoEmailPayLink?: {
+    enabled: boolean;
+    env: "unset" | "on" | "off";
+    mailReady: boolean;
+    badge: "on_default" | "on_env" | "off_env" | "off_mail";
+  };
+  autoVisitReminders?: {
     enabled: boolean;
     env: "unset" | "on" | "off";
     mailReady: boolean;
@@ -640,6 +652,7 @@ export default function SettingsClient({
                   <li>{t("pages.settings.mailPlan2")}</li>
                   <li>{t("pages.settings.mailPlan3")}</li>
                   <li>{t("pages.settings.mailPlan4")}</li>
+                  <li>{t("pages.settings.mailPlan5")}</li>
                 </ul>
                 <div className="mt-3 admin-settings-stat flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm text-ink">
@@ -663,6 +676,29 @@ export default function SettingsClient({
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-muted">
                   {t("pages.settings.mailAutoPayLinkHint")}
+                </p>
+                <div className="mt-3 admin-settings-stat flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-sm text-ink">
+                    {t("pages.settings.mailAutoVisitRemindersLabel")}
+                  </span>
+                  <span
+                    className={
+                      autoVisitReminders.enabled
+                        ? "admin-settings-chip"
+                        : "admin-settings-chip admin-settings-chip-warn"
+                    }
+                  >
+                    {autoVisitReminders.badge === "on_default"
+                      ? t("pages.settings.mailAutoVisitRemindersOnDefault")
+                      : autoVisitReminders.badge === "on_env"
+                        ? t("pages.settings.mailAutoVisitRemindersOnEnv")
+                        : autoVisitReminders.badge === "off_env"
+                          ? t("pages.settings.mailAutoVisitRemindersOffEnv")
+                          : t("pages.settings.mailAutoVisitRemindersOffMail")}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-muted">
+                  {t("pages.settings.mailAutoVisitRemindersHint")}
                 </p>
                 <p className="mt-3 text-xs leading-relaxed text-muted">
                   {withCode(
@@ -689,6 +725,7 @@ export default function SettingsClient({
                   <Code>SMTP_PASS</Code>
                   <Code>MAIL_TO_OWNERS</Code>
                   <Code>KABA_AUTO_EMAIL_PAY_LINK</Code>
+                  <Code>KABA_AUTO_VISIT_REMINDERS</Code>
                 </div>
               </article>
             </div>

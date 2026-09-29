@@ -91,3 +91,16 @@ export async function addQuoteNote(
 ): Promise<QuoteNoteRecord | null> {
   return getRepos().quotes.addNote(quoteId, body, author);
 }
+
+export async function listDueVisitReminders(
+  tomorrowYmd: string,
+): Promise<QuoteRecord[]> {
+  return getRepos().quotes.listDueVisitReminders(tomorrowYmd);
+}
+
+export async function markQuoteVisitReminderSent(
+  id: string,
+  at?: string | null,
+): Promise<QuoteRecord | undefined> {
+  return getRepos().quotes.markVisitReminderSent(id, at);
+}

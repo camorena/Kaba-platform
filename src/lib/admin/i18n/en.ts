@@ -470,6 +470,8 @@ const en = {
       mailPlan3: "Invoice detail → Email pay link (customer summary + /pay/{token})",
       mailPlan4:
         "Invoice marked sent → auto email pay link once (idempotent; default ON when mail configured)",
+      mailPlan5:
+        "Morning cron → visit reminders for scheduled/won quotes with scheduled_for = tomorrow (customer + owner BCC)",
       mailAutoPayLinkLabel: "Auto email pay link on sent",
       mailAutoPayLinkOnDefault: "On (mail ready)",
       mailAutoPayLinkOnEnv: "On (env)",
@@ -477,11 +479,18 @@ const en = {
       mailAutoPayLinkOffMail: "Off (mail not configured)",
       mailAutoPayLinkHint:
         "Default ON when mail is configured. Set KABA_AUTO_EMAIL_PAY_LINK=false to disable, or =true to force on. Skips if already emailed (payLinkNotifiedAt). Manual Email pay link always works.",
+      mailAutoVisitRemindersLabel: "Auto visit reminders (day before)",
+      mailAutoVisitRemindersOnDefault: "On (mail ready)",
+      mailAutoVisitRemindersOnEnv: "On (env)",
+      mailAutoVisitRemindersOffEnv: "Off (env)",
+      mailAutoVisitRemindersOffMail: "Off (mail not configured)",
+      mailAutoVisitRemindersHint:
+        "Default ON when mail is configured. Cron /api/cron/visit-reminders emails customers for quotes with scheduled_for = tomorrow (status scheduled/won). Set KABA_AUTO_VISIT_REMINDERS=false to disable. Idempotent via visitReminderSentAt. Owner BCC matches quote alerts.",
       mailEnv: "Environment keys",
       mailKeySet: "Set",
       mailKeyMissing: "Not set",
       mailRoutes:
-        "Hooks: {quoteNotify} · {paymentNotify} · notifyInvoicePayLink (+ auto on sent). Prefer Resend; else SMTP.",
+        "Hooks: {quoteNotify} · {paymentNotify} · notifyInvoicePayLink (+ auto on sent) · notifyVisitReminder (cron). Prefer Resend; else SMTP.",
       aboutTitle: "About this admin",
       aboutBody: "Ops tools and craft notes — no paid analytics or messaging APIs.",
       aboutVersion: "v{version}",

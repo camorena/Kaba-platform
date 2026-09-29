@@ -15,6 +15,11 @@ import {
 } from "@/lib/db/quiet";
 import type { QuotesRepo } from "@/lib/db/repos/types";
 import type { NewQuoteInput, QuotePatch, QuoteStatus } from "@/lib/db/types";
+import {
+  defaultScheduledFor,
+  isVisitReminderCandidate,
+  VISIT_REMINDER_STATUSES,
+} from "@/lib/db/visits";
 
 export function createPostgresQuotesRepo(): QuotesRepo {
   return {
@@ -34,11 +39,17 @@ export function createPostgresQuotesRepo(): QuotesRepo {
     },
 
     async add(input: NewQuoteInput) {
+      const status = input.status ?? "new";
+      const scheduledFor =
+        input.scheduledFor ??
+        (VISIT_REMINDER_STATUSES.includes(status)
+          ? defaultScheduledFor(status)
+          : null);
       const { rows } = await query<QuoteRow>(
         `insert into quotes (
            customer_id, name, phone, email, service_type, address, description,
-           preferred_contact, source, status, notes
-         ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+           preferred_contact, source, status, notes, scheduled_for
+         ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
          returning *`,
         [
           input.customerId ?? null,
@@ -50,8 +61,9 @@ export function createPostgresQuotesRepo(): QuotesRepo {
           input.description,
           input.preferredContact,
           input.source,
-          input.status ?? "new",
+          status,
           input.notes ?? "",
+          scheduledFor,
         ],
       );
       return mapQuote(rows[0]);
@@ -70,27 +82,71 @@ export function createPostgresQuotesRepo(): QuotesRepo {
           ? patch.notifyAttempts
           : existing.notifyAttempts;
 
+      let scheduledFor =
+        patch.scheduledFor !== undefined
+          ? patch.scheduledFor
+          : existing.scheduledFor;
+      // Auto-assign calendar day when entering scheduled/won without a date.
+      if (
+        VISIT_REMINDER_STATUSES.includes(status) &&
+        !scheduledFor &&
+        patch.scheduledFor === undefined
+      ) {
+        scheduledFor = defaultScheduledFor(status);
+      }
+      // Clear reminder stamp when the visit day changes.
+      let visitReminderSentAt =
+        patch.visitReminderSentAt !== undefined
+          ? patch.visitReminderSentAt
+          : existing.visitReminderSentAt;
+      if (
+        patch.scheduledFor !== undefined &&
+        patch.scheduledFor !== existing.scheduledFor
+      ) {
+        visitReminderSentAt =
+          patch.visitReminderSentAt !== undefined
+            ? patch.visitReminderSentAt
+            : null;
+      }
+
       const { rows } = await query<QuoteRow>(
         `update quotes set
            status = $2,
            notes = $3,
            notified_at = $4,
            notify_attempts = $5,
+           scheduled_for = $6,
+           visit_reminder_sent_at = $7,
            updated_at = now()
          where id = $1
          returning *`,
-        [id, status, notes, notifiedAt, notifyAttempts],
+        [
+          id,
+          status,
+          notes,
+          notifiedAt,
+          notifyAttempts,
+          scheduledFor,
+          visitReminderSentAt,
+        ],
       );
       return rows[0] ? mapQuote(rows[0]) : undefined;
     },
 
     async bulkUpdateStatus(ids, status: QuoteStatus) {
       if (!ids.length) return { updated: 0, missing: [] };
+      const defaultDay = defaultScheduledFor(status);
       const { rows } = await query<{ id: string }>(
-        `update quotes set status = $1, updated_at = now()
+        `update quotes set
+           status = $1,
+           scheduled_for = case
+             when scheduled_for is null and $3::date is not null then $3::date
+             else scheduled_for
+           end,
+           updated_at = now()
          where id = any($2::uuid[])
          returning id`,
-        [status, ids],
+        [status, ids, defaultDay],
       );
       const updatedIds = new Set(rows.map((r) => r.id));
       const missing = ids.filter((id) => !updatedIds.has(id));
@@ -127,6 +183,34 @@ export function createPostgresQuotesRepo(): QuotesRepo {
 
     async quietCount(thresholdDays = QUIET_DAYS_THRESHOLD) {
       return (await this.listQuiet(thresholdDays)).length;
+    },
+
+    async listDueVisitReminders(tomorrowYmd) {
+      const { rows } = await query<QuoteRow>(
+        `select * from quotes
+         where status = any($1::quote_status[])
+           and scheduled_for = $2::date
+           and visit_reminder_sent_at is null
+           and length(btrim(email)) > 0
+         order by name asc`,
+        [VISIT_REMINDER_STATUSES, tomorrowYmd],
+      );
+      return rows.map(mapQuote).filter((q) =>
+        isVisitReminderCandidate(q, tomorrowYmd),
+      );
+    },
+
+    async markVisitReminderSent(id, at) {
+      const stamp = at === undefined ? new Date().toISOString() : at;
+      const { rows } = await query<QuoteRow>(
+        `update quotes set
+           visit_reminder_sent_at = $2,
+           updated_at = now()
+         where id = $1
+         returning *`,
+        [id, stamp],
+      );
+      return rows[0] ? mapQuote(rows[0]) : undefined;
     },
 
     async listNotes(quoteId) {

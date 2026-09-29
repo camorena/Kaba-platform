@@ -1,5 +1,12 @@
 import { listQuotes } from "@/lib/admin/quotes-store";
 import type { QuoteRecord } from "@/lib/db/types";
+import {
+  addCalendarDaysYmd,
+  chicagoYmd,
+  defaultScheduledFor,
+  visitKindLabel,
+  visitTimeLabel,
+} from "@/lib/db/visits";
 
 export type ScheduleJob = {
   id: string;
@@ -9,13 +16,13 @@ export type ScheduleJob = {
   address: string;
   serviceType: string;
   status: QuoteRecord["status"];
-  /** Stub scheduled day (ISO date YYYY-MM-DD in America/Chicago approx). */
+  /** Scheduled day (ISO date YYYY-MM-DD in America/Chicago). */
   day: string;
   timeLabel: string;
   notes: string;
 };
 
-/** Derive install / site-visit stubs from scheduled + won quotes. */
+/** Derive install / site-visit jobs from scheduled + won quotes. */
 export async function listScheduleJobs(): Promise<ScheduleJob[]> {
   const jobs: ScheduleJob[] = [];
   const quotes = (await listQuotes()).filter(
@@ -23,25 +30,25 @@ export async function listScheduleJobs(): Promise<ScheduleJob[]> {
   );
 
   for (const q of quotes) {
-    const base = new Date(q.updatedAt || q.createdAt);
-    // Spread stub jobs across the coming week for a usable calendar
-    const offsetDays = q.status === "scheduled" ? 2 : 5;
-    const day = new Date(base);
-    day.setDate(day.getDate() + offsetDays);
-    const y = day.getFullYear();
-    const m = String(day.getMonth() + 1).padStart(2, "0");
-    const d = String(day.getDate()).padStart(2, "0");
+    const day =
+      q.scheduledFor ||
+      defaultScheduledFor(q.status) ||
+      addCalendarDaysYmd(chicagoYmd(new Date(q.updatedAt || q.createdAt)), 2);
     jobs.push({
       id: `job_${q.id}`,
       quoteId: q.id,
-      title: q.status === "won" ? "Install window" : "Site visit",
+      title: visitKindLabel(q.status),
       customer: q.name,
       address: q.address,
       serviceType: q.serviceType,
       status: q.status,
-      day: `${y}-${m}-${d}`,
-      timeLabel: q.status === "scheduled" ? "10:00 AM" : "8:00 AM",
-      notes: q.notes || "Stub schedule — wire real calendar later.",
+      day,
+      timeLabel: visitTimeLabel(q.status),
+      notes:
+        q.notes ||
+        (q.scheduledFor
+          ? "Scheduled visit day on quote."
+          : "Stub schedule — set scheduledFor on the quote for a real day."),
     });
   }
 

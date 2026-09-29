@@ -14,6 +14,12 @@ import {
   QUIET_DAYS_THRESHOLD,
   QUIET_QUOTE_STATUSES,
 } from "@/lib/db/quiet";
+import {
+  chicagoTomorrowYmd,
+  defaultScheduledFor,
+  isVisitReminderCandidate,
+  VISIT_REMINDER_STATUSES,
+} from "@/lib/db/visits";
 
 const seed: QuoteRecord[] = [
   {
@@ -33,6 +39,8 @@ const seed: QuoteRecord[] = [
     notifiedAt: null,
     notifyAttempts: 0,
     customerId: null,
+    scheduledFor: null,
+    visitReminderSentAt: null,
   },
   {
     id: "q_seed_2",
@@ -51,6 +59,8 @@ const seed: QuoteRecord[] = [
     notifiedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(),
     notifyAttempts: 1,
     customerId: null,
+    scheduledFor: null,
+    visitReminderSentAt: null,
   },
   {
     id: "q_seed_3",
@@ -69,6 +79,8 @@ const seed: QuoteRecord[] = [
     notifiedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
     notifyAttempts: 1,
     customerId: null,
+    scheduledFor: chicagoTomorrowYmd(),
+    visitReminderSentAt: null,
   },
   {
     id: "q_seed_4",
@@ -87,6 +99,8 @@ const seed: QuoteRecord[] = [
     notifiedAt: new Date(Date.now() - 1000 * 60 * 60 * 140).toISOString(),
     notifyAttempts: 1,
     customerId: null,
+    scheduledFor: defaultScheduledFor("won"),
+    visitReminderSentAt: null,
   },
   {
     id: "q_seed_5",
@@ -105,6 +119,8 @@ const seed: QuoteRecord[] = [
     notifiedAt: null,
     notifyAttempts: 0,
     customerId: null,
+    scheduledFor: null,
+    visitReminderSentAt: null,
   },
 ];
 
@@ -161,15 +177,23 @@ export const memoryQuotesRepo: QuotesRepo = {
 
   async add(input: NewQuoteInput) {
     const now = new Date().toISOString();
+    const status = input.status ?? "new";
+    const scheduledFor =
+      input.scheduledFor ??
+      (VISIT_REMINDER_STATUSES.includes(status)
+        ? defaultScheduledFor(status)
+        : null);
     const record: QuoteRecord = {
       id: `q_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
       createdAt: now,
       updatedAt: now,
-      status: input.status ?? "new",
+      status,
       notes: input.notes ?? "",
       notifiedAt: null,
       notifyAttempts: 0,
       customerId: input.customerId ?? null,
+      scheduledFor,
+      visitReminderSentAt: null,
       name: input.name,
       phone: input.phone,
       email: input.email,
@@ -186,11 +210,29 @@ export const memoryQuotesRepo: QuotesRepo = {
   async update(id, patch: QuotePatch) {
     const q = store().find((item) => item.id === id);
     if (!q) return undefined;
+    const prevScheduledFor = q.scheduledFor;
     if (patch.status !== undefined) q.status = patch.status;
     if (patch.notes !== undefined) q.notes = patch.notes;
     if (patch.notifiedAt !== undefined) q.notifiedAt = patch.notifiedAt;
     if (patch.notifyAttempts !== undefined) {
       q.notifyAttempts = patch.notifyAttempts;
+    }
+    if (patch.scheduledFor !== undefined) {
+      q.scheduledFor = patch.scheduledFor;
+      if (patch.scheduledFor !== prevScheduledFor) {
+        q.visitReminderSentAt =
+          patch.visitReminderSentAt !== undefined
+            ? patch.visitReminderSentAt
+            : null;
+      }
+    } else if (
+      VISIT_REMINDER_STATUSES.includes(q.status) &&
+      !q.scheduledFor
+    ) {
+      q.scheduledFor = defaultScheduledFor(q.status);
+    }
+    if (patch.visitReminderSentAt !== undefined) {
+      q.visitReminderSentAt = patch.visitReminderSentAt;
     }
     q.updatedAt = new Date().toISOString();
     return q;
@@ -207,6 +249,9 @@ export const memoryQuotesRepo: QuotesRepo = {
         continue;
       }
       q.status = status;
+      if (VISIT_REMINDER_STATUSES.includes(status) && !q.scheduledFor) {
+        q.scheduledFor = defaultScheduledFor(status);
+      }
       q.updatedAt = now;
       updated += 1;
     }
@@ -235,6 +280,22 @@ export const memoryQuotesRepo: QuotesRepo = {
 
   async quietCount(thresholdDays = QUIET_DAYS_THRESHOLD) {
     return (await memoryQuotesRepo.listQuiet(thresholdDays)).length;
+  },
+
+  async listDueVisitReminders(tomorrowYmd) {
+    const all = await memoryQuotesRepo.list();
+    return all
+      .filter((q) => isVisitReminderCandidate(q, tomorrowYmd))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  },
+
+  async markVisitReminderSent(id, at) {
+    const q = store().find((item) => item.id === id);
+    if (!q) return undefined;
+    q.visitReminderSentAt =
+      at === undefined ? new Date().toISOString() : at;
+    q.updatedAt = new Date().toISOString();
+    return q;
   },
 
   async listNotes(quoteId) {

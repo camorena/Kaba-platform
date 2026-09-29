@@ -30,6 +30,10 @@ import {
 } from "@/lib/mail/templates/quiet-digest";
 import { buildInvoicePayLinkEmail } from "@/lib/mail/templates/invoice-pay-link";
 import { isAutoEmailPayLinkEnabled } from "@/lib/mail/auto-pay-link";
+import { isAutoVisitRemindersEnabled } from "@/lib/mail/auto-visit-reminders";
+import { buildVisitReminderEmail } from "@/lib/mail/templates/visit-reminder";
+import { markQuoteVisitReminderSent } from "@/lib/admin/quotes-store";
+import { visitKindLabel } from "@/lib/db/visits";
 import { QUIET_DAYS_THRESHOLD } from "@/lib/db/quiet";
 import { markInvoicePayLinkNotified } from "@/lib/admin/invoices-store";
 
@@ -546,5 +550,137 @@ export async function notifyQuietDigest(
     reason: result.delivered
       ? `Quiet digest delivered (${result.transport}; ${quietCount} lead${quietCount === 1 ? "" : "s"}${ownerBcc.length ? `; bcc ${ownerBcc.join(",")}` : ""}).`
       : `Quiet digest failed: ${result.reason}`,
+  };
+}
+
+/**
+ * Day-before visit / install reminder to the customer.
+ * Recipients (match quote-alert owner awareness on a customer-facing send):
+ *   - To: customer email
+ *   - Bcc: MAIL_TO_OWNERS (or published site email) + always camoren222@gmail.com
+ *     (QUOTE_OWNER_ALWAYS_COPY), deduped, excluding the customer address
+ *
+ * Idempotent stamp via markQuoteVisitReminderSent on deliver.
+ * Toggle: KABA_AUTO_VISIT_REMINDERS (default ON when mail configured).
+ */
+export type NotifyVisitReminderResult = {
+  delivered: boolean;
+  skipped: boolean;
+  reason: string;
+  to?: string;
+  bcc?: string[];
+  quoteId?: string;
+};
+
+export async function notifyVisitReminder(
+  quote: QuoteRecord,
+): Promise<NotifyVisitReminderResult> {
+  if (!isAutoVisitRemindersEnabled()) {
+    return {
+      delivered: false,
+      skipped: true,
+      reason:
+        "Visit reminders off (set KABA_AUTO_VISIT_REMINDERS=true, or configure mail for default ON).",
+      quoteId: quote.id,
+    };
+  }
+
+  if (quote.visitReminderSentAt) {
+    return {
+      delivered: false,
+      skipped: true,
+      reason: "Visit reminder already sent for this quote (idempotent skip).",
+      quoteId: quote.id,
+    };
+  }
+
+  const visitDay = quote.scheduledFor?.trim() || "";
+  if (!visitDay) {
+    return {
+      delivered: false,
+      skipped: true,
+      reason: "Quote has no scheduledFor date.",
+      quoteId: quote.id,
+    };
+  }
+
+  const status = getMailStatus();
+  if (!status.ready) {
+    return {
+      delivered: false,
+      skipped: true,
+      reason:
+        "notifyVisitReminder no-op — configure MAIL_FROM + RESEND_API_KEY or SMTP_HOST (Settings → Platform).",
+      quoteId: quote.id,
+    };
+  }
+
+  const to = quote.email?.trim() || "";
+  if (!to) {
+    return {
+      delivered: false,
+      skipped: true,
+      reason: "Quote has no customer email.",
+      quoteId: quote.id,
+    };
+  }
+
+  const owners = dedupeEmails(resolveOwnerEmails());
+  const alwaysCopy = QUOTE_OWNER_ALWAYS_COPY.trim().toLowerCase();
+  const customerKey = to.toLowerCase();
+  const bccRaw: string[] = [...owners];
+  if (alwaysCopy && alwaysCopy !== customerKey) {
+    bccRaw.push(QUOTE_OWNER_ALWAYS_COPY);
+  }
+  const bcc = dedupeEmails(bccRaw).filter(
+    (e) => e.trim().toLowerCase() !== customerKey,
+  );
+
+  const brandName = getPublishedHeroCopy().name;
+  const contact = getPublishedContactInfo();
+  const mail = buildVisitReminderEmail({
+    quote,
+    brandName,
+    visitDay,
+    phone: contact.phone || "(919) 292-4777",
+    email: contact.email || "kabafencellc@gmail.com",
+    phoneHref: contact.phoneHref,
+    emailHref: contact.emailHref,
+  });
+
+  const result = await sendMail({
+    to,
+    bcc: bcc.length ? bcc : undefined,
+    subject: mail.subject,
+    text: mail.text,
+    html: mail.html,
+    replyTo: contact.email || undefined,
+  });
+
+  if (!result.delivered) {
+    return {
+      delivered: false,
+      skipped: false,
+      reason: result.reason,
+      to,
+      bcc: bcc.length ? bcc : undefined,
+      quoteId: quote.id,
+    };
+  }
+
+  try {
+    await markQuoteVisitReminderSent(quote.id);
+  } catch {
+    /* non-fatal — email already delivered */
+  }
+
+  const kind = visitKindLabel(quote.status);
+  return {
+    delivered: true,
+    skipped: false,
+    reason: `Visit reminder delivered (${result.transport}; ${kind}${bcc.length ? `; bcc ${bcc.join(",")}` : ""}).`,
+    to,
+    bcc: bcc.length ? bcc : undefined,
+    quoteId: quote.id,
   };
 }
