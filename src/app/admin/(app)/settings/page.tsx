@@ -2,7 +2,7 @@ import SettingsClient from "@/components/admin/SettingsClient";
 import { getAdminRolesDoc, APP_ROLE_RANK, getAuthPosture, getCurrentAdmin } from "@/lib/admin/dal";
 import { getDataAdapterName, isDatabaseUrlConfigured } from "@/lib/db/adapter";
 import { getStripeStatus } from "@/lib/stripe/config";
-import { getMailStatus } from "@/lib/mail";
+import { getAutoEmailPayLinkPosture, getMailStatus } from "@/lib/mail";
 
 export const metadata = { title: "Settings" };
 export const dynamic = "force-dynamic";
@@ -14,6 +14,7 @@ export default async function AdminSettingsPage() {
   const databaseUrlConfigured = isDatabaseUrlConfigured();
   const stripe = getStripeStatus();
   const mail = getMailStatus();
+  const autoEmailPayLink = getAutoEmailPayLinkPosture();
   const roles = (Object.keys(APP_ROLE_RANK) as Array<keyof typeof APP_ROLE_RANK>).sort(
     (a, b) => APP_ROLE_RANK[b] - APP_ROLE_RANK[a],
   );
@@ -32,6 +33,7 @@ export default async function AdminSettingsPage() {
       databaseUrlConfigured={databaseUrlConfigured}
       stripe={stripe}
       mail={mail}
+      autoEmailPayLink={autoEmailPayLink}
       roles={roles}
     />
   );

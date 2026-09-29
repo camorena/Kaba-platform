@@ -483,11 +483,20 @@ const es = {
       mailPlan1: "Crear cotización → alerta al propietario (MAIL_TO_OWNERS o correo del sitio)",
       mailPlan2: "Pago registrado → recibo al cliente + aviso al propietario (persistir y luego notificar)",
       mailPlan3: "Detalle de factura → Enviar enlace de pago (resumen + /pay/{token})",
+      mailPlan4:
+        "Factura marcada enviada → correo automático del enlace una vez (idempotente; ON por defecto si el correo está configurado)",
+      mailAutoPayLinkLabel: "Correo automático del enlace al marcar enviada",
+      mailAutoPayLinkOnDefault: "Activado (correo listo)",
+      mailAutoPayLinkOnEnv: "Activado (env)",
+      mailAutoPayLinkOffEnv: "Desactivado (env)",
+      mailAutoPayLinkOffMail: "Desactivado (correo sin configurar)",
+      mailAutoPayLinkHint:
+        "ON por defecto cuando el correo está configurado. KABA_AUTO_EMAIL_PAY_LINK=false para desactivar, o =true para forzar. Omite si ya se envió (payLinkNotifiedAt). Enviar enlace de pago manual siempre funciona.",
       mailEnv: "Variables de entorno",
       mailKeySet: "Definida",
       mailKeyMissing: "Sin definir",
       mailRoutes:
-        "Ganchos: {quoteNotify} · {paymentNotify} · notifyInvoicePayLink. Prefiera Resend; si no, SMTP.",
+        "Ganchos: {quoteNotify} · {paymentNotify} · notifyInvoicePayLink (+ auto al enviar). Prefiera Resend; si no, SMTP.",
       aboutTitle: "Acerca de este admin",
       aboutBody: "Herramientas operativas y notas de diseño — sin analítica ni mensajería de pago.",
       aboutVersion: "v{version}",

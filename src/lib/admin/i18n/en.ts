@@ -468,11 +468,20 @@ const en = {
       mailPlan1: "Quote create → owner alert (MAIL_TO_OWNERS or site email)",
       mailPlan2: "Payment recorded → customer receipt + owner notice (persist-then-notify)",
       mailPlan3: "Invoice detail → Email pay link (customer summary + /pay/{token})",
+      mailPlan4:
+        "Invoice marked sent → auto email pay link once (idempotent; default ON when mail configured)",
+      mailAutoPayLinkLabel: "Auto email pay link on sent",
+      mailAutoPayLinkOnDefault: "On (mail ready)",
+      mailAutoPayLinkOnEnv: "On (env)",
+      mailAutoPayLinkOffEnv: "Off (env)",
+      mailAutoPayLinkOffMail: "Off (mail not configured)",
+      mailAutoPayLinkHint:
+        "Default ON when mail is configured. Set KABA_AUTO_EMAIL_PAY_LINK=false to disable, or =true to force on. Skips if already emailed (payLinkNotifiedAt). Manual Email pay link always works.",
       mailEnv: "Environment keys",
       mailKeySet: "Set",
       mailKeyMissing: "Not set",
       mailRoutes:
-        "Hooks: {quoteNotify} · {paymentNotify} · notifyInvoicePayLink. Prefer Resend; else SMTP.",
+        "Hooks: {quoteNotify} · {paymentNotify} · notifyInvoicePayLink (+ auto on sent). Prefer Resend; else SMTP.",
       aboutTitle: "About this admin",
       aboutBody: "Ops tools and craft notes — no paid analytics or messaging APIs.",
       aboutVersion: "v{version}",

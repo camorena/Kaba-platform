@@ -9,6 +9,7 @@ import {
   listPaymentsForInvoice,
   paidCentsForInvoice,
 } from "@/lib/admin/payments-store";
+import { maybeAutoEmailInvoicePayLink } from "@/lib/db/notify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,7 +42,8 @@ export async function PATCH(
   }
 
   const { id } = await context.params;
-  if (!(await getInvoice(id))) {
+  const before = await getInvoice(id);
+  if (!before) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
@@ -58,5 +60,32 @@ export async function PATCH(
   }
 
   const updated = await updateInvoiceStatus(id, status);
-  return NextResponse.json({ invoice: updated });
+  if (!updated) {
+    return NextResponse.json({ error: "Not found." }, { status: 404 });
+  }
+
+  let autoPayLink: Awaited<ReturnType<typeof maybeAutoEmailInvoicePayLink>> | null =
+    null;
+  let invoice = updated;
+
+  // First transition to "sent" → auto email pay link (idempotent; honest no-op if mail off).
+  if (status === "sent" && before.status !== "sent") {
+    autoPayLink = await maybeAutoEmailInvoicePayLink(updated, { request });
+    if (autoPayLink.invoice) {
+      invoice = autoPayLink.invoice;
+    }
+  }
+
+  return NextResponse.json({
+    invoice,
+    autoPayLink: autoPayLink
+      ? {
+          attempted: autoPayLink.attempted,
+          delivered: autoPayLink.delivered,
+          skipped: autoPayLink.skipped,
+          reason: autoPayLink.reason,
+          to: autoPayLink.to,
+        }
+      : undefined,
+  });
 }

@@ -20,8 +20,12 @@ export type {
 export {
   notificationPatchFromResult,
   notifyQuoteCreated,
+  notifyInvoicePayLink,
+  maybeAutoEmailInvoicePayLink,
   notifyQuietDigest,
   type NotifyQuoteResult,
+  type NotifyPayLinkResult,
+  type AutoPayLinkResult,
   type NotifyQuietDigestResult,
 } from "@/lib/db/notify";
 export {

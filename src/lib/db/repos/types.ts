@@ -55,6 +55,11 @@ export type InvoicesRepo = {
     id: string,
     status: InvoiceStatus,
   ): Promise<InvoiceRecord | undefined>;
+  /** Stamp pay-link email delivery (idempotency for auto-send). */
+  markPayLinkNotified(
+    id: string,
+    at?: string | null,
+  ): Promise<InvoiceRecord | undefined>;
   /** Pure helper — sync on purpose. */
   subtotalCents(inv: InvoiceRecord): number;
   stats(paidByInvoiceId?: Map<string, number>): Promise<{

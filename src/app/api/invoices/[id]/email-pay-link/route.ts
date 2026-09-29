@@ -1,11 +1,17 @@
 /**
  * Admin: email customer the public pay link for an invoice.
  * Honest 503 when mail is not configured (Settings → Platform).
+ * Always allowed (manual); stamps payLinkNotifiedAt on success.
+ * Soft-marks draft → sent after deliver (auto path then no-ops via stamp).
  */
 
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
-import { getInvoice, updateInvoiceStatus } from "@/lib/admin/invoices-store";
+import {
+  getInvoice,
+  markInvoicePayLinkNotified,
+  updateInvoiceStatus,
+} from "@/lib/admin/invoices-store";
 import { notifyInvoicePayLink } from "@/lib/db/notify";
 import { isMailReady } from "@/lib/mail";
 
@@ -57,6 +63,13 @@ export async function POST(
     );
   }
 
+  // Stamp before soft-marking sent so auto-on-sent does not re-spam.
+  try {
+    await markInvoicePayLinkNotified(id);
+  } catch {
+    /* non-fatal — email already delivered */
+  }
+
   // Soft-mark draft invoices as sent after a successful pay-link email.
   let statusUpdated = false;
   if (invoice.status === "draft") {
@@ -75,5 +88,6 @@ export async function POST(
     payUrl: result.payUrl,
     to: result.to,
     statusUpdated,
+    payLinkNotified: true,
   });
 }

@@ -14,3 +14,10 @@ export {
   type SendMailResult,
 } from "@/lib/mail/send";
 export { QUOTE_OWNER_ALWAYS_COPY } from "@/lib/mail/templates/html";
+
+export {
+  getAutoEmailPayLinkEnv,
+  getAutoEmailPayLinkPosture,
+  isAutoEmailPayLinkEnabled,
+} from "@/lib/mail/auto-pay-link";
+export type { AutoPayLinkEnv, AutoPayLinkPosture } from "@/lib/mail/auto-pay-link";

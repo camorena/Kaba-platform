@@ -16,7 +16,7 @@
 | Cron route | `GET/POST /api/cron/quiet-digest` | Needs `CRON_SECRET` (+ mail) |
 | Schedule | `vercel.json` → `0 12 * * *` UTC | Deploy to activate |
 | Quote notify (v20) | Still wired on `POST /api/quotes` | Needs mail env |
-| Auto pay-link | **Not shipped** — hooks/notes only | Opt-in later |
+| Auto pay-link | Shipped in **v22** | See `REUSE_PORT_v22.md` |
 
 Mail / Resend secrets are **not** invented or committed — paste them in Vercel / `.env.local`.
 
@@ -33,7 +33,7 @@ Mail / Resend secrets are **not** invented or committed — paste them in Vercel
 4. **Auth** — `CRON_SECRET` Bearer **or** `x-vercel-cron: 1` (`src/lib/cron/auth.ts`). Unauthorized → 401.
 5. **Honest no-ops** — if mail is off or the quiet list is empty, route still returns **200** with `reason` for cron logs (never invents keys).
 6. **EN copy** — Formal Colombian Spanish mail templates are not present yet (admin UI i18n only); digest stays EN until an ES mail pack lands.
-7. **Auto pay-link (next)** — comment on `notifyInvoicePayLink` + this note. Manual admin **Email pay link** remains default. Future: gate with `AUTO_EMAIL_PAY_LINK=true` when invoice first becomes `sent`.
+7. **Auto pay-link** — shipped in `preview/REUSE_PORT_v22.md` (`KABA_AUTO_EMAIL_PAY_LINK`, default ON when mail configured).
 
 ---
 
@@ -83,15 +83,14 @@ Verify From domain in Resend before expecting delivery. Confirm Cron Jobs in the
 
 ---
 
-## Next (hooks only — not built)
+## Next
 
-**Auto email pay link** after invoice is first marked `sent` (or created from won quote) when customer email + pay token exist. Reuse `notifyInvoicePayLink`. Require explicit env opt-in (`AUTO_EMAIL_PAY_LINK=true`). Do not auto-send until Resend + owner inbox are proven.
+Shipped separately: **v22** auto pay-link on sent. Remaining: bilingual EN/ES digest templates when an ES mail pack lands.
 
 ---
 
 ## Non-goals
 
 - Inventing or committing `RESEND_API_KEY` / `CRON_SECRET`
-- Shipping auto pay-link sends
 - Bilingual EN/ES digest templates (no ES mail pack yet)
 - Changing quiet threshold (still 3 days) or quiet statuses

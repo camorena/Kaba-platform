@@ -61,6 +61,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       notes: "Demo invoice. 50% deposit recorded.",
       demo: true,
       payToken: DEMO_PAY_TOKENS.inv_seed_1,
+      payLinkNotifiedAt: null,
     },
     {
       id: "inv_seed_2",
@@ -85,6 +86,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       notes: "Draft from scheduled quote — not sent.",
       demo: true,
       payToken: DEMO_PAY_TOKENS.inv_seed_2,
+      payLinkNotifiedAt: null,
     },
     {
       id: "inv_seed_3",
@@ -109,6 +111,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       notes: "Paid in full — demo seed.",
       demo: true,
       payToken: DEMO_PAY_TOKENS.inv_seed_3,
+      payLinkNotifiedAt: null,
     },
   ];
 }
@@ -163,6 +166,7 @@ export const memoryInvoicesRepo: InvoicesRepo = {
       notes: `Created from quote ${quote.id}. Synthetic demo amount — not a real bid.`,
       demo: true,
       payToken: generatePayToken(),
+      payLinkNotifiedAt: null,
     };
     store().unshift(record);
     return record;
@@ -172,6 +176,15 @@ export const memoryInvoicesRepo: InvoicesRepo = {
     const inv = store().find((i) => i.id === id);
     if (!inv) return undefined;
     inv.status = status;
+    inv.updatedAt = new Date().toISOString();
+    return inv;
+  },
+
+  async markPayLinkNotified(id, at) {
+    const inv = store().find((i) => i.id === id);
+    if (!inv) return undefined;
+    inv.payLinkNotifiedAt =
+      at === undefined ? new Date().toISOString() : at;
     inv.updatedAt = new Date().toISOString();
     return inv;
   },

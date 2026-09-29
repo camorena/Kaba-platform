@@ -135,6 +135,20 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
       return mapInvoice(rows[0], lines.get(id) ?? []);
     },
 
+    async markPayLinkNotified(id, at) {
+      const stamp = at === undefined ? new Date().toISOString() : at;
+      const { rows } = await query<InvoiceRow>(
+        `update invoices
+         set pay_link_notified_at = $2::timestamptz, updated_at = now()
+         where id = $1
+         returning *`,
+        [id, stamp],
+      );
+      if (!rows[0]) return undefined;
+      const lines = await loadLines([id]);
+      return mapInvoice(rows[0], lines.get(id) ?? []);
+    },
+
     async stats(paidByInvoiceId) {
       const all = await repo.list();
       const open = all.filter((i) =>

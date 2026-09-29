@@ -73,6 +73,12 @@ export default function SettingsClient({
     ready: false,
     badge: "not_configured" as const,
   },
+  autoEmailPayLink = {
+    enabled: false,
+    env: "unset" as const,
+    mailReady: false,
+    badge: "off_mail" as const,
+  },
   roles = ["owner", "editor", "viewer"],
 }: {
   configured: boolean;
@@ -100,6 +106,12 @@ export default function SettingsClient({
     transport: "none" | "resend" | "smtp";
     ready: boolean;
     badge: "not_configured" | "resend" | "smtp";
+  };
+  autoEmailPayLink?: {
+    enabled: boolean;
+    env: "unset" | "on" | "off";
+    mailReady: boolean;
+    badge: "on_default" | "on_env" | "off_env" | "off_mail";
   };
   roles?: string[];
 }) {
@@ -627,7 +639,31 @@ export default function SettingsClient({
                   <li>{t("pages.settings.mailPlan1")}</li>
                   <li>{t("pages.settings.mailPlan2")}</li>
                   <li>{t("pages.settings.mailPlan3")}</li>
+                  <li>{t("pages.settings.mailPlan4")}</li>
                 </ul>
+                <div className="mt-3 admin-settings-stat flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-sm text-ink">
+                    {t("pages.settings.mailAutoPayLinkLabel")}
+                  </span>
+                  <span
+                    className={
+                      autoEmailPayLink.enabled
+                        ? "admin-settings-chip"
+                        : "admin-settings-chip admin-settings-chip-warn"
+                    }
+                  >
+                    {autoEmailPayLink.badge === "on_default"
+                      ? t("pages.settings.mailAutoPayLinkOnDefault")
+                      : autoEmailPayLink.badge === "on_env"
+                        ? t("pages.settings.mailAutoPayLinkOnEnv")
+                        : autoEmailPayLink.badge === "off_env"
+                          ? t("pages.settings.mailAutoPayLinkOffEnv")
+                          : t("pages.settings.mailAutoPayLinkOffMail")}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-muted">
+                  {t("pages.settings.mailAutoPayLinkHint")}
+                </p>
                 <p className="mt-3 text-xs leading-relaxed text-muted">
                   {withCode(
                     t("pages.settings.mailRoutes", {
@@ -652,6 +688,7 @@ export default function SettingsClient({
                   <Code>SMTP_USER</Code>
                   <Code>SMTP_PASS</Code>
                   <Code>MAIL_TO_OWNERS</Code>
+                  <Code>KABA_AUTO_EMAIL_PAY_LINK</Code>
                 </div>
               </article>
             </div>

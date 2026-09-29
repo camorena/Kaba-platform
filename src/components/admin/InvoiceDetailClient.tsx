@@ -83,12 +83,26 @@ export default function InvoiceDetailClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: next }),
       });
+      const data = (await res.json().catch(() => ({}))) as {
+        autoPayLink?: {
+          delivered?: boolean;
+          skipped?: boolean;
+          attempted?: boolean;
+          to?: string;
+        };
+      };
       if (!res.ok) {
         toast.push({ title: t("common.statusUpdateFailed"), tone: "error" });
         return;
       }
       setStatus(next);
       toast.push({ title: t("detail.invoiceArrow", { status: invoiceStatusLabel(locale, next) }), tone: "success" });
+      if (data.autoPayLink?.delivered && data.autoPayLink.to) {
+        toast.push({
+          title: t("detail.emailPayLinkSent", { email: data.autoPayLink.to }),
+          tone: "success",
+        });
+      }
       router.refresh();
     } finally {
       setBusy(false);

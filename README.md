@@ -6,7 +6,7 @@ Built with **Next.js (App Router)** and **Tailwind CSS**.
 
 Live: https://kaba-platform.vercel.app
 
-Ops / reuse notes: `preview/REUSE_PORT_v21.md` (gone-quiet digest cron), `preview/REUSE_PORT_v20.md` (quote emails), `preview/REUSE_PORT_v19.md` (pay-link email), `preview/REUSE_PORT_v18.md` (Stripe), `preview/CMS_PUBLIC_CONTENT_PLAN.md`.
+Ops / reuse notes: `preview/REUSE_PORT_v22.md` (auto pay-link on sent), `preview/REUSE_PORT_v21.md` (gone-quiet digest cron), `preview/REUSE_PORT_v20.md` (quote emails), `preview/REUSE_PORT_v19.md` (pay-link email), `preview/REUSE_PORT_v18.md` (Stripe), `preview/CMS_PUBLIC_CONTENT_PLAN.md`.
 
 
 ## Getting started
@@ -73,7 +73,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
 
-Schema: `db/migrations/0001_ops_foundation.sql` (+ `0003_stripe`, `0004_pay_token`). Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v6.md` and production flip `preview/REUSE_PORT_v17.md`. Stripe is optional — without keys the UI says **not connected**; with test keys admin or the customer pay link can open Checkout for a deposit; webhook records the payment.
+Schema: `db/migrations/0001_ops_foundation.sql` (+ `0003_stripe`, `0004_pay_token`, `0008_pay_link_notified`). Seed: `db/seeds/0001_angier_raleigh_demo.sql`. Repos: `src/lib/db/` (Memory* default, Postgres* when `KABA_DATA_ADAPTER=postgres` + `DATABASE_URL`). Optional local DB: `docker compose up -d` then `npm run db:migrate` / `db:seed`. On Vercel cold starts the **memory** lists reset. See `preview/REUSE_PORT_v6.md` and production flip `preview/REUSE_PORT_v17.md`. Stripe is optional — without keys the UI says **not connected**; with test keys admin or the customer pay link can open Checkout for a deposit; webhook records the payment.
 
 ### Auth (dual mode)
 
@@ -130,8 +130,9 @@ Without keys the build and Payments UI stay honest (“not connected”); `/pay/
 | `MAIL_TO_OWNERS` | Optional | Owner alert recipients (else site email). Recommended: `kabafencellc@gmail.com`. Quote alerts + quiet digest also BCC `camoren222@gmail.com` in code. |
 | `SMTP_HOST` (+ port/user/pass/secure) | Alt | Used when Resend unset |
 | `CRON_SECRET` | For digest cron | Bearer token for `/api/cron/quiet-digest` (Vercel Cron sends it automatically when set) |
+| `KABA_AUTO_EMAIL_PAY_LINK` | Optional | Auto email pay link when invoice first becomes `sent`. Default **ON** when mail configured; `false` disables; `true` forces on. Idempotent via `pay_link_notified_at`. |
 
-`notifyQuoteCreated` (owner HTML alert + customer confirmation) / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link**) / `notifyQuietDigest` (morning cron) are honest no-ops until mail is configured. Cron schedule: `0 12 * * *` UTC → ~07:00 America/Chicago (CDT). See `preview/REUSE_PORT_v7.md` / `v19.md` / `v20.md` / `v21.md`.
+`notifyQuoteCreated` (owner HTML alert + customer confirmation) / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link** + auto on first `sent`) / `notifyQuietDigest` (morning cron) are honest no-ops until mail is configured. Cron schedule: `0 12 * * *` UTC → ~07:00 America/Chicago (CDT). See `preview/REUSE_PORT_v7.md` / `v19.md` / `v20.md` / `v21.md` / `v22.md`.
 
 ## Analytics (optional)
 

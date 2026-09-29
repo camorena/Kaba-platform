@@ -28,7 +28,10 @@ import {
   buildQuietDigestEmail,
   toQuietDigestItems,
 } from "@/lib/mail/templates/quiet-digest";
+import { buildInvoicePayLinkEmail } from "@/lib/mail/templates/invoice-pay-link";
+import { isAutoEmailPayLinkEnabled } from "@/lib/mail/auto-pay-link";
 import { QUIET_DAYS_THRESHOLD } from "@/lib/db/quiet";
+import { markInvoicePayLinkNotified } from "@/lib/admin/invoices-store";
 
 export type NotifyQuoteResult = {
   /** True when the owner/admin alert was delivered (drives notifiedAt). */
@@ -182,14 +185,14 @@ export async function notifyQuoteCreated(
 }
 
 /**
- * Admin action — email the customer their invoice summary + public pay URL.
- * Does not change invoice status; caller may mark "sent" separately.
+ * Email the customer their invoice summary + public pay URL (elegant HTML).
+ * Does not change invoice status; caller may mark "sent" / payLinkNotifiedAt.
+ * Customer-only — no owner BCC (owner BCC is for owner-facing notices).
  *
- * NEXT (auto pay-link): After mail is proven in production, optionally call this
- * automatically when an invoice is first marked "sent" (or created from a won
- * quote) if customer email + pay token exist. Gate with env e.g.
- * AUTO_EMAIL_PAY_LINK=true — owners must opt in. Manual admin "Email pay link"
- * remains the default until then. See preview/REUSE_PORT_v21.md.
+ * Auto path: maybeAutoEmailInvoicePayLink when status first becomes "sent"
+ * (default ON when mail configured; KABA_AUTO_EMAIL_PAY_LINK=false to disable).
+ * Manual admin "Email pay link" always calls this and refreshes the stamp.
+ * See preview/REUSE_PORT_v22.md.
  */
 export async function notifyInvoicePayLink(
   invoice: InvoiceRecord,
@@ -224,46 +227,22 @@ export async function notifyInvoicePayLink(
   const brandName = getPublishedHeroCopy().name;
   const contact = getPublishedContactInfo();
   const total = invoiceTotalCents(invoice);
-  const totalLabel = formatMoney(total);
-
-  const lineRows = invoice.lines
-    .map((l) => {
-      const amt = formatMoney(l.quantity * l.unitCents);
-      return `  • ${l.description} × ${l.quantity} @ ${formatMoney(l.unitCents)} = ${amt}`;
-    })
-    .join("\n");
-
-  const subject = `[${brandName}] Invoice ${invoice.number} · Pay online`;
-  const lines = [
-    `Hello ${invoice.customerName || "there"},`,
-    "",
-    `Here is your invoice from ${brandName}.`,
-    "",
-    `Invoice: ${invoice.number}`,
-    `Total: ${totalLabel}`,
-    invoice.address ? `Job address: ${invoice.address}` : null,
-    "",
-    "Line items:",
-    lineRows || "  (none)",
-    invoice.notes ? `\nNotes:\n${invoice.notes}` : null,
-    "",
-    "Pay online (secure link — no login required):",
-    payUrl,
-    "",
-    contact.phone ? `Phone: ${contact.phone}` : null,
-    contact.email ? `Email: ${contact.email}` : null,
-    "",
-    `Thank you,`,
+  const mail = buildInvoicePayLinkEmail({
+    invoice,
     brandName,
-  ]
-    .filter((line): line is string => line !== null)
-    .join("\n");
+    payUrl,
+    totalCents: total,
+    phone: contact.phone || "(919) 292-4777",
+    email: contact.email || "kabafencellc@gmail.com",
+    phoneHref: contact.phoneHref,
+    emailHref: contact.emailHref,
+  });
 
   const result = await sendMail({
     to,
-    subject,
-    text: lines,
-    html: htmlPre(lines),
+    subject: mail.subject,
+    text: mail.text,
+    html: mail.html,
     replyTo: contact.email || undefined,
   });
 
@@ -272,6 +251,84 @@ export async function notifyInvoicePayLink(
     reason: result.reason,
     payUrl,
     to,
+  };
+}
+
+export type AutoPayLinkResult = {
+  attempted: boolean;
+  delivered: boolean;
+  skipped: boolean;
+  reason: string;
+  payUrl?: string;
+  to?: string;
+  invoice?: InvoiceRecord;
+};
+
+/**
+ * After an invoice first becomes "sent": email pay link once (idempotent).
+ * Honest no-op when mail off, toggle off, already notified, or missing email/token.
+ */
+export async function maybeAutoEmailInvoicePayLink(
+  invoice: InvoiceRecord,
+  opts?: { request?: Request },
+): Promise<AutoPayLinkResult> {
+  if (!isAutoEmailPayLinkEnabled()) {
+    return {
+      attempted: false,
+      delivered: false,
+      skipped: true,
+      reason:
+        "Auto pay-link email off (set KABA_AUTO_EMAIL_PAY_LINK=true, or configure mail for default ON).",
+    };
+  }
+
+  if (invoice.payLinkNotifiedAt) {
+    return {
+      attempted: false,
+      delivered: false,
+      skipped: true,
+      reason: "Pay-link email already sent for this invoice (idempotent skip).",
+    };
+  }
+
+  const mailStatus = getMailStatus();
+  if (!mailStatus.ready) {
+    return {
+      attempted: false,
+      delivered: false,
+      skipped: true,
+      reason:
+        "notifyInvoicePayLink no-op — configure MAIL_FROM + RESEND_API_KEY or SMTP_HOST (Settings → Platform).",
+    };
+  }
+
+  const result = await notifyInvoicePayLink(invoice, opts);
+  if (!result.delivered) {
+    return {
+      attempted: true,
+      delivered: false,
+      skipped: false,
+      reason: result.reason,
+      payUrl: result.payUrl,
+      to: result.to,
+    };
+  }
+
+  let marked: InvoiceRecord | undefined;
+  try {
+    marked = await markInvoicePayLinkNotified(invoice.id);
+  } catch {
+    /* non-fatal — email already delivered */
+  }
+
+  return {
+    attempted: true,
+    delivered: true,
+    skipped: false,
+    reason: result.reason,
+    payUrl: result.payUrl,
+    to: result.to,
+    invoice: marked,
   };
 }
 

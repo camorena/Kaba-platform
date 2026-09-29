@@ -47,6 +47,13 @@ export async function updateInvoiceStatus(
   return getRepos().invoices.updateStatus(id, status);
 }
 
+export async function markInvoicePayLinkNotified(
+  id: string,
+  at?: string | null,
+): Promise<InvoiceRecord | undefined> {
+  return getRepos().invoices.markPayLinkNotified(id, at);
+}
+
 export async function invoiceStats(paidByInvoiceId?: Map<string, number>) {
   return getRepos().invoices.stats(paidByInvoiceId);
 }

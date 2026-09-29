@@ -70,6 +70,8 @@ export type InvoiceRecord = {
   demo: boolean;
   /** Opaque public pay-link token (/pay/[token]). */
   payToken: string;
+  /** Set when customer pay-link email was delivered (idempotent auto-send). */
+  payLinkNotifiedAt: string | null;
 };
 
 export type PaymentRecord = {
