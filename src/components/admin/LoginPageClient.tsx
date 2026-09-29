@@ -71,15 +71,13 @@ export default function LoginPageClient({
         </aside>
 
         <div className="mx-auto w-full max-w-md">
-          <p
-            role="status"
-            className="mb-5 text-xs leading-relaxed text-muted"
-          >
-            <span className="font-semibold text-ink/80">
+          <p role="status" className="mb-5 hidden text-xs leading-relaxed text-muted lg:block">
+            <span className="font-medium text-ink/70">
               {authMode === "credentials"
                 ? t("login.authStrongCredentials")
                 : t("login.authStrong")}
-            </span>{" "}
+            </span>
+            <span className="text-muted"> · </span>
             {authMode === "credentials"
               ? t("login.authBodyCredentials")
               : t("login.authBody")}

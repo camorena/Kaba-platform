@@ -4,6 +4,17 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
 
+function RequiredMark() {
+  return (
+    <>
+      <span className="ml-0.5 font-normal text-muted-light" aria-hidden>
+        *
+      </span>
+      <span className="sr-only"> (required)</span>
+    </>
+  );
+}
+
 export default function LoginForm({
   configured,
   authMode = "stub",
@@ -20,6 +31,20 @@ export default function LoginForm({
   const [pending, setPending] = useState(false);
   const credentials = authMode === "credentials";
 
+  function mapLoginError(raw?: string): string {
+    if (!raw) return t("login.loginFailed");
+    if (raw.includes("Incorrect email or password")) {
+      return t("login.incorrectCredentials");
+    }
+    if (raw.includes("Incorrect password")) {
+      return t("login.incorrectPassword");
+    }
+    if (raw.includes("Email and password are required")) {
+      return t("login.fieldsRequired");
+    }
+    return raw;
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
@@ -34,7 +59,7 @@ export default function LoginForm({
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
-        setError(data.error || t("login.loginFailed"));
+        setError(mapLoginError(data.error));
         setPending(false);
         return;
       }
@@ -59,22 +84,22 @@ export default function LoginForm({
     const codeToken = credentials ? "AUTH_SECRET" : "ADMIN_PASSWORD";
     return (
       <div className="rounded-xl border border-[color:var(--admin-border)] bg-[var(--admin-panel)] p-5 text-sm text-ink">
-        <p className="font-semibold">
+        <p className="font-medium">
           {credentials
             ? t("login.notConfiguredCredentialsTitle")
             : t("login.notConfiguredTitle")}
         </p>
-        <p className="mt-2 leading-relaxed">
+        <p className="mt-2 leading-relaxed text-muted">
           {body.includes(codeToken) ? (
             <>
               {body.split(codeToken)[0]}
-              <code className="rounded bg-black/5 px-1 dark:bg-white/10">
+              <code className="rounded bg-black/5 px-1 text-ink dark:bg-white/10">
                 {codeToken}
               </code>
               {body.split(codeToken)[1]?.includes(".env.local") ? (
                 <>
                   {body.split(codeToken)[1].split(".env.local")[0]}
-                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">
+                  <code className="rounded bg-black/5 px-1 text-ink dark:bg-white/10">
                     .env.local
                   </code>
                   {body.split(codeToken)[1].split(".env.local")[1]}
@@ -95,12 +120,15 @@ export default function LoginForm({
     ? Boolean(email.trim() && password)
     : Boolean(password);
 
+  const labelClass = "block text-sm font-medium text-ink";
+
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {credentials ? (
         <div>
-          <label htmlFor="admin-email" className="block text-sm font-medium text-ink">
+          <label htmlFor="admin-email" className={labelClass}>
             {t("login.emailLabel")}
+            <RequiredMark />
           </label>
           <input
             id="admin-email"
@@ -113,15 +141,17 @@ export default function LoginForm({
             onChange={(e) => setEmail(e.target.value)}
             className="field-input mt-1.5"
             required
+            aria-required="true"
             autoFocus
           />
         </div>
       ) : null}
       <div>
-        <label htmlFor="admin-password" className="block text-sm font-medium text-ink">
+        <label htmlFor="admin-password" className={labelClass}>
           {credentials
             ? t("login.passwordLabelCredentials")
             : t("login.passwordLabel")}
+          <RequiredMark />
         </label>
         <div className="relative mt-1.5">
           <input
@@ -133,11 +163,13 @@ export default function LoginForm({
             onChange={(e) => setPassword(e.target.value)}
             className="field-input !mt-0 pr-16"
             required
+            aria-required="true"
+            aria-describedby={error ? "admin-login-error" : undefined}
             autoFocus={!credentials}
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 px-3 text-xs font-semibold text-muted hover:text-ink"
+            className="absolute inset-y-0 right-0 px-3 text-xs font-medium text-muted hover:text-ink"
             onClick={() => setShow((v) => !v)}
             tabIndex={-1}
           >
@@ -147,8 +179,9 @@ export default function LoginForm({
       </div>
       {error && (
         <p
+          id="admin-login-error"
           role="alert"
-          className="admin-login-error rounded-lg border border-danger/25 bg-danger/5 px-3 py-2 text-sm font-medium text-danger"
+          className="admin-login-error rounded-lg border border-danger/25 bg-danger/5 px-3 py-2 text-sm text-danger"
         >
           {error}
         </p>
