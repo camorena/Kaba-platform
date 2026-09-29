@@ -22,6 +22,10 @@ export type SendMailInput = {
   text: string;
   html?: string;
   replyTo?: string;
+  /** Carbon copy (visible). */
+  cc?: string | string[];
+  /** Blind carbon copy. */
+  bcc?: string | string[];
 };
 
 export type SendMailResult = {
@@ -31,9 +35,25 @@ export type SendMailResult = {
   messageId?: string;
 };
 
-function normalizeTo(to: string | string[]): string[] {
+function normalizeTo(to: string | string[] | undefined): string[] {
+  if (!to) return [];
   const list = Array.isArray(to) ? to : [to];
   return list.map((s) => s.trim()).filter(Boolean);
+}
+
+/** Case-insensitive dedupe while preserving first-seen casing. */
+export function dedupeEmails(emails: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of emails) {
+    const e = raw.trim();
+    if (!e) continue;
+    const key = e.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(e);
+  }
+  return out;
 }
 
 async function sendViaResend(input: SendMailInput): Promise<SendMailResult> {
@@ -55,20 +75,27 @@ async function sendViaResend(input: SendMailInput): Promise<SendMailResult> {
     };
   }
 
+  const cc = normalizeTo(input.cc);
+  const bcc = normalizeTo(input.bcc);
+
+  const payload: Record<string, unknown> = {
+    from,
+    to,
+    subject: input.subject,
+    text: input.text,
+    html: input.html,
+    reply_to: input.replyTo,
+  };
+  if (cc.length) payload.cc = cc;
+  if (bcc.length) payload.bcc = bcc;
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      from,
-      to,
-      subject: input.subject,
-      text: input.text,
-      html: input.html,
-      reply_to: input.replyTo,
-    }),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
@@ -108,6 +135,9 @@ async function sendViaSmtp(input: SendMailInput): Promise<SendMailResult> {
     };
   }
 
+  const cc = normalizeTo(input.cc);
+  const bcc = normalizeTo(input.bcc);
+
   const nodemailer = await import("nodemailer");
   const transporter = nodemailer.createTransport({
     host: smtp.host,
@@ -122,6 +152,8 @@ async function sendViaSmtp(input: SendMailInput): Promise<SendMailResult> {
   const info = await transporter.sendMail({
     from,
     to: to.join(", "),
+    cc: cc.length ? cc.join(", ") : undefined,
+    bcc: bcc.length ? bcc.join(", ") : undefined,
     subject: input.subject,
     text: input.text,
     html: input.html,

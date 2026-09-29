@@ -59,7 +59,7 @@ export async function PATCH(request: Request) {
 /**
  * Public quote intake — persist-then-notify.
  * 1. Validate + addQuote (row is source of truth).
- * 2. notifyQuoteCreated (no-op stub today).
+ * 2. notifyQuoteCreated — owner alert (+ always-copy BCC) + customer confirmation.
  * 3. Record notifyAttempts / notifiedAt; never fail the request if mail fails.
  */
 export async function POST(request: Request) {

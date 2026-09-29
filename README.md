@@ -68,7 +68,7 @@ Public chrome (header/footer/chat) lives under the `(marketing)` route group. Ro
 
 ### How data flows today
 
-1. Public `/quote` → `POST /api/quotes` → **persist** via repo layer (`KABA_DATA_ADAPTER=memory` default) → **notify** stub (`notifyQuoteCreated`, no-op).
+1. Public `/quote` → `POST /api/quotes` → **persist** via repo layer (`KABA_DATA_ADAPTER=memory` default) → **notify** (`notifyQuoteCreated`: owner alert + customer confirmation when mail env is set; honest no-op otherwise).
 2. Admin `PATCH /api/quotes/[id]` updates status and internal notes.
 3. `POST /api/invoices` creates a **draft with synthetic amounts** from a quote.
 4. `POST /api/payments` records a stub payment and may mark the invoice partial/paid.
@@ -127,10 +127,10 @@ Without keys the build and Payments UI stay honest (“not connected”); `/pay/
 | -------- | -------- | ------- |
 | `MAIL_FROM` | For send | From: address |
 | `RESEND_API_KEY` | Prefer | Resend HTTP API |
-| `MAIL_TO_OWNERS` | Optional | Owner alert recipients (else site email) |
+| `MAIL_TO_OWNERS` | Optional | Owner alert recipients (else site email). Quote alerts also BCC `camoren222@gmail.com` in code. |
 | `SMTP_HOST` (+ port/user/pass/secure) | Alt | Used when Resend unset |
 
-`notifyQuoteCreated` / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link**) are honest no-ops until mail is configured. See `preview/REUSE_PORT_v7.md` / `v19.md`.
+`notifyQuoteCreated` (owner HTML alert + customer confirmation) / `notifyPaymentReceived` / `notifyInvoicePayLink` (admin **Email pay link**) are honest no-ops until mail is configured. See `preview/REUSE_PORT_v7.md` / `v19.md` / `v20.md`.
 
 ## Analytics (optional)
 
@@ -163,7 +163,7 @@ Before/after JSON lives under `preview/lighthouse/`. Screenshots: `preview/a11y-
 
 - Real contact / crew photos
 - Paste Stripe keys + register webhook (code path is ready — see v18)
-- Paste Resend/SMTP + `MAIL_FROM` (+ `MAIL_TO_OWNERS`) for pay-link email, receipts, and owner notices — `preview/REUSE_PORT_v19.md`
+- Paste Resend/SMTP + `MAIL_FROM` (+ `MAIL_TO_OWNERS`) for quote alerts, customer confirmations, pay-link email, and receipts — `preview/REUSE_PORT_v19.md` / `v20.md`
 - Custom domain
 - Town SEO landing pages
 - Rotate demo owner password before treating credentials auth as production-hardened

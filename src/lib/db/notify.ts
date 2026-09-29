@@ -16,14 +16,21 @@ import {
   getMailStatus,
   resolveOwnerEmails,
   sendMail,
+  dedupeEmails,
 } from "@/lib/mail";
 import { getPublishedContactInfo, getPublishedHeroCopy } from "@/lib/cms/public";
 import { buildPaymentReceiptStub } from "@/lib/pay/receipt";
 import { invoicePayUrl, publicAppOrigin } from "@/lib/pay/origin";
+import { QUOTE_OWNER_ALWAYS_COPY } from "@/lib/mail/templates/html";
+import { buildQuoteOwnerEmail } from "@/lib/mail/templates/quote-owner";
+import { buildQuoteCustomerEmail } from "@/lib/mail/templates/quote-customer";
 
 export type NotifyQuoteResult = {
+  /** True when the owner/admin alert was delivered (drives notifiedAt). */
   delivered: boolean;
   reason: string;
+  ownerDelivered?: boolean;
+  customerDelivered?: boolean;
 };
 
 export type NotifyPaymentResult = {
@@ -68,8 +75,14 @@ function htmlPre(text: string): string {
 }
 
 /**
- * Owner notification after a quote is saved.
+ * Owner notification + customer confirmation after a quote is saved.
  * Persist-then-notify — must not throw away the saved row (callers catch).
+ *
+ * Recipients:
+ *   - To: MAIL_TO_OWNERS (or published site email fallback)
+ *   - Bcc: camoren222@gmail.com always (QUOTE_OWNER_ALWAYS_COPY), even when
+ *     MAIL_TO_OWNERS is only the business inbox — skipped if already in To
+ *   - Customer: separate elegant confirmation when quote.email is present
  */
 export async function notifyQuoteCreated(
   quote: QuoteRecord,
@@ -80,47 +93,86 @@ export async function notifyQuoteCreated(
       delivered: false,
       reason:
         "notifyQuoteCreated no-op — configure MAIL_FROM + RESEND_API_KEY or SMTP_HOST (Settings → Platform).",
+      ownerDelivered: false,
+      customerDelivered: false,
     };
   }
 
-  const owners = resolveOwnerEmails();
-  if (!owners.length) {
+  const owners = dedupeEmails(resolveOwnerEmails());
+  const alwaysCopy = QUOTE_OWNER_ALWAYS_COPY.trim().toLowerCase();
+  const ownerSet = new Set(owners.map((e) => e.toLowerCase()));
+  const bcc =
+    alwaysCopy && !ownerSet.has(alwaysCopy) ? [QUOTE_OWNER_ALWAYS_COPY] : [];
+
+  if (!owners.length && !bcc.length) {
     return {
       delivered: false,
       reason: "No owner recipients (set MAIL_TO_OWNERS or site email).",
+      ownerDelivered: false,
+      customerDelivered: false,
     };
   }
 
-  const brandName = getPublishedHeroCopy().name;
-  const subject = `[${brandName}] New quote · ${quote.name}`;
-  const lines = [
-    `New quote request saved (${quote.id}).`,
-    "",
-    `Name: ${quote.name}`,
-    `Email: ${quote.email || "—"}`,
-    `Phone: ${quote.phone || "—"}`,
-    `Preferred contact: ${quote.preferredContact || "—"}`,
-    `Address: ${quote.address || "—"}`,
-    `Source: ${quote.source || "—"}`,
-    "",
-    "Description:",
-    quote.description || "(none)",
-    "",
-    `Admin: ${publicAppOrigin()}/admin/quotes/${quote.id}`,
-  ];
-  const text = lines.join("\n");
+  // If MAIL_TO_OWNERS empty but we still have the always-copy address, send To that address.
+  const to = owners.length ? owners : [QUOTE_OWNER_ALWAYS_COPY];
+  const ownerBcc = owners.length ? bcc : [];
 
-  const result = await sendMail({
-    to: owners,
-    subject,
-    text,
-    html: htmlPre(text),
+  const brandName = getPublishedHeroCopy().name;
+  const contact = getPublishedContactInfo();
+  const adminUrl = `${publicAppOrigin()}/admin/quotes/${quote.id}`;
+  const ownerMail = buildQuoteOwnerEmail({ quote, brandName, adminUrl });
+
+  let ownerDelivered = false;
+  let customerDelivered = false;
+  const reasons: string[] = [];
+
+  const ownerResult = await sendMail({
+    to,
+    bcc: ownerBcc.length ? ownerBcc : undefined,
+    subject: ownerMail.subject,
+    text: ownerMail.text,
+    html: ownerMail.html,
     replyTo: quote.email || undefined,
   });
+  ownerDelivered = ownerResult.delivered;
+  reasons.push(
+    ownerResult.delivered
+      ? `Owner notice delivered (${ownerResult.transport}${ownerBcc.length ? `; bcc ${ownerBcc.join(",")}` : ""}).`
+      : `Owner notice failed: ${ownerResult.reason}`,
+  );
+
+  const customerEmail = quote.email?.trim() || "";
+  if (customerEmail) {
+    const customerMail = buildQuoteCustomerEmail({
+      quote,
+      brandName,
+      phone: contact.phone || "(919) 292-4777",
+      email: contact.email || "kabafencellc@gmail.com",
+      phoneHref: contact.phoneHref,
+      emailHref: contact.emailHref,
+    });
+    const customerResult = await sendMail({
+      to: customerEmail,
+      subject: customerMail.subject,
+      text: customerMail.text,
+      html: customerMail.html,
+      replyTo: contact.email || undefined,
+    });
+    customerDelivered = customerResult.delivered;
+    reasons.push(
+      customerResult.delivered
+        ? `Customer confirmation delivered (${customerResult.transport}).`
+        : `Customer confirmation failed: ${customerResult.reason}`,
+    );
+  } else {
+    reasons.push("No customer email on quote — skipped confirmation.");
+  }
 
   return {
-    delivered: result.delivered,
-    reason: result.reason,
+    delivered: ownerDelivered,
+    reason: reasons.join(" "),
+    ownerDelivered,
+    customerDelivered,
   };
 }
 
