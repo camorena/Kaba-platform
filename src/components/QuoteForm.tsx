@@ -51,22 +51,22 @@ const fieldLabels: Record<keyof FormState, string> = {
   phone: "Phone",
   email: "Email",
   serviceType: "Service type",
-  address: "Project address / city",
-  description: "Brief description",
-  preferredContact: "Preferred contact method",
+  address: "Project address",
+  description: "Project notes",
+  preferredContact: "Preferred contact",
 };
 
 const steps = [
   {
     id: 1,
     title: "Contact",
-    blurb: "How we can reach you",
+    blurb: "Where we can reach you",
     fields: ["name", "phone", "email", "preferredContact"] as (keyof FormState)[],
   },
   {
     id: 2,
     title: "Project",
-    blurb: "What and where",
+    blurb: "What you need and where",
     fields: ["serviceType", "address"] as (keyof FormState)[],
   },
   {
@@ -76,6 +76,17 @@ const steps = [
     fields: ["description"] as (keyof FormState)[],
   },
 ] as const;
+
+function RequiredMark() {
+  return (
+    <>
+      <span className="ml-0.5 font-normal text-muted-light" aria-hidden>
+        *
+      </span>
+      <span className="sr-only"> (required)</span>
+    </>
+  );
+}
 
 export default function QuoteForm({
   contact = {
@@ -97,17 +108,25 @@ export default function QuoteForm({
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const errorEntries = Object.entries(errors) as [keyof FormState, string][];
+  const errorKeySig = errorEntries.map(([k]) => k).join(",");
   const current = steps[step];
   const progress = ((step + 1) / steps.length) * 100;
+  // Banner only when several fields fail — single-field errors stay inline.
+  const showErrorSummary = errorEntries.length > 1;
 
   useEffect(() => {
-    if (attempted && errorEntries.length > 0) {
+    if (!attempted || !errorKeySig) return;
+    if (errorKeySig.includes(",")) {
       summaryRef.current?.focus();
+      return;
     }
-  }, [attempted, errorEntries.length]);
+    document.getElementById(errorKeySig)?.focus();
+  }, [attempted, errorKeySig]);
 
   useEffect(() => {
-    // Announce step changes to keyboard users without stealing focus on first mount
+    // Announce step changes to keyboard users without stealing focus on first mount.
+    // Skip when validation errors are present so the field/summary keeps focus.
+    if (errorKeySig) return;
     if (step > 0 || attempted) {
       stepHeadingRef.current?.focus();
     }
@@ -128,32 +147,29 @@ export default function QuoteForm({
   function validateFields(keys: (keyof FormState)[]): boolean {
     const next: Partial<Record<keyof FormState, string>> = {};
     for (const key of keys) {
-      if (key === "name" && !form.name.trim())
-        next.name = "Please enter your full name.";
+      if (key === "name" && !form.name.trim()) next.name = "Enter your full name.";
       if (key === "phone") {
-        if (!form.phone.trim())
-          next.phone = "Please enter a phone number so we can reach you.";
+        if (!form.phone.trim()) next.phone = "Enter a phone number.";
         else if (!/^[\d\s().+-]{7,}$/.test(form.phone.trim()))
-          next.phone = "Enter a valid phone number (at least 7 digits).";
+          next.phone = "Enter a valid phone number.";
       }
       if (key === "email") {
-        if (!form.email.trim()) next.email = "Please enter your email address.";
+        if (!form.email.trim()) next.email = "Enter your email.";
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
-          next.email = "Enter a valid email address (for example, name@email.com).";
+          next.email = "Enter a valid email address.";
       }
       if (key === "serviceType" && !form.serviceType)
-        next.serviceType = "Please select a service type from the list.";
+        next.serviceType = "Select a service.";
       if (key === "address" && !form.address.trim())
-        next.address = "Please enter the project street address or city.";
+        next.address = "Enter the project city or address.";
       if (key === "description") {
         if (!form.description.trim())
-          next.description = "Please describe your fence or deck project.";
+          next.description = "Add a short note about your project.";
         else if (form.description.trim().length < 10)
-          next.description =
-            "Add a few more details—at least 10 characters—so we can prepare a better estimate.";
+          next.description = "A little more detail helps—about 10 characters.";
       }
       if (key === "preferredContact" && !form.preferredContact)
-        next.preferredContact = "Choose how you’d like us to contact you.";
+        next.preferredContact = "Choose how we should reach you.";
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -183,7 +199,6 @@ export default function QuoteForm({
       // Jump to first step with errors
       for (let i = 0; i < steps.length; i++) {
         const bad = steps[i].fields.some((f) => {
-          // re-check lightly
           if (f === "name") return !form.name.trim();
           if (f === "phone")
             return !form.phone.trim() || !/^[\d\s().+-]{7,}$/.test(form.phone.trim());
@@ -254,10 +269,13 @@ export default function QuoteForm({
             Request received
           </h2>
           <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted">
-            Thanks, {form.name.split(" ")[0]}! We&apos;ll review your{" "}
-            {form.serviceType.toLowerCase()} project in {form.address} and get
-            back to you by {contactVia} soon. For faster help, call{" "}
-            <a href={contact.phoneHref} className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline">
+            Thank you, {form.name.split(" ")[0]}. We&apos;ll review your{" "}
+            {form.serviceType.toLowerCase()} project in {form.address} and follow
+            up by {contactVia}. To reach us sooner, call{" "}
+            <a
+              href={contact.phoneHref}
+              className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
+            >
               {contact.phone}
             </a>
             .
@@ -275,7 +293,7 @@ export default function QuoteForm({
           </div>
           <div className="flex flex-wrap items-baseline justify-between gap-2 print:mt-4">
             <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
-              Confirmation summary
+              Your request
             </p>
             <p className="text-xs text-muted">Submitted {submittedAt} CT</p>
           </div>
@@ -307,7 +325,7 @@ export default function QuoteForm({
             ))}
           </dl>
           <p className="mt-3 border-t border-ink/[0.06] pt-3 text-xs leading-relaxed text-muted dark:border-cream/10">
-            This is a request confirmation—not a binding estimate.{" "}
+            This confirms your request—not a binding estimate.{" "}
             {brand.name} will follow up to schedule a free on-site visit.
           </p>
         </div>
@@ -339,14 +357,23 @@ export default function QuoteForm({
   }
 
   const labelClass = "block text-sm font-medium text-ink";
-  const errorClass = "mt-1.5 text-sm font-medium text-danger";
+  const errorClass = "mt-1.5 text-sm text-danger";
+  // When the summary lists messages, keep fields marked invalid but skip inline repeats.
+  function FieldError({ id, message }: { id: string; message?: string }) {
+    if (!message || showErrorSummary) return null;
+    return (
+      <p id={id} className={errorClass} role="alert">
+        {message}
+      </p>
+    );
+  }
 
   return (
     <form
       onSubmit={handleSubmit}
       noValidate
       className="card-static min-w-0 overflow-hidden"
-      aria-describedby={errorEntries.length ? "form-error-summary" : undefined}
+      aria-describedby={showErrorSummary ? "form-error-summary" : undefined}
     >
       {/* Progress */}
       <div className="border-b border-ink/[0.07] bg-ivory-muted/40 px-4 py-4 sm:px-6 md:px-8 dark:border-cream/10">
@@ -412,18 +439,17 @@ export default function QuoteForm({
         </h2>
         <p className="mt-1.5 text-sm text-muted">{current.blurb}</p>
 
-        {errorEntries.length > 0 && (
+        {showErrorSummary && (
           <div
             ref={summaryRef}
             id="form-error-summary"
             tabIndex={-1}
             role="alert"
             aria-live="assertive"
-            className="mt-5 rounded-xl border border-danger/30 bg-danger-bg px-4 py-3.5 outline-none"
+            className="mt-5 rounded-xl border border-danger/25 bg-danger-bg px-4 py-3.5 outline-none"
           >
-            <p className="text-sm font-semibold text-danger">
-              Please fix {errorEntries.length}{" "}
-              {errorEntries.length === 1 ? "item" : "items"} below before continuing.
+            <p className="text-sm font-medium text-danger">
+              A few details still need attention.
             </p>
             <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-danger">
               {errorEntries.map(([key, message]) => (
@@ -436,8 +462,9 @@ export default function QuoteForm({
                       document.getElementById(key)?.focus();
                     }}
                   >
-                    {fieldLabels[key]}: {message}
+                    {fieldLabels[key]}
                   </a>
+                  <span className="text-danger/80"> — {message}</span>
                 </li>
               ))}
             </ul>
@@ -449,8 +476,8 @@ export default function QuoteForm({
             <>
               <div className="sm:col-span-1">
                 <label htmlFor="name" className={labelClass}>
-                  Full name <span className="text-bronze" aria-hidden>*</span>
-                  <span className="sr-only">(required)</span>
+                  Full name
+                  <RequiredMark />
                 </label>
                 <input
                   id="name"
@@ -461,19 +488,15 @@ export default function QuoteForm({
                   className="field-input"
                   aria-required="true"
                   aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
+                  aria-describedby={errors.name && !showErrorSummary ? "name-error" : undefined}
                 />
-                {errors.name && (
-                  <p id="name-error" className={errorClass} role="alert">
-                    {errors.name}
-                  </p>
-                )}
+                <FieldError id="name-error" message={errors.name} />
               </div>
 
               <div>
                 <label htmlFor="phone" className={labelClass}>
-                  Phone <span className="text-bronze" aria-hidden>*</span>
-                  <span className="sr-only">(required)</span>
+                  Phone
+                  <RequiredMark />
                 </label>
                 <input
                   id="phone"
@@ -487,19 +510,15 @@ export default function QuoteForm({
                   placeholder="(919) 555-0123"
                   aria-required="true"
                   aria-invalid={!!errors.phone}
-                  aria-describedby={errors.phone ? "phone-error" : undefined}
+                  aria-describedby={errors.phone && !showErrorSummary ? "phone-error" : undefined}
                 />
-                {errors.phone && (
-                  <p id="phone-error" className={errorClass} role="alert">
-                    {errors.phone}
-                  </p>
-                )}
+                <FieldError id="phone-error" message={errors.phone} />
               </div>
 
               <div className="sm:col-span-2">
                 <label htmlFor="email" className={labelClass}>
-                  Email <span className="text-bronze" aria-hidden>*</span>
-                  <span className="sr-only">(required)</span>
+                  Email
+                  <RequiredMark />
                 </label>
                 <input
                   id="email"
@@ -513,20 +532,15 @@ export default function QuoteForm({
                   placeholder="you@email.com"
                   aria-required="true"
                   aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "email-error" : undefined}
+                  aria-describedby={errors.email && !showErrorSummary ? "email-error" : undefined}
                 />
-                {errors.email && (
-                  <p id="email-error" className={errorClass} role="alert">
-                    {errors.email}
-                  </p>
-                )}
+                <FieldError id="email-error" message={errors.email} />
               </div>
 
               <fieldset className="sm:col-span-2">
                 <legend className={labelClass}>
-                  Preferred contact method{" "}
-                  <span className="text-bronze" aria-hidden>*</span>
-                  <span className="sr-only">(required)</span>
+                  Preferred contact
+                  <RequiredMark />
                 </legend>
                 <div className="mt-2.5 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3">
                   {[
@@ -555,11 +569,7 @@ export default function QuoteForm({
                     </label>
                   ))}
                 </div>
-                {errors.preferredContact && (
-                  <p id="preferredContact-error" className={errorClass} role="alert">
-                    {errors.preferredContact}
-                  </p>
-                )}
+                <FieldError id="preferredContact-error" message={errors.preferredContact} />
               </fieldset>
             </>
           )}
@@ -568,8 +578,8 @@ export default function QuoteForm({
             <>
               <div className="sm:col-span-2">
                 <label htmlFor="serviceType" className={labelClass}>
-                  Service type <span className="text-bronze" aria-hidden>*</span>
-                  <span className="sr-only">(required)</span>
+                  Service type
+                  <RequiredMark />
                 </label>
                 <select
                   id="serviceType"
@@ -579,7 +589,7 @@ export default function QuoteForm({
                   className="field-input"
                   aria-required="true"
                   aria-invalid={!!errors.serviceType}
-                  aria-describedby={errors.serviceType ? "serviceType-error" : undefined}
+                  aria-describedby={errors.serviceType && !showErrorSummary ? "serviceType-error" : undefined}
                 >
                   <option value="">Select a service…</option>
                   {serviceOptions.map((opt) => (
@@ -588,18 +598,13 @@ export default function QuoteForm({
                     </option>
                   ))}
                 </select>
-                {errors.serviceType && (
-                  <p id="serviceType-error" className={errorClass} role="alert">
-                    {errors.serviceType}
-                  </p>
-                )}
+                <FieldError id="serviceType-error" message={errors.serviceType} />
               </div>
 
               <div className="sm:col-span-2">
                 <label htmlFor="address" className={labelClass}>
-                  Project address / city{" "}
-                  <span className="text-bronze" aria-hidden>*</span>
-                  <span className="sr-only">(required)</span>
+                  Project address / city
+                  <RequiredMark />
                 </label>
                 <input
                   id="address"
@@ -611,13 +616,9 @@ export default function QuoteForm({
                   placeholder="e.g. 123 Oak St, Angier NC"
                   aria-required="true"
                   aria-invalid={!!errors.address}
-                  aria-describedby={errors.address ? "address-error" : undefined}
+                  aria-describedby={errors.address && !showErrorSummary ? "address-error" : undefined}
                 />
-                {errors.address && (
-                  <p id="address-error" className={errorClass} role="alert">
-                    {errors.address}
-                  </p>
-                )}
+                <FieldError id="address-error" message={errors.address} />
               </div>
             </>
           )}
@@ -626,8 +627,8 @@ export default function QuoteForm({
             <>
               <div className="sm:col-span-2">
                 <label htmlFor="description" className={labelClass}>
-                  Brief description <span className="text-bronze" aria-hidden>*</span>
-                  <span className="sr-only">(required)</span>
+                  Project notes
+                  <RequiredMark />
                 </label>
                 <textarea
                   id="description"
@@ -636,28 +637,24 @@ export default function QuoteForm({
                   value={form.description}
                   onChange={(e) => update("description", e.target.value)}
                   className="field-input min-h-[8rem] resize-y"
-                  placeholder="What needs repair or installation? Approximate length, material preferences, timeline…"
+                  placeholder="Size, material preference, timing—whatever helps us estimate."
                   aria-required="true"
                   aria-invalid={!!errors.description}
                   aria-describedby={
-                    errors.description
-                      ? "description-error description-hint"
+                    errors.description && !showErrorSummary
+                      ? "description-hint description-error"
                       : "description-hint"
                   }
                 />
                 <p id="description-hint" className="mt-1.5 text-xs text-muted-light">
-                  A short note about size, material, and timing helps us prepare an accurate quote.
+                  A short note is enough.
                 </p>
-                {errors.description && (
-                  <p id="description-error" className={errorClass} role="alert">
-                    {errors.description}
-                  </p>
-                )}
+                <FieldError id="description-error" message={errors.description} />
               </div>
 
               <div className="sm:col-span-2 rounded-xl border border-ink/[0.08] bg-ivory-muted/50 px-4 py-3.5 text-sm dark:border-cream/10">
                 <p className="text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-bronze-dark dark:text-bronze-light">
-                  Quick review
+                  Your details
                 </p>
                 <ul className="mt-2 space-y-1 text-muted">
                   <li>
@@ -668,9 +665,16 @@ export default function QuoteForm({
                     {form.email}
                   </li>
                   <li>
-                    {form.serviceType || "—"} at {form.address || "—"}
+                    {form.serviceType || "—"} · {form.address || "—"}
                   </li>
-                  <li className="capitalize">Prefer: {form.preferredContact}</li>
+                  <li>
+                    Prefer{" "}
+                    {form.preferredContact === "text"
+                      ? "text"
+                      : form.preferredContact === "email"
+                        ? "email"
+                        : "a call"}
+                  </li>
                 </ul>
               </div>
             </>
@@ -689,7 +693,7 @@ export default function QuoteForm({
               </button>
             ) : (
               <p className="text-xs leading-relaxed text-muted-light">
-                Fields marked with * are required. Demo validates in-browser.
+                About a minute. All fields required.
               </p>
             )}
           </div>

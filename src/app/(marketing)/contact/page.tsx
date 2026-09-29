@@ -35,8 +35,9 @@ export default function ContactPage() {
             Request a free estimate
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
-            Tell us about your project and we&apos;ll schedule a free on-site
-            estimate. We serve {contact.serviceArea}. Prefer to talk? Call{" "}
+            Three short steps—contact, project, and details—and we&apos;ll
+            schedule a free on-site visit. We serve {contact.serviceArea}. Prefer
+            to talk? Call{" "}
             <a
               href={contact.phoneHref}
               className="focus-ring rounded font-semibold text-ink underline-offset-2 hover:underline"
