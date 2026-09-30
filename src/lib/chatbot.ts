@@ -14,7 +14,7 @@ export type ChatReply = {
   suggestions?: string[];
   /** Prompt the UI to show lead-capture fields */
   collectLead?: boolean;
-  /** Optional CTA href (e.g. /quote) */
+  /** Optional CTA href (prefer /contact for estimates) */
   cta?: { label: string; href: string };
 };
 
@@ -90,7 +90,7 @@ export function getWelcomeReply(
   const brand = catalog.brand ?? DEFAULT_CHATBOT_BRAND;
   const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
   return {
-    text: `Hi — I'm the ${brand.name} helper. Ask about fencing, materials, where we serve, or free estimates. Prefer a person? Call ${contact.phone} or leave your number below.`,
+    text: `Hi — quick answers from ${brand.name} about fencing, materials, and free estimates. Prefer a person? Call ${contact.phone} or open the estimate form.`,
     suggestions: [...DEFAULT_SUGGESTIONS],
   };
 }
@@ -208,7 +208,7 @@ export function getBotReply(
   const deckList = catalog.deckServices.map((s) => s.title).join(", ");
   if (!q) {
     return {
-      text: "Go ahead — ask about fences, decks, materials, where we work, or how to get a free quote.",
+      text: "Ask about fences, decks, materials, where we work, or a free estimate.",
       suggestions: [...DEFAULT_SUGGESTIONS],
     };
   }
@@ -226,7 +226,7 @@ export function getBotReply(
     q === "hi"
   ) {
     return {
-      text: `Hello! Thanks for reaching out to ${brand.name}. What can I help with today?`,
+      text: `Hello — thanks for reaching out to ${brand.name}. What would you like to know?`,
       suggestions: [...DEFAULT_SUGGESTIONS],
     };
   }
@@ -234,7 +234,7 @@ export function getBotReply(
   // Thanks / bye
   if (includesAny(q, ["thank", "thanks", "bye", "goodbye", "see you"])) {
     return {
-      text: `You're welcome! Call ${phone} anytime, or request a free estimate on our quote page.`,
+      text: `You're welcome. Call ${phone} anytime, or request a free estimate on our contact page.`,
       suggestions: ["Get a quote", "Hours & contact", "Materials"],
       cta: { label: "Request a free estimate", href: "/contact" },
     };
@@ -260,9 +260,9 @@ export function getBotReply(
     ])
   ) {
     return {
-      text: `We offer free on-site estimates across ${area}. Share your name and phone below and we'll follow up — or jump to the full quote form. Prefer to talk now? Call ${phone}.`,
+      text: `Free on-site estimates across ${area}. The surest next step is our estimate form, or call ${phone}. You can also leave a name and phone below for a callback note.`,
       collectLead: true,
-      suggestions: ["Fence services", "Deck services", "Service area", "Materials"],
+      suggestions: ["Fence services", "Service area", "Materials", "Hours & contact"],
       cta: { label: "Request a free estimate", href: "/contact" },
     };
   }
@@ -458,7 +458,7 @@ export function getBotReply(
     ])
   ) {
     return {
-      text: `Absolutely — leave your name, phone, and a short message below, or call us directly at ${phone}. Someone from ${brand.name} will get back to you.`,
+      text: `Of course — call ${phone}, or open the estimate form. You can also leave a name and phone below as a callback note.`,
       collectLead: true,
       suggestions: ["Hours & contact", "Get a quote"],
       cta: { label: `Call ${phone}`, href: phoneHref },
@@ -467,7 +467,7 @@ export function getBotReply(
 
   // Fallback — clear recovery paths
   return {
-    text: `I didn't catch that. I can help with fence & deck services, materials, our service area (${area.split(",")[0]} & nearby), hours, or a free quote. Or call ${phone} and talk to the crew.`,
+    text: `I didn't catch that. Try fence or deck services, materials, our service area (${area.split(",")[0]} & nearby), hours, or a free estimate — or call ${phone}.`,
     suggestions: [...DEFAULT_SUGGESTIONS],
     cta: { label: "Request a free estimate", href: "/contact" },
   };
@@ -484,9 +484,8 @@ export function formatLeadConfirmation(
   lead: LeadPayload,
   catalog: ChatbotCatalog = DEFAULT_CHATBOT_CATALOG,
 ): string {
-  const brand = catalog.brand ?? DEFAULT_CHATBOT_BRAND;
   const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
-  return `Thanks, ${lead.name.trim()}! We've noted your info (${lead.phone.trim()}${
+  return `Thanks, ${lead.name.trim()}. We saved your note here (${lead.phone.trim()}${
     lead.email.trim() ? `, ${lead.email.trim()}` : ""
-  }). A ${brand.name} team member will follow up soon. For the fastest response, call ${contact.phone} or finish details on our quote page.`;
+  }). Chat notes are not delivered to our office yet — please call ${contact.phone} or finish the free estimate form so we receive your request.`;
 }

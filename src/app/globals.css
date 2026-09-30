@@ -2821,6 +2821,11 @@ html[data-mobile-nav="open"] .chat-widget-root {
   pointer-events: none;
 }
 
+/* Soften page scroll competition while the chat sheet is open on phones */
+html[data-chatOpen="true"] {
+  overscroll-behavior: none;
+}
+
 
 /* —— Admin agency review v9 polish —— */
 .admin-nav-link:focus-visible {

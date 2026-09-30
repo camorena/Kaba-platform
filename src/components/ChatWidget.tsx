@@ -93,11 +93,16 @@ export default function ChatWidget({
     el.scrollTop = el.scrollHeight;
   }, []);
 
-  // Signal CSS that chat owns the bottom chrome
+  // Signal CSS that chat owns the bottom chrome; lock page scroll on small screens
   useEffect(() => {
     document.documentElement.dataset.chatOpen = open ? "true" : "false";
+    const prevOverflow = document.body.style.overflow;
+    if (open && window.matchMedia("(max-width: 639px)").matches) {
+      document.body.style.overflow = "hidden";
+    }
     return () => {
       delete document.documentElement.dataset.chatOpen;
+      document.body.style.overflow = prevOverflow;
     };
   }, [open]);
 
@@ -185,7 +190,7 @@ export default function ChatWidget({
   function handleUserText(text: string) {
     const trimmed = text.trim();
     if (!trimmed) {
-      setComposerError("Type a question, or tap a suggestion below.");
+      setComposerError("Type a question, or choose a suggestion.");
       return;
     }
     setComposerError(null);
@@ -239,7 +244,7 @@ export default function ChatWidget({
         id: uid(),
         role: "bot",
         text: formatLeadConfirmation(lead, catalog),
-        cta: { label: "Finish on quote page", href: "/quote" },
+        cta: { label: "Open estimate form", href: "/contact" },
         suggestions: ["Fence services", "Materials", "Service area", "Hours & contact"],
       },
     ]);
@@ -258,14 +263,16 @@ export default function ChatWidget({
     setLeadErrors({});
     setComposerError(null);
     setInput("");
+    const welcomeReply = getWelcomeReply(catalog);
     setMessages([
       {
         id: "welcome",
         role: "bot",
-        text: getWelcomeReply(catalog).text,
-        suggestions: getWelcomeReply(catalog).suggestions,
+        text: welcomeReply.text,
+        suggestions: welcomeReply.suggestions,
       },
     ]);
+    window.setTimeout(() => inputRef.current?.focus(), 60);
   }
 
   const latestSuggestions =
@@ -304,8 +311,12 @@ export default function ChatWidget({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
+            aria-describedby={`${titleId}-desc`}
             className="chat-panel mb-0 flex w-[min(100vw-1.5rem,23rem)] flex-col overflow-hidden rounded-2xl border border-ink/[0.08] bg-surface shadow-[var(--shadow-lg)] dark:border-cream/10 sm:w-[min(100vw-2rem,24rem)]"
           >
+            <p id={`${titleId}-desc`} className="sr-only">
+              Rule-based helper for fencing questions, phone, and free estimate handoff. Escape closes.
+            </p>
             {/* Header */}
             <div className="chat-panel-header relative flex shrink-0 items-center gap-2.5 bg-navy px-3 py-2.5 text-cream sm:gap-3 sm:px-3.5 sm:py-3">
               <div
@@ -321,8 +332,8 @@ export default function ChatWidget({
                   className="h-8 w-8 object-contain"
                 />
                 <span
-                  className="chat-online-dot absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-navy"
-                  title="Available"
+                  className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-bronze/80 ring-2 ring-navy"
+                  title="Chat helper available"
                   aria-hidden
                 />
               </div>
@@ -334,7 +345,7 @@ export default function ChatWidget({
                   {brand.name}
                 </p>
                 <p className="truncate text-[0.6875rem] text-cream/70 sm:text-xs">
-                  Online · Fence help
+                  Quick answers · Call anytime
                 </p>
               </div>
               <a
@@ -443,10 +454,13 @@ export default function ChatWidget({
                 <form
                   onSubmit={onLeadSubmit}
                   className="rounded-2xl border border-bronze/35 bg-surface p-3 shadow-[var(--shadow-sm)] dark:border-bronze/40"
-                  aria-label="Leave your contact information"
+                  aria-label="Callback note"
                 >
-                  <p className="mb-2.5 text-xs font-semibold text-ink">
-                    Leave your details for a callback
+                  <p className="mb-1 text-xs font-semibold text-ink">
+                    Callback note
+                  </p>
+                  <p className="mb-2.5 text-[0.6875rem] leading-snug text-muted">
+                    Chat notes stay on this device until you call or use the estimate form.
                   </p>
                   <div className="space-y-2">
                     <div>
@@ -554,19 +568,22 @@ export default function ChatWidget({
                         className="w-full resize-none rounded-lg border border-ink/10 bg-background px-3 py-2 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40 dark:border-cream/15"
                       />
                     </div>
-                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                      <button
-                        type="submit"
-                        className="focus-ring inline-flex flex-1 items-center justify-center rounded-lg bg-bronze px-3 py-2 text-xs font-semibold text-white shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark sm:flex-none"
-                      >
-                        Send contact info
-                      </button>
+                    <div className="flex flex-col gap-2 pt-0.5 sm:flex-row sm:flex-wrap sm:items-center">
                       <Link
                         href="/contact"
-                        className="focus-ring text-xs font-medium text-muted underline-offset-2 hover:text-ink hover:underline"
+                        className="focus-ring inline-flex flex-1 items-center justify-center rounded-lg bg-bronze px-3 py-2 text-xs font-semibold text-white shadow-[var(--shadow-bronze)] transition hover:bg-bronze-dark"
                       >
-                        Or open quote form
+                        Open estimate form
+                        <span className="ml-1" aria-hidden>
+                          →
+                        </span>
                       </Link>
+                      <button
+                        type="submit"
+                        className="focus-ring inline-flex items-center justify-center rounded-lg border border-ink/15 bg-background px-3 py-2 text-xs font-semibold text-ink transition hover:border-bronze/45 hover:bg-bronze/10 dark:border-cream/20"
+                      >
+                        Save callback note
+                      </button>
                     </div>
                   </div>
                 </form>
@@ -574,7 +591,7 @@ export default function ChatWidget({
             </div>
 
             {/* Quick suggestions */}
-            {latestSuggestions.length > 0 && !typing && (
+            {latestSuggestions.length > 0 && !typing && !leadActive && (
               <div
                 className="chat-chips flex shrink-0 flex-wrap gap-1.5 border-t border-ink/[0.06] bg-surface px-3 py-2 dark:border-cream/10"
                 aria-label="Suggested questions"
@@ -610,7 +627,7 @@ export default function ChatWidget({
                 href="/contact"
                 className="focus-ring flex flex-1 items-center justify-center gap-1.5 border-l border-ink/[0.06] px-2 py-2 text-[0.6875rem] font-semibold text-ink transition hover:bg-bronze/10 dark:border-cream/10"
               >
-                Free quote
+                Free estimate
                 <span aria-hidden>→</span>
               </Link>
             </div>
@@ -638,7 +655,7 @@ export default function ChatWidget({
                     setInput(e.target.value);
                     if (composerError) setComposerError(null);
                   }}
-                  placeholder="Ask about fencing, estimates…"
+                  placeholder="Ask about fencing or estimates…"
                   autoComplete="off"
                   enterKeyHint="send"
                   className="min-w-0 flex-1 rounded-xl border border-ink/10 bg-background px-3 py-2.5 text-sm text-ink placeholder:text-muted-light focus:border-bronze focus:outline-none focus:ring-2 focus:ring-bronze/40 dark:border-cream/15"
