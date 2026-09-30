@@ -14,6 +14,7 @@ import {
   DEFAULT_CHATBOT_BRAND,
   DEFAULT_CHATBOT_CATALOG,
   DEFAULT_CHATBOT_CONTACT,
+  DEFAULT_SUGGESTIONS,
   formatLeadConfirmation,
   getBotReply,
   getWelcomeReply,
@@ -42,11 +43,41 @@ const emptyLead: LeadPayload = {
   message: "",
 };
 
-const REPLY_DELAY_MS = 420;
 
 function isExternalHref(href: string) {
   return href.startsWith("tel:") || href.startsWith("mailto:") || href.startsWith("http");
 }
+
+/** Heuristics for LLM replies — CTA / lead prompt without inventing prices. */
+function enrichLlmReply(text: string, contactPhone: string, phoneHref: string): ChatReply {
+  const lower = text.toLowerCase();
+  const wantsQuote = /estimate|quote|pricing|price|cost|how much|callback|contact form|\/contact/.test(
+    lower,
+  );
+  const wantsPhone = /call |phone|\(\d{3}\)/.test(lower);
+  const reply: ChatReply = {
+    text,
+    suggestions: [...DEFAULT_SUGGESTIONS],
+  };
+  if (wantsQuote) {
+    reply.cta = { label: "Request a free estimate", href: "/contact" };
+    reply.collectLead = true;
+  } else if (wantsPhone) {
+    reply.cta = { label: `Call ${contactPhone}`, href: phoneHref };
+  } else {
+    reply.cta = { label: "Request a free estimate", href: "/contact" };
+  }
+  return reply;
+}
+
+type RulesApiReply = {
+  mode?: string;
+  text?: string;
+  suggestions?: string[];
+  cta?: ChatReply["cta"] | null;
+  collectLead?: boolean;
+  error?: string;
+};
 
 export default function ChatWidget({
   catalog = DEFAULT_CHATBOT_CATALOG,
@@ -105,7 +136,6 @@ export default function ChatWidget({
       document.body.style.overflow = prevOverflow;
     };
   }, [open]);
-
 
   useEffect(() => {
     if (!open) return;
@@ -187,6 +217,108 @@ export default function ChatWidget({
     if (!open) setUnread(true);
   }
 
+  async function requestChatReply(
+    history: { role: "user" | "assistant"; content: string }[],
+    fallbackUserText: string,
+  ) {
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history }),
+      });
+
+      if (res.status === 429) {
+        pushBot({
+          text: "We're getting a lot of chat traffic right now. Please wait a moment, call us, or use the estimate form.",
+          suggestions: ["Hours & contact", "Get a quote"],
+          cta: { label: "Request a free estimate", href: "/contact" },
+        });
+        return;
+      }
+
+      const mode = res.headers.get("X-Kaba-Chat-Mode");
+      const contentType = res.headers.get("content-type") ?? "";
+
+      if (!res.ok) {
+        throw new Error(`chat status ${res.status}`);
+      }
+
+      // Rules / JSON fallback from the API
+      if (mode === "rules" || contentType.includes("application/json")) {
+        const data = (await res.json()) as RulesApiReply;
+        if (data.error && !data.text) throw new Error(data.error);
+        pushBot({
+          text: data.text ?? getBotReply(fallbackUserText, catalog).text,
+          suggestions: data.suggestions,
+          cta: data.cta ?? undefined,
+          collectLead: Boolean(data.collectLead),
+        });
+        return;
+      }
+
+      // Streaming LLM text
+      if (!res.body) {
+        const full = await res.text();
+        pushBot(enrichLlmReply(full.trim(), contact.phone, contact.phoneHref));
+        return;
+      }
+
+      const botId = uid();
+      setTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: botId,
+          role: "bot",
+          text: "",
+          suggestions: [...DEFAULT_SUGGESTIONS],
+        },
+      ]);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let assembled = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        assembled += decoder.decode(value, { stream: true });
+        const snapshot = assembled;
+        setMessages((prev) =>
+          prev.map((m) => (m.id === botId ? { ...m, text: snapshot } : m)),
+        );
+      }
+      assembled += decoder.decode();
+      const enriched = enrichLlmReply(
+        assembled.trim() ||
+          "Thanks for reaching out — call us or open the estimate form and we'll help from there.",
+        contact.phone,
+        contact.phoneHref,
+      );
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === botId
+            ? {
+                ...m,
+                text: enriched.text,
+                cta: enriched.cta,
+                suggestions: enriched.suggestions,
+                showLead: Boolean(enriched.collectLead),
+              }
+            : m,
+        ),
+      );
+      if (enriched.collectLead) {
+        setLeadActive(true);
+        setLeadSent(false);
+      }
+      if (!open) setUnread(true);
+    } catch {
+      // Client-side rules engine if the API is unreachable
+      pushBot(getBotReply(fallbackUserText, catalog));
+    }
+  }
+
   function handleUserText(text: string) {
     const trimmed = text.trim();
     if (!trimmed) {
@@ -194,18 +326,26 @@ export default function ChatWidget({
       return;
     }
     setComposerError(null);
-    setMessages((prev) => [
-      ...prev,
-      { id: uid(), role: "user", text: trimmed },
-    ]);
+    const userMsg: Message = { id: uid(), role: "user", text: trimmed };
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setTyping(true);
-    if (replyTimerRef.current) window.clearTimeout(replyTimerRef.current);
-    replyTimerRef.current = window.setTimeout(() => {
-      setTyping(false);
-      pushBot(getBotReply(trimmed, catalog));
+    if (replyTimerRef.current) {
+      window.clearTimeout(replyTimerRef.current);
       replyTimerRef.current = null;
-    }, REPLY_DELAY_MS);
+    }
+
+    const history = [...messages, userMsg]
+      .filter((m) => m.id !== "welcome")
+      .map((m) => ({
+        role: (m.role === "user" ? "user" : "assistant") as "user" | "assistant",
+        content: m.text,
+      }))
+      .filter((m) => m.content.trim().length > 0);
+
+    void requestChatReply(history, trimmed).finally(() => {
+      setTyping(false);
+    });
   }
 
   function onSubmit(e: FormEvent) {
@@ -315,7 +455,7 @@ export default function ChatWidget({
             className="chat-panel mb-0 flex w-[min(100vw-1.5rem,23rem)] flex-col overflow-hidden rounded-2xl border border-ink/[0.08] bg-surface shadow-[var(--shadow-lg)] dark:border-cream/10 sm:w-[min(100vw-2rem,24rem)]"
           >
             <p id={`${titleId}-desc`} className="sr-only">
-              Rule-based helper for fencing questions, phone, and free estimate handoff. Escape closes.
+              Chat helper for fencing questions, phone, and free estimate handoff. Escape closes.
             </p>
             {/* Header */}
             <div className="chat-panel-header relative flex shrink-0 items-center gap-2.5 bg-navy px-3 py-2.5 text-cream sm:gap-3 sm:px-3.5 sm:py-3">
