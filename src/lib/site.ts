@@ -21,6 +21,42 @@
  * preview/CMS_PUBLIC_CONTENT_PLAN.md (getPublished* + one page at a time).
  */
 
+export type SocialNetwork = "facebook" | "instagram" | "linkedin";
+
+const socialHosts: Record<SocialNetwork, ReadonlySet<string>> = {
+  facebook: new Set(["facebook.com", "www.facebook.com", "m.facebook.com"]),
+  instagram: new Set(["instagram.com", "www.instagram.com"]),
+  linkedin: new Set(["linkedin.com", "www.linkedin.com"]),
+};
+
+/**
+ * Return only a complete profile URL for a known social network.
+ * Empty values and provider roots are intentionally treated as unpublished.
+ */
+export function getSocialProfileUrl(
+  network: SocialNetwork,
+  value: string | null | undefined,
+): string {
+  const candidate = value?.trim();
+  if (!candidate) return "";
+
+  try {
+    const url = new URL(candidate);
+    const hasProfilePath = url.pathname.split("/").some(Boolean);
+    if (
+      !["http:", "https:"].includes(url.protocol) ||
+      !socialHosts[network].has(url.hostname.toLowerCase()) ||
+      !hasProfilePath
+    ) {
+      return "";
+    }
+  } catch {
+    return "";
+  }
+
+  return candidate;
+}
+
 export const siteConfig = {
   name: "Kaba Fence",
   tagline: "We Listen. We Guide. We Build. We Care.",
@@ -47,9 +83,10 @@ export const siteConfig = {
   heroSub:
     "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
   social: {
-    facebook: "https://www.facebook.com/",
-    instagram: "https://www.instagram.com/",
-    linkedin: "https://www.linkedin.com/",
+    // Keep unset until the business supplies real profile URLs.
+    facebook: "",
+    instagram: "",
+    linkedin: "",
   },
 } as const;
 

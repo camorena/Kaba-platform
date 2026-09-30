@@ -29,7 +29,7 @@ Seeded site-copy key: **`site.name`** (group `hero`). Tagline / description alre
 | `contact.address.{city,state,zip,region}` | Footer region, pay footer, JSON-LD PostalAddress, invoice letterhead region |
 | `contact.social.{facebook,instagram,linkedin}` | Footer Follow Us icons |
 
-Per-key published site-copy (group `contact`) → else `site.ts`. Empty ZIP still falls back cleanly (map skips blank values).
+Per-key published site-copy (group `contact`) → else `site.ts`. Social values are accepted only as complete URLs on their matching platform; empty, invalid, or root-only values are treated as unpublished, so the Follow Us section is hidden until real profile URLs exist. Empty ZIP still falls back cleanly (map skips blank values).
 
 ### 3. Invoice letterhead contact (safe client path)
 
@@ -52,8 +52,9 @@ npm run dev
 # Edit site.name → Published → refresh tab title / footer copyright / pay header
 # Edit site.tagline / site.description → footer script line + home OG description
 # Edit contact.address.region → footer + pay footer + invoice print letterhead
-# Edit contact.social.facebook → footer Follow Us link
-# Draft all contact.address.* / social.* → surfaces fall back to site.ts
+# Set contact.social.facebook to https://www.facebook.com/<profile> → icon appears
+# Leave contact.social.* blank (or root-only) → that icon, and an empty Follow Us section, stay hidden
+# Draft all contact.address.* / social.* → address falls back; social stays hidden unless a full URL exists
 ```
 
 ---

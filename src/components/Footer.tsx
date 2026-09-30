@@ -7,6 +7,7 @@ import {
   footerLinks as siteFooterLinks,
   legalLinks as siteLegalLinks,
   navLinks as siteNavLinks,
+  getSocialProfileUrl,
   siteConfig,
 } from "@/lib/site";
 
@@ -89,6 +90,35 @@ export default function Footer({
   brand?: FooterBrand;
 } = {}) {
   const year = new Date().getFullYear();
+  const socialLinks = [
+    {
+      label: "Facebook",
+      href: getSocialProfileUrl("facebook", contact.social.facebook),
+      icon: (
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path d="M22 12.07C22 6.48 17.52 2 11.93 2S1.86 6.48 1.86 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.02H7.9v-2.91h2.4V9.84c0-2.37 1.41-3.68 3.56-3.68 1.03 0 2.11.18 2.11.18v2.32h-1.19c-1.17 0-1.54.73-1.54 1.48v1.78h2.62l-.42 2.91h-2.2V22c4.78-.75 8.44-4.91 8.44-9.93z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Instagram",
+      href: getSocialProfileUrl("instagram", contact.social.instagram),
+      icon: (
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 01-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 017.8 2zm-.2 2A3.6 3.6 0 004 7.6v8.8A3.6 3.6 0 007.6 20h8.8a3.6 3.6 0 003.6-3.6V7.6A3.6 3.6 0 0016.4 4H7.6zm9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z" />
+        </svg>
+      ),
+    },
+    {
+      label: "LinkedIn",
+      href: getSocialProfileUrl("linkedin", contact.social.linkedin),
+      icon: (
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.05c.53-1 1.82-2.05 3.75-2.05 4.01 0 4.75 2.64 4.75 6.07V23h-4v-6.6c0-1.57-.03-3.59-2.19-3.59-2.19 0-2.53 1.71-2.53 3.48V23h-4V8.5z" />
+        </svg>
+      ),
+    },
+  ].filter((link) => link.href);
 
   return (
     <footer className="bg-[#0a0c10] text-cream">
@@ -205,28 +235,20 @@ export default function Footer({
           </ul>
         </div>
 
-        <div className="lg:col-span-2 lg:pt-1">
-          <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
-            Follow Us
-          </p>
-          <div className="mt-4 flex gap-2.5">
-            <SocialIcon label="Facebook" href={contact.social.facebook}>
-              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path d="M22 12.07C22 6.48 17.52 2 11.93 2S1.86 6.48 1.86 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.02H7.9v-2.91h2.4V9.84c0-2.37 1.41-3.68 3.56-3.68 1.03 0 2.11.18 2.11.18v2.32h-1.19c-1.17 0-1.54.73-1.54 1.48v1.78h2.62l-.42 2.91h-2.2V22c4.78-.75 8.44-4.91 8.44-9.93z" />
-              </svg>
-            </SocialIcon>
-            <SocialIcon label="Instagram" href={contact.social.instagram}>
-              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 01-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 017.8 2zm-.2 2A3.6 3.6 0 004 7.6v8.8A3.6 3.6 0 007.6 20h8.8a3.6 3.6 0 003.6-3.6V7.6A3.6 3.6 0 0016.4 4H7.6zm9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z" />
-              </svg>
-            </SocialIcon>
-            <SocialIcon label="LinkedIn" href={contact.social.linkedin}>
-              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.05c.53-1 1.82-2.05 3.75-2.05 4.01 0 4.75 2.64 4.75 6.07V23h-4v-6.6c0-1.57-.03-3.59-2.19-3.59-2.19 0-2.53 1.71-2.53 3.48V23h-4V8.5z" />
-              </svg>
-            </SocialIcon>
+        {socialLinks.length > 0 && (
+          <div className="lg:col-span-2 lg:pt-1">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze">
+              Follow Us
+            </p>
+            <div className="mt-4 flex gap-2.5">
+              {socialLinks.map((link) => (
+                <SocialIcon key={link.label} label={link.label} href={link.href}>
+                  {link.icon}
+                </SocialIcon>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="border-t border-white/[0.08]">

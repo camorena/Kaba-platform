@@ -54,6 +54,7 @@ import {
   navLinks as siteNavLinks,
   processTimeline as siteProcessTimeline,
   serviceTowns as siteServiceTowns,
+  getSocialProfileUrl,
   siteConfig as siteSiteConfig,
   testimonials as siteTestimonials,
   trustPoints as siteTrustPoints,
@@ -849,15 +850,18 @@ export function getPublishedContactInfo(): PublishedContactInfo {
         contact.get("contact.address.region") ?? siteSiteConfig.address.region,
     },
     social: {
-      facebook:
-        contact.get("contact.social.facebook") ??
-        siteSiteConfig.social.facebook,
-      instagram:
-        contact.get("contact.social.instagram") ??
-        siteSiteConfig.social.instagram,
-      linkedin:
-        contact.get("contact.social.linkedin") ??
-        siteSiteConfig.social.linkedin,
+      facebook: getSocialProfileUrl(
+        "facebook",
+        contact.get("contact.social.facebook") ?? siteSiteConfig.social.facebook,
+      ),
+      instagram: getSocialProfileUrl(
+        "instagram",
+        contact.get("contact.social.instagram") ?? siteSiteConfig.social.instagram,
+      ),
+      linkedin: getSocialProfileUrl(
+        "linkedin",
+        contact.get("contact.social.linkedin") ?? siteSiteConfig.social.linkedin,
+      ),
     },
   };
 }
