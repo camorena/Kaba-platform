@@ -10,14 +10,15 @@ import {
 } from "@/lib/cms/public";
 import { defaultOgImage } from "@/lib/site";
 
-const title = "Fencing Options";
+const title = "Fencing Options in Angier & Raleigh, NC";
 
 export function generateMetadata(): Metadata {
   const brand = getPublishedHeroCopy();
-  const description = `Wood, vinyl, aluminum, and chain link fencing from ${brand.name} in Raleigh, NC & surrounding areas.`;
+  const description = `Wood, vinyl, aluminum, and chain link fencing installation & repair from ${brand.name} in Angier, Raleigh, NC & surrounding areas.`;
   return {
   title,
   description,
+  alternates: { canonical: "/services" },
   openGraph: {
     title: `${title} | ${brand.name}`,
     description,

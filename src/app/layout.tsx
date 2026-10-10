@@ -39,7 +39,7 @@ const geistMono = Geist_Mono({
 export function generateMetadata(): Metadata {
   const brand = getPublishedHeroCopy();
   const defaultDescription = `${brand.description} Free estimates.`;
-  const titleDefault = `${brand.name} | Fence Company in Raleigh, NC`;
+  const titleDefault = `Fence Installation & Repair in Angier & Raleigh, NC | ${brand.name}`;
   return {
     metadataBase: new URL(siteUrl),
     title: {
@@ -48,7 +48,10 @@ export function generateMetadata(): Metadata {
     },
     description: defaultDescription,
     keywords: [
+      "fence company Angier NC",
       "fence company Raleigh NC",
+      "fence installation Angier NC",
+      "fence repair Harnett County",
       "fence installation",
       "wood fence",
       "vinyl fence",
@@ -58,9 +61,6 @@ export function generateMetadata(): Metadata {
     ],
     authors: [{ name: brand.name }],
     creator: brand.name,
-    alternates: {
-      canonical: "/",
-    },
     icons: {
       icon: [
         { url: "/favicon.png", sizes: "32x32", type: "image/png" },

@@ -20,7 +20,7 @@ const title = "Fence & Deck Materials Guide";
 
 export function generateMetadata(): Metadata {
   const brand = getPublishedHeroCopy();
-  const description = `Compare wood, vinyl, aluminum, and chain-link fencing with ${brand.name}—built for Raleigh-area weather, privacy goals, and upkeep.`;
+  const description = `Compare wood, vinyl, aluminum, and chain-link fencing with ${brand.name}—built for Angier & Raleigh-area weather, privacy goals, and upkeep.`;
   return {
   title,
   description,

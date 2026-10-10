@@ -8,6 +8,7 @@ import {
   getPublishedHeroCopy,
   getPublishedKabaExperience,
   getPublishedProjects,
+  getPublishedServiceTowns,
   getPublishedTestimonials,
   getPublishedTrustPoints,
   getPublishedYourNeeds,
@@ -15,13 +16,16 @@ import {
 
 export function generateMetadata(): Metadata {
   const brand = getPublishedHeroCopy();
-  const title = `${brand.name} | Fence Company in Raleigh, NC`;
+  const title = `Fence Installation & Repair in Angier & Raleigh, NC | ${brand.name}`;
+  const description = `${brand.name} installs and repairs wood, vinyl, aluminum, and chain-link fences and decks for homes and businesses in Angier, Raleigh, and nearby Harnett, Wake & Johnston County towns. Free on-site estimates.`;
   return {
     title: { absolute: title },
-    description: brand.description,
+    description,
+    alternates: { canonical: "/" },
     openGraph: {
       title,
-      description: brand.description,
+      description,
+      url: "/",
     },
   };
 }
@@ -115,7 +119,9 @@ export default function HomePage() {
   const teaser = getPublishedProjects()
     .filter((p) => p.category === "fence")
     .slice(0, 4);
+  // Only real, verified testimonials (CMS-published). Empty by default.
   const homeReviews = getPublishedTestimonials().slice(0, 3);
+  const towns = getPublishedServiceTowns();
 
   return (
     <>
@@ -135,12 +141,22 @@ export default function HomePage() {
 
         <div className="container-page relative z-[2] flex flex-1 flex-col justify-center py-16 sm:py-20 lg:py-28">
           <div className="max-w-2xl">
-            <p className="hero-reveal text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze">
+            {/* H1 carries service + town for local search; the large headline stays the visual lead. */}
+            <h1
+              className="hero-reveal text-[0.6875rem] uppercase text-bronze"
+              style={{
+                // Override global h1 display-serif styles so this keeps the eyebrow look.
+                fontFamily: "var(--font-sans), system-ui, sans-serif",
+                fontWeight: 700,
+                letterSpacing: "0.16em",
+                lineHeight: 1.5,
+              }}
+            >
               {hero.heroLabel}
-            </p>
-            <h1 className="hero-reveal hero-reveal-d1 mt-4 font-display text-[2.15rem] font-semibold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.85rem] lg:text-[3.5rem] lg:leading-[1.08]">
-              {hero.heroHeadline}
             </h1>
+            <p className="hero-reveal hero-reveal-d1 mt-4 font-display text-[2.15rem] font-semibold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.85rem] lg:text-[3.5rem] lg:leading-[1.08]">
+              {hero.heroHeadline}
+            </p>
             <p className="hero-reveal hero-reveal-d2 mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
               {hero.heroSub}
             </p>
@@ -344,44 +360,106 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Reviews */}
+      {/* Service area — Angier home base */}
       <section className="bg-ivory-muted/60 section-y">
         <div className="container-page">
-          <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-12">
+            <Reveal className="lg:col-span-5">
               <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
-                Reviews
+                Service Area
               </p>
               <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">
-                Trusted by Homeowners in Our Community.
+                Based in Angier. Serving Raleigh &amp; Nearby Towns.
               </h2>
-            </div>
-            <Link href="/reviews" className="focus-ring btn-primary gap-2 self-start uppercase tracking-[0.06em] sm:self-auto">
-              Read Our Reviews
-              <span aria-hidden>→</span>
-            </Link>
-          </Reveal>
-          <ul className="mt-10 grid gap-5 sm:grid-cols-3">
-            {homeReviews.map((review, i) => (
-              <Reveal as="li" key={review.name} delay={i * 80} className="review-card flex flex-col">
-                <span
-                  className="font-display text-3xl leading-none text-bronze/50"
-                  aria-hidden
+              <p className="mt-4 leading-relaxed text-muted">
+                We install and repair fences and decks across Harnett, Wake,
+                and Johnston counties—Angier first, then Raleigh and the
+                surrounding communities within a practical drive.
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Link
+                  href="/fence-company-angier-nc"
+                  className="focus-ring btn-primary gap-2 whitespace-nowrap uppercase tracking-[0.06em]"
                 >
-                  “
-                </span>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
-                  {review.quote}
-                </p>
-                <p className="mt-5 text-sm font-semibold text-ink">
-                  {review.name}{" "}
-                  <span className="font-normal text-muted">| {review.town}</span>
-                </p>
-              </Reveal>
-            ))}
-          </ul>
+                  Fencing in Angier, NC
+                  <span aria-hidden>→</span>
+                </Link>
+                <Link
+                  href="/service-area"
+                  className="focus-ring btn-secondary-light justify-center whitespace-nowrap"
+                >
+                  All towns we serve
+                </Link>
+              </div>
+            </Reveal>
+            <Reveal className="lg:col-span-7" delay={80}>
+              <h3 className="sr-only">Towns we serve</h3>
+              <ul className="flex flex-wrap gap-2.5">
+                {towns.map((town) =>
+                  town.name.trim().toLowerCase() === "angier" ? (
+                    <li key={town.name}>
+                      <Link
+                        href="/fence-company-angier-nc"
+                        className="focus-ring inline-flex items-center rounded-full border-2 border-bronze bg-bronze px-4 py-2 text-sm font-bold text-navy transition hover:bg-bronze-light"
+                      >
+                        {town.name}, NC ★
+                      </Link>
+                    </li>
+                  ) : (
+                    <li
+                      key={town.name}
+                      className="inline-flex items-center rounded-full border border-ink/[0.1] bg-surface px-3.5 py-1.5 text-sm font-medium text-ink/80 dark:border-cream/15"
+                    >
+                      {town.name}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </Reveal>
+          </div>
         </div>
       </section>
+
+      {/* Reviews — only rendered when real, verified testimonials are published */}
+      {homeReviews.length > 0 ? (
+        <section className="bg-ivory-muted/60 section-y">
+          <div className="container-page">
+            <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-bronze-dark dark:text-bronze-light">
+                  Reviews
+                </p>
+                <h2 className="mt-3 font-display text-[1.85rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-[2.35rem]">
+                  Trusted by Homeowners in Our Community.
+                </h2>
+              </div>
+              <Link href="/reviews" className="focus-ring btn-primary gap-2 self-start uppercase tracking-[0.06em] sm:self-auto">
+                Read Our Reviews
+                <span aria-hidden>→</span>
+              </Link>
+            </Reveal>
+            <ul className="mt-10 grid gap-5 sm:grid-cols-3">
+              {homeReviews.map((review, i) => (
+                <Reveal as="li" key={review.name} delay={i * 80} className="review-card flex flex-col">
+                  <span
+                    className="font-display text-3xl leading-none text-bronze/50"
+                    aria-hidden
+                  >
+                    “
+                  </span>
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
+                    {review.quote}
+                  </p>
+                  <p className="mt-5 text-sm font-semibold text-ink">
+                    {review.name}{" "}
+                    <span className="font-normal text-muted">| {review.town}</span>
+                  </p>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       {/* Final CTA — own fence photo band (separate from solid charcoal footer) */}
       <section className="relative isolate overflow-hidden py-16 sm:py-20 lg:py-24">

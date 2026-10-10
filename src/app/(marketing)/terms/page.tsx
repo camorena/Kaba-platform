@@ -97,9 +97,8 @@ export default function TermsPage() {
             </h2>
             <p className="mt-3">
               We aim to keep service descriptions, gallery examples, and contact
-              details current. Gallery images and testimonials may include
-              illustrative or placeholder examples until replaced with verified
-              project photos and customer quotes. Always confirm details with us
+              details current. Gallery images may include illustrative examples
+              until replaced with verified project photos. Always confirm details with us
               before relying on a specific product, price, or timeline.
             </p>
           </div>

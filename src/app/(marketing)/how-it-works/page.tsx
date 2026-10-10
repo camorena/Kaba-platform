@@ -14,6 +14,7 @@ export function generateMetadata(): Metadata {
   return {
   title,
   description,
+  alternates: { canonical: "/how-it-works" },
   openGraph: {
     title: `${title} | ${brand.name}`,
     description,

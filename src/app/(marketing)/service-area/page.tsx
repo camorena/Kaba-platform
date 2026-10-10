@@ -8,7 +8,7 @@ import {
 } from "@/lib/cms/public";
 import { defaultOgImage } from "@/lib/site";
 
-const title = "Service Area";
+const title = "Service Area: Angier, Raleigh & Nearby NC Towns";
 
 export function generateMetadata(): Metadata {
   const brand = getPublishedHeroCopy();
@@ -16,6 +16,7 @@ export function generateMetadata(): Metadata {
   return {
   title,
   description,
+  alternates: { canonical: "/service-area" },
   keywords: [
     "fence company Angier NC",
     "Raleigh fence installation",
@@ -76,6 +77,13 @@ export default function ServiceAreaPage() {
               </a>{" "}
               and ask.
             </p>
+            <Link
+              href="/fence-company-angier-nc"
+              className="focus-ring btn-primary mt-6 inline-flex gap-2"
+            >
+              Fence installation in Angier, NC
+              <span aria-hidden>→</span>
+            </Link>
 
             {/* Stylized map graphic — no paid map API */}
             <div
@@ -159,6 +167,14 @@ export default function ServiceAreaPage() {
                     <p className="mt-2 text-sm leading-relaxed text-muted">
                       {town.note}
                     </p>
+                    {town.name.trim().toLowerCase() === "angier" ? (
+                      <Link
+                        href="/fence-company-angier-nc"
+                        className="focus-ring btn-ghost mt-3 inline-flex min-h-10 items-center"
+                      >
+                        Angier fence services →
+                      </Link>
+                    ) : null}
                   </Reveal>
                 ))}
               </ul>

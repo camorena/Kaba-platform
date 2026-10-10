@@ -10,14 +10,15 @@ import {
 } from "@/lib/cms/public";
 import { defaultOgImage } from "@/lib/site";
 
-const title = "Residential Fencing";
+const title = "Residential Fencing in Angier & Raleigh, NC";
 
 export function generateMetadata(): Metadata {
   const brand = getPublishedHeroCopy();
-  const description = `Residential fence installation and repair for homeowners in Raleigh, NC & surrounding areas from ${brand.name}.`;
+  const description = `Residential fence installation and repair for homeowners in Angier, Raleigh, NC & surrounding areas from ${brand.name}.`;
   return {
   title,
   description,
+  alternates: { canonical: "/residential" },
   openGraph: {
     title: `${title} | ${brand.name}`,
     description,
@@ -45,7 +46,7 @@ export default function ResidentialPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">
             Privacy for family gatherings, safer yards for pets, or repairs that
-            restore what you already have—{brand.name} guides Raleigh-area
+            restore what you already have—{brand.name} guides Angier and Raleigh-area
             homeowners from first conversation to finished fence.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

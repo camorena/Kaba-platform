@@ -4,7 +4,7 @@
  * CMS: admin Phase A–C under src/lib/cms/ and /admin/content.
  * Partial cutovers (CMS published → site.ts fallback):
  *   getPublishedFaqs() → /faq
- *   getPublishedTestimonials() → /reviews + home
+ *   getPublishedTestimonials() → /reviews + home (empty until real reviews exist)
  *   getPublishedProjects() → /gallery + home teaser
  *   getPublishedFenceTypes/Services() → /services, residential/commercial, home
  *   getPublishedAbout* / ServiceTowns / Materials* (+ FAQs) → /about, /service-area, /materials
@@ -61,8 +61,8 @@ export const siteConfig = {
   name: "Kaba Fence",
   tagline: "We Listen. We Guide. We Build. We Care.",
   description:
-    "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
-  serviceArea: "Raleigh, NC & surrounding areas",
+    "Fence and deck installation and repair in Angier, Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
+  serviceArea: "Angier, Raleigh, NC & surrounding areas",
   phone: "(919) 292-4777",
   phoneHref: "tel:+19192924777",
   email: "kabafencellc@gmail.com",
@@ -73,15 +73,15 @@ export const siteConfig = {
     sunday: "Sunday: Closed",
   },
   address: {
-    city: "Raleigh",
+    city: "Angier",
     state: "NC",
-    zip: "",
+    zip: "27501",
     region: "Angier, Raleigh & Surrounding Areas",
   },
-  heroLabel: "Fence Company in Angier, Raleigh & Surrounding Areas",
+  heroLabel: "Fence Installation & Repair in Angier & Raleigh, NC",
   heroHeadline: "A Better Fence Starts With a Better Experience.",
   heroSub:
-    "Professional fencing in Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
+    "Professional fencing in Angier, Raleigh, NC & surrounding areas, with personalized guidance from start to finish.",
   social: {
     // Keep unset until the business supplies real profile URLs.
     facebook: "",
@@ -112,7 +112,7 @@ export const footerLinks = [
   { href: "/materials", label: "Materials guide" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/service-area", label: "Service area" },
-  { href: "/reviews", label: "Reviews" },
+  { href: "/fence-company-angier-nc", label: "Angier, NC fencing" },
   { href: "/faq", label: "FAQ" },
 ] as const;
 
@@ -301,7 +301,7 @@ export const howItWorks = [
     step: "1",
     title: "Request a Quote",
     description:
-      "Tell us about your fence project online or by phone. We serve Raleigh, NC and surrounding areas.",
+      "Tell us about your fence project online or by phone. We serve Angier, Raleigh, NC and surrounding areas.",
   },
   {
     step: "2",
@@ -409,6 +409,11 @@ export const companyValues = [
 
 export const serviceTowns = [
   {
+    name: "Angier",
+    region: "Harnett County",
+    note: "Fence installs and repairs across town and nearby rural lots.",
+  },
+  {
     name: "Raleigh",
     region: "Wake County",
     note: "Privacy fences, ornamental aluminum, and residential projects for in-town and suburban homes.",
@@ -454,11 +459,6 @@ export const serviceTowns = [
     note: "Select projects in northern Wake—ask us about current scheduling.",
   },
   {
-    name: "Angier",
-    region: "Harnett County",
-    note: "Fence installs and repairs across town and nearby rural lots.",
-  },
-  {
     name: "Dunn",
     region: "Harnett County",
     note: "Rural and in-town fence lines and pet enclosures.",
@@ -470,44 +470,16 @@ export const serviceTowns = [
   },
 ] as const;
 
-export const testimonials = [
-  {
-    quote:
-      "Excellent communication and beautiful work. Our backyard privacy fence looks amazing and the crew left everything spotless.",
-    name: "Sarah M.",
-    town: "Apex, NC",
-  },
-  {
-    quote:
-      "From the estimate to the final walkthrough, everything was easy. Clear pricing, on-time crew, and a fence we’re proud of.",
-    name: "Michael R.",
-    town: "Raleigh, NC",
-  },
-  {
-    quote:
-      "Great experience! The team was respectful of our property, answered every question, and finished ahead of schedule.",
-    name: "Jennifer T.",
-    town: "Holly Springs, NC",
-  },
-  {
-    quote:
-      "We needed vinyl privacy that would pass HOA review. Kaba walked us through options, got it approved, and installed it cleanly.",
-    name: "Jordan M.",
-    town: "Cary, NC",
-  },
-  {
-    quote:
-      "Storm damage took out a section of our fence. They matched the existing panels and had us secure again within the week.",
-    name: "Pat & Elena S.",
-    town: "Garner, NC",
-  },
-  {
-    quote:
-      "Professional from start to finish. Honest guidance on materials and a fence that feels solid for our dogs.",
-    name: "Marcus W.",
-    town: "Raleigh, NC",
-  },
-] as const;
+/**
+ * Customer testimonials. Intentionally empty: only add real, verified
+ * customer reviews here (or publish them via the CMS). Never seed
+ * placeholder/illustrative quotes; they render publicly and in the chatbot.
+ */
+export const testimonials: readonly {
+  quote: string;
+  name: string;
+  town: string;
+}[] = [];
 
 export const faqs = [
   {
@@ -518,7 +490,7 @@ export const faqs = [
   {
     question: "Do you handle permits and HOA approvals?",
     answer:
-      "We help you understand local permit and HOA requirements for Raleigh and nearby towns. When a permit is needed, we'll guide the paperwork and build to the approved plan.",
+      "We help you understand local permit and HOA requirements for Angier, Raleigh, and nearby towns. When a permit is needed, we'll guide the paperwork and build to the approved plan.",
   },
   {
     question: "What materials hold up best in North Carolina weather?",
@@ -533,7 +505,7 @@ export const faqs = [
   {
     question: "What towns do you serve?",
     answer:
-      "We serve Raleigh, NC and surrounding areas including Apex, Holly Springs, Cary, Fuquay-Varina, Garner, Clayton, Knightdale, Wake Forest, and nearby communities. If you’re close and unsure, call—we’ll let you know.",
+      "We’re based in Angier and serve Angier, Raleigh, and surrounding areas including Fuquay-Varina, Holly Springs, Apex, Cary, Garner, Clayton, Knightdale, Wake Forest, Dunn, Lillington, and nearby communities. If you’re close and unsure, call—we’ll let you know.",
   },
   {
     question: "Is the estimate really free?",
@@ -555,7 +527,7 @@ export const faqs = [
 /** Canonical production origin (metadataBase, sitemap, JSON-LD, analytics). */
 export const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "") ||
-  "https://kaba-platform.vercel.app"
+  "https://kabafence.com"
 );
 
 /** Absolute URL helper for sitemap / JSON-LD. */
@@ -573,9 +545,12 @@ export const sitemapRoutes = [
   { path: "/gallery", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/about", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/contact", changeFrequency: "monthly" as const, priority: 0.9 },
-  { path: "/quote", changeFrequency: "monthly" as const, priority: 0.8 },
-  { path: "/reviews", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/service-area", changeFrequency: "monthly" as const, priority: 0.8 },
+  {
+    path: "/fence-company-angier-nc",
+    changeFrequency: "monthly" as const,
+    priority: 0.9,
+  },
   { path: "/how-it-works", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/materials", changeFrequency: "monthly" as const, priority: 0.75 },
   { path: "/faq", changeFrequency: "monthly" as const, priority: 0.7 },

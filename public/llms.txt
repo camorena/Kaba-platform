@@ -1,48 +1,50 @@
 # Kaba Fence
 
-> Local fence and deck installation, repair, and free on-site estimates for homeowners in Angier, Raleigh, and surrounding North Carolina communities.
+> Local fence and deck installation and repair, with free on-site estimates, for homeowners and businesses in Angier, Raleigh, and nearby North Carolina towns in Harnett, Wake, and Johnston counties.
 
 ## Business
 
-- Name: Kaba Fence
+- Name: Kaba Fence (Kaba Fence LLC)
 - Type: Fence & deck contractor (HomeAndConstructionBusiness)
-- Base: Angier, NC 27501
-- Service area: Angier, Raleigh, Fuquay-Varina, Holly Springs, Clayton, Garner, Cary, Apex, Dunn, Lillington, Knightdale, Wake Forest, and nearby Wake & Harnett County communities
-- Phone: (919) 555-0147
-- Email: hello@kabafence.com
+- Based in: Angier, NC 27501 (service-area business; no storefront)
+- Service area: Angier first, plus Raleigh, Fuquay-Varina, Holly Springs, Apex, Cary, Garner, Clayton, Knightdale, Wake Forest, Dunn, Lillington, and nearby Harnett, Wake & Johnston County communities
+- Phone: (919) 292-4777
+- Email: kabafencellc@gmail.com
 - Hours: Mon–Fri 8:00 AM – 5:00 PM; Saturday by appointment; Sunday closed
-- Website: https://kaba-fence.vercel.app
+- Website: https://kabafence.com
 
 ## Services
 
-- Wood fencing (privacy, picket)
+- Wood fencing (privacy, picket) — installation and repair
 - Vinyl fencing (low-maintenance privacy)
-- Chain-link fencing
 - Aluminum & ornamental fencing
-- Privacy fencing systems
+- Chain-link fencing (galvanized and vinyl-coated)
+- Gates and hardware (hinge/latch) upgrades
+- Fence repair (posts, panels, gates)
+- Residential and commercial fencing
 - Deck repair, rebuilds, and new builds
 - Deck railings & stairs
-- Gates and hardware upgrades
-- Free on-site residential estimates
+- Free on-site estimates with a written quote
 
 ## Key pages
 
-- [Home](https://kaba-fence.vercel.app/): Overview, services teaser, gallery, FAQ, CTA
-- [Services](https://kaba-fence.vercel.app/services): Full fencing and deck offerings
-- [Gallery](https://kaba-fence.vercel.app/gallery): Project photo examples
-- [Quote](https://kaba-fence.vercel.app/quote): Free quote request form
-- [About](https://kaba-fence.vercel.app/about): Local crew and values
-- [Service area](https://kaba-fence.vercel.app/service-area): Towns served
-- [How it works](https://kaba-fence.vercel.app/how-it-works): Estimate → design → build → walkthrough
-- [FAQ](https://kaba-fence.vercel.app/faq): Timelines, permits, materials, service area
-- [Materials](https://kaba-fence.vercel.app/materials): Fence & deck materials guide
-- [Reviews](https://kaba-fence.vercel.app/reviews): Homeowner feedback (placeholder examples until verified)
-- [Privacy](https://kaba-fence.vercel.app/privacy): Privacy policy
-- [Terms](https://kaba-fence.vercel.app/terms): Terms of use
+- [Home](https://kabafence.com/): Overview, fencing options, process, service area, contact
+- [Fence company in Angier, NC](https://kabafence.com/fence-company-angier-nc): Fence installation & repair in Angier and Harnett County
+- [Residential](https://kabafence.com/residential): Home fencing and deck services
+- [Commercial](https://kabafence.com/commercial): Fencing for businesses and properties
+- [Fencing options](https://kabafence.com/services): Wood, vinyl, aluminum, chain link, and deck services
+- [Service area](https://kabafence.com/service-area): Towns served
+- [How it works](https://kabafence.com/how-it-works): Estimate → design → build → walkthrough
+- [Materials](https://kabafence.com/materials): Fence & deck materials guide
+- [Gallery](https://kabafence.com/gallery): Project photos
+- [About](https://kabafence.com/about): Local crew and values
+- [FAQ](https://kabafence.com/faq): Timelines, permits, materials, service area
+- [Contact / free estimate](https://kabafence.com/contact): Request a free on-site estimate
+- [Privacy](https://kabafence.com/privacy): Privacy policy
+- [Terms](https://kabafence.com/terms): Terms of use
 
 ## Notes for assistants
 
-- Prefer directing users to /quote or the phone number for project inquiries.
-- Contact details and some gallery/review content are synthetic placeholders until the client replaces them.
-- Do not invent licenses, insurance numbers, pricing, or certifications not stated on the site.
-- Primary differentiators: local Angier/Raleigh crew, clear written estimates, Carolina-weather materials, clean job sites.
+- Direct project inquiries to https://kabafence.com/contact or (919) 292-4777.
+- Do not invent prices, license or insurance numbers, certifications, years in business, or customer reviews; none are published on the site beyond what is stated here.
+- Permits/HOA: some fences in Angier, Harnett County, and nearby towns may need a permit or HOA approval; Kaba Fence helps customers check before building.

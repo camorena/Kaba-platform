@@ -3,6 +3,17 @@ import { absoluteUrl, faqs as siteFaqs, siteConfig, siteUrl } from "@/lib/site";
 
 type JsonLd = Record<string, unknown>;
 
+/** Approximate center of Angier, NC (home base; not a street address). */
+const businessGeo = {
+  latitude: 35.5071,
+  longitude: -78.7392,
+} as const;
+
+/** Verified third-party profiles for this business (Nextdoor listing, phone matches). */
+const businessSameAs = [
+  "https://nextdoor.com/pages/kaba-fence-llc-wilmington-nc/",
+] as const;
+
 export type LocalBusinessJsonLdOptions = {
   towns?: readonly PublishedServiceTown[];
   contact?: PublishedContactInfo;
@@ -32,7 +43,14 @@ export function localBusinessJsonLd(
   const addressState = contact?.address.state ?? siteConfig.address.state;
   const addressZip = contact?.address.zip ?? siteConfig.address.zip;
 
-  const towns = options.towns?.filter((t) => t.name.trim().length > 0) ?? [];
+  // Angier is home base: always list it first in areaServed.
+  const towns = [...(options.towns ?? [])]
+    .filter((t) => t.name.trim().length > 0)
+    .sort(
+      (a, b) =>
+        Number(b.name.trim().toLowerCase() === "angier") -
+        Number(a.name.trim().toLowerCase() === "angier"),
+    );
   const areaServed: Record<string, unknown>[] =
     towns.length > 0
       ? [
@@ -53,11 +71,15 @@ export function localBusinessJsonLd(
           },
         ]
       : [
+          { "@type": "City", name: "Angier" },
           { "@type": "City", name: "Raleigh" },
-          { "@type": "City", name: "Apex" },
+          { "@type": "City", name: "Fuquay-Varina" },
           { "@type": "City", name: "Holly Springs" },
+          { "@type": "City", name: "Apex" },
           { "@type": "City", name: "Cary" },
+          { "@type": "AdministrativeArea", name: "Harnett County" },
           { "@type": "AdministrativeArea", name: "Wake County" },
+          { "@type": "AdministrativeArea", name: "Johnston County" },
           {
             "@type": "GeoCircle",
             description: serviceArea,
@@ -76,13 +98,20 @@ export function localBusinessJsonLd(
     image: absoluteUrl("/brand/kaba-fence-logo.png"),
     logo: absoluteUrl("/brand/kaba-fence-logo.png"),
     priceRange: "$$",
+    // Service-area business: no street address published.
     address: {
       "@type": "PostalAddress",
       addressLocality: addressCity,
       addressRegion: addressState,
-      postalCode: addressZip,
+      ...(addressZip ? { postalCode: addressZip } : {}),
       addressCountry: "US",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: businessGeo.latitude,
+      longitude: businessGeo.longitude,
+    },
+    sameAs: [...businessSameAs],
     areaServed,
     openingHoursSpecification: [
       {

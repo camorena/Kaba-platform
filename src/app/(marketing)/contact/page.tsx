@@ -3,15 +3,16 @@ import QuoteForm from "@/components/QuoteForm";
 import { getPublishedContactInfo, getPublishedHeroCopy } from "@/lib/cms/public";
 import { defaultOgImage } from "@/lib/site";
 
-const title = "Request a Free Estimate";
+const title = "Free Fence Estimate in Angier & Raleigh, NC";
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = getPublishedContactInfo();
   const brand = getPublishedHeroCopy();
-  const description = `Contact ${brand.name} for a free fence estimate in Raleigh, NC & surrounding areas. Call ${contact.phone} or request online.`;
+  const description = `Contact ${brand.name} for a free fence or deck estimate in Angier, Raleigh, NC & nearby towns. Call ${contact.phone} or request online.`;
   return {
     title,
     description,
+    alternates: { canonical: "/contact" },
     openGraph: {
       title: `${title} | ${brand.name}`,
       description,
