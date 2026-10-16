@@ -12,6 +12,8 @@ import {
   QUIET_QUOTE_STATUSES,
 } from "@/lib/db/quiet";
 import type {
+  CustomerPatch,
+  CustomerProfile,
   NewQuoteInput,
   QuoteNoteRecord,
   QuotePatch,
@@ -64,6 +66,19 @@ export async function quoteStats() {
 /** Unique customers derived from quote contact fields (or customers table). */
 export async function listCustomers() {
   return getRepos().customers.list();
+}
+
+export async function getCustomer(
+  id: string,
+): Promise<CustomerProfile | undefined> {
+  return getRepos().customers.get(id);
+}
+
+export async function updateCustomer(
+  id: string,
+  patch: CustomerPatch,
+): Promise<CustomerProfile | undefined> {
+  return getRepos().customers.update(id, patch);
 }
 
 export async function listQuietQuotes(

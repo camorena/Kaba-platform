@@ -3,6 +3,7 @@
  */
 
 import type {
+  CustomerProfile,
   InvoiceLine,
   InvoiceRecord,
   InvoiceStatus,
@@ -246,6 +247,38 @@ export function mapProfile(row: ProfileRow): ProfileRecord {
     role: row.role,
     isActive: Boolean(row.is_active),
     passwordHash: row.password_hash ?? "",
+    createdAt: iso(row.created_at),
+    updatedAt: iso(row.updated_at),
+  };
+}
+
+export type CustomerRow = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  notes: string;
+  company: string | null;
+  street: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  created_at: Date | string;
+  updated_at: Date | string;
+};
+
+export function mapCustomer(row: CustomerRow): CustomerProfile {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    notes: row.notes ?? "",
+    company: row.company ?? "",
+    street: row.street ?? "",
+    city: row.city ?? "",
+    state: row.state ?? "",
+    zip: row.zip ?? "",
     createdAt: iso(row.created_at),
     updatedAt: iso(row.updated_at),
   };

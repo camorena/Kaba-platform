@@ -12,7 +12,12 @@ import { useMemo, useState } from "react";
 
 export type CustomerRow = {
   key: string;
+  /** Durable customers row id — links to the customer record when set. */
+  id: string | null;
   name: string;
+  company: string;
+  city: string;
+  state: string;
   email: string;
   phone: string;
   quoteCount: number;
@@ -39,6 +44,16 @@ function filterClass(active: boolean): string {
   }`;
 }
 
+function cityLine(c: Pick<CustomerRow, "city" | "state">): string {
+  return [c.city, c.state].filter((p) => p.trim()).join(", ");
+}
+
+function customerHref(c: Pick<CustomerRow, "id" | "quoteId">): string | null {
+  if (c.id) return `/admin/customers/${c.id}`;
+  if (c.quoteId) return `/admin/quotes/${c.quoteId}`;
+  return null;
+}
+
 type ActivityFilter = "all" | "active" | "single";
 
 export default function CustomersClient({
@@ -56,7 +71,7 @@ export default function CustomersClient({
       if (filter === "active" && c.quoteCount < 2) return false;
       if (filter === "single" && c.quoteCount !== 1) return false;
       if (!q) return true;
-      const hay = [c.name, c.email, c.phone, ...c.addresses]
+      const hay = [c.name, c.company, c.email, c.phone, c.city, c.state, ...c.addresses]
         .join(" ")
         .toLowerCase();
       return hay.includes(q);
@@ -149,6 +164,7 @@ export default function CustomersClient({
               <ul className="admin-card-list space-y-2.5 md:hidden">
                 {filtered.map((c) => {
                   const latestStatus = c.statuses[0] ?? "new";
+                  const href = customerHref(c);
                   return (
                     <li key={c.key} className="admin-mobile-card">
                       <div className="flex items-start gap-2.5">
@@ -159,9 +175,9 @@ export default function CustomersClient({
                           {initials(c.name)}
                         </span>
                         <div className="min-w-0 flex-1">
-                          {c.quoteId ? (
+                          {href ? (
                             <Link
-                              href={`/admin/quotes/${c.quoteId}`}
+                              href={href}
                               className="font-semibold text-ink hover:text-bronze-dark hover:underline dark:hover:text-bronze-light"
                             >
                               {c.name}
@@ -169,30 +185,54 @@ export default function CustomersClient({
                           ) : (
                             <span className="font-semibold text-ink">{c.name}</span>
                           )}
-                          <p className="mt-0.5 text-xs text-muted">{c.phone}</p>
+                          {c.company ? (
+                            <p className="truncate text-xs font-medium text-ink/70">
+                              {c.company}
+                            </p>
+                          ) : null}
+                          {c.phone ? (
+                            <p className="mt-0.5 text-xs text-muted">{c.phone}</p>
+                          ) : null}
                           <p className="truncate text-xs text-muted">{c.email}</p>
                           <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <StatusBadge
-                              label={quoteStatusLabel(locale, latestStatus)}
-                              tone={quoteStatusTone[latestStatus]}
-                            />
-                            <span className="text-xs text-muted">
-                              {t(
-                                c.quoteCount === 1
-                                  ? "common.quotesCount"
-                                  : "common.quotesCount_plural",
-                                { count: c.quoteCount },
-                              )}
-                            </span>
+                            {c.quoteCount > 0 ? (
+                              <>
+                                <StatusBadge
+                                  label={quoteStatusLabel(locale, latestStatus)}
+                                  tone={quoteStatusTone[latestStatus]}
+                                />
+                                <span className="text-xs text-muted">
+                                  {t(
+                                    c.quoteCount === 1
+                                      ? "common.quotesCount"
+                                      : "common.quotesCount_plural",
+                                    { count: c.quoteCount },
+                                  )}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-xs text-muted">
+                                {t("pages.customers.noQuotes")}
+                              </span>
+                            )}
+                            {cityLine(c) ? (
+                              <span className="text-xs text-muted">
+                                · {cityLine(c)}
+                              </span>
+                            ) : null}
                           </div>
-                          <p className="mt-1.5 text-xs text-muted">
-                            {c.addresses.join(" · ")}
-                          </p>
-                          <p className="mt-1 text-[0.6875rem] text-muted-light">
-                            {t("common.latest", {
-                              date: formatShortDate(c.latestQuoteAt),
-                            })}
-                          </p>
+                          {c.addresses.length > 0 ? (
+                            <p className="mt-1.5 text-xs text-muted">
+                              {c.addresses.join(" · ")}
+                            </p>
+                          ) : null}
+                          {c.quoteCount > 0 ? (
+                            <p className="mt-1 text-[0.6875rem] text-muted-light">
+                              {t("common.latest", {
+                                date: formatShortDate(c.latestQuoteAt),
+                              })}
+                            </p>
+                          ) : null}
                         </div>
                       </div>
                     </li>
@@ -212,6 +252,9 @@ export default function CustomersClient({
                           {t("pages.customers.colQuotes")}
                         </th>
                         <th className="hidden px-3 py-2.5 font-semibold md:table-cell sm:px-4">
+                          {t("pages.customers.colCity")}
+                        </th>
+                        <th className="hidden px-3 py-2.5 font-semibold lg:table-cell sm:px-4">
                           {t("pages.customers.colLocations")}
                         </th>
                         <th className="px-3 py-2.5 font-semibold sm:px-4">
@@ -222,6 +265,7 @@ export default function CustomersClient({
                     <tbody>
                       {filtered.map((c) => {
                         const latestStatus = c.statuses[0] ?? "new";
+                        const href = customerHref(c);
                         return (
                           <tr
                             key={c.key}
@@ -236,9 +280,9 @@ export default function CustomersClient({
                                   {initials(c.name)}
                                 </span>
                                 <div className="min-w-0">
-                                  {c.quoteId ? (
+                                  {href ? (
                                     <Link
-                                      href={`/admin/quotes/${c.quoteId}`}
+                                      href={href}
                                       className="font-semibold text-ink hover:text-bronze-dark hover:underline dark:hover:text-bronze-light"
                                     >
                                       {c.name}
@@ -248,6 +292,11 @@ export default function CustomersClient({
                                       {c.name}
                                     </span>
                                   )}
+                                  {c.company ? (
+                                    <div className="truncate text-xs font-medium text-ink/70">
+                                      {c.company}
+                                    </div>
+                                  ) : null}
                                   <div className="mt-0.5 text-xs text-muted">
                                     {c.phone}
                                   </div>
@@ -261,18 +310,25 @@ export default function CustomersClient({
                               <div className="font-medium tabular-nums text-ink">
                                 {c.quoteCount}
                               </div>
-                              <div className="mt-1">
-                                <StatusBadge
-                                  label={quoteStatusLabel(locale, latestStatus)}
-                                  tone={quoteStatusTone[latestStatus]}
-                                />
-                              </div>
+                              {c.quoteCount > 0 ? (
+                                <div className="mt-1">
+                                  <StatusBadge
+                                    label={quoteStatusLabel(locale, latestStatus)}
+                                    tone={quoteStatusTone[latestStatus]}
+                                  />
+                                </div>
+                              ) : null}
                             </td>
-                            <td className="hidden px-3 py-3 text-muted md:table-cell sm:px-4">
+                            <td className="hidden whitespace-nowrap px-3 py-3 text-muted md:table-cell sm:px-4">
+                              {cityLine(c) || t("pages.customers.notSet")}
+                            </td>
+                            <td className="hidden px-3 py-3 text-muted lg:table-cell sm:px-4">
                               {c.addresses.join(" · ")}
                             </td>
                             <td className="whitespace-nowrap px-3 py-3 text-muted sm:px-4">
-                              {formatShortDate(c.latestQuoteAt)}
+                              {c.quoteCount > 0
+                                ? formatShortDate(c.latestQuoteAt)
+                                : t("pages.customers.notSet")}
                             </td>
                           </tr>
                         );

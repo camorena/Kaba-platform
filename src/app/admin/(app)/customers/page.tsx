@@ -10,13 +10,20 @@ export default async function AdminCustomersPage() {
   const quotes = await listQuotes();
 
   const rows = customers.map((c) => {
+    const email = c.email.toLowerCase().trim();
+    const phone = c.phone.trim();
     const quoteLink = quotes.find(
       (q) =>
-        q.email.toLowerCase() === c.email.toLowerCase() || q.phone === c.phone,
+        (email && q.email.toLowerCase().trim() === email) ||
+        (phone && q.phone.trim() === phone),
     );
     return {
       key: c.key,
+      id: c.id,
       name: c.name,
+      company: c.company,
+      city: c.city,
+      state: c.state,
       email: c.email,
       phone: c.phone,
       quoteCount: c.quoteCount,

@@ -99,7 +99,16 @@ export type PaymentRecord = {
   stripeCheckoutSessionId: string | null;
 };
 
-export type CustomerRecord = {
+/** Company + mailing address on the durable customers table ('' when unset). */
+export type CustomerAddressFields = {
+  company: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+};
+
+export type CustomerRecord = CustomerAddressFields & {
   key: string;
   id: string | null;
   name: string;
@@ -110,6 +119,36 @@ export type CustomerRecord = {
   addresses: string[];
   statuses: QuoteStatus[];
 };
+
+/** Durable customers row (Postgres table, memory map in dev). */
+export type CustomerProfile = CustomerAddressFields & {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CustomerPatch = Partial<
+  Pick<
+    CustomerProfile,
+    "name" | "email" | "phone" | "notes" | "company" | "street" | "city" | "state" | "zip"
+  >
+>;
+
+export const CUSTOMER_PATCH_FIELDS = [
+  "name",
+  "email",
+  "phone",
+  "notes",
+  "company",
+  "street",
+  "city",
+  "state",
+  "zip",
+] as const satisfies readonly (keyof CustomerPatch)[];
 
 export type TrustClaimsRecord = {
   claimFreeEstimates: boolean;

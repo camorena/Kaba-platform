@@ -4,6 +4,8 @@
  */
 
 import type {
+  CustomerPatch,
+  CustomerProfile,
   CustomerRecord,
   InvoiceRecord,
   InvoiceStatus,
@@ -107,6 +109,9 @@ export type PaymentsRepo = {
 export type CustomersRepo = {
   /** Derived from quotes (and optional customers table on Postgres). */
   list(): Promise<CustomerRecord[]>;
+  get(id: string): Promise<CustomerProfile | undefined>;
+  /** Throws CustomerEmailTakenError when the email belongs to another customer. */
+  update(id: string, patch: CustomerPatch): Promise<CustomerProfile | undefined>;
 };
 
 

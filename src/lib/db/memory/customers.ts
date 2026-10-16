@@ -1,46 +1,63 @@
 /**
- * Customers — derived from quotes in the memory adapter.
- * Durable `customers` table exists in the SQL draft for the Postgres swap.
+ * Customers — derived from quotes in the memory adapter, plus an in-process
+ * map standing in for the durable `customers` table (company + address).
+ * Empty by default; the Postgres adapter is the source of truth in production.
  */
 
+import { CustomerEmailTakenError } from "@/lib/db/customer-errors";
+import { mergeCustomers } from "@/lib/db/customers-merge";
 import { memoryQuotesRepo } from "@/lib/db/memory/quotes";
 import type { CustomersRepo } from "@/lib/db/repos/types";
-import type { CustomerRecord, QuoteStatus } from "@/lib/db/types";
+import type { CustomerProfile } from "@/lib/db/types";
+
+const globalStore = globalThis as unknown as {
+  __kabaMemoryCustomers?: Map<string, CustomerProfile>;
+};
+
+function store(): Map<string, CustomerProfile> {
+  if (!globalStore.__kabaMemoryCustomers) {
+    globalStore.__kabaMemoryCustomers = new Map();
+  }
+  return globalStore.__kabaMemoryCustomers;
+}
+
+/** Test/dev helper — seed a durable customer row in memory. */
+export function memoryUpsertCustomer(profile: CustomerProfile): void {
+  store().set(profile.id, { ...profile });
+}
 
 export const memoryCustomersRepo: CustomersRepo = {
   async list() {
-    const map = new Map<string, CustomerRecord>();
+    const profiles = [...store().values()].sort(
+      (a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt),
+    );
+    return mergeCustomers(await memoryQuotesRepo.list(), profiles);
+  },
 
-    for (const q of await memoryQuotesRepo.list()) {
-      const key = q.email.toLowerCase().trim() || q.phone.trim();
-      const existing = map.get(key);
-      if (!existing) {
-        map.set(key, {
-          key,
-          id: q.customerId,
-          name: q.name,
-          email: q.email,
-          phone: q.phone,
-          quoteCount: 1,
-          latestQuoteAt: q.createdAt,
-          addresses: [q.address],
-          statuses: [q.status],
-        });
-      } else {
-        existing.quoteCount += 1;
-        if (+new Date(q.createdAt) > +new Date(existing.latestQuoteAt)) {
-          existing.latestQuoteAt = q.createdAt;
-          existing.name = q.name;
+  async get(id) {
+    const c = store().get(id);
+    return c ? { ...c } : undefined;
+  },
+
+  async update(id, patch) {
+    const current = store().get(id);
+    if (!current) return undefined;
+    if (patch.email !== undefined && patch.email.trim()) {
+      const email = patch.email.toLowerCase().trim();
+      for (const other of store().values()) {
+        if (other.id !== id && other.email.toLowerCase().trim() === email) {
+          throw new CustomerEmailTakenError();
         }
-        if (!existing.addresses.includes(q.address)) {
-          existing.addresses.push(q.address);
-        }
-        existing.statuses.push(q.status as QuoteStatus);
       }
     }
-
-    return [...map.values()].sort(
-      (a, b) => +new Date(b.latestQuoteAt) - +new Date(a.latestQuoteAt),
-    );
+    const next: CustomerProfile = {
+      ...current,
+      ...Object.fromEntries(
+        Object.entries(patch).filter(([, v]) => v !== undefined),
+      ),
+      updatedAt: new Date().toISOString(),
+    };
+    store().set(id, next);
+    return { ...next };
   },
 };
