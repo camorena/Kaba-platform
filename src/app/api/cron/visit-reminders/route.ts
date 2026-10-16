@@ -6,7 +6,7 @@
  *   → 06:15 America/Chicago during CST (UTC-6)
  * Quiet digest stays at `0 12 * * *` UTC (~07:00 CDT) — at least 15 minutes apart.
  *
- * Auth: Bearer CRON_SECRET and/or x-vercel-cron: 1 (see src/lib/cron/auth.ts).
+ * Auth: Authorization: Bearer CRON_SECRET only (see src/lib/cron/auth.ts).
  *
  * Entity: quotes with status scheduled (site visit) or won (install window)
  * that have scheduled_for = tomorrow (America/Chicago) and no visit_reminder_sent_at.

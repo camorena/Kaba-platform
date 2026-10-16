@@ -107,6 +107,8 @@ export default function ChatWidget({
   >({});
   const [leadActive, setLeadActive] = useState(false);
   const [leadSent, setLeadSent] = useState(false);
+  const [leadSending, setLeadSending] = useState(false);
+  const [leadSubmitError, setLeadSubmitError] = useState<string | null>(null);
   const [unread, setUnread] = useState(false);
   const [typing, setTyping] = useState(false);
   const [composerError, setComposerError] = useState<string | null>(null);
@@ -368,14 +370,37 @@ export default function ChatWidget({
     return Object.keys(next).length === 0;
   }
 
-  function onLeadSubmit(e: FormEvent) {
+  async function onLeadSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!validateLead()) return;
-    console.info("[chat-lead]", {
-      ...lead,
-      source: "chat-widget",
-      at: new Date().toISOString(),
-    });
+    if (leadSending || !validateLead()) return;
+    setLeadSending(true);
+    setLeadSubmitError(null);
+    try {
+      const res = await fetch("/api/chat/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(lead),
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as {
+          fields?: Partial<Record<keyof LeadPayload, string>>;
+        };
+        if (data.fields) setLeadErrors(data.fields);
+        setLeadSubmitError(
+          res.status === 429
+            ? `Too many requests right now — please call ${contact.phone}.`
+            : `We couldn't send that. Please try again or call ${contact.phone}.`,
+        );
+        return;
+      }
+    } catch {
+      setLeadSubmitError(
+        `We couldn't send that. Please try again or call ${contact.phone}.`,
+      );
+      return;
+    } finally {
+      setLeadSending(false);
+    }
     setLeadSent(true);
     setLeadActive(false);
     setMessages((prev) => [
@@ -592,15 +617,15 @@ export default function ChatWidget({
 
               {leadActive && !leadSent && (
                 <form
-                  onSubmit={onLeadSubmit}
+                  onSubmit={(e) => void onLeadSubmit(e)}
                   className="rounded-2xl border border-bronze/35 bg-surface p-3 shadow-[var(--shadow-sm)] dark:border-bronze/40"
-                  aria-label="Callback note"
+                  aria-label="Request a callback"
                 >
                   <p className="mb-1 text-xs font-semibold text-ink">
-                    Callback note
+                    Request a callback
                   </p>
                   <p className="mb-2.5 text-[0.6875rem] leading-snug text-muted">
-                    Chat notes stay on this device until you call or use the estimate form.
+                    This goes straight to our office and we&apos;ll call you back. Add an email to get a confirmation.
                   </p>
                   <div className="space-y-2">
                     <div>
@@ -720,11 +745,17 @@ export default function ChatWidget({
                       </Link>
                       <button
                         type="submit"
-                        className="focus-ring inline-flex items-center justify-center rounded-lg border border-ink/15 bg-background px-3 py-2 text-xs font-semibold text-ink transition hover:border-bronze/45 hover:bg-bronze/10 dark:border-cream/20"
+                        disabled={leadSending}
+                        className="focus-ring inline-flex items-center justify-center rounded-lg border border-ink/15 bg-background px-3 py-2 text-xs font-semibold text-ink transition hover:border-bronze/45 hover:bg-bronze/10 disabled:opacity-60 dark:border-cream/20"
                       >
-                        Save callback note
+                        {leadSending ? "Sending…" : "Send callback request"}
                       </button>
                     </div>
+                    {leadSubmitError ? (
+                      <p role="alert" className="text-[0.6875rem] leading-snug text-danger">
+                        {leadSubmitError}
+                      </p>
+                    ) : null}
                   </div>
                 </form>
               )}

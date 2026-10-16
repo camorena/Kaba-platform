@@ -8,15 +8,12 @@ import { mapCustomer, type CustomerRow } from "@/lib/db/postgres/mappers";
 import { createPostgresQuotesRepo } from "@/lib/db/postgres/quotes";
 import { CustomerEmailTakenError } from "@/lib/db/customer-errors";
 import { mergeCustomers } from "@/lib/db/customers-merge";
+import { isUuid } from "@/lib/db/ids";
 import type { CustomersRepo } from "@/lib/db/repos/types";
 import { CUSTOMER_PATCH_FIELDS } from "@/lib/db/types";
 
 const COLUMNS =
   "id, name, email, phone, notes, company, street, city, state, zip, created_at, updated_at";
-
-function isUuid(id: string): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-}
 
 export function createPostgresCustomersRepo(): CustomersRepo {
   const quotes = createPostgresQuotesRepo();

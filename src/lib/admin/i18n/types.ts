@@ -2,6 +2,9 @@ export type AdminLocale = "en" | "es";
 
 export const ADMIN_LOCALES: AdminLocale[] = ["en", "es"];
 
+/** Admin default is formal Colombian Spanish (es-CO, usted); English stays selectable. */
+export const DEFAULT_ADMIN_LOCALE: AdminLocale = "es";
+
 export const LOCALE_STORAGE_KEY = "kaba-admin-locale";
 export const LOCALE_COOKIE = "kaba_admin_locale";
 

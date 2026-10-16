@@ -10,6 +10,7 @@ import {
 export type { AdminLocale, TranslateVars } from "./types";
 export {
   ADMIN_LOCALES,
+  DEFAULT_ADMIN_LOCALE,
   LOCALE_COOKIE,
   LOCALE_STORAGE_KEY,
 } from "./types";

@@ -751,18 +751,29 @@ const es = {
     unread: "Notificaciones, {count} sin leer",
     markAll: "Marcar todas como leídas",
     close: "Cerrar notificaciones",
-    stubFooter:
-      "Feed provisional — sin push, correo ni tiempo real aún. Solo para la interfaz.",
-    n1title: "Cotización nueva · Jordan Miles",
-    n1body: "Solicitud de cerca de madera desde Angier — requiere primer contacto.",
-    n2title: "Visita al sitio mañana",
-    n2body: "Chris Nguyen · privacidad en vinilo · Fuquay-Varina.",
-    n3title: "Saldo de factura abierto",
-    n3body:
-      "La cartera demo aún tiene saldo abierto — registre un pago provisional.",
-    time26h: "hace 26 h",
-    time2d: "hace 2 d",
-    time3d: "hace 3 d"
+    loading: "Cargando…",
+    empty: "Sin novedades — todo al día.",
+    loadError: "No se pudieron cargar las notificaciones.",
+    retry: "Reintentar",
+    footer:
+      "Se calcula con las cotizaciones, visitas, facturas y pagos reales. Se actualiza al abrir y cada minuto; los avisos por correo siguen activos.",
+    quoteNewTitle: "Cotización nueva · {name}",
+    quoteNewBodyToday: "Recibida hoy — requiere primer contacto.",
+    quoteNewBody: "Sin primer contacto desde hace {days} d.",
+    quoteQuietTitle: "Prospecto sin actividad · {name}",
+    quoteQuietBody: "Sin cambios desde hace {days} d — haga seguimiento.",
+    notifyFailedTitle: "Falló el aviso por correo · {name}",
+    notifyFailedBody:
+      "La alerta al propietario no se envió ({attempts} intento(s)). Revise el correo en Configuración.",
+    visitTitle: "Visita al sitio · {name}",
+    installTitle: "Ventana de instalación · {name}",
+    reminderMissingTitle: "Recordatorio no enviado · {name}",
+    reminderMissingBody:
+      "La visita es mañana y el cliente no recibió el recordatorio por correo.",
+    invoiceOpenTitle: "Saldo pendiente · Factura {number}",
+    invoiceOpenBody: "{name} — saldo de {amount}.",
+    paymentTitle: "Pago con Stripe recibido · Factura {number}",
+    paymentBody: "{name} — {amount}."
   },
   cmd: {
     groupNavigate: "Navegación",

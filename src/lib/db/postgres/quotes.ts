@@ -2,6 +2,7 @@
  * Postgres QuotesRepo — same contract as Memory*.
  */
 
+import { isUuid } from "@/lib/db/ids";
 import { query } from "@/lib/db/postgres/connection";
 import {
   mapQuote,
@@ -31,6 +32,7 @@ export function createPostgresQuotesRepo(): QuotesRepo {
     },
 
     async get(id) {
+      if (!isUuid(id)) return undefined;
       const { rows } = await query<QuoteRow>(
         `select * from quotes where id = $1`,
         [id],
@@ -133,8 +135,9 @@ export function createPostgresQuotesRepo(): QuotesRepo {
       return rows[0] ? mapQuote(rows[0]) : undefined;
     },
 
-    async bulkUpdateStatus(ids, status: QuoteStatus) {
-      if (!ids.length) return { updated: 0, missing: [] };
+    async bulkUpdateStatus(allIds, status: QuoteStatus) {
+      const ids = allIds.filter(isUuid);
+      if (!ids.length) return { updated: 0, missing: [...allIds] };
       const defaultDay = defaultScheduledFor(status);
       const { rows } = await query<{ id: string }>(
         `update quotes set
@@ -149,7 +152,7 @@ export function createPostgresQuotesRepo(): QuotesRepo {
         [status, ids, defaultDay],
       );
       const updatedIds = new Set(rows.map((r) => r.id));
-      const missing = ids.filter((id) => !updatedIds.has(id));
+      const missing = allIds.filter((id) => !updatedIds.has(id));
       return { updated: rows.length, missing };
     },
 
@@ -201,6 +204,7 @@ export function createPostgresQuotesRepo(): QuotesRepo {
     },
 
     async markVisitReminderSent(id, at) {
+      if (!isUuid(id)) return undefined;
       const stamp = at === undefined ? new Date().toISOString() : at;
       const { rows } = await query<QuoteRow>(
         `update quotes set
@@ -214,6 +218,7 @@ export function createPostgresQuotesRepo(): QuotesRepo {
     },
 
     async listNotes(quoteId) {
+      if (!isUuid(quoteId)) return [];
       const { rows } = await query<QuoteNoteRow>(
         `select * from quote_notes where quote_id = $1 order by created_at desc`,
         [quoteId],

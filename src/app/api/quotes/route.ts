@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
-import {
-  addQuote,
-  bulkUpdateQuoteStatus,
-  listQuotes,
-  updateQuote,
-} from "@/lib/admin/quotes-store";
+import { bulkUpdateQuoteStatus, listQuotes } from "@/lib/admin/quotes-store";
 import { QUOTE_STATUSES, type QuoteStatus } from "@/lib/admin/status";
-import {
-  notificationPatchFromResult,
-  notifyQuoteCreated,
-} from "@/lib/db/notify";
+import { checkIntakeRateLimit, createQuoteAndNotify } from "@/lib/quotes/intake";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -58,11 +50,19 @@ export async function PATCH(request: Request) {
 
 /**
  * Public quote intake — persist-then-notify.
- * 1. Validate + addQuote (row is source of truth).
- * 2. notifyQuoteCreated — owner alert (+ always-copy BCC) + customer confirmation.
- * 3. Record notifyAttempts / notifiedAt; never fail the request if mail fails.
+ * Validate, then createQuoteAndNotify (src/lib/quotes/intake.ts): persist,
+ * owner alert (+ always-copy BCC) + customer confirmation, record notifiedAt.
+ * Never fails the request if mail fails.
  */
 export async function POST(request: Request) {
+  const rate = checkIntakeRateLimit(request);
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: "Too many submissions. Please wait a few minutes and try again." },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSec) } },
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -91,42 +91,17 @@ export async function POST(request: Request) {
     );
   }
 
-  // 1. Persist first.
-  const quote = await addQuote({
-    name,
-    phone,
-    email,
-    serviceType,
-    address,
-    description,
-    preferredContact,
-    source,
-  });
-
-  // 2. Notify second (stub no-op — must not throw away the saved row).
-  let notifyDelivered = false;
-  let notifyReason = "skipped";
-  try {
-    const notifyResult = await notifyQuoteCreated(quote);
-    notifyDelivered = notifyResult.delivered;
-    notifyReason = notifyResult.reason;
-    await updateQuote(
-      quote.id,
-      notificationPatchFromResult(quote.notifyAttempts, notifyResult),
-    );
-  } catch (err) {
-    notifyReason =
-      err instanceof Error ? err.message : "notifyQuoteCreated threw";
-    await updateQuote(quote.id, {
-      notifyAttempts: quote.notifyAttempts + 1,
-      notifiedAt: null,
+  const { quote, notified: notifyDelivered, notifyReason } =
+    await createQuoteAndNotify({
+      name,
+      phone,
+      email,
+      serviceType,
+      address,
+      description,
+      preferredContact,
+      source,
     });
-    console.error(
-      "[quotes] ALERT: quote %s saved but notify failed: %s",
-      quote.id,
-      notifyReason,
-    );
-  }
 
   return NextResponse.json(
     {

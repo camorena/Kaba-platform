@@ -260,7 +260,7 @@ export function getBotReply(
     ])
   ) {
     return {
-      text: `Free on-site estimates across ${area}. The surest next step is our estimate form, or call ${phone}. You can also leave a name and phone below for a callback note.`,
+      text: `Free on-site estimates across ${area}. The surest next step is our estimate form, or call ${phone}. You can also leave a name and phone below and our office will call you back.`,
       collectLead: true,
       suggestions: ["Fence services", "Service area", "Materials", "Hours & contact"],
       cta: { label: "Request a free estimate", href: "/contact" },
@@ -458,7 +458,7 @@ export function getBotReply(
     ])
   ) {
     return {
-      text: `Of course — call ${phone}, or open the estimate form. You can also leave a name and phone below as a callback note.`,
+      text: `Of course — call ${phone}, or open the estimate form. You can also leave a name and phone below and our office will call you back.`,
       collectLead: true,
       suggestions: ["Hours & contact", "Get a quote"],
       cta: { label: `Call ${phone}`, href: phoneHref },
@@ -485,7 +485,7 @@ export function formatLeadConfirmation(
   catalog: ChatbotCatalog = DEFAULT_CHATBOT_CATALOG,
 ): string {
   const contact = catalog.contact ?? DEFAULT_CHATBOT_CONTACT;
-  return `Thanks, ${lead.name.trim()}. We saved your note here (${lead.phone.trim()}${
-    lead.email.trim() ? `, ${lead.email.trim()}` : ""
-  }). Chat notes are not delivered to our office yet — please call ${contact.phone} or finish the free estimate form so we receive your request.`;
+  return `Thanks, ${lead.name.trim()}. Your callback request was sent to our office — we'll call you at ${lead.phone.trim()}${
+    lead.email.trim() ? ` and email a confirmation to ${lead.email.trim()}` : ""
+  }. Need us sooner? Call ${contact.phone}.`;
 }

@@ -2,6 +2,7 @@
  * Postgres PaymentsRepo — ledger + Stripe webhook idempotency (0003_stripe.sql).
  */
 
+import { isUuid } from "@/lib/db/ids";
 import { query } from "@/lib/db/postgres/connection";
 import { createPostgresInvoicesRepo } from "@/lib/db/postgres/invoices";
 import { mapPayment, type PaymentRow } from "@/lib/db/postgres/mappers";
@@ -34,6 +35,7 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
     },
 
     async listForInvoice(invoiceId) {
+      if (!isUuid(invoiceId)) return [];
       const { rows } = await query<PaymentRow>(
         `select p.*, i.number as invoice_number, i.customer_name
          from payments p
@@ -46,6 +48,7 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
     },
 
     async get(id) {
+      if (!isUuid(id)) return undefined;
       const { rows } = await query<PaymentRow>(
         `select p.*, i.number as invoice_number, i.customer_name
          from payments p
@@ -83,6 +86,7 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
     },
 
     async paidCentsForInvoice(invoiceId) {
+      if (!isUuid(invoiceId)) return 0;
       const { rows } = await query<{ sum: string | null }>(
         `select coalesce(sum(amount_cents), 0)::text as sum
          from payments

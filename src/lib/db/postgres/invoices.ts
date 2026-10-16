@@ -3,6 +3,7 @@
  */
 
 import { demoUnitCentsForService } from "@/lib/db/demo-amounts";
+import { isUuid } from "@/lib/db/ids";
 import { query } from "@/lib/db/postgres/connection";
 import {
   mapInvoice,
@@ -62,6 +63,7 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
     },
 
     async get(id) {
+      if (!isUuid(id)) return undefined;
       const { rows } = await query<InvoiceRow>(
         `select * from invoices where id = $1`,
         [id],
@@ -124,6 +126,7 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
     },
 
     async updateStatus(id, status: InvoiceStatus) {
+      if (!isUuid(id)) return undefined;
       const { rows } = await query<InvoiceRow>(
         `update invoices set status = $2, updated_at = now()
          where id = $1
@@ -136,6 +139,7 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
     },
 
     async markPayLinkNotified(id, at) {
+      if (!isUuid(id)) return undefined;
       const stamp = at === undefined ? new Date().toISOString() : at;
       const { rows } = await query<InvoiceRow>(
         `update invoices

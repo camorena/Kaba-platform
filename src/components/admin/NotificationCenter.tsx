@@ -1,56 +1,169 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useAdminI18n } from "@/components/admin/LocaleProvider";
+import { formatMoney } from "@/lib/admin/format";
+import type { AdminLocale } from "@/lib/admin/i18n";
+import type { AdminNotification } from "@/lib/admin/notifications-derive";
+import { chicagoYmd } from "@/lib/db/visits";
 
-type StubNote = {
-  id: string;
-  titleKey: string;
-  bodyKey: string;
-  timeKey: string;
-  href: string;
-  unread?: boolean;
+type FeedResponse = {
+  items: AdminNotification[];
+  unreadCount: number;
+  total: number;
 };
 
-const STUB: StubNote[] = [
-  {
-    id: "n1",
-    titleKey: "notifications.n1title",
-    bodyKey: "notifications.n1body",
-    timeKey: "notifications.time26h",
-    href: "/admin/quotes/q_seed_1",
-    unread: true,
-  },
-  {
-    id: "n2",
-    titleKey: "notifications.n2title",
-    bodyKey: "notifications.n2body",
-    timeKey: "notifications.time2d",
-    href: "/admin/calendar",
-    unread: true,
-  },
-  {
-    id: "n3",
-    titleKey: "notifications.n3title",
-    bodyKey: "notifications.n3body",
-    timeKey: "notifications.time3d",
-    href: "/admin/invoices",
-  },
-];
+const POLL_MS = 60_000;
+
+function rtf(locale: AdminLocale) {
+  return new Intl.RelativeTimeFormat(locale === "es" ? "es-CO" : "en-US", {
+    numeric: "auto",
+  });
+}
+
+/** "hace 26 h", "hace 3 d", "hace 5 min" — from an ISO instant. */
+function relativeFromNow(iso: string, locale: AdminLocale, now: number): string {
+  const diffMs = new Date(iso).getTime() - now;
+  const abs = Math.abs(diffMs);
+  const f = rtf(locale);
+  if (abs < 60 * 60_000) return f.format(Math.round(diffMs / 60_000), "minute");
+  if (abs < 48 * 3_600_000) return f.format(Math.round(diffMs / 3_600_000), "hour");
+  return f.format(Math.round(diffMs / 86_400_000), "day");
+}
+
+/** "hoy", "mañana", "pasado mañana" — calendar days in America/Chicago. */
+function relativeDay(ymd: string, locale: AdminLocale, now: number): string {
+  const today = chicagoYmd(new Date(now));
+  const toUtc = (d: string) => {
+    const [y, m, dd] = d.split("-").map(Number);
+    return Date.UTC(y, m - 1, dd);
+  };
+  const days = Math.round((toUtc(ymd) - toUtc(today)) / 86_400_000);
+  return rtf(locale).format(days, "day");
+}
+
+function joinParts(parts: Array<string | number | undefined>): string {
+  return parts
+    .map((p) => (p === undefined ? "" : String(p).trim()))
+    .filter(Boolean)
+    .join(" · ");
+}
+
+function describe(
+  n: AdminNotification,
+  t: (key: string, vars?: Record<string, string | number>) => string,
+): { title: string; body: string } {
+  const v = n.vars;
+  switch (n.kind) {
+    case "quote_new":
+      return {
+        title: t("notifications.quoteNewTitle", { name: v.name }),
+        body: joinParts([
+          v.service,
+          v.city,
+          Number(v.days) >= 1
+            ? t("notifications.quoteNewBody", { days: v.days })
+            : t("notifications.quoteNewBodyToday"),
+        ]),
+      };
+    case "quote_quiet":
+      return {
+        title: t("notifications.quoteQuietTitle", { name: v.name }),
+        body: t("notifications.quoteQuietBody", { days: v.days }),
+      };
+    case "notify_failed":
+      return {
+        title: t("notifications.notifyFailedTitle", { name: v.name }),
+        body: t("notifications.notifyFailedBody", { attempts: v.attempts }),
+      };
+    case "visit_upcoming":
+      return {
+        title: t(
+          Number(v.install) ? "notifications.installTitle" : "notifications.visitTitle",
+          { name: v.name },
+        ),
+        body: joinParts([v.service, v.city]),
+      };
+    case "visit_reminder_missing":
+      return {
+        title: t("notifications.reminderMissingTitle", { name: v.name }),
+        body: t("notifications.reminderMissingBody"),
+      };
+    case "invoice_open":
+      return {
+        title: t("notifications.invoiceOpenTitle", { number: v.number }),
+        body: t("notifications.invoiceOpenBody", {
+          name: v.name,
+          amount: formatMoney(Number(v.balanceCents) || 0),
+        }),
+      };
+    case "payment_received":
+      return {
+        title: t("notifications.paymentTitle", { number: v.number }),
+        body: t("notifications.paymentBody", {
+          name: v.name,
+          amount: formatMoney(Number(v.amountCents) || 0),
+        }),
+      };
+  }
+}
 
 export default function NotificationCenter() {
-  const { t } = useAdminI18n();
+  const { t, locale } = useAdminI18n();
   const [open, setOpen] = useState(false);
-  const [read, setRead] = useState<Set<string>>(new Set());
+  const [feed, setFeed] = useState<FeedResponse | null>(null);
+  const [error, setError] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const panelId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  const unreadCount = useMemo(
-    () => STUB.filter((n) => n.unread && !read.has(n.id)).length,
-    [read],
-  );
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/notifications", { cache: "no-store" });
+      if (!res.ok) throw new Error(String(res.status));
+      const data = (await res.json()) as FeedResponse;
+      setFeed(data);
+      setError(false);
+    } catch {
+      setError(true);
+    } finally {
+      setNow(Date.now());
+    }
+  }, []);
+
+  // Initial load + 60s poll while the tab is visible; refresh on return to tab.
+  useEffect(() => {
+    let timer: number | null = null;
+    const start = () => {
+      if (timer === null) timer = window.setInterval(() => void load(), POLL_MS);
+    };
+    const stop = () => {
+      if (timer !== null) window.clearInterval(timer);
+      timer = null;
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void load();
+        start();
+      } else {
+        stop();
+      }
+    };
+    // Deferred so the first fetch runs outside the effect body.
+    const first = window.setTimeout(() => void load(), 0);
+    if (document.visibilityState === "visible") start();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.clearTimeout(first);
+      stop();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [load]);
+
+  const items = feed?.items ?? [];
+  const unreadCount = feed?.unreadCount ?? 0;
 
   useEffect(() => {
     if (!open) return;
@@ -76,8 +189,46 @@ export default function NotificationCenter() {
     };
   }, [open]);
 
+  async function postRead(body: { keys: string[] } | { all: true }) {
+    try {
+      await fetch("/api/admin/notifications/read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    } finally {
+      void load();
+    }
+  }
+
+  function markOne(key: string) {
+    setFeed((prev) => {
+      if (!prev) return prev;
+      const target = prev.items.find((n) => n.key === key);
+      if (!target?.unread) return prev;
+      return {
+        ...prev,
+        unreadCount: Math.max(0, prev.unreadCount - 1),
+        items: prev.items.map((n) => (n.key === key ? { ...n, unread: false } : n)),
+      };
+    });
+    void postRead({ keys: [key] });
+  }
+
   function markAll() {
-    setRead(new Set(STUB.map((n) => n.id)));
+    setFeed((prev) =>
+      prev
+        ? { ...prev, unreadCount: 0, items: prev.items.map((n) => ({ ...n, unread: false })) }
+        : prev,
+    );
+    void postRead({ all: true });
+  }
+
+  function toggle() {
+    setOpen((v) => {
+      if (!v) void load();
+      return !v;
+    });
   }
 
   function close() {
@@ -96,7 +247,7 @@ export default function NotificationCenter() {
         }
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
           <path
@@ -137,8 +288,9 @@ export default function NotificationCenter() {
                 </p>
                 <button
                   type="button"
-                  className="admin-touch mt-1 inline-flex min-h-9 items-center text-[0.6875rem] font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+                  className="admin-touch mt-1 inline-flex min-h-9 items-center text-[0.6875rem] font-semibold text-bronze-dark hover:underline disabled:cursor-default disabled:opacity-50 disabled:no-underline dark:text-bronze-light"
                   onClick={markAll}
+                  disabled={unreadCount === 0}
                 >
                   {t("notifications.markAll")}
                 </button>
@@ -155,47 +307,79 @@ export default function NotificationCenter() {
                 </svg>
               </button>
             </div>
-            <ul className="max-h-[min(24rem,calc(100dvh-8rem))] divide-y divide-ink/6 overflow-y-auto overscroll-contain sm:max-h-[min(20rem,50vh)]">
-              {STUB.map((n) => {
-                const isUnread = Boolean(n.unread && !read.has(n.id));
-                return (
-                  <li key={n.id}>
-                    <Link
-                      href={n.href}
-                      className="admin-touch block px-3 py-3 transition hover:bg-[var(--admin-row-hover)] sm:px-3.5 sm:py-2.5"
-                      onClick={() => {
-                        setRead((prev) => new Set(prev).add(n.id));
-                        setOpen(false);
-                      }}
-                    >
-                      <div className="flex items-start gap-2.5">
-                        {isUnread ? (
-                          <span
-                            className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-bronze"
-                            aria-hidden
-                          />
-                        ) : (
-                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0" aria-hidden />
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <p className="break-words text-sm font-semibold leading-snug text-ink">
-                            {t(n.titleKey)}
-                          </p>
-                          <p className="admin-notify-body mt-1 text-xs leading-relaxed text-muted">
-                            {t(n.bodyKey)}
-                          </p>
-                          <p className="mt-1.5 text-[0.625rem] text-muted-light">
-                            {t(n.timeKey)}
-                          </p>
+            {feed === null && !error ? (
+              <p className="px-3 py-6 text-center text-xs text-muted sm:px-3.5" role="status">
+                {t("notifications.loading")}
+              </p>
+            ) : error && feed === null ? (
+              <div className="px-3 py-6 text-center sm:px-3.5" role="alert">
+                <p className="text-xs text-muted">{t("notifications.loadError")}</p>
+                <button
+                  type="button"
+                  className="admin-touch mt-2 inline-flex min-h-9 items-center text-[0.6875rem] font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
+                  onClick={() => void load()}
+                >
+                  {t("notifications.retry")}
+                </button>
+              </div>
+            ) : items.length === 0 ? (
+              <p className="px-3 py-6 text-center text-sm text-muted sm:px-3.5" role="status">
+                {t("notifications.empty")}
+              </p>
+            ) : (
+              <ul className="max-h-[min(24rem,calc(100dvh-8rem))] divide-y divide-ink/6 overflow-y-auto overscroll-contain sm:max-h-[min(20rem,50vh)]">
+                {items.map((n) => {
+                  const { title, body } = describe(n, t);
+                  const when = n.day
+                    ? relativeDay(n.day, locale, now)
+                    : relativeFromNow(n.at, locale, now);
+                  return (
+                    <li key={n.key}>
+                      <Link
+                        href={n.href}
+                        className="admin-touch block px-3 py-3 transition hover:bg-[var(--admin-row-hover)] sm:px-3.5 sm:py-2.5"
+                        onClick={() => {
+                          markOne(n.key);
+                          setOpen(false);
+                        }}
+                      >
+                        <div className="flex items-start gap-2.5">
+                          {n.unread ? (
+                            <span
+                              className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                                n.severity === "urgent" ? "bg-danger" : "bg-bronze"
+                              }`}
+                              aria-hidden
+                            />
+                          ) : (
+                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0" aria-hidden />
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p
+                              className={`break-words text-sm leading-snug text-ink ${
+                                n.unread ? "font-semibold" : "font-medium"
+                              }`}
+                            >
+                              {title}
+                            </p>
+                            {body ? (
+                              <p className="admin-notify-body mt-1 text-xs leading-relaxed text-muted">
+                                {body}
+                              </p>
+                            ) : null}
+                            <p className="mt-1.5 text-[0.625rem] text-muted-light">
+                              {when}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
             <p className="border-t border-ink/8 px-3 py-2.5 text-[0.625rem] leading-relaxed text-muted sm:px-3.5">
-              {t("notifications.stubFooter")}
+              {t("notifications.footer")}
             </p>
           </div>
         </>

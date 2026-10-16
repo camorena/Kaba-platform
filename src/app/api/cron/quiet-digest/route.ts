@@ -5,7 +5,7 @@
  *   → 07:00 America/Chicago during CDT (UTC-5)
  *   → 06:00 America/Chicago during CST (UTC-6)
  *
- * Auth: Bearer CRON_SECRET and/or x-vercel-cron: 1 (see src/lib/cron/auth.ts).
+ * Auth: Authorization: Bearer CRON_SECRET only (see src/lib/cron/auth.ts).
  *
  * Always returns 200 when authorized (even if mail is off or list is empty)
  * so cron logs stay readable; unauthorized → 401.

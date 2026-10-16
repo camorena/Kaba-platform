@@ -121,6 +121,20 @@ export type ProfilesRepo = {
   list(): Promise<ProfileRecord[]>;
 };
 
+/** Per-admin read state for the derived notifications bell. */
+export type NotificationReadState = {
+  /** ISO instant of the last "mark all as read" (null = never). */
+  clearedAt: string | null;
+  readKeys: Set<string>;
+};
+
+export type NotificationReadsRepo = {
+  getState(profileId: string): Promise<NotificationReadState>;
+  markRead(profileId: string, keys: string[]): Promise<void>;
+  /** Mark these keys read and stamp clearedAt = now. */
+  markAll(profileId: string, keys: string[]): Promise<void>;
+};
+
 export type TrustClaimsRepo = {
   get(): Promise<TrustClaimsRecord>;
   save(
@@ -136,4 +150,5 @@ export type DataRepos = {
   customers: CustomersRepo;
   trustClaims: TrustClaimsRepo;
   profiles: ProfilesRepo;
+  notificationReads: NotificationReadsRepo;
 };
