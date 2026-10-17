@@ -59,6 +59,9 @@ export function generateMetadata(): Metadata {
       "chain link fence",
       "free fence estimate",
     ],
+    verification: {
+      google: "sVvUmbpE7hM8ALK5kV3d9OwDZ4DoQqry7YKbnzrcXYo",
+    },
     authors: [{ name: brand.name }],
     creator: brand.name,
     icons: {
