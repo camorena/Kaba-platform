@@ -9,10 +9,10 @@ import {
   getPublishedKabaExperience,
   getPublishedProjects,
   getPublishedServiceTowns,
-  getPublishedTestimonials,
   getPublishedTrustPoints,
   getPublishedYourNeeds,
 } from "@/lib/cms/public";
+import { getFeaturedReviews, getPublicHighlightStats } from "@/lib/reviews/public";
 
 export function generateMetadata(): Metadata {
   const brand = getPublishedHeroCopy();
@@ -109,7 +109,7 @@ function TrustIcon({ icon }: { icon: "home" | "shield" | "pin" }) {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
   const contact = getPublishedContactInfo();
   const hero = getPublishedHeroCopy();
   const trustPoints = getPublishedTrustPoints();
@@ -119,8 +119,11 @@ export default function HomePage() {
   const teaser = getPublishedProjects()
     .filter((p) => p.category === "fence")
     .slice(0, 4);
-  // Only real, verified testimonials (CMS-published). Empty by default.
-  const homeReviews = getPublishedTestimonials().slice(0, 3);
+  // Only real reviews an admin published AND featured. Empty by default.
+  const [homeReviews, highlights] = await Promise.all([
+    getFeaturedReviews(3),
+    getPublicHighlightStats(),
+  ]);
   const towns = getPublishedServiceTowns();
 
   return (
@@ -197,6 +200,28 @@ export default function HomePage() {
           </ul>
         </div>
       </section>
+
+      {/* Highlight stats — only owner-set, visible figures; nothing by default */}
+      {highlights.length > 0 ? (
+        <section className="border-b border-ink/8 bg-surface py-8 sm:py-10" aria-label="Kaba Fence at a glance">
+          <ul
+            className={`container-page grid gap-6 text-center ${
+              highlights.length >= 4 ? "grid-cols-2 lg:grid-cols-4" : highlights.length === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
+            }`}
+          >
+            {highlights.map((h) => (
+              <li key={h.id}>
+                <p className="font-display text-3xl font-semibold tracking-[-0.02em] text-ink sm:text-4xl">
+                  {h.value}
+                </p>
+                <p className="mt-1.5 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bronze-dark dark:text-bronze-light">
+                  {h.label}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {/* Your Needs */}
       <section className="bg-surface section-y">
@@ -420,7 +445,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Reviews — only rendered when real, verified testimonials are published */}
+      {/* Reviews — only rendered when real reviews are published and featured */}
       {homeReviews.length > 0 ? (
         <section className="bg-ivory-muted/60 section-y">
           <div className="container-page">
@@ -440,7 +465,7 @@ export default function HomePage() {
             </Reveal>
             <ul className="mt-10 grid gap-5 sm:grid-cols-3">
               {homeReviews.map((review, i) => (
-                <Reveal as="li" key={review.name} delay={i * 80} className="review-card flex flex-col">
+                <Reveal as="li" key={review.id} delay={i * 80} className="review-card flex flex-col">
                   <span
                     className="font-display text-3xl leading-none text-bronze/50"
                     aria-hidden
@@ -448,11 +473,13 @@ export default function HomePage() {
                     “
                   </span>
                   <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
-                    {review.quote}
+                    {review.body}
                   </p>
                   <p className="mt-5 text-sm font-semibold text-ink">
-                    {review.name}{" "}
-                    <span className="font-normal text-muted">| {review.town}</span>
+                    {review.customerName}
+                    {review.city ? (
+                      <span className="font-normal text-muted"> | {review.city}</span>
+                    ) : null}
                   </p>
                 </Reveal>
               ))}

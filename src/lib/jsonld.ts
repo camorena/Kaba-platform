@@ -178,3 +178,49 @@ export function faqPageJsonLd(
     })),
   };
 }
+
+export type ReviewJsonLdInput = {
+  customerName: string;
+  rating: number;
+  body: string;
+  reviewDate: string;
+};
+
+/**
+ * AggregateRating + Review for the business node (same @id as
+ * localBusinessJsonLd, so crawlers merge them). Only call with real,
+ * published reviews — returns null when there are none.
+ */
+export function reviewsJsonLd(
+  reviews: ReadonlyArray<ReviewJsonLdInput>,
+  brandName: string,
+): JsonLd | null {
+  if (!reviews.length) return null;
+  const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+  return {
+    "@context": "https://schema.org",
+    "@type": ["HomeAndConstructionBusiness", "LocalBusiness"],
+    "@id": `${siteUrl}/#business`,
+    name: brandName,
+    url: siteUrl,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: Number(avg.toFixed(2)),
+      reviewCount: reviews.length,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: reviews.slice(0, 50).map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.customerName },
+      datePublished: r.reviewDate,
+      reviewBody: r.body,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    })),
+  };
+}

@@ -16,6 +16,7 @@ export type AdminPageId =
   | "templates"
   | "activity"
   | "reports"
+  | "reviews"
   | "content"
   | "settings";
 

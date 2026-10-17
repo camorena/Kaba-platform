@@ -14,6 +14,10 @@ import {
 } from "@/lib/db/memory/trust-claims";
 import { memoryProfilesRepo } from "@/lib/db/memory/profiles";
 import { memoryNotificationReadsRepo } from "@/lib/db/memory/notification-reads";
+import {
+  memoryHighlightStatsRepo,
+  memoryReviewsRepo,
+} from "@/lib/db/memory/reviews";
 
 export function createMemoryRepos(): DataRepos {
   return {
@@ -25,6 +29,8 @@ export function createMemoryRepos(): DataRepos {
     trustClaims: memoryTrustClaimsRepo,
     profiles: memoryProfilesRepo,
     notificationReads: memoryNotificationReadsRepo,
+    reviews: memoryReviewsRepo,
+    highlightStats: memoryHighlightStatsRepo,
   };
 }
 

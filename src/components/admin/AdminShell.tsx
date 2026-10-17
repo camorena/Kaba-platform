@@ -31,6 +31,7 @@ const nav = [
   { href: "/admin/templates", icon: "templates" },
   { href: "/admin/activity", icon: "pulse" },
   { href: "/admin/reports", icon: "chart" },
+  { href: "/admin/reviews", icon: "star" },
   { href: "/admin/content", icon: "content" },
   { href: "/admin/settings", icon: "gear" },
 ];
@@ -38,6 +39,12 @@ const nav = [
 function NavIcon({ name }: { name: string }) {
   const common = "h-4 w-4 shrink-0 opacity-80";
   switch (name) {
+    case "star":
+      return (
+        <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M11.48 3.5a.56.56 0 011.04 0l2.13 5.11a.56.56 0 00.47.34l5.52.44c.5.04.7.66.32.99l-4.2 3.6a.56.56 0 00-.18.56l1.28 5.39a.56.56 0 01-.84.61l-4.73-2.89a.56.56 0 00-.58 0l-4.73 2.89a.56.56 0 01-.84-.61l1.28-5.39a.56.56 0 00-.18-.56l-4.2-3.6a.56.56 0 01.32-.99l5.52-.44a.56.56 0 00.47-.34l2.13-5.11z" />
+        </svg>
+      );
     case "grid":
       return (
         <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

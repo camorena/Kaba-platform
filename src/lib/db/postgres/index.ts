@@ -7,6 +7,10 @@ import { createPostgresQuotesRepo } from "@/lib/db/postgres/quotes";
 import { createPostgresTrustClaimsRepo } from "@/lib/db/postgres/trust-claims";
 import { createPostgresProfilesRepo } from "@/lib/db/postgres/profiles";
 import { createPostgresNotificationReadsRepo } from "@/lib/db/postgres/notification-reads";
+import {
+  createPostgresHighlightStatsRepo,
+  createPostgresReviewsRepo,
+} from "@/lib/db/postgres/reviews";
 import type { DataRepos } from "@/lib/db/repos/types";
 
 /**
@@ -26,6 +30,8 @@ export function createPostgresRepos(): DataRepos {
     trustClaims: createPostgresTrustClaimsRepo(),
     profiles: createPostgresProfilesRepo(),
     notificationReads: createPostgresNotificationReadsRepo(),
+    reviews: createPostgresReviewsRepo(),
+    highlightStats: createPostgresHighlightStatsRepo(),
   };
 }
 

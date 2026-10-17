@@ -23,7 +23,8 @@ const NAV_BASE: { href: string; keywords?: string }[] = [
   { href: "/admin/pricebook", keywords: "rates estimate calculator materials precios" },
   { href: "/admin/templates", keywords: "sms email follow-up copy plantillas" },
   { href: "/admin/activity", keywords: "feed timeline log actividad" },
-  { href: "/admin/reports", keywords: "charts analytics informes" },
+  { href: "/admin/reports", keywords: "charts analytics statistics estadísticas informes" },
+  { href: "/admin/reviews", keywords: "reviews testimonials ratings reseñas calificaciones" },
   { href: "/admin/content", keywords: "cms fence types services projects faqs site copy about testimonials materials media contenido" },
   { href: "/admin/settings", keywords: "auth env configuración" },
 ];

@@ -128,6 +128,7 @@ export function navLabelKey(href: string): string {
     "/admin/templates": "nav.templates",
     "/admin/activity": "nav.activity",
     "/admin/reports": "nav.reports",
+    "/admin/reviews": "nav.reviews",
     "/admin/content": "nav.content",
     "/admin/settings": "nav.settings",
   };

@@ -4,6 +4,12 @@
  */
 
 import type { InvoiceLineInput } from "@/lib/invoices/lines";
+import type { ReviewInput, ReviewPatch, ReviewRecord } from "@/lib/reviews/model";
+import type {
+  HighlightStatInput,
+  HighlightStatPatch,
+  HighlightStatRecord,
+} from "@/lib/stats/highlights";
 import type {
   CustomerPatch,
   CustomerProfile,
@@ -154,6 +160,27 @@ export type TrustClaimsRepo = {
   ): Promise<TrustClaimsRecord>;
 };
 
+export type ReviewsRepo = {
+  /** All reviews, newest review_date first (admin). */
+  list(): Promise<ReviewRecord[]>;
+  /** Published only (public). */
+  listPublished(): Promise<ReviewRecord[]>;
+  get(id: string): Promise<ReviewRecord | undefined>;
+  create(input: ReviewInput): Promise<ReviewRecord>;
+  update(id: string, patch: ReviewPatch): Promise<ReviewRecord | undefined>;
+  remove(id: string): Promise<boolean>;
+};
+
+export type HighlightStatsRepo = {
+  list(): Promise<HighlightStatRecord[]>;
+  create(input: HighlightStatInput): Promise<HighlightStatRecord>;
+  update(
+    id: string,
+    patch: HighlightStatPatch,
+  ): Promise<HighlightStatRecord | undefined>;
+  remove(id: string): Promise<boolean>;
+};
+
 export type DataRepos = {
   readonly adapter: "memory" | "postgres";
   quotes: QuotesRepo;
@@ -163,4 +190,6 @@ export type DataRepos = {
   trustClaims: TrustClaimsRepo;
   profiles: ProfilesRepo;
   notificationReads: NotificationReadsRepo;
+  reviews: ReviewsRepo;
+  highlightStats: HighlightStatsRepo;
 };
