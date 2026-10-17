@@ -1,5 +1,6 @@
 "use client";
 
+import { invoiceLinesTotalCents } from "@/lib/invoices/lines";
 import EmptyState from "@/components/admin/EmptyState";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { downloadCsv } from "@/lib/admin/csv";
@@ -57,7 +58,7 @@ export default function InvoicesPanel({
     const rows: (string | number)[][] = [
       t("invoices.csvHeaders").split(","),
       ...filtered.map((inv) => {
-        const total = inv.lines.reduce((s, l) => s + l.quantity * l.unitCents, 0);
+        const total = invoiceLinesTotalCents(inv.lines);
         const paid = paidMap[inv.id] ?? 0;
         return [
           inv.number,
@@ -218,10 +219,7 @@ export default function InvoicesPanel({
         <>
           <ul className="admin-card-list space-y-2.5 md:hidden">
             {filtered.map((inv) => {
-              const total = inv.lines.reduce(
-                (s, l) => s + l.quantity * l.unitCents,
-                0,
-              );
+              const total = invoiceLinesTotalCents(inv.lines);
               const paid = paidMap[inv.id] ?? 0;
               const balance = Math.max(0, total - paid);
               return (
@@ -281,10 +279,7 @@ export default function InvoicesPanel({
                 </thead>
                 <tbody>
                   {filtered.map((inv) => {
-                    const total = inv.lines.reduce(
-                      (s, l) => s + l.quantity * l.unitCents,
-                      0,
-                    );
+                    const total = invoiceLinesTotalCents(inv.lines);
                     const paid = paidMap[inv.id] ?? 0;
                     const balance = Math.max(0, total - paid);
                     return (

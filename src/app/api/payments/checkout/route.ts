@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { INVOICE_NOT_SENDABLE, isInvoiceSendable } from "@/lib/invoices/lines";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
 import { getInvoice, invoiceSubtotalCents } from "@/lib/admin/invoices-store";
 import { paidCentsForInvoice } from "@/lib/admin/payments-store";
@@ -61,6 +62,16 @@ export async function POST(request: Request) {
   if (invoice.status === "void" || invoice.status === "paid") {
     return NextResponse.json(
       { error: `Invoice is ${invoice.status} — cannot collect a deposit.` },
+      { status: 400 },
+    );
+  }
+
+  if (!isInvoiceSendable(invoice.lines)) {
+    return NextResponse.json(
+      {
+        error: "La factura necesita al menos una línea con total mayor que $0.",
+        code: INVOICE_NOT_SENDABLE,
+      },
       { status: 400 },
     );
   }

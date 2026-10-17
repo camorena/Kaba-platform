@@ -14,6 +14,8 @@ import {
 } from "@/lib/admin/invoices-store";
 import { notifyInvoicePayLink } from "@/lib/db/notify";
 import { isMailReady } from "@/lib/mail";
+import { INVOICE_NOT_SENDABLE } from "@/lib/invoices/lines";
+import { isPubliclyPayable } from "@/lib/pay/public";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,6 +44,18 @@ export async function POST(
   const invoice = await getInvoice(id);
   if (!invoice) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
+  }
+
+  if (!isPubliclyPayable(invoice)) {
+    return NextResponse.json(
+      {
+        error: "La factura necesita al menos una línea con total mayor que $0.",
+        code: INVOICE_NOT_SENDABLE,
+        delivered: false,
+        mailReady: true,
+      },
+      { status: 400 },
+    );
   }
 
   const result = await notifyInvoicePayLink(invoice, { request });

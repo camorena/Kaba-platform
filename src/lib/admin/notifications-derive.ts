@@ -4,6 +4,7 @@
  * tested without a database.
  */
 
+import { invoiceLinesTotalCents } from "@/lib/invoices/lines";
 import { isQuietQuote, QUIET_DAYS_THRESHOLD } from "@/lib/db/quiet";
 import type {
   InvoiceRecord,
@@ -180,7 +181,7 @@ export function deriveNotifications(
   for (const inv of input.invoices) {
     if (inv.demo) continue;
     if (inv.status !== "sent" && inv.status !== "partial") continue;
-    const total = inv.lines.reduce((s, l) => s + l.quantity * l.unitCents, 0);
+    const total = invoiceLinesTotalCents(inv.lines);
     const paid = input.paidByInvoiceId.get(inv.id) ?? 0;
     const balance = total - paid;
     if (balance <= 0) continue;

@@ -3,6 +3,7 @@
  * Default adapter is memory (no DATABASE_URL required for build/demo).
  */
 
+import type { InvoiceLineInput } from "@/lib/invoices/lines";
 import type {
   CustomerPatch,
   CustomerProfile,
@@ -69,6 +70,17 @@ export type InvoicesRepo = {
     id: string,
     at?: string | null,
   ): Promise<InvoiceRecord | undefined>;
+  /**
+   * Replace all line items atomically. Only while status is draft/sent
+   * (EDITABLE_INVOICE_STATUSES); otherwise "locked".
+   */
+  replaceLines(
+    id: string,
+    lines: InvoiceLineInput[],
+  ): Promise<
+    | { ok: true; invoice: InvoiceRecord }
+    | { ok: false; reason: "not_found" | "locked" }
+  >;
   /** Pure helper — sync on purpose. */
   subtotalCents(inv: InvoiceRecord): number;
   stats(paidByInvoiceId?: Map<string, number>): Promise<{

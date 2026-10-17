@@ -139,7 +139,7 @@ export const memoryPaymentsRepo: PaymentsRepo = {
       status: "recorded",
       reference: (input.reference ?? "").trim(),
       notes: (input.notes ?? "").trim(),
-      demo: input.demo ?? true,
+      demo: input.demo ?? inv.demo,
       stripeEventId,
       stripeCheckoutSessionId: sessionId,
     };

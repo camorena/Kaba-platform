@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getInvoiceByPayToken, invoiceSubtotalCents } from "@/lib/admin/invoices-store";
 import { paidCentsForInvoice } from "@/lib/admin/payments-store";
 import { appOrigin } from "@/lib/pay/origin";
+import { isPubliclyPayable, isServablePayToken } from "@/lib/pay/public";
 import { isValidPayTokenShape, payPath } from "@/lib/pay/token";
 import { getStripe } from "@/lib/stripe/client";
 import {
@@ -25,6 +26,10 @@ export async function POST(
   const token = decodeURIComponent(raw ?? "").trim();
   if (!token || !isValidPayTokenShape(token)) {
     return NextResponse.json({ error: "Invalid pay token." }, { status: 400 });
+  }
+
+  if (!isServablePayToken(token)) {
+    return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
   }
 
   const status = getStripeStatus();
@@ -48,7 +53,7 @@ export async function POST(
   }
 
   const invoice = await getInvoiceByPayToken(token);
-  if (!invoice) {
+  if (!invoice || !isPubliclyPayable(invoice)) {
     return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
   }
   if (invoice.status === "void" || invoice.status === "paid") {

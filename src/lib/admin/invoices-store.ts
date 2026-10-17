@@ -1,11 +1,12 @@
 /**
- * Invoice store facade — memory adapter by default (demo amounts).
+ * Invoice store facade — memory adapter by default; Postgres in production.
  * See db/migrations/0001_ops_foundation.sql + src/lib/db/.
  */
 
 import "server-only";
 
 import { getRepos } from "@/lib/db/adapter";
+import type { InvoiceLineInput } from "@/lib/invoices/lines";
 import type {
   InvoiceLine,
   InvoiceRecord,
@@ -38,6 +39,10 @@ export async function createInvoiceFromQuote(
   quoteId: string,
 ): Promise<InvoiceRecord | null> {
   return getRepos().invoices.createFromQuote(quoteId);
+}
+
+export async function replaceInvoiceLines(id: string, lines: InvoiceLineInput[]) {
+  return getRepos().invoices.replaceLines(id, lines);
 }
 
 export async function updateInvoiceStatus(

@@ -134,7 +134,7 @@ const en = {
     dashboard: {
       title: "Dashboard",
       meta: "Ops brief",
-      description: "Attention items, funnel, and recent movement. Demo amounts until Postgres + credentials are on.",
+      description: "Attention items, funnel, and recent movement from recorded quotes, invoices, and payments.",
       needsAttention: "Needs attention",
       newQuotes: "New quotes",
       openInvoices: "Open invoices",
@@ -209,7 +209,7 @@ const en = {
     invoices: {
       title: "Invoices",
       meta: "Billing",
-      description: "Demo drafts from quotes with synthetic amounts. PDF/email and real pricing later."
+      description: "Invoices created from quotes. Set line items and prices on the draft before sending it or sharing the pay link."
     },
     payments: {
       title: "Payments",
@@ -314,7 +314,7 @@ const en = {
     },
     reports: {
       title: "Reports",
-      description: "Lightweight ops snapshot — SVG/CSS charts only. Demo amounts; no analytics vendor."
+      description: "Lightweight ops snapshot — SVG/CSS charts of recorded amounts; no analytics vendor."
     },
     content: {
       title: "Content",
@@ -663,7 +663,7 @@ const en = {
   },
   invoices: {
     createFrom: "Create draft from quote",
-    createFromHint: "Draft with a synthetic demo amount — not a real bid. No PDF/email yet.",
+    createFromHint: "Creates a draft with the customer details. Add line items and prices before sending.",
     quoteLabel: "Quote",
     pickQuote: "Pick a quote…",
     pickQuoteFirst: "Pick a quote first.",
@@ -674,7 +674,7 @@ const en = {
     exportTitle: "Download filtered invoices as CSV",
     allCount: "All ({count})",
     emptyTitle: "No invoices yet",
-    emptyDesc: "Create a draft from a quote above. Amounts are synthetic demo data until estimating is wired.",
+    emptyDesc: "Create a draft from a quote above, then fill in line items with the agreed prices.",
     colNumber: "Number",
     colCustomer: "Customer",
     colTotal: "Total",
@@ -895,8 +895,8 @@ const en = {
     allServices: "All services",
     quotes: "Quotes",
     wonRate: "Won rate",
-    openAr: "Open AR (demo)",
-    collectedStub: "Collected (stub)",
+    openAr: "Open AR",
+    collectedStub: "Collected",
     open: "Open",
     paid: "Paid",
     other: "Other",
@@ -946,12 +946,28 @@ const en = {
     pricebookLink: "Price book →",
     nextStepTitle: "Next step:",
     nextStepBody:
-      "after the site visit, create a demo invoice from this quote, then record payments on the invoice detail. Amounts stay synthetic until Stripe + DB are wired.",
+      "after the site visit, create the invoice draft from this quote, fill in line items with the agreed prices, and send it; record payments on the invoice detail.",
     balanceDueTitle: "Balance due:",
     balanceDueBody:
       "Record a payment or adjust status. Collect a Stripe deposit when keys are set.",
     sourceQuote: "Source quote",
     lineItems: "Line items",
+    linesEditHint: "Edit the description, quantity, and unit price (USD). The total is calculated from the lines.",
+    addLine: "Add line",
+    removeLine: "Remove line",
+    saveLines: "Save lines",
+    discardLines: "Discard changes",
+    linesSaved: "Lines saved",
+    linesSaveFailed: "Could not save the lines.",
+    linesInvalid: "Check line {n}: it needs a description, quantity above 0, and a valid price.",
+    linesUnsaved: "You have unsaved line changes.",
+    linesLocked: "Lines can't be edited because the invoice has payments, is paid, or is void.",
+    linesEmpty: "No lines. Add at least one before sending the invoice.",
+    lineDescPlaceholder: "Description of work or materials",
+    linesTotalPreview: "Total with changes: {total}",
+    needsAmountTitle: "Amount missing:",
+    needsAmountBody: "add at least one priced line before sending the invoice or sharing the pay link.",
+    sendBlocked: "A $0 invoice can't be sent or collected. Add priced lines.",
     qty: "Qty",
     unitPrice: "Unit",
     amount: "Amount",
@@ -964,7 +980,7 @@ const en = {
     payments: "Payments",
     noPayments: "No payments on this invoice yet.",
     voidTitle: "Void this invoice?",
-    voidDesc: "Voided invoices stay in the ledger for audit but should not collect payment. You can change status again in this demo.",
+    voidDesc: "Voided invoices stay in the ledger for audit but should not collect payment.",
     voidConfirm: "Void invoice",
     invoiceArrow: "Invoice → {status}",
     markContacted: "Mark contacted",

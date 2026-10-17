@@ -2,7 +2,6 @@
  * Postgres InvoicesRepo — same contract as Memory*.
  */
 
-import { demoUnitCentsForService } from "@/lib/db/demo-amounts";
 import { isUuid } from "@/lib/db/ids";
 import { query } from "@/lib/db/postgres/connection";
 import {
@@ -14,6 +13,10 @@ import {
 import { createPostgresQuotesRepo } from "@/lib/db/postgres/quotes";
 import type { InvoicesRepo } from "@/lib/db/repos/types";
 import type { InvoiceLine, InvoiceRecord, InvoiceStatus } from "@/lib/db/types";
+import {
+  EDITABLE_INVOICE_STATUSES,
+  invoiceLinesTotalCents,
+} from "@/lib/invoices/lines";
 import { generatePayToken } from "@/lib/pay/token";
 
 async function loadLines(invoiceIds: string[]): Promise<Map<string, InvoiceLine[]>> {
@@ -51,7 +54,7 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
 
   const repo: InvoicesRepo = {
     subtotalCents(inv) {
-      return inv.lines.reduce((sum, l) => sum + l.quantity * l.unitCents, 0);
+      return invoiceLinesTotalCents(inv.lines);
     },
 
     async list() {
@@ -90,14 +93,16 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
       const quote = await quotes.get(quoteId);
       if (!quote) return null;
 
-      const unit = demoUnitCentsForService(quote.serviceType);
+      // Real invoice (demo=false) as a draft. Quotes carry no amount, so
+      // start with one editable line at $0 — the admin must price it before
+      // the invoice can be sent (see isInvoiceSendable).
       const number = await nextInvoiceNumber();
       const payToken = generatePayToken();
       const { rows } = await query<InvoiceRow>(
         `insert into invoices (
            number, quote_id, customer_id, customer_name, customer_email,
            customer_phone, address, status, notes, demo, pay_token
-         ) values ($1,$2,$3,$4,$5,$6,$7,'draft',$8,true,$9)
+         ) values ($1,$2,$3,$4,$5,$6,$7,'draft',$8,false,$9)
          returning *`,
         [
           number,
@@ -107,22 +112,63 @@ export function createPostgresInvoicesRepo(): InvoicesRepo {
           quote.email,
           quote.phone,
           quote.address,
-          `Created from quote ${quote.id}. Synthetic demo amount — not a real bid.`,
+          "",
           payToken,
         ],
       );
       const inv = rows[0];
       const { rows: lineRows } = await query<InvoiceLineRow>(
         `insert into invoice_lines (invoice_id, description, quantity, unit_cents, sort_order)
-         values ($1, $2, 1, $3, 0)
+         values ($1, $2, 1, 0, 0)
          returning *`,
-        [
-          inv.id,
-          `${quote.serviceType} — demo estimate from quote`,
-          unit,
-        ],
+        [inv.id, quote.serviceType?.trim() || "Servicio"],
       );
       return mapInvoice(inv, lineRows.map(mapInvoiceLine));
+    },
+
+    async replaceLines(id, lines) {
+      if (!isUuid(id)) return { ok: false, reason: "not_found" };
+      // Single statement → atomic: lock the invoice row, delete old lines,
+      // insert new ones, bump updated_at — only while editable.
+      const { rows } = await query<{ id: string; editable: boolean }>(
+        `with target as (
+           select id, (status = any($5::invoice_status[])) as editable
+           from invoices where id = $1 for update
+         ),
+         del as (
+           delete from invoice_lines
+           where invoice_id in (select id from target where editable)
+         ),
+         ins as (
+           insert into invoice_lines (invoice_id, description, quantity, unit_cents, sort_order)
+           select t.id, d.description, d.quantity, d.unit_cents, (d.ord - 1)::int
+           from target t
+           cross join unnest($2::text[], $3::numeric[], $4::int[])
+             with ordinality as d(description, quantity, unit_cents, ord)
+           where t.editable
+         ),
+         upd as (
+           update invoices i set updated_at = now()
+           from target t
+           where i.id = t.id and t.editable
+           returning i.*
+         )
+         select coalesce(u.id, t.id) as id, t.editable
+         from target t left join upd u on u.id = t.id`,
+        [
+          id,
+          lines.map((l) => l.description),
+          lines.map((l) => l.quantity),
+          lines.map((l) => l.unitCents),
+          [...EDITABLE_INVOICE_STATUSES],
+        ],
+      );
+      const row = rows[0];
+      if (!row) return { ok: false, reason: "not_found" };
+      if (!row.editable) return { ok: false, reason: "locked" };
+      const fresh = await repo.get(id);
+      if (!fresh) return { ok: false, reason: "not_found" };
+      return { ok: true, invoice: fresh };
     },
 
     async updateStatus(id, status: InvoiceStatus) {

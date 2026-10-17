@@ -136,7 +136,7 @@ const es = {
       title: "Panel",
       meta: "Resumen operativo",
       description:
-        "Pendientes, embudo y movimiento reciente. Montos de demostración hasta activar Postgres y credenciales.",
+        "Pendientes, embudo y movimiento reciente a partir de cotizaciones, facturas y pagos registrados.",
       needsAttention: "Requiere atención",
       newQuotes: "Cotizaciones nuevas",
       openInvoices: "Facturas abiertas",
@@ -215,7 +215,7 @@ const es = {
       title: "Facturas",
       meta: "Facturación",
       description:
-        "Borradores de demostración desde cotizaciones con montos sintéticos. PDF, correo y precios reales después."
+        "Facturas creadas desde cotizaciones. Defina las líneas y precios en el borrador antes de enviarla o compartir el enlace de pago."
     },
     payments: {
       title: "Pagos",
@@ -327,7 +327,7 @@ const es = {
     reports: {
       title: "Informes",
       description:
-        "Resumen operativo ligero: solo gráficos SVG/CSS. Montos de demostración; sin proveedor de analítica."
+        "Resumen operativo ligero: solo gráficos SVG/CSS con los montos registrados; sin proveedor de analítica."
     },
     content: {
       title: "Contenido",
@@ -686,7 +686,7 @@ const es = {
   invoices: {
     createFrom: "Crear borrador desde cotización",
     createFromHint:
-      "Borrador con monto sintético de demostración — no es una oferta real. Aún no hay PDF ni correo.",
+      "Crea un borrador con los datos del cliente. Agregue las líneas y precios antes de enviarlo.",
     quoteLabel: "Cotización",
     pickQuote: "Elija una cotización…",
     pickQuoteFirst: "Primero elija una cotización.",
@@ -698,7 +698,7 @@ const es = {
     allCount: "Todas ({count})",
     emptyTitle: "Aún no hay facturas",
     emptyDesc:
-      "Cree un borrador desde una cotización arriba. Los montos son datos sintéticos de demostración hasta conectar el estimado.",
+      "Cree un borrador desde una cotización arriba y complete las líneas con los precios acordados.",
     colNumber: "Número",
     colCustomer: "Cliente",
     colTotal: "Total",
@@ -922,8 +922,8 @@ const es = {
     allServices: "Todos los servicios",
     quotes: "Cotizaciones",
     wonRate: "Tasa de cierre",
-    openAr: "Cartera abierta (demo)",
-    collectedStub: "Recaudado (provisional)",
+    openAr: "Cartera abierta",
+    collectedStub: "Recaudado",
     open: "Abiertas",
     paid: "Pagadas",
     other: "Otras",
@@ -973,12 +973,28 @@ const es = {
     pricebookLink: "Lista de precios →",
     nextStepTitle: "Siguiente paso:",
     nextStepBody:
-      "tras la visita al sitio, cree una factura de demostración desde esta cotización y registre pagos en el detalle de la factura. Los montos siguen siendo sintéticos hasta conectar Stripe y la base de datos.",
+      "tras la visita al sitio, cree el borrador de factura desde esta cotización, complete las líneas con los precios acordados y envíela; registre los pagos en el detalle de la factura.",
     balanceDueTitle: "Saldo por cobrar:",
     balanceDueBody:
       "Registre un pago o ajuste el estado. Cobre un anticipo con Stripe cuando haya claves.",
     sourceQuote: "Cotización de origen",
-    lineItems: "Partidas",
+    lineItems: "Líneas de la factura",
+    linesEditHint: "Edite la descripción, la cantidad y el precio unitario (USD). El total se calcula con las líneas.",
+    addLine: "Agregar línea",
+    removeLine: "Quitar línea",
+    saveLines: "Guardar líneas",
+    discardLines: "Descartar cambios",
+    linesSaved: "Líneas guardadas",
+    linesSaveFailed: "No se pudieron guardar las líneas.",
+    linesInvalid: "Revise la línea {n}: necesita descripción, cantidad mayor que 0 y precio válido.",
+    linesUnsaved: "Tiene cambios sin guardar en las líneas.",
+    linesLocked: "Las líneas no se pueden editar porque la factura tiene pagos, está pagada o anulada.",
+    linesEmpty: "Sin líneas. Agregue al menos una para poder enviar la factura.",
+    lineDescPlaceholder: "Descripción del trabajo o material",
+    linesTotalPreview: "Total con cambios: {total}",
+    needsAmountTitle: "Falta el valor:",
+    needsAmountBody: "agregue al menos una línea con precio antes de enviar la factura o compartir el enlace de pago.",
+    sendBlocked: "No se puede enviar ni cobrar una factura con total $0. Agregue líneas con precio.",
     qty: "Cant.",
     unitPrice: "Unidad",
     amount: "Monto",
@@ -991,7 +1007,7 @@ const es = {
     noPayments: "Aún no hay pagos en esta factura.",
     voidTitle: "¿Anular esta factura?",
     voidDesc:
-      "Las facturas anuladas permanecen en el libro para auditoría, pero no deben cobrar pago. En esta demo puede cambiar el estado de nuevo.",
+      "Las facturas anuladas permanecen en el libro para auditoría, pero no deben cobrar pago.",
     voidConfirm: "Anular factura",
     invoiceArrow: "Factura → {status}",
     markContacted: "Marcar contactada",

@@ -121,7 +121,7 @@ export function createPostgresPaymentsRepo(): PaymentsRepo {
         if (existing) return existing;
       }
 
-      const demo = input.demo ?? true;
+      const demo = input.demo ?? inv.demo;
       const sessionId = input.stripeCheckoutSessionId?.trim() || null;
       if (sessionId) {
         const existingSession = await repo.getByStripeCheckoutSessionId(sessionId);

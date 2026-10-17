@@ -2,11 +2,24 @@
  * In-memory InvoicesRepo — demo amounts, clearly labeled.
  */
 
-import { demoUnitCentsForService } from "@/lib/db/demo-amounts";
 import { memoryQuotesRepo } from "@/lib/db/memory/quotes";
 import type { InvoicesRepo } from "@/lib/db/repos/types";
 import type { InvoiceRecord, InvoiceStatus } from "@/lib/db/types";
-import { DEMO_PAY_TOKENS, generatePayToken } from "@/lib/pay/token";
+import {
+  isInvoiceEditable,
+  invoiceLinesTotalCents,
+} from "@/lib/invoices/lines";
+import { generatePayToken } from "@/lib/pay/token";
+
+/**
+ * Seed-only pay tokens for the memory adapter's demo invoices. Never used by
+ * the Postgres adapter; /pay/kf_pay_demo_* 404s in production.
+ */
+export const MEMORY_DEMO_PAY_TOKENS = {
+  inv_seed_1: "kf_pay_demo_1001_alicia",
+  inv_seed_2: "kf_pay_demo_1002_chris",
+  inv_seed_3: "kf_pay_demo_1003_sam",
+} as const;
 
 declare global {
   // eslint-disable-next-line no-var
@@ -24,6 +37,7 @@ function store(): InvoiceRecord[] {
 }
 
 function nextNumber(): string {
+  store(); // seed first so new numbers never collide with KF-1001…1003
   const n = (globalThis.__kabaInvoiceSeq ?? 1000) + 1;
   globalThis.__kabaInvoiceSeq = n;
   return `KF-${n}`;
@@ -60,7 +74,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       ],
       notes: "Demo invoice. 50% deposit recorded.",
       demo: true,
-      payToken: DEMO_PAY_TOKENS.inv_seed_1,
+      payToken: MEMORY_DEMO_PAY_TOKENS.inv_seed_1,
       payLinkNotifiedAt: null,
     },
     {
@@ -85,7 +99,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       ],
       notes: "Draft from scheduled quote — not sent.",
       demo: true,
-      payToken: DEMO_PAY_TOKENS.inv_seed_2,
+      payToken: MEMORY_DEMO_PAY_TOKENS.inv_seed_2,
       payLinkNotifiedAt: null,
     },
     {
@@ -110,7 +124,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
       ],
       notes: "Paid in full — demo seed.",
       demo: true,
-      payToken: DEMO_PAY_TOKENS.inv_seed_3,
+      payToken: MEMORY_DEMO_PAY_TOKENS.inv_seed_3,
       payLinkNotifiedAt: null,
     },
   ];
@@ -118,7 +132,7 @@ function seedInvoicesSync(): InvoiceRecord[] {
 
 export const memoryInvoicesRepo: InvoicesRepo = {
   subtotalCents(inv) {
-    return inv.lines.reduce((sum, l) => sum + l.quantity * l.unitCents, 0);
+    return invoiceLinesTotalCents(inv.lines);
   },
 
   async list() {
@@ -141,7 +155,6 @@ export const memoryInvoicesRepo: InvoicesRepo = {
     const quote = await memoryQuotesRepo.get(quoteId);
     if (!quote) return null;
 
-    const unit = demoUnitCentsForService(quote.serviceType);
     const now = new Date().toISOString();
     const record: InvoiceRecord = {
       id: `inv_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
@@ -158,18 +171,33 @@ export const memoryInvoicesRepo: InvoicesRepo = {
       lines: [
         {
           id: `l_${Date.now().toString(36)}`,
-          description: `${quote.serviceType} — demo estimate from quote`,
+          description: quote.serviceType?.trim() || "Servicio",
           quantity: 1,
-          unitCents: unit,
+          unitCents: 0,
         },
       ],
-      notes: `Created from quote ${quote.id}. Synthetic demo amount — not a real bid.`,
-      demo: true,
+      notes: "",
+      demo: false,
       payToken: generatePayToken(),
       payLinkNotifiedAt: null,
     };
     store().unshift(record);
     return record;
+  },
+
+  async replaceLines(id, lines) {
+    const inv = store().find((i) => i.id === id);
+    if (!inv) return { ok: false, reason: "not_found" };
+    if (!isInvoiceEditable(inv.status)) return { ok: false, reason: "locked" };
+    const stamp = Date.now().toString(36);
+    inv.lines = lines.map((l, i) => ({
+      id: `l_${stamp}_${i}`,
+      description: l.description,
+      quantity: l.quantity,
+      unitCents: l.unitCents,
+    }));
+    inv.updatedAt = new Date().toISOString();
+    return { ok: true, invoice: inv };
   },
 
   async updateStatus(id, status: InvoiceStatus) {

@@ -8,18 +8,15 @@ import {
   paidCentsForInvoice,
 } from "@/lib/admin/payments-store";
 import { buildPaymentReceiptStub } from "@/lib/pay/receipt";
-import { isValidPayTokenShape } from "@/lib/pay/token";
+import { isPubliclyPayable, isServablePayToken } from "@/lib/pay/public";
 import { getPayMessages } from "@/lib/pay/messages";
-import {
-  getPublishedContactInfo,
-  getPublishedHeroCopy,
-} from "@/lib/cms/public";
+import { getPublishedContactInfo } from "@/lib/cms/public";
 import {
   isStripeCheckoutReady,
   suggestedDepositCents,
 } from "@/lib/stripe/config";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -33,10 +30,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { token: raw } = await params;
   const token = decodeURIComponent(raw ?? "").trim();
-  const invoice =
-    token && isValidPayTokenShape(token)
-      ? await getInvoiceByPayToken(token)
-      : undefined;
+  const found = isServablePayToken(token)
+    ? await getInvoiceByPayToken(token)
+    : undefined;
+  const invoice = found && isPubliclyPayable(found) ? found : undefined;
   const m = getPayMessages("en");
   return {
     title: invoice ? `${m.invoiceLabel} ${invoice.number}` : m.notFoundTitle,
@@ -54,31 +51,15 @@ export default async function PublicPayPage({
   const { token: raw } = await params;
   const token = decodeURIComponent(raw ?? "").trim();
   const search = await searchParams;
-  const m = getPayMessages("en");
   const contact = getPublishedContactInfo();
-  const brandName = getPublishedHeroCopy().name;
 
-  if (!token || !isValidPayTokenShape(token)) {
-    return (
-      <PayNotFound
-        title={m.notFoundTitle}
-        body={m.notFoundBody}
-        contact={contact}
-        brandName={brandName}
-      />
-    );
+  if (!isServablePayToken(token)) {
+    notFound();
   }
 
   const invoice = await getInvoiceByPayToken(token);
-  if (!invoice) {
-    return (
-      <PayNotFound
-        title={m.notFoundTitle}
-        body={m.notFoundBody}
-        contact={contact}
-        brandName={brandName}
-      />
-    );
+  if (!invoice || !isPubliclyPayable(invoice)) {
+    notFound();
   }
 
   const paidCents = await paidCentsForInvoice(invoice.id);
@@ -111,36 +92,5 @@ export default async function PublicPayPage({
       receipt={receipt}
       contact={contact}
     />
-  );
-}
-
-function PayNotFound({
-  title,
-  body,
-  contact,
-  brandName,
-}: {
-  title: string;
-  body: string;
-  contact: { phone: string; phoneHref: string };
-  brandName: string;
-}) {
-  return (
-    <div className="rounded-xl border border-ink/10 px-5 py-8 text-center">
-      <h1 className="font-display text-xl font-semibold text-ink">{title}</h1>
-      <p className="mx-auto mt-2 max-w-md text-sm text-muted">{body}</p>
-      <p className="mt-4 text-sm">
-        <a
-          href={contact.phoneHref}
-          className="font-semibold text-bronze-dark hover:underline dark:text-bronze-light"
-        >
-          {contact.phone}
-        </a>
-        {" · "}
-        <Link href="/" className="font-semibold text-ink hover:underline">
-          {brandName}
-        </Link>
-      </p>
-    </div>
   );
 }

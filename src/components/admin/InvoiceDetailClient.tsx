@@ -1,6 +1,13 @@
 "use client";
 
+import {
+  invoiceLinesTotalCents,
+  isInvoiceEditable,
+  isInvoiceSendable,
+  lineAmountCents,
+} from "@/lib/invoices/lines";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import InvoiceLinesEditor from "@/components/admin/InvoiceLinesEditor";
 import CopyChip from "@/components/admin/CopyChip";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { InvoiceStatusTimeline } from "@/components/admin/StatusTimeline";
@@ -61,11 +68,11 @@ export default function InvoiceDetailClient({
   const [emailBusy, setEmailBusy] = useState(false);
 
   const payPath = `/pay/${encodeURIComponent(invoice.payToken)}`;
-  const total = invoice.lines.reduce(
-    (s, l) => s + l.quantity * l.unitCents,
-    0,
-  );
+  const total = invoiceLinesTotalCents(invoice.lines);
   const balance = Math.max(0, total - paidCents);
+  // Sending, sharing the pay link and collecting need priced lines.
+  const sendable = isInvoiceSendable(invoice.lines);
+  const linesEditable = isInvoiceEditable(status) && paidCents === 0;
 
   async function changeStatus(next: InvoiceStatus) {
     if (next === "void" && status !== "void") {
@@ -84,6 +91,7 @@ export default function InvoiceDetailClient({
         body: JSON.stringify({ status: next }),
       });
       const data = (await res.json().catch(() => ({}))) as {
+        code?: string;
         autoPayLink?: {
           delivered?: boolean;
           skipped?: boolean;
@@ -92,7 +100,13 @@ export default function InvoiceDetailClient({
         };
       };
       if (!res.ok) {
-        toast.push({ title: t("common.statusUpdateFailed"), tone: "error" });
+        toast.push({
+          title:
+            data.code === "invoice_not_sendable"
+              ? t("detail.sendBlocked")
+              : t("common.statusUpdateFailed"),
+          tone: "error",
+        });
         return;
       }
       setStatus(next);
@@ -189,13 +203,17 @@ export default function InvoiceDetailClient({
       });
       const data = (await res.json()) as {
         error?: string;
+        code?: string;
         delivered?: boolean;
         to?: string;
         statusUpdated?: boolean;
       };
       if (!res.ok || !data.delivered) {
         toast.push({
-          title: data.error || t("detail.emailPayLinkFailed"),
+          title:
+            data.code === "invoice_not_sendable"
+              ? t("detail.sendBlocked")
+              : data.error || t("detail.emailPayLinkFailed"),
           tone: "error",
         });
         return;
@@ -273,7 +291,7 @@ export default function InvoiceDetailClient({
         <CopyChip value={summary} label={t("common.copySummary")} />
         <CopyChip value={invoice.customerEmail} label={t("common.copyEmail")} />
         <CopyChip value={invoice.customerPhone} label={t("common.copyPhone")} />
-        {invoice.payToken ? (
+        {invoice.payToken && sendable ? (
           <>
             <CopyChip
               value={
@@ -319,6 +337,13 @@ export default function InvoiceDetailClient({
           </button>
         )}
       </div>
+
+      {!sendable && status !== "void" && (
+        <div className="admin-flow-hint px-0.5 text-xs leading-relaxed text-amber-700 dark:text-amber-400 print:hidden">
+          <strong className="font-semibold">{t("detail.needsAmountTitle")}</strong>{" "}
+          {t("detail.needsAmountBody")}
+        </div>
+      )}
 
       {balance > 0 && (
         <div className="admin-flow-hint px-0.5 text-xs leading-relaxed text-muted print:hidden">
@@ -391,7 +416,26 @@ export default function InvoiceDetailClient({
       <div className="grid gap-3 lg:grid-cols-3">
         <section className="admin-card invoice-print-sheet lg:col-span-2">
           <h2 className="admin-card-title">{t("detail.lineItems")}</h2>
-          <div className="mt-3 overflow-x-auto">
+          {linesEditable ? (
+            <div className="print:hidden">
+              <InvoiceLinesEditor
+                key={invoice.updatedAt}
+                invoiceId={invoice.id}
+                lines={invoice.lines}
+              />
+            </div>
+          ) : (
+            <p className="mt-2 text-[0.6875rem] leading-relaxed text-muted print:hidden">
+              {t("detail.linesLocked")}
+            </p>
+          )}
+          <div
+            className={
+              linesEditable
+                ? "mt-3 hidden overflow-x-auto print:block"
+                : "mt-3 overflow-x-auto"
+            }
+          >
             <table className="admin-table min-w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-ink/10 text-[0.625rem] uppercase tracking-wider text-muted">
@@ -412,7 +456,7 @@ export default function InvoiceDetailClient({
                       {formatMoney(l.unitCents)}
                     </td>
                     <td className="py-2.5 font-medium tabular-nums text-ink">
-                      {formatMoney(l.quantity * l.unitCents)}
+                      {formatMoney(lineAmountCents(l))}
                     </td>
                   </tr>
                 ))}
@@ -438,7 +482,15 @@ export default function InvoiceDetailClient({
               }
             >
               {INVOICE_STATUSES.map((s) => (
-                <option key={s} value={s}>
+                <option
+                  key={s}
+                  value={s}
+                  disabled={
+                    !sendable &&
+                    s !== status &&
+                    (s === "sent" || s === "partial" || s === "paid")
+                  }
+                >
                   {invoiceStatusLabel(locale, s)}
                 </option>
               ))}
@@ -460,7 +512,7 @@ export default function InvoiceDetailClient({
           </dl>
           <div>
             <h2 className="admin-card-title">{t("detail.payments")}</h2>
-            {invoice.payToken ? (
+            {invoice.payToken && sendable ? (
               <p className="mt-2 text-[0.6875rem] leading-relaxed text-muted">
                 {t("detail.payLinkHint")}{" "}
                 <a
@@ -473,7 +525,7 @@ export default function InvoiceDetailClient({
                 </a>
               </p>
             ) : null}
-            {invoice.payToken && !mailReady ? (
+            {invoice.payToken && sendable && !mailReady ? (
               <p className="mt-2 text-[0.6875rem] leading-relaxed text-amber-700 dark:text-amber-400">
                 {t("detail.emailPayLinkMailOff")}
               </p>

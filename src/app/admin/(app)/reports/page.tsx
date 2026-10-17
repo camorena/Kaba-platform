@@ -1,3 +1,4 @@
+import { invoiceLinesTotalCents } from "@/lib/invoices/lines";
 import AdminPageChrome from "@/components/admin/AdminPageChrome";
 import ReportsPanel from "@/components/admin/ReportsPanel";
 import { listInvoices } from "@/lib/admin/invoices-store";
@@ -17,7 +18,7 @@ export default async function AdminReportsPage() {
   const invoices = (await listInvoices()).map((inv) => ({
     id: inv.id,
     status: inv.status,
-    totalCents: inv.lines.reduce((s, l) => s + l.quantity * l.unitCents, 0),
+    totalCents: invoiceLinesTotalCents(inv.lines),
     createdAt: inv.createdAt,
   }));
   const pStats = await paymentStats();

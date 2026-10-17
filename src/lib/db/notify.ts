@@ -36,6 +36,8 @@ import { markQuoteVisitReminderSent } from "@/lib/admin/quotes-store";
 import { visitKindLabel } from "@/lib/db/visits";
 import { QUIET_DAYS_THRESHOLD } from "@/lib/db/quiet";
 import { markInvoicePayLinkNotified } from "@/lib/admin/invoices-store";
+import { invoiceLinesTotalCents } from "@/lib/invoices/lines";
+import { isPubliclyPayable } from "@/lib/pay/public";
 
 export type NotifyQuoteResult = {
   /** True when the owner/admin alert was delivered (drives notifiedAt). */
@@ -71,7 +73,7 @@ export function notificationPatchFromResult(
 }
 
 function invoiceTotalCents(invoice: InvoiceRecord): number {
-  return invoice.lines.reduce((s, l) => s + l.quantity * l.unitCents, 0);
+  return invoiceLinesTotalCents(invoice.lines);
 }
 
 function escapeHtml(s: string): string {
@@ -208,6 +210,14 @@ export async function notifyInvoicePayLink(
       delivered: false,
       reason:
         "Mail not configured — set MAIL_FROM plus RESEND_API_KEY or SMTP_HOST (Settings → Platform).",
+    };
+  }
+
+  // Never email a $0 / unpriced (or, in production, demo) invoice.
+  if (!isPubliclyPayable(invoice)) {
+    return {
+      delivered: false,
+      reason: "Invoice has no priced lines (total $0) — not sendable.",
     };
   }
 

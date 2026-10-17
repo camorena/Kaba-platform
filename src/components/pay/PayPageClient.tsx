@@ -1,5 +1,6 @@
 "use client";
 
+import { invoiceLinesTotalCents, lineAmountCents } from "@/lib/invoices/lines";
 import { formatMoney } from "@/lib/admin/format";
 import type { InvoiceRecord } from "@/lib/db/types";
 import type { PaymentReceiptStub } from "@/lib/pay/receipt";
@@ -46,10 +47,7 @@ export default function PayPageClient({
   const [error, setError] = useState<string | null>(null);
   const m = useMemo(() => getPayMessages(locale), [locale]);
 
-  const total = invoice.lines.reduce(
-    (s, l) => s + l.quantity * l.unitCents,
-    0,
-  );
+  const total = invoiceLinesTotalCents(invoice.lines);
   const balance = Math.max(0, total - paidCents);
   const canPay =
     stripeCheckoutReady &&
@@ -230,7 +228,7 @@ export default function PayPageClient({
                     {l.quantity}
                   </td>
                   <td className="px-4 py-2.5 font-medium tabular-nums text-ink">
-                    {formatMoney(l.quantity * l.unitCents)}
+                    {formatMoney(lineAmountCents(l))}
                   </td>
                 </tr>
               ))}

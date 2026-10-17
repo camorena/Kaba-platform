@@ -16,12 +16,12 @@ export function isValidPayTokenShape(token: string): boolean {
   return TOKEN_RE.test(token.trim());
 }
 
-/** Stable demo tokens so docs / demos can deep-link without guessing. */
-export const DEMO_PAY_TOKENS = {
-  inv_seed_1: "kf_pay_demo_1001_alicia",
-  inv_seed_2: "kf_pay_demo_1002_chris",
-  inv_seed_3: "kf_pay_demo_1003_sam",
-} as const;
+/** Reserved prefix of the memory adapter's seed tokens (never valid in Postgres). */
+export const DEMO_PAY_TOKEN_PREFIX = "kf_pay_demo_";
+
+export function isDemoPayToken(token: string): boolean {
+  return token.startsWith(DEMO_PAY_TOKEN_PREFIX);
+}
 
 export function payPath(token: string): string {
   return `/pay/${encodeURIComponent(token)}`;

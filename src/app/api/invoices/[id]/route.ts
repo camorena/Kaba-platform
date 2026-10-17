@@ -10,6 +10,7 @@ import {
   paidCentsForInvoice,
 } from "@/lib/admin/payments-store";
 import { maybeAutoEmailInvoicePayLink } from "@/lib/db/notify";
+import { INVOICE_NOT_SENDABLE, isInvoiceSendable } from "@/lib/invoices/lines";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,6 +58,21 @@ export async function PATCH(
   const status = body.status as InvoiceStatus | undefined;
   if (!status || !INVOICE_STATUSES.includes(status)) {
     return NextResponse.json({ error: "Invalid status." }, { status: 400 });
+  }
+
+  // Never send / settle a $0 invoice: price the lines first.
+  if (
+    (status === "sent" || status === "partial" || status === "paid") &&
+    status !== before.status &&
+    !isInvoiceSendable(before.lines)
+  ) {
+    return NextResponse.json(
+      {
+        error: "La factura necesita al menos una línea con total mayor que $0.",
+        code: INVOICE_NOT_SENDABLE,
+      },
+      { status: 400 },
+    );
   }
 
   const updated = await updateInvoiceStatus(id, status);

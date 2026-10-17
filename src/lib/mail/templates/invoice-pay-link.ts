@@ -2,6 +2,7 @@
  * Elegant customer pay-link email — invoice summary + CTA to /pay/{token}.
  */
 
+import { lineAmountCents } from "@/lib/invoices/lines";
 import type { InvoiceRecord } from "@/lib/db/types";
 import { formatMoney } from "@/lib/admin/format";
 import {
@@ -43,7 +44,7 @@ export function buildInvoicePayLinkEmail(input: InvoicePayLinkEmailInput): {
 
   const lineText = invoice.lines
     .map((l) => {
-      const amt = formatMoney(l.quantity * l.unitCents);
+      const amt = formatMoney(lineAmountCents(l));
       return `  • ${l.description} × ${l.quantity} @ ${formatMoney(l.unitCents)} = ${amt}`;
     })
     .join("\n");
@@ -78,7 +79,7 @@ export function buildInvoicePayLinkEmail(input: InvoicePayLinkEmailInput): {
   const lineRowsHtml = invoice.lines.length
     ? invoice.lines
         .map((l) => {
-          const amt = formatMoney(l.quantity * l.unitCents);
+          const amt = formatMoney(lineAmountCents(l));
           return `<tr>
   <td style="padding:8px 12px;border-bottom:1px solid ${border};font-family:Arial,Helvetica,sans-serif;font-size:13px;color:${charcoalSoft};">${escapeHtml(l.description)}</td>
   <td style="padding:8px 12px;border-bottom:1px solid ${border};font-family:Arial,Helvetica,sans-serif;font-size:13px;color:${muted};text-align:right;white-space:nowrap;">${escapeHtml(amt)}</td>

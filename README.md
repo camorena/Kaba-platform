@@ -119,7 +119,7 @@ Without keys the build and Payments UI stay honest (“not connected”); `/pay/
 
 **Webhook URL (Stripe Dashboard):** `https://kaba-platform.vercel.app/api/stripe/webhook` (event: `checkout.session.completed`).
 
-**Demo pay link:** `/pay/kf_pay_demo_1002_chris` (seed token). Stripe launch: `preview/REUSE_PORT_v18.md`. Mail / Email pay link: `preview/REUSE_PORT_v19.md`.
+**Demo pay link (memory adapter only):** `/pay/kf_pay_demo_1002_chris` (seed token; 404 with Postgres / in production). Stripe launch: `preview/REUSE_PORT_v18.md`. Mail / Email pay link: `preview/REUSE_PORT_v19.md`.
 
 ## Mail (optional)
 
