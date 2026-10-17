@@ -61,6 +61,7 @@ export function generateMetadata(): Metadata {
     ],
     verification: {
       google: "sVvUmbpE7hM8ALK5kV3d9OwDZ4DoQqry7YKbnzrcXYo",
+      other: { "msvalidate.01": "F616EF822AEBECD406BA6C0565534C44" },
     },
     authors: [{ name: brand.name }],
     creator: brand.name,
